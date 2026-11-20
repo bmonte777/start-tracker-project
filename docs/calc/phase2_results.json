@@ -216,7 +216,7 @@
    "slew_7kg_20C": 0.114,
    "slew_7kg_m20C": 0.177,
    "track_ref_20C": 0.042,
-   "track_ref_m20C": 0.105
+   "track_ref_m20C": 0.106
   },
   "alt": {
    "slew_7kg_20C": 0.062,
@@ -286,32 +286,32 @@
   "17HS19-2004S1": [
    {
     "rpm": 1,
-    "pullout": 0.417,
-    "usable": 0.292,
+    "pullout": 0.398,
+    "usable": 0.279,
     "bemf": 0.02
    },
    {
     "rpm": 100,
-    "pullout": 0.417,
-    "usable": 0.292,
+    "pullout": 0.398,
+    "usable": 0.279,
     "bemf": 2.18
    },
    {
     "rpm": 200,
-    "pullout": 0.417,
-    "usable": 0.292,
+    "pullout": 0.398,
+    "usable": 0.279,
     "bemf": 4.37
    },
    {
     "rpm": 300,
-    "pullout": 0.392,
-    "usable": 0.275,
+    "pullout": 0.383,
+    "usable": 0.268,
     "bemf": 6.55
    },
    {
     "rpm": 400,
-    "pullout": 0.311,
-    "usable": 0.218,
+    "pullout": 0.31,
+    "usable": 0.217,
     "bemf": 8.74
    },
    {
@@ -334,58 +334,118 @@
    }
   ]
  },
- "motor_margin_400rpm_m20C": 0.84,
- "motor_margin_400rpm_20C": 1.3,
+ "motor_margin_400rpm_m20C": 1.18,
+ "motor_margin_400rpm_20C": 1.9,
  "slew_margins": {
   "ref_any_pose": {
+   "governing_axis": "az",
    "need": 0.06,
-   "m400": 2.47,
-   "m300": 3.19,
-   "m200": 3.47,
-   "m400_48mm": 3.64
+   "need_by_axis": {
+    "az": 0.06,
+    "alt": 0.033,
+    "roll": 0.037
+   },
+   "m400": 3.61,
+   "m300": 4.46,
+   "m200": 4.64
   },
   "ref_any_pose_m20": {
-   "need": 0.123,
-   "m400": 1.2,
-   "m300": 1.55,
-   "m200": 1.69,
-   "m400_48mm": 1.77
+   "governing_axis": "alt",
+   "need": 0.096,
+   "need_by_axis": {
+    "az": 0.123,
+    "alt": 0.096,
+    "roll": 0.079
+   },
+   "m400": 1.54,
+   "m300": 1.99,
+   "m200": 2.17
   },
   "kg7_altaz": {
+   "governing_axis": "roll",
    "need": 0.063,
+   "need_by_axis": {
+    "az": 0.026,
+    "alt": 0.062,
+    "roll": 0.063
+   },
    "m400": 2.33,
    "m300": 3.01,
-   "m200": 3.28,
-   "m400_48mm": 3.43
+   "m200": 3.28
   },
   "kg7_altaz_m20": {
+   "governing_axis": "alt",
    "need": 0.125,
+   "need_by_axis": {
+    "az": 0.089,
+    "alt": 0.125,
+    "roll": 0.106
+   },
    "m400": 1.19,
    "m300": 1.53,
-   "m200": 1.67,
-   "m400_48mm": 1.75
+   "m200": 1.67
   },
   "kg7_eq_extreme": {
+   "governing_axis": "az",
    "need": 0.114,
-   "m400": 1.3,
-   "m300": 1.68,
-   "m200": 1.83,
-   "m400_48mm": 1.92
+   "need_by_axis": {
+    "az": 0.114
+   },
+   "m400": 1.9,
+   "m300": 2.35,
+   "m200": 2.45
   },
   "kg7_eq_extreme_m20": {
+   "governing_axis": "az",
    "need": 0.177,
+   "need_by_axis": {
+    "az": 0.177
+   },
+   "m400": 1.23,
+   "m300": 1.51,
+   "m200": 1.58
+  }
+ },
+ "az_motor_1p6_ohm": {
+  "m400": 1.19,
+  "m300": 1.49
+ },
+ "az_with_38mm_motor": {
+  "kg7_eq_extreme": {
+   "m400": 1.3,
+   "m300": 1.68,
+   "m200": 1.83
+  },
+  "kg7_eq_extreme_m20": {
    "m400": 0.84,
    "m300": 1.08,
-   "m200": 1.18,
-   "m400_48mm": 1.23
+   "m200": 1.17
   }
  },
  "current_settings": {
-  "track_20C": 0.3,
-  "track_m20C": 0.75,
-  "slew_20C": 0.81,
-  "slew_m20C": 1.06,
-  "max_rms": 1.06
+  "az": {
+   "motor": "17HS19-2004S1",
+   "kt": 0.2086,
+   "track_20C": 0.28,
+   "track_m20C": 0.72,
+   "slew_20C": 0.77,
+   "slew_m20C": 1.2,
+   "max_rms": 1.35
+  },
+  "alt_roll": {
+   "motor": "17HE15-1504S",
+   "kt": 0.198,
+   "track_20C": 0.18,
+   "track_m20C": 0.63,
+   "slew_20C": 0.45,
+   "slew_m20C": 0.89,
+   "max_rms": 1.06
+  }
+ },
+ "bemf_400rpm": {
+  "az": 8.74,
+  "alt": 8.29,
+  "roll": 8.29
  },
  "belt": {
   "d1": 12.73,
@@ -400,6 +460,8 @@
   "work_9mm": 41.7,
   "sf_6mm": 1.0,
   "sf_9mm": 1.5,
+  "Te_az_stall_cold_slew": 55.6,
+  "Te_az_at_max_current": 62.6,
   "static_tension": 14.0,
   "shaft_load": 27.3,
   "span_freq_hz": 291,
@@ -407,10 +469,10 @@
  },
  "holding": {
   "az": {
-   "hold": 8.1,
-   "sf_ref_typical": 1.98,
-   "sf_ref_worst": 1.1,
-   "sf_7kg_worst": 0.46
+   "hold": 9.9,
+   "sf_ref_typical": 2.42,
+   "sf_ref_worst": 1.35,
+   "sf_7kg_worst": 0.56
   },
   "alt": {
    "hold": 8.1,
@@ -551,6 +613,11 @@
   "roll": 26.0
  },
  "belt_backlash_out_arcsec": 2.2,
+ "motor_loss_tracking": {
+  "az": 0.35,
+  "alt": 0.51,
+  "roll": 0.51
+ },
  "energy": {
   "nominal_wh": 72.0,
   "usable_20C": 62.9,
@@ -563,50 +630,57 @@
    52.4
   ],
   [
-   "EQ tracking, 20 C (1 axis moving, 2 holding at 0.15 A)",
-   2.0,
-   31.1
+   "EQ tracking, 20 C (azimuth moving at 0.30 A, 2 holding at 0.15 A)",
+   1.8,
+   34.1
   ],
   [
    "Alt-az tracking, 20 C (3 axes at 0.30 A)",
-   2.7,
-   23.2
+   2.5,
+   24.8
   ],
   [
    "Alt-az tracking, -20 C (3 axes at 0.65 A)",
-   7.8,
-   6.4
+   7.0,
+   7.2
   ],
   [
    "Alt-az tracking + camera power, 20 C",
-   8.1,
-   7.7
+   8.0,
+   7.9
   ],
   [
    "Time-lapse / panorama, 20 C (10 % slewing)",
-   4.0,
-   15.6
+   3.7,
+   16.9
   ],
   [
-   "Slewing, 3 axes, peak (1.06 A)",
-   20.8,
-   3.0
+   "Slewing, 3 axes, peak (azimuth 1.20 A, altitude and roll 1.06 A)",
+   19.5,
+   3.2
   ]
  ],
  "thermal": {
   "r_th": 1.39,
-  "p_internal": 4.7,
-  "rise": 6.5,
-  "internal_at_40C": 46.5,
+  "p_internal": 4.5,
+  "rise": 6.3,
+  "internal_at_40C": 46.3,
   "motor_rise_065A": 23.0,
   "motor_rise_106A": 62.0,
   "motor_loss_065A": 1.94,
-  "motor_loss_106A": 5.17
+  "motor_loss_106A": 5.17,
+  "az_motor_loss_065A": 1.18,
+  "az_motor_rise_065A": 14.0,
+  "az_motor_loss_peak": 4.03,
+  "az_motor_rise_peak": 48.0,
+  "az_peak_current": 1.2
  },
- "boost_current_peak": 1.48,
+ "peak_slew_power_w": 19.5,
+ "boost_current_peak": 1.39,
+ "pack_current_peak": 3.25,
  "mass_p1": {
   "Reducers, hollow units (2 x size 17, 1 x size 14)": 2.7,
-  "Stepper motors x3": 0.84,
+  "Stepper motors x3": 0.95,
   "Pulleys and belts x3": 0.14,
   "Battery pack (4 cells + board + shell)": 0.34,
   "Electronics and harness": 0.17,
@@ -614,10 +688,10 @@
   "Aluminium parts (wedge, base, arm, shelf, clamp, plates)": 1.08,
   "Fasteners, inserts, seals": 0.15
  },
- "mass_p1_total": 5.97,
+ "mass_p1_total": 6.08,
  "mass_prod": {
   "Reducers, hollow units (2 x size 17, 1 x size 14)": 1.6,
-  "Stepper motors x3": 0.84,
+  "Stepper motors x3": 0.95,
   "Pulleys and belts x3": 0.14,
   "Battery pack (4 cells + board + shell)": 0.34,
   "Electronics and harness": 0.17,
@@ -625,12 +699,12 @@
   "Aluminium parts (wedge, base, arm, shelf, clamp, plates)": 1.08,
   "Fasteners, inserts, seals": 0.12
  },
- "mass_prod_total": 5.23,
+ "mass_prod_total": 5.34,
  "cost": {
   "materials": [
-   1826.0,
-   1286.0,
-   959.0
+   1829.0,
+   1289.0,
+   962.0
   ],
   "labour": [
    0.0,
@@ -643,9 +717,9 @@
    0.05
   ],
   "cogs": [
-   2045.0,
-   1429.0,
-   1042.0
+   2048.0,
+   1433.0,
+   1045.0
   ],
   "groups": {
    "0": [
@@ -654,9 +728,9 @@
     0.0
    ],
    "2": [
-    1045.0,
-    867.0,
-    681.0
+    1049.0,
+    871.0,
+    685.0
    ],
    "3": [
     479.0,
@@ -696,28 +770,28 @@
   ],
   "tooling_eur": 44600.0,
   "tooling_per_unit_1000": 44.6,
-  "landed_1000": 1087,
+  "landed_1000": 1090,
   "retail_low_high": [
    2720.0,
-   3800.0
+   3810.0
   ],
-  "landed_1000_oem_sets": 771,
+  "landed_1000_oem_sets": 775,
   "retail_oem_low_high": [
-   1930.0,
-   2700.0
+   1940.0,
+   2710.0
   ],
   "retail_multiples": {
    "2.0": [
-    2170.0,
-    1540.0
+    2180.0,
+    1550.0
    ],
    "2.5": [
     2720.0,
-    1930.0
+    1940.0
    ],
    "3.5": [
-    3800.0,
-    2700.0
+    3810.0,
+    2710.0
    ]
   }
  }
