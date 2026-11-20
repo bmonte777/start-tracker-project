@@ -61,6 +61,16 @@ T_NL = {14: {20: 0.04, -20: 0.16}, 17: {20: 0.06, -20: 0.24}}  # no-load running
 # motor: StepperOnline 17HE15-1504S
 MOT = dict(name="17HE15-1504S", Th=0.42, Ir=1.5, R=2.3, L=4.0e-3, p=50, J=5.4e-6, detent=0.016, m=0.28)
 MOT_ALT = dict(name="17HS19-2004S1", Th=0.59, Ir=2.0, R=1.4, L=3.0e-3, p=50, J=8.2e-6, detent=0.022, m=0.39)
+MOT_AX = {"az": MOT_ALT, "alt": MOT, "roll": MOT}   # D32: 48 mm motor on azimuth only
+# 17HS19-2004S1 data: StepperOnline product page (59 N.cm, 2.0 A, 1.4 ohm, 3.0 mH); a distributor datasheet gives 1.6 ohm
+# (sensitivity below). Rotor inertia 82 g.cm2 from that datasheet; mass 390 g from a reseller listing.
+# Detent torque is on neither page: 1.6 and 2.2 N.cm are typical values, to be measured.
+I_DRV_RMS = 1.35                                     # A RMS, TMC2209 full scale with 0.15 ohm sense resistors
+def kt_of(m):
+    return m["Th"] / (math.sqrt(2) * m["Ir"])
+def i_ceiling_rms(m):
+    """Highest RMS current the firmware may set: the motor rating (Ipk = Ir) or the driver full scale."""
+    return min(m["Ir"] / math.sqrt(2), I_DRV_RMS)
 VBUS = 12.0
 VDROP = 0.5
 
@@ -255,7 +265,7 @@ R["settle"] = dict(f_sys=f_sys, zeta=zeta, A0=round(A0, 1), t_to_1arcsec=round(m
 def motor_torque_needed(ax, t_out, temp):
     size = AX[ax]
     t_wg = t_out / (N_HD * ETA_HD) + T_NL[size][temp]
-    j_ref = MOT["J"] + 0.6e-6 + HD[size]["Jwg"] / N_BELT ** 2
+    j_ref = MOT_AX[ax]["J"] + 0.6e-6 + HD[size]["Jwg"] / N_BELT ** 2
     return t_wg / (N_BELT * ETA_BELT) + j_ref * alpha * N
 
 
@@ -297,42 +307,69 @@ curve = {}
 for m in (MOT, MOT_ALT):
     rows = []
     for rpm in (1, 100, 200, 300, 400, 500, 600, 800):
-        t_full = pullout(m, rpm, math.sqrt(2) * m["Ir"] * 0.7071)        # rated-current peak (Ipk = Ir)
+        t_full = pullout(m, rpm, math.sqrt(2) * i_ceiling_rms(m))        # peak current: motor rating or driver full scale
         rows.append(dict(rpm=rpm, pullout=round(t_full, 3), usable=round(0.7 * t_full, 3), bemf=round(m["Th"] / (math.sqrt(2) * m["Ir"]) * rpm * 2 * math.pi / 60, 2)))
     curve[m["name"]] = rows
 R["speed_torque"] = curve
-need400 = max(R["motor_need"][ax]["slew_7kg_m20C"] for ax in AX)
-u400 = [r for r in curve[MOT["name"]] if r["rpm"] == 400][0]["usable"]
-R["motor_margin_400rpm_m20C"] = round(u400 / need400, 2)
+usable = {r["rpm"]: r["usable"] for r in curve[MOT["name"]]}
+usable_big = {r["rpm"]: r["usable"] for r in curve[MOT_ALT["name"]]}
+usable_ax = {ax: {r["rpm"]: r["usable"] for r in curve[MOT_AX[ax]["name"]]} for ax in AX}
+need400 = max(R["motor_need"][ax]["slew_7kg_m20C"] for ax in AX)      # largest torque at any motor pulley (sets the belt)
 need400w = max(R["motor_need"][ax]["slew_7kg_20C"] for ax in AX)
-R["motor_margin_400rpm_20C"] = round(u400 / need400w, 2)
+R["motor_margin_400rpm_m20C"] = round(min(usable_ax[ax][400] / R["motor_need"][ax]["slew_7kg_m20C"] for ax in AX), 2)
+R["motor_margin_400rpm_20C"] = round(min(usable_ax[ax][400] / R["motor_need"][ax]["slew_7kg_20C"] for ax in AX), 2)
 # margins by case: reference rig (worst pose, any axis), 7 kg alt-az (azimuth carries no gravity torque), 7 kg EQ extreme
 def _need(ax, t_static, mp_idx, temp):
     return motor_torque_needed(ax, t_static + J[ax][mp_idx] * alpha + wind[10][mp_idx], temp)
+def _all(mp_idx, temp, az_static=None):
+    out = {}
+    for a in AX:
+        st = loads[a]["ref_unbal"] if mp_idx == 0 else loads[a]["max"]
+        if a == "az" and az_static is not None:
+            st = az_static
+        out[a] = _need(a, st, mp_idx, temp)
+    return out
 cases = {
-    "ref_any_pose": max(_need(a, loads[a]["ref_unbal"], 0, 20) for a in AX), "ref_any_pose_m20": max(_need(a, loads[a]["ref_unbal"], 0, -20) for a in AX),
-    "kg7_altaz": max(_need("az", 0.0, 1, 20), _need("alt", loads["alt"]["max"], 1, 20), _need("roll", loads["roll"]["max"], 1, 20)),
-    "kg7_altaz_m20": max(_need("az", 0.0, 1, -20), _need("alt", loads["alt"]["max"], 1, -20), _need("roll", loads["roll"]["max"], 1, -20)),
-    "kg7_eq_extreme": _need("az", loads["az"]["max"], 1, 20), "kg7_eq_extreme_m20": _need("az", loads["az"]["max"], 1, -20),
+    "ref_any_pose": _all(0, 20), "ref_any_pose_m20": _all(0, -20),
+    "kg7_altaz": _all(1, 20, az_static=0.0), "kg7_altaz_m20": _all(1, -20, az_static=0.0),
+    "kg7_eq_extreme": {"az": _need("az", loads["az"]["max"], 1, 20)}, "kg7_eq_extreme_m20": {"az": _need("az", loads["az"]["max"], 1, -20)},
 }
-usable = {r["rpm"]: r["usable"] for r in curve[MOT["name"]]}
-usable_big = {r["rpm"]: r["usable"] for r in curve[MOT_ALT["name"]]}
-R["slew_margins"] = {k: dict(need=round(v, 3), m400=round(usable[400] / v, 2), m300=round(usable[300] / v, 2), m200=round(usable[200] / v, 2),
-                             m400_48mm=round(usable_big[400] / v, 2)) for k, v in cases.items()}
+def _margin(needs, rpm):
+    return min(usable_ax[a][rpm] / v for a, v in needs.items())
+def _governing(needs, rpm=400):
+    return min(needs, key=lambda a: usable_ax[a][rpm] / needs[a])
+R["slew_margins"] = {}
+for k, needs in cases.items():
+    g = _governing(needs)
+    R["slew_margins"][k] = dict(governing_axis=g, need=round(needs[g], 3), need_by_axis={a: round(v, 3) for a, v in needs.items()},
+                                m400=round(_margin(needs, 400), 2), m300=round(_margin(needs, 300), 2), m200=round(_margin(needs, 200), 2))
+# sensitivity: azimuth motor winding at 1.6 ohm instead of 1.4 ohm
+_m16 = dict(MOT_ALT, R=1.6)
+R["az_motor_1p6_ohm"] = {"m%d" % rpm: round(0.7 * pullout(_m16, rpm, math.sqrt(2) * i_ceiling_rms(_m16)) / cases["kg7_eq_extreme_m20"]["az"], 2) for rpm in (400, 300)}
+# comparison kept for the record: the 38 mm motor on azimuth (before D32)
+R["az_with_38mm_motor"] = {k: dict(m400=round(usable[400] / cases[k]["az"], 2), m300=round(usable[300] / cases[k]["az"], 2),
+                                   m200=round(usable[200] / cases[k]["az"], 2)) for k in ("kg7_eq_extreme", "kg7_eq_extreme_m20")}
 R["az_eq_cases"]["note"] = "size 17 on azimuth carries every case below its 39 N.m average-torque limit"
 _t30 = G * (m_max * (y_pay + d_roll * math.sin(math.radians(30))) + m_rollstage * y_pay + m_tower * y_tower) * math.sin(math.radians(53))
 R["az_eq_cases"]["kg7_roll30_lat37"] = round(_t30, 2)
 
 
-def irms_for(t, margin=2.0):
-    return margin * t / R["kt"] / math.sqrt(2)
+def irms_for(t, m, margin=2.0):
+    return margin * t / kt_of(m) / math.sqrt(2)
 
 
-R["current_settings"] = dict(
-    track_20C=round(irms_for(max(R["motor_need"][a]["track_ref_20C"] for a in AX)), 2),
-    track_m20C=round(irms_for(max(R["motor_need"][a]["track_ref_m20C"] for a in AX)), 2),
-    slew_20C=round(irms_for(need400w), 2), slew_m20C=round(min(irms_for(need400), MOT["Ir"] / math.sqrt(2)), 2),
-    max_rms=round(MOT["Ir"] / math.sqrt(2), 2))
+def _cur(axes):
+    m = MOT_AX[axes[0]]
+    need = lambda key: max(R["motor_need"][a][key] for a in axes)
+    cap = i_ceiling_rms(m)
+    return dict(motor=m["name"], kt=round(kt_of(m), 4),
+                track_20C=round(irms_for(need("track_ref_20C"), m), 2), track_m20C=round(irms_for(need("track_ref_m20C"), m), 2),
+                slew_20C=round(irms_for(need("slew_7kg_20C"), m), 2), slew_m20C=round(min(irms_for(need("slew_7kg_m20C"), m), cap), 2),
+                max_rms=round(cap, 2))
+
+
+R["current_settings"] = {"az": _cur(["az"]), "alt_roll": _cur(["alt", "roll"])}
+R["bemf_400rpm"] = {ax: round(kt_of(MOT_AX[ax]) * 400 * 2 * math.pi / 60, 2) for ax in AX}
 
 # ----------------------------------------------------------------------------------------
 # 7. Belt
@@ -347,8 +384,11 @@ tim = z1 * wrap / 360
 span = math.sqrt(C ** 2 - ((d2 - d1) / 2) ** 2)
 t_design = need400                       # N.m at the motor pulley, worst cold slew
 Te = t_design / (d1 / 2000)
-T_max_motor = R["kt"] * MOT["Ir"]        # torque at the highest current we allow (Ipk = Ir)
+T_max_motor = R["kt"] * MOT["Ir"]        # 38 mm motor at the highest current we allow (Ipk = Ir)
 Te_max = T_max_motor / (d1 / 2000)
+# azimuth (48 mm motor): stalled at its cold-slew current setting, and at the driver full scale
+Te_az_slew = kt_of(MOT_ALT) * math.sqrt(2) * R["current_settings"]["az"]["slew_m20C"] / (d1 / 2000)
+Te_az_max = kt_of(MOT_ALT) * math.sqrt(2) * i_ceiling_rms(MOT_ALT) / (d1 / 2000)
 WORK_6MM = 27.8                          # N, generic 6 mm GT2 working tension (6.25 lb)
 Tst = 14.0                               # N static tension per span (above half the design belt pull)
 shaft_load = 2 * Tst * math.sin(math.radians(wrap / 2))
@@ -357,7 +397,7 @@ f_span = math.sqrt(Tst / mu) / (2 * span / 1000)
 R["belt"] = dict(d1=round(d1, 2), d2=round(d2, 2), centre=round(C, 2), wrap_deg=round(wrap, 1), teeth_in_mesh=round(tim, 1),
                  span_mm=round(span, 1), Te_design=round(Te, 1), Te_at_max_current=round(Te_max, 1),
                  work_6mm=WORK_6MM, work_9mm=round(WORK_6MM * 1.5, 1), sf_6mm=round(WORK_6MM / Te, 2),
-                 sf_9mm=round(WORK_6MM * 1.5 / Te, 2), static_tension=Tst, shaft_load=round(shaft_load, 1), span_freq_hz=round(f_span))
+                 sf_9mm=round(WORK_6MM * 1.5 / Te, 2), Te_az_stall_cold_slew=round(Te_az_slew, 1), Te_az_at_max_current=round(Te_az_max, 1), static_tension=Tst, shaft_load=round(shaft_load, 1), span_freq_hz=round(f_span))
 ecc = 0.020e-3  # m, pulley eccentricity (TIR 0.04)
 amp_wg = ecc / (d2 / 2000)                # rad at wave generator
 R["belt"]["pulley_error_out_arcsec"] = round(asec(amp_wg) / N_HD, 2)
@@ -367,7 +407,7 @@ R["belt"]["pulley_error_out_arcsec"] = round(asec(amp_wg) / N_HD, 2)
 # ----------------------------------------------------------------------------------------
 R["holding"] = {}
 for ax, size in AX.items():
-    hold = HD[size]["backdrive"] + MOT["detent"] * N
+    hold = HD[size]["backdrive"] + MOT_AX[ax]["detent"] * N
     R["holding"][ax] = dict(hold=round(hold, 1), sf_ref_typical=round(hold / max(loads[ax]["ref_bal"], 0.01), 2),
                             sf_ref_worst=round(hold / max(loads[ax]["ref_unbal"], 0.01), 2),
                             sf_7kg_worst=round(hold / loads[ax]["max"], 2))
@@ -453,22 +493,30 @@ R["belt_backlash_out_arcsec"] = round(asec(0.02e-3 / (d1 / 2000)) / N, 1)
 # ----------------------------------------------------------------------------------------
 # 10. Power, runtime, thermal
 # ----------------------------------------------------------------------------------------
-def p_motor(i_rms):
-    return 2 * i_rms ** 2 * MOT["R"] + 0.10      # copper loss both phases + driver
+def p_motor(i_rms, ax="alt"):
+    return 2 * i_rms ** 2 * MOT_AX[ax]["R"] + 0.10      # copper loss both phases + driver
 
 
+def p3(i_rms):
+    """All three motors at the same current."""
+    return sum(p_motor(i_rms, a) for a in AX)
+
+
+I_PEAK = {"az": R["current_settings"]["az"]["slew_m20C"], "alt": R["current_settings"]["alt_roll"]["max_rms"], "roll": R["current_settings"]["alt_roll"]["max_rms"]}
+P_PEAK_MOTORS = sum(p_motor(I_PEAK[a], a) for a in AX)
 ETA_BOOST, ETA_33, ETA_PD = 0.90, 0.90, 0.92
 P_ELEC = 0.90 / ETA_33            # ESP32 0.45 + RP2354 0.10 + encoders 0.20 + GNSS/IMU/RTC 0.05 + OLED dimmed 0.05 + gauges 0.05
 P_CAM = 5.0 / ETA_PD
 modes = {
     "Idle, Wi-Fi on, motors off": P_ELEC + 0.2,
-    "EQ tracking, 20 C (1 axis moving, 2 holding at 0.15 A)": (p_motor(0.30) + 2 * p_motor(0.15)) / ETA_BOOST + P_ELEC,
-    "Alt-az tracking, 20 C (3 axes at 0.30 A)": 3 * p_motor(0.30) / ETA_BOOST + P_ELEC,
-    "Alt-az tracking, -20 C (3 axes at 0.65 A)": 3 * p_motor(0.65) / ETA_BOOST + P_ELEC,
-    "Alt-az tracking + camera power, 20 C": 3 * p_motor(0.30) / ETA_BOOST + P_ELEC + P_CAM,
-    "Time-lapse / panorama, 20 C (10 % slewing)": 0.9 * (3 * p_motor(0.30) / ETA_BOOST) + 0.1 * (3 * p_motor(0.90) + 2.0) / ETA_BOOST + P_ELEC,
-    "Slewing, 3 axes, peak (1.06 A)": (3 * p_motor(1.06) + 2.0) / ETA_BOOST + P_ELEC,
+    "EQ tracking, 20 C (azimuth moving at 0.30 A, 2 holding at 0.15 A)": (p_motor(0.30, "az") + p_motor(0.15, "alt") + p_motor(0.15, "roll")) / ETA_BOOST + P_ELEC,
+    "Alt-az tracking, 20 C (3 axes at 0.30 A)": p3(0.30) / ETA_BOOST + P_ELEC,
+    "Alt-az tracking, -20 C (3 axes at 0.65 A)": p3(0.65) / ETA_BOOST + P_ELEC,
+    "Alt-az tracking + camera power, 20 C": p3(0.30) / ETA_BOOST + P_ELEC + P_CAM,
+    "Time-lapse / panorama, 20 C (10 % slewing)": 0.9 * (p3(0.30) / ETA_BOOST) + 0.1 * (p3(0.90) + 2.0) / ETA_BOOST + P_ELEC,
+    "Slewing, 3 axes, peak (azimuth 1.20 A, altitude and roll 1.06 A)": (P_PEAK_MOTORS + 2.0) / ETA_BOOST + P_ELEC,
 }
+R["motor_loss_tracking"] = {a: round(p_motor(0.30, a), 2) for a in AX}
 E_NOM = 4 * 5.0 * 3.6
 E_20 = 4 * 4.85 * 3.6 * 0.90
 E_M20 = E_20 * 0.80
@@ -480,18 +528,24 @@ for name, p in modes.items():
 # thermal
 A_SURF, H_CONV = 0.09, 8.0
 r_th = 1 / (H_CONV * A_SURF)
-p_int = 3 * p_motor(0.30) + P_ELEC + 0.45 + 1.7     # tracking + PD-out loss + charger loss at 20 W
+p_int = p3(0.30) + P_ELEC + 0.45 + 1.7     # tracking + PD-out loss + charger loss at 20 W
+i_az_cold, i_az_pk = R["current_settings"]["az"]["track_m20C"], I_PEAK["az"]
 R["thermal"] = dict(r_th=round(r_th, 2), p_internal=round(p_int, 1), rise=round(p_int * r_th, 1), internal_at_40C=round(40 + p_int * r_th, 1),
                     motor_rise_065A=round((p_motor(0.65) - 0.1) * 12, 0), motor_rise_106A=round((p_motor(1.06) - 0.1) * 12, 0),
-                    motor_loss_065A=round(p_motor(0.65) - 0.1, 2), motor_loss_106A=round(p_motor(1.06) - 0.1, 2))
-R["boost_current_peak"] = round((3 * p_motor(1.06) + 2.0) / VBUS, 2)
+                    motor_loss_065A=round(p_motor(0.65) - 0.1, 2), motor_loss_106A=round(p_motor(1.06) - 0.1, 2),
+                    az_motor_loss_065A=round(p_motor(0.65, "az") - 0.1, 2), az_motor_rise_065A=round((p_motor(0.65, "az") - 0.1) * 12, 0),
+                    az_motor_loss_peak=round(p_motor(i_az_pk, "az") - 0.1, 2), az_motor_rise_peak=round((p_motor(i_az_pk, "az") - 0.1) * 12, 0),
+                    az_peak_current=i_az_pk)
+R["peak_slew_power_w"] = round((P_PEAK_MOTORS + 2.0) / ETA_BOOST + P_ELEC, 1)
+R["boost_current_peak"] = round((P_PEAK_MOTORS + 2.0) / VBUS, 2)
+R["pack_current_peak"] = round(R["peak_slew_power_w"] / 6.0, 2)
 
 # ----------------------------------------------------------------------------------------
 # 11. Mass budget
 # ----------------------------------------------------------------------------------------
 mass_p1 = {
     "Reducers, hollow units (2 x size 17, 1 x size 14)": 2 * HD[17]["m_hollow"] + HD[14]["m_hollow"],
-    "Stepper motors x3": 3 * MOT["m"],
+    "Stepper motors x3": sum(MOT_AX[a]["m"] for a in AX),
     "Pulleys and belts x3": 3 * 0.045,
     "Battery pack (4 cells + board + shell)": 4 * 0.070 + 0.060,
     "Electronics and harness": 0.165,

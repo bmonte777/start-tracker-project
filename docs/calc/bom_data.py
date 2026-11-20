@@ -22,7 +22,7 @@ def E(a, b, c):
 PARTS = [
     # ---- 0xx assemblies -------------------------------------------------------------------
     ("ST-000", "Star tracker head, complete", 1, "-", "-", "make", "-", E(0, 0, 0), "-", "top assembly"),
-    ("ST-010", "Azimuth cartridge assembly", 1, "-", "-", "make", "-", E(0, 0, 0), "-", "ST-202,203..213"),
+    ("ST-010", "Azimuth cartridge assembly", 1, "-", "-", "make", "-", E(0, 0, 0), "-", "ST-202,204..214"),
     ("ST-020", "Altitude cartridge assembly", 1, "-", "-", "make", "-", E(0, 0, 0), "-", "ST-202,203..213"),
     ("ST-030", "Roll cartridge assembly", 1, "-", "-", "make", "-", E(0, 0, 0), "-", "ST-201,203..213"),
     ("ST-040", "Wedge and base assembly", 1, "-", "-", "make", "-", E(0, 0, 0), "-", "ST-301..307"),
@@ -30,7 +30,7 @@ PARTS = [
     # ---- 2xx axis cartridges --------------------------------------------------------------
     ("ST-201", "Strain-wave reducer, hollow-shaft unit, size 14, 100:1 (roll)", 1, "steel/alu unit", "same; component set option", "buy", "Laifual LHT-14-100-U-III (alt: Leaderdrive, HD SHF-14-100-2UH)", U(260, 230, 185), "est", "listing range USD 180-588; quote needed"),
     ("ST-202", "Strain-wave reducer, hollow-shaft unit, size 17, 100:1 (azimuth, altitude)", 2, "steel/alu unit", "same; component set option", "buy", "Laifual LHT-17-100-U-III (alt: Leaderdrive, HD SHF-17-100-2UH)", U(300, 265, 215), "est", "listing range USD 180-588; quote needed"),
-    ("ST-203", "Stepper motor NEMA 17, 1.8 deg, 42 N.cm, 1.5 A, 38 mm", 3, "-", "-", "buy", "StepperOnline 17HE15-1504S", U(5.93, 3.75, 3.30), "quoted", "1k price est"),
+    ("ST-203", "Stepper motor NEMA 17, 1.8 deg, 42 N.cm, 1.5 A, 38 mm (altitude, roll)", 2, "-", "-", "buy", "StepperOnline 17HE15-1504S", U(5.93, 3.75, 3.30), "quoted", "1k price est"),
     ("ST-204", "GT2 pulley 20T, 9 mm belt, bore 5 mm, TIR <= 0.03", 3, "aluminium 6061", "aluminium 6061", "buy", "Misumi / Gates / JLCMC", U(2.5, 1.2, 0.8), "est", ""),
     ("ST-205", "GT2 pulley 60T, 9 mm belt, hollow bore, TIR <= 0.03", 3, "aluminium 6061", "aluminium 6061", "buy", "Misumi / Gates / JLCMC (bored to reducer input)", U(6, 3, 2), "est", "two bore sizes: one for size 14, two for size 17"),
     ("ST-206", "Timing belt 2GT, 200 mm closed loop (100 teeth), 9 mm wide", 3, "neoprene + glass fibre", "same", "buy", "Gates 2MGT-200-9", U(11, 5, 3.5), "est", "Gates 160-2MGT-06 quoted USD 10.96"),
@@ -41,6 +41,7 @@ PARTS = [
     ("ST-211", "Cartridge housing, size 17 (azimuth, altitude)", 2, "PAHT-CF printed", "aluminium 6061 CNC", "make", "own printer / JLC3DP MJF / JLCCNC", U(30, 33, 28), "est", ""),
     ("ST-212", "Cartridge rear cover", 3, "ASA printed", "PA66-GF30 moulded", "make", "own printer / moulder", U(2, 7, 1.2), "est", ""),
     ("ST-213", "Rotary seal (V-ring) for axis gap", 3, "NBR", "NBR", "buy", "SKF / Trelleborg", U(3, 1.5, 1.0), "est", ""),
+    ("ST-214", "Stepper motor NEMA 17, 1.8 deg, 59 N.cm, 2.0 A, 48 mm (azimuth)", 1, "-", "-", "buy", "StepperOnline 17HS19-2004S1", U(9.62, 8.03, 7.00), "quoted", "D32; 1k price est; check lead order against ST-203"),
     # ---- 3xx structure, wedge, clamp -----------------------------------------------------
     ("ST-301", "Base plate with 3/8in-16 socket", 1, "aluminium 6061 CNC", "aluminium 6061 CNC, hard anodised", "make", "JLCCNC", U(45, 15, 9), "est", ""),
     ("ST-302", "Wedge lower plate with azimuth fine adjust", 1, "aluminium 6061 CNC", "aluminium 6061 CNC", "make", "JLCCNC", U(55, 18, 11), "est", ""),

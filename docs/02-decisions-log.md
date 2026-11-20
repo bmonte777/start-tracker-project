@@ -35,23 +35,22 @@ The reasoning and numbers are in `docs/02-engineering-spec.md`. The label in bra
 | D20 | Roll geometry (Q3) | Roll axis parallel to the lens axis and 130 mm from it for a lens on its foot; L-shaped shelf with Arca clamp |
 | D21 | Wedge range (Q4) | Tilt 0–75° (latitudes 15–90° N and S), fine adjust 34′ per turn, locks flat for alt-az |
 | D22 | Motion MCU (Q5) | Raspberry Pi RP2354A (RP2350A with 2 MB flash, A4 stepping). Closes the open choice in D10 |
-| D23 | Motor and belt (Q6) | StepperOnline 17HE15-1504S on all axes; 20T:60T GT2, 9 mm wide, 200 mm closed belt |
+| D23 | Motor and belt (Q6) | StepperOnline 17HE15-1504S on all axes; 20T:60T GT2, 9 mm wide, 200 mm closed belt. **Azimuth motor changed by D32** |
 | D24 | Metal parts on prototype P1 (Q7) | Altitude arm and roll shelf CNC-machined in 6061 from the first prototype |
 | D25 | Brake (Q8) | None. Low-battery park at 5 % and end-stop bumpers |
 | D26 | Slew speed in the cold (Q9) | 8°/s down to 0 °C, 6°/s at −20 °C |
 | D27 | Power chips (Q10) | BQ25792 + TPS25751D (port A), TPS25752A + TPS55288 (27 W camera port B), TPS61288 (12 V), TPS62932 (3.3 V), BQ40Z50-R2 in the pack. The BQ25792 / TPS25751D pairing is to be confirmed in Phase 4 |
-| D28 | Weight target (Q11) | Approved as prototype P1 ≤ 5.8 kg, production ≤ 4.9 kg, weight-cutting pass in Phase 8. The size-17 azimuth (D17) adds 0.3 kg, so revision B of the spec restates it as P1 ≤ 6.1 kg, production ≤ 5.1 kg. **Restated figures await Bruno's confirmation** |
+| D28 | Weight target (Q11) | Prototype P1 ≤ 6.1 kg, production ≤ 5.1 kg, weight-cutting pass in Phase 8. First approved as 5.8 kg and 4.9 kg; restated after the size-17 azimuth (D17) added 0.3 kg, and confirmed with D32. Revision C of the spec predicts 6.08 kg and 5.34 kg, so production depends on the Phase 8 pass |
 | D29 | Printer, dryer, services (Q12) | Bambu Lab H2S + AMS HT; JLCCNC for aluminium, JLC3DP for MJF PA12, Xometry Europe as backup |
 | D30 | Arca clamp on the prototype (Q13) | Buy a standard 60 mm clamp |
 | D31 | Roll travel with long lenses (Q14) | Accept 155° of travel (+5° to −150°) with the 200–600 on its foot for prototype P1; study a wider payload offset or a raised roll axis in the Phase 3 CAD |
 
-**D17 follow-up, done 20 Nov 2026:** revision B of the spec reruns the calculations, mass budget, cost model and parts list with size 17 on azimuth (two ST-202, one ST-201).
+**D17 follow-up, done 20 Nov 2026:** revision B of the spec reran the calculations, mass budget, cost model and parts list with size 17 on azimuth (two ST-202, one ST-201).
 
-## Awaiting Bruno's approval
+## 20 Nov 2026 — Phase 2 follow-up decisions (approved: "Continue with recommendations")
 
-Not decisions yet.
-
-| # | Question | Recommendation |
+| # | Topic | Decision |
 |---|---|---|
-| Q15 | Motor on azimuth | 48 mm StepperOnline 17HS19-2004S1 on azimuth only (same mount, +110 g). The size-17 reducer drags more in the cold: at −20 °C a 7 kg load in the EQ extreme has a margin of 0.84 at 8°/s and 1.08 at 6°/s with the 38 mm motor of D23, against 1.23 and 1.55 with the 48 mm motor. Until decided, the spec keeps the 38 mm motor on all axes |
-| D28 restated | Weight target after D17 | Prototype P1 ≤ 6.1 kg, production ≤ 5.1 kg |
+| D32 | Azimuth motor (Q15, changes D23) | 48 mm StepperOnline 17HS19-2004S1 on azimuth only (part ST-214); altitude and roll keep the 38 mm 17HE15-1504S. Same mount, +110 g, about €3.50 more per head. At −20 °C a 7 kg load in the EQ extreme had a margin of 0.84 at 8°/s and 1.08 at 6°/s with the 38 mm motor; it has 1.23 and 1.51 with the 48 mm motor, so the cold limit of D26 holds for every load |
+
+The restated weight target was confirmed in the same reply and is recorded in D28. Revision C of the spec carries D32 through the calculations, mass budget, power budget, cost model and parts list.
