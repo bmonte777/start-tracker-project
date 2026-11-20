@@ -1,21 +1,21 @@
 ID,Name,Qty per head,Material (prototype),Material (production),Make/Buy,Supplier,Unit price EUR @1,Unit price EUR @100,Unit price EUR @1000,Line total EUR @1,Line total EUR @100,Line total EUR @1000,Price source,Note
 ST-000,"Star tracker head, complete",1,-,-,make,-,0.00,0.00,0.00,0.00,0.00,0.00,-,top assembly
-ST-010,Azimuth cartridge assembly,1,-,-,make,-,0.00,0.00,0.00,0.00,0.00,0.00,-,"ST-201,203..213"
+ST-010,Azimuth cartridge assembly,1,-,-,make,-,0.00,0.00,0.00,0.00,0.00,0.00,-,"ST-202,203..213"
 ST-020,Altitude cartridge assembly,1,-,-,make,-,0.00,0.00,0.00,0.00,0.00,0.00,-,"ST-202,203..213"
 ST-030,Roll cartridge assembly,1,-,-,make,-,0.00,0.00,0.00,0.00,0.00,0.00,-,"ST-201,203..213"
 ST-040,Wedge and base assembly,1,-,-,make,-,0.00,0.00,0.00,0.00,0.00,0.00,-,ST-301..307
 ST-050,Battery pack assembly,1,-,-,make,-,0.00,0.00,0.00,0.00,0.00,0.00,-,ST-601..611
-ST-201,"Strain-wave reducer, hollow-shaft unit, size 14, 100:1 (az, roll)",2,steel/alu unit,same; component set option,buy,"Laifual LHT-14-100-U-III (alt: Leaderdrive, HD SHF-14-100-2UH)",236.60,209.30,168.35,473.20,418.60,336.70,est,listing range USD 180-588; quote needed
-ST-202,"Strain-wave reducer, hollow-shaft unit, size 17, 100:1 (alt)",1,steel/alu unit,same; component set option,buy,"Laifual LHT-17-100-U-III (alt: Leaderdrive, HD SHF-17-100-2UH)",273.00,241.15,195.65,273.00,241.15,195.65,est,listing range USD 180-588; quote needed
+ST-201,"Strain-wave reducer, hollow-shaft unit, size 14, 100:1 (roll)",1,steel/alu unit,same; component set option,buy,"Laifual LHT-14-100-U-III (alt: Leaderdrive, HD SHF-14-100-2UH)",236.60,209.30,168.35,236.60,209.30,168.35,est,listing range USD 180-588; quote needed
+ST-202,"Strain-wave reducer, hollow-shaft unit, size 17, 100:1 (azimuth, altitude)",2,steel/alu unit,same; component set option,buy,"Laifual LHT-17-100-U-III (alt: Leaderdrive, HD SHF-17-100-2UH)",273.00,241.15,195.65,546.00,482.30,391.30,est,listing range USD 180-588; quote needed
 ST-203,"Stepper motor NEMA 17, 1.8 deg, 42 N.cm, 1.5 A, 38 mm",3,-,-,buy,StepperOnline 17HE15-1504S,5.40,3.41,3.00,16.20,10.23,9.00,quoted,1k price est
 ST-204,"GT2 pulley 20T, 9 mm belt, bore 5 mm, TIR <= 0.03",3,aluminium 6061,aluminium 6061,buy,Misumi / Gates / JLCMC,2.27,1.09,0.73,6.81,3.27,2.19,est,
-ST-205,"GT2 pulley 60T, 9 mm belt, hollow bore, TIR <= 0.03",3,aluminium 6061,aluminium 6061,buy,Misumi / Gates / JLCMC (bored to reducer input),5.46,2.73,1.82,16.38,8.19,5.46,est,two bore sizes: size 14 and 17
+ST-205,"GT2 pulley 60T, 9 mm belt, hollow bore, TIR <= 0.03",3,aluminium 6061,aluminium 6061,buy,Misumi / Gates / JLCMC (bored to reducer input),5.46,2.73,1.82,16.38,8.19,5.46,est,"two bore sizes: one for size 14, two for size 17"
 ST-206,"Timing belt 2GT, 200 mm closed loop (100 teeth), 9 mm wide",3,neoprene + glass fibre,same,buy,Gates 2MGT-200-9,10.01,4.55,3.19,30.03,13.65,9.57,est,Gates 160-2MGT-06 quoted USD 10.96
 ST-207,Motor plate with belt-tension slide,3,aluminium 6061 CNC,aluminium 6061 CNC,make,JLCCNC,25.48,8.19,4.55,76.44,24.57,13.65,est,
 ST-208,"Encoder reference tube, dia 10, with magnet seat",3,stainless 304 turned,stainless 304 turned,make,JLCCNC,8.19,2.73,1.36,24.57,8.19,4.08,est,
 ST-209,"Encoder magnet, dia 6 x 2.5, diametric, N35SH",3,NdFeB,NdFeB,buy,LCSC / magnet supplier,1.36,0.46,0.27,4.08,1.38,0.81,est,
-ST-210,"Cartridge housing, size 14 (az, roll)",2,PAHT-CF printed,aluminium 6061 CNC,make,own printer / JLC3DP MJF / JLCCNC,20.02,22.75,20.02,40.04,45.50,40.04,est,
-ST-211,"Cartridge housing, size 17 (alt)",1,PAHT-CF printed,aluminium 6061 CNC,make,own printer / JLC3DP MJF / JLCCNC,27.30,30.03,25.48,27.30,30.03,25.48,est,
+ST-210,"Cartridge housing, size 14 (roll)",1,PAHT-CF printed,aluminium 6061 CNC,make,own printer / JLC3DP MJF / JLCCNC,20.02,22.75,20.02,20.02,22.75,20.02,est,
+ST-211,"Cartridge housing, size 17 (azimuth, altitude)",2,PAHT-CF printed,aluminium 6061 CNC,make,own printer / JLC3DP MJF / JLCCNC,27.30,30.03,25.48,54.60,60.06,50.96,est,
 ST-212,Cartridge rear cover,3,ASA printed,PA66-GF30 moulded,make,own printer / moulder,1.82,6.37,1.09,5.46,19.11,3.27,est,
 ST-213,Rotary seal (V-ring) for axis gap,3,NBR,NBR,buy,SKF / Trelleborg,2.73,1.36,0.91,8.19,4.08,2.73,est,
 ST-301,Base plate with 3/8in-16 socket,1,aluminium 6061 CNC,"aluminium 6061 CNC, hard anodised",make,JLCCNC,40.95,13.65,8.19,40.95,13.65,8.19,est,
