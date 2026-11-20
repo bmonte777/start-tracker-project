@@ -32,20 +32,21 @@
   "kg7_rolled_lat37": 14.57,
   "kg7_rolled_lat15": 17.63,
   "altaz_any": 0.0,
+  "note": "size 17 on azimuth carries every case below its 39 N.m average-torque limit",
   "kg7_roll30_lat37": 11.01
  },
  "loads": {
   "az": {
-   "size": 14,
+   "size": 17,
    "static_ref_balanced": 4.1,
    "static_ref_worst": 7.35,
    "static_7kg_worst": 17.63,
    "accel_7kg": 0.074,
    "wind10_7kg": 0.67,
    "design_total": 18.37,
-   "sf_vs_peak": 1.52,
-   "sf_vs_avg": 0.6,
-   "sf_vs_momentary": 2.94
+   "sf_vs_peak": 2.94,
+   "sf_vs_avg": 2.12,
+   "sf_vs_momentary": 5.88
   },
   "alt": {
    "size": 17,
@@ -72,10 +73,10 @@
    "sf_vs_momentary": 5.53
   }
  },
- "az_with_size17": {
-  "sf_vs_peak": 2.94,
-  "sf_vs_avg": 2.12,
-  "sf_vs_momentary": 5.88
+ "az_with_size14": {
+  "sf_vs_peak": 1.52,
+  "sf_vs_avg": 0.6,
+  "sf_vs_momentary": 2.94
  },
  "alpha_rad_s2": 0.2792526803190927,
  "crb": {
@@ -106,25 +107,20 @@
   },
   "az_ref_altaz": {
    "M": 5.13,
-   "sf": 6.55,
-   "tilt_arcsec": 29.4
+   "sf": 10.24,
+   "tilt_arcsec": 16.5
   },
   "az_ref_lat37": {
    "M": 7.99,
-   "sf": 4.2,
-   "tilt_arcsec": 45.8
+   "sf": 6.57,
+   "tilt_arcsec": 25.8
   },
   "az_7kg_altaz_rolled": {
    "M": 18.25,
-   "sf": 1.84,
-   "tilt_arcsec": 104.6
+   "sf": 2.88,
+   "tilt_arcsec": 58.8
   },
   "az_7kg_lat15_rolled": {
-   "M": 22.3,
-   "sf": 1.51,
-   "tilt_arcsec": 127.8
-  },
-  "az17_7kg_lat15_rolled": {
    "M": 22.3,
    "sf": 2.35,
    "tilt_arcsec": 71.9
@@ -143,48 +139,48 @@
   "shelf_7kg_alu": 11.2
  },
  "windup": {
-  "az": 158.6,
+  "az": 83.3,
   "alt": 11.9,
   "roll": 0.0
  },
  "windup_worst_ref": {
-  "az": 266.7,
+  "az": 131.3,
   "alt": 40.1,
   "roll": 162.3
  },
- "windup_az_size17": 83.3,
+ "windup_az_size14": 158.6,
  "wind_deflection_5ms": {
-  "az": 2.75,
+  "az": 1.29,
   "alt": 1.29,
   "roll": 2.75
  },
  "wind_deflection_3ms": {
-  "az": 0.99,
+  "az": 0.47,
   "alt": 0.47,
   "roll": 0.99
  },
  "flexure_alu": {
-  "static_rss": 168.4,
-  "static_sum": 268.1,
-  "drift_5min": 3.68,
-  "rms_5min": 1.06
+  "static_rss": 93.3,
+  "static_sum": 172.8,
+  "drift_5min": 2.04,
+  "rms_5min": 0.59
  },
  "flexure_printed": {
-  "static_rss": 223.3,
-  "static_sum": 460.3,
-  "drift_5min": 4.89,
-  "rms_5min": 1.41
+  "static_rss": 173.9,
+  "static_sum": 365.0,
+  "drift_5min": 3.8,
+  "rms_5min": 1.1
  },
  "rot5_deg": 1.2534166666666666,
  "dynamics": {
   "az": {
    "ref": {
-    "f_hz": 32.2,
-    "ring_arcsec": 1.41
+    "f_hz": 46.9,
+    "ring_arcsec": 0.66
    },
    "7kg": {
-    "f_hz": 21.2,
-    "ring_arcsec": 3.25
+    "f_hz": 30.9,
+    "ring_arcsec": 1.53
    }
   },
   "alt": {
@@ -217,10 +213,10 @@
  },
  "motor_need": {
   "az": {
-   "slew_7kg_20C": 0.107,
-   "slew_7kg_m20C": 0.149,
-   "track_ref_20C": 0.035,
-   "track_ref_m20C": 0.077
+   "slew_7kg_20C": 0.114,
+   "slew_7kg_m20C": 0.177,
+   "track_ref_20C": 0.042,
+   "track_ref_m20C": 0.105
   },
   "alt": {
    "slew_7kg_20C": 0.062,
@@ -338,22 +334,22 @@
    }
   ]
  },
- "motor_margin_400rpm_m20C": 0.99,
- "motor_margin_400rpm_20C": 1.38,
+ "motor_margin_400rpm_m20C": 0.84,
+ "motor_margin_400rpm_20C": 1.3,
  "slew_margins": {
   "ref_any_pose": {
-   "need": 0.053,
-   "m400": 2.8,
-   "m300": 3.61,
-   "m200": 3.94,
-   "m400_48mm": 4.12
+   "need": 0.06,
+   "m400": 2.47,
+   "m300": 3.19,
+   "m200": 3.47,
+   "m400_48mm": 3.64
   },
   "ref_any_pose_m20": {
-   "need": 0.096,
-   "m400": 1.54,
-   "m300": 1.99,
-   "m200": 2.17,
-   "m400_48mm": 2.27
+   "need": 0.123,
+   "m400": 1.2,
+   "m300": 1.55,
+   "m200": 1.69,
+   "m400_48mm": 1.77
   },
   "kg7_altaz": {
    "need": 0.063,
@@ -370,24 +366,24 @@
    "m400_48mm": 1.75
   },
   "kg7_eq_extreme": {
-   "need": 0.107,
-   "m400": 1.39,
-   "m300": 1.79,
-   "m200": 1.95,
-   "m400_48mm": 2.04
+   "need": 0.114,
+   "m400": 1.3,
+   "m300": 1.68,
+   "m200": 1.83,
+   "m400_48mm": 1.92
   },
   "kg7_eq_extreme_m20": {
-   "need": 0.149,
-   "m400": 0.99,
-   "m300": 1.28,
-   "m200": 1.4,
-   "m400_48mm": 1.47
+   "need": 0.177,
+   "m400": 0.84,
+   "m300": 1.08,
+   "m200": 1.18,
+   "m400_48mm": 1.23
   }
  },
  "current_settings": {
-  "track_20C": 0.25,
-  "track_m20C": 0.63,
-  "slew_20C": 0.76,
+  "track_20C": 0.3,
+  "track_m20C": 0.75,
+  "slew_20C": 0.81,
   "slew_m20C": 1.06,
   "max_rms": 1.06
  },
@@ -398,23 +394,23 @@
   "wrap_deg": 154.9,
   "teeth_in_mesh": 8.6,
   "span_mm": 57.2,
-  "Te_design": 23.4,
+  "Te_design": 27.8,
   "Te_at_max_current": 46.7,
   "work_6mm": 27.8,
   "work_9mm": 41.7,
-  "sf_6mm": 1.19,
-  "sf_9mm": 1.78,
-  "static_tension": 12.0,
-  "shaft_load": 23.4,
-  "span_freq_hz": 270,
+  "sf_6mm": 1.0,
+  "sf_9mm": 1.5,
+  "static_tension": 14.0,
+  "shaft_load": 27.3,
+  "span_freq_hz": 291,
   "pulley_error_out_arcsec": 2.16
  },
  "holding": {
   "az": {
-   "hold": 6.6,
-   "sf_ref_typical": 1.61,
-   "sf_ref_worst": 0.9,
-   "sf_7kg_worst": 0.37
+   "hold": 8.1,
+   "sf_ref_typical": 1.98,
+   "sf_ref_worst": 1.1,
+   "sf_7kg_worst": 0.46
   },
   "alt": {
    "hold": 8.1,
@@ -427,10 +423,6 @@
    "sf_ref_typical": 660.0,
    "sf_ref_worst": 1.57,
    "sf_7kg_worst": 0.73
-  },
-  "az_size17": {
-   "hold": 8.1,
-   "sf_ref_worst": 1.1
   }
  },
  "budget_inputs": {
@@ -464,7 +456,7 @@
   ],
   [
    "Differential flexure (aluminium arms)",
-   1.06
+   0.59
   ],
   [
    "Thermal drift of structure",
@@ -484,7 +476,7 @@
   ],
   [
    "Wind 3 m/s gusts on RA and Dec",
-   0.55
+   0.33
   ],
   [
    "Low-speed friction ripple",
@@ -542,19 +534,19 @@
   ],
   [
    "Wind 3 m/s gusts on az and alt",
-   0.42
+   0.29
   ]
  ],
- "budget_eq_total": 2.4,
- "budget_altaz_total": 2.73,
+ "budget_eq_total": 2.19,
+ "budget_altaz_total": 2.71,
  "budget_eq_no_pec": 14.4,
  "budget_altaz_no_pec": 17.4,
- "budget_eq_catalogue_limit": 4.18,
- "budget_eq_printed_arms": 2.57,
+ "budget_eq_catalogue_limit": 4.06,
+ "budget_eq_printed_arms": 2.38,
  "goto_rms": 59.0,
  "goto_rms_no_gear_map": 73.0,
  "lost_motion": {
-  "az": 26.0,
+  "az": 12.0,
   "alt": 12.0,
   "roll": 26.0
  },
@@ -613,7 +605,7 @@
  },
  "boost_current_peak": 1.48,
  "mass_p1": {
-  "Reducers, hollow units (2 x size 14, 1 x size 17)": 2.4,
+  "Reducers, hollow units (2 x size 17, 1 x size 14)": 2.7,
   "Stepper motors x3": 0.84,
   "Pulleys and belts x3": 0.14,
   "Battery pack (4 cells + board + shell)": 0.34,
@@ -622,9 +614,9 @@
   "Aluminium parts (wedge, base, arm, shelf, clamp, plates)": 1.08,
   "Fasteners, inserts, seals": 0.15
  },
- "mass_p1_total": 5.67,
+ "mass_p1_total": 5.97,
  "mass_prod": {
-  "Reducers, hollow units (2 x size 14, 1 x size 17)": 1.4,
+  "Reducers, hollow units (2 x size 17, 1 x size 14)": 1.6,
   "Stepper motors x3": 0.84,
   "Pulleys and belts x3": 0.14,
   "Battery pack (4 cells + board + shell)": 0.34,
@@ -633,12 +625,12 @@
   "Aluminium parts (wedge, base, arm, shelf, clamp, plates)": 1.08,
   "Fasteners, inserts, seals": 0.12
  },
- "mass_prod_total": 5.03,
+ "mass_prod_total": 5.23,
  "cost": {
   "materials": [
-   1782.0,
-   1246.0,
-   926.0
+   1826.0,
+   1286.0,
+   959.0
   ],
   "labour": [
    0.0,
@@ -651,9 +643,9 @@
    0.05
   ],
   "cogs": [
-   1996.0,
-   1387.0,
-   1007.0
+   2045.0,
+   1429.0,
+   1042.0
   ],
   "groups": {
    "0": [
@@ -662,9 +654,9 @@
     0.0
    ],
    "2": [
-    1002.0,
-    828.0,
-    649.0
+    1045.0,
+    867.0,
+    681.0
    ],
    "3": [
     479.0,
@@ -693,39 +685,39 @@
    ]
   },
   "reducers": [
-   746.0,
-   660.0,
-   532.0
+   783.0,
+   692.0,
+   560.0
   ],
   "reducer_share": [
-   0.42,
-   0.53,
-   0.57
+   0.43,
+   0.54,
+   0.58
   ],
   "tooling_eur": 44600.0,
   "tooling_per_unit_1000": 44.6,
-  "landed_1000": 1052,
+  "landed_1000": 1087,
   "retail_low_high": [
-   2630.0,
-   3680.0
+   2720.0,
+   3800.0
   ],
-  "landed_1000_oem_sets": 765,
+  "landed_1000_oem_sets": 771,
   "retail_oem_low_high": [
-   1910.0,
-   2680.0
+   1930.0,
+   2700.0
   ],
   "retail_multiples": {
    "2.0": [
-    2100.0,
-    1530.0
+    2170.0,
+    1540.0
    ],
    "2.5": [
-    2630.0,
-    1910.0
+    2720.0,
+    1930.0
    ],
    "3.5": [
-    3680.0,
-    2680.0
+    3800.0,
+    2700.0
    ]
   }
  }

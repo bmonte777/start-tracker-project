@@ -4,7 +4,7 @@ Open-source 3-axis motorised astro head: star tracking, go-to, panoramas, time-l
 
 ## Status
 - Phase 1: research — done → [`docs/01-research-report.md`](docs/01-research-report.md)
-- Phase 2: engineering spec — done → [`docs/02-engineering-spec.md`](docs/02-engineering-spec.md), parts list in [`hardware/bom/master-parts-list.csv`](hardware/bom/master-parts-list.csv), calculations in [`docs/calc/`](docs/calc/), decisions D1–D31 in [`docs/02-decisions-log.md`](docs/02-decisions-log.md). Open follow-up: revise the spec for the size-17 azimuth reducer (D17)
+- Phase 2: engineering spec — done → [`docs/02-engineering-spec.md`](docs/02-engineering-spec.md), parts list in [`hardware/bom/master-parts-list.csv`](hardware/bom/master-parts-list.csv), calculations in [`docs/calc/`](docs/calc/), decisions D1–D31 in [`docs/02-decisions-log.md`](docs/02-decisions-log.md). The spec is at revision B: size-17 reducer on azimuth (D17). Awaiting approval: Q15 (longer motor on azimuth) and the restated weight target
 
 ## Repository layout (planned)
 | Folder | Contents |

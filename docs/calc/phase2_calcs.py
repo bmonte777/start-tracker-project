@@ -54,7 +54,7 @@ HD = {
     17: dict(rated=24, avg=39, peak=54, mom=108, K1=1.0e4, T1=3.9, K2=1.4e4, T2=12, K3=1.6e4,
              backdrive=3.3, start_ncm=3.4, Mc=52.5, Km=6.4e4, m_solid=0.67, m_hollow=1.00, Jwg=7.9e-6),
 }
-AX = {"az": 14, "alt": 17, "roll": 14}
+AX = {"az": 17, "alt": 17, "roll": 14}   # D17: azimuth is size 17
 ETA_HD, ETA_BELT = 0.70, 0.95
 T_NL = {14: {20: 0.04, -20: 0.16}, 17: {20: 0.06, -20: 0.24}}  # no-load running torque at wave generator, N.m (assumed x4 at -20 C)
 
@@ -140,9 +140,9 @@ for ax, size in AX.items():
         static_7kg_worst=round(loads[ax]["max"], 2), accel_7kg=round(t_acc, 3), wind10_7kg=round(t_wind, 2),
         design_total=round(design, 2), sf_vs_peak=round(h["peak"] / design, 2), sf_vs_avg=round(h["avg"] / design, 2),
         sf_vs_momentary=round(h["mom"] / design, 2))
-# change request CR1: what a size 17 on azimuth would give
+# for the record: what the size 14 first planned for azimuth (D2, before D17) would have given
 _d = R["loads"]["az"]["design_total"]
-R["az_with_size17"] = dict(sf_vs_peak=round(HD[17]["peak"] / _d, 2), sf_vs_avg=round(HD[17]["avg"] / _d, 2), sf_vs_momentary=round(HD[17]["mom"] / _d, 2))
+R["az_with_size14"] = dict(sf_vs_peak=round(HD[14]["peak"] / _d, 2), sf_vs_avg=round(HD[14]["avg"] / _d, 2), sf_vs_momentary=round(HD[14]["mom"] / _d, 2))
 R["alpha_rad_s2"] = alpha
 
 # ----------------------------------------------------------------------------------------
@@ -165,9 +165,8 @@ def M_az(mp, lat, rolled):
 R["crb"] = {
     "roll_ref": crb(M_roll(m_ref), 14), "roll_7kg": crb(M_roll(m_max), 14),
     "alt_ref": crb(M_alt(m_ref, False), 17), "alt_ref_rolled": crb(M_alt(m_ref, True), 17), "alt_7kg_rolled": crb(M_alt(m_max, True), 17),
-    "az_ref_altaz": crb(M_az(m_ref, 90, False), 14), "az_ref_lat37": crb(M_az(m_ref, 37, False), 14),
-    "az_7kg_altaz_rolled": crb(M_az(m_max, 90, True), 14), "az_7kg_lat15_rolled": crb(M_az(m_max, 15, True), 14),
-    "az17_7kg_lat15_rolled": crb(M_az(m_max, 15, True), 17),
+    "az_ref_altaz": crb(M_az(m_ref, 90, False), AX["az"]), "az_ref_lat37": crb(M_az(m_ref, 37, False), AX["az"]),
+    "az_7kg_altaz_rolled": crb(M_az(m_max, 90, True), AX["az"]), "az_7kg_lat15_rolled": crb(M_az(m_max, 15, True), AX["az"]),
 }
 
 # ----------------------------------------------------------------------------------------
@@ -219,7 +218,7 @@ def windup(T, size):
 # torsional wind-up in the typical EQ pose (reference rig, roll 0, latitude 37) and in the worst reference pose
 R["windup"] = {ax: round(asec(windup(loads[ax]["ref_bal"], AX[ax])), 1) for ax in AX}
 R["windup_worst_ref"] = {ax: round(asec(windup(loads[ax]["ref_unbal"], AX[ax])), 1) for ax in AX}
-R["windup_az_size17"] = round(asec(windup(loads["az"]["ref_bal"], 17)), 1)
+R["windup_az_size14"] = round(asec(windup(loads["az"]["ref_bal"], 14)), 1)
 R["wind_deflection_5ms"] = {ax: round(asec(wind[5][0] / HD[AX[ax]]["K1"]), 2) for ax in AX}
 R["wind_deflection_3ms"] = {ax: round(asec(wind[3][0] / HD[AX[ax]]["K1"]), 2) for ax in AX}
 
@@ -320,6 +319,7 @@ usable = {r["rpm"]: r["usable"] for r in curve[MOT["name"]]}
 usable_big = {r["rpm"]: r["usable"] for r in curve[MOT_ALT["name"]]}
 R["slew_margins"] = {k: dict(need=round(v, 3), m400=round(usable[400] / v, 2), m300=round(usable[300] / v, 2), m200=round(usable[200] / v, 2),
                              m400_48mm=round(usable_big[400] / v, 2)) for k, v in cases.items()}
+R["az_eq_cases"]["note"] = "size 17 on azimuth carries every case below its 39 N.m average-torque limit"
 _t30 = G * (m_max * (y_pay + d_roll * math.sin(math.radians(30))) + m_rollstage * y_pay + m_tower * y_tower) * math.sin(math.radians(53))
 R["az_eq_cases"]["kg7_roll30_lat37"] = round(_t30, 2)
 
@@ -350,7 +350,7 @@ Te = t_design / (d1 / 2000)
 T_max_motor = R["kt"] * MOT["Ir"]        # torque at the highest current we allow (Ipk = Ir)
 Te_max = T_max_motor / (d1 / 2000)
 WORK_6MM = 27.8                          # N, generic 6 mm GT2 working tension (6.25 lb)
-Tst = 12.0                               # N static tension per span
+Tst = 14.0                               # N static tension per span (above half the design belt pull)
 shaft_load = 2 * Tst * math.sin(math.radians(wrap / 2))
 mu = 0.0126                              # kg/m for 9 mm belt (assumed 1.4 g/m per mm)
 f_span = math.sqrt(Tst / mu) / (2 * span / 1000)
@@ -371,8 +371,7 @@ for ax, size in AX.items():
     R["holding"][ax] = dict(hold=round(hold, 1), sf_ref_typical=round(hold / max(loads[ax]["ref_bal"], 0.01), 2),
                             sf_ref_worst=round(hold / max(loads[ax]["ref_unbal"], 0.01), 2),
                             sf_7kg_worst=round(hold / loads[ax]["max"], 2))
-R["holding"]["az_size17"] = dict(hold=round(HD[17]["backdrive"] + MOT["detent"] * N, 1),
-                                 sf_ref_worst=round((HD[17]["backdrive"] + MOT["detent"] * N) / loads["az"]["ref_unbal"], 2))
+
 
 # ----------------------------------------------------------------------------------------
 # 9. Accuracy budget (RMS over a 5-minute exposure, 300 mm, reference rig, aluminium arms)
@@ -491,7 +490,7 @@ R["boost_current_peak"] = round((3 * p_motor(1.06) + 2.0) / VBUS, 2)
 # 11. Mass budget
 # ----------------------------------------------------------------------------------------
 mass_p1 = {
-    "Reducers, hollow units (2 x size 14, 1 x size 17)": 2 * HD[14]["m_hollow"] + HD[17]["m_hollow"],
+    "Reducers, hollow units (2 x size 17, 1 x size 14)": 2 * HD[17]["m_hollow"] + HD[14]["m_hollow"],
     "Stepper motors x3": 3 * MOT["m"],
     "Pulleys and belts x3": 3 * 0.045,
     "Battery pack (4 cells + board + shell)": 4 * 0.070 + 0.060,
@@ -501,7 +500,7 @@ mass_p1 = {
     "Fasteners, inserts, seals": 0.15,
 }
 mass_prod = dict(mass_p1)
-mass_prod["Reducers, hollow units (2 x size 14, 1 x size 17)"] = 0.40 + 0.40 + 0.60   # simple hollow units in our own housings
+mass_prod["Reducers, hollow units (2 x size 17, 1 x size 14)"] = 0.60 + 0.60 + 0.40   # simple hollow units in our own housings
 mass_prod["Printed housings and covers"] = 0.95                                         # aluminium housings + moulded covers
 mass_prod["Fasteners, inserts, seals"] = 0.12
 R["mass_p1"] = {k: round(v, 2) for k, v in mass_p1.items()}
@@ -518,7 +517,7 @@ OVH = (0.12, 0.05, 0.05)                 # freight/import allowance at 1; scrap 
 cogs = [round((tot[i] + LAB[i]) * (1 + OVH[i]), 0) for i in range(3)]
 R["cost"] = dict(materials=[round(t, 0) for t in tot], labour=LAB, allowance=OVH, cogs=cogs,
                  groups={k: [round(x, 0) for x in v] for k, v in sorted(groups.items())})
-red = [2 * bom_data.PARTS[6][7][i] + bom_data.PARTS[7][7][i] for i in range(3)]
+red = [sum(q * pr[i] for (pid, _n, q, _a, _b, _c, _d2, pr, _s, _t) in bom_data.PARTS if pid in ("ST-201", "ST-202")) for i in range(3)]
 R["cost"]["reducers"] = [round(x, 0) for x in red]
 R["cost"]["reducer_share"] = [round(red[i] / tot[i], 2) for i in range(3)]
 TOOLING_EUR = round((36000 + 6000 + 7000) * bom_data.USD_TO_EUR, -2)

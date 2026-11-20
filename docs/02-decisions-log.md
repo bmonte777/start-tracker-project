@@ -40,9 +40,18 @@ The reasoning and numbers are in `docs/02-engineering-spec.md`. The label in bra
 | D25 | Brake (Q8) | None. Low-battery park at 5 % and end-stop bumpers |
 | D26 | Slew speed in the cold (Q9) | 8°/s down to 0 °C, 6°/s at −20 °C |
 | D27 | Power chips (Q10) | BQ25792 + TPS25751D (port A), TPS25752A + TPS55288 (27 W camera port B), TPS61288 (12 V), TPS62932 (3.3 V), BQ40Z50-R2 in the pack. The BQ25792 / TPS25751D pairing is to be confirmed in Phase 4 |
-| D28 | Weight target (Q11) | Prototype P1 ≤ 5.8 kg, production ≤ 4.9 kg, weight-cutting pass in Phase 8. To be re-stated after the size-17 azimuth is added |
+| D28 | Weight target (Q11) | Approved as prototype P1 ≤ 5.8 kg, production ≤ 4.9 kg, weight-cutting pass in Phase 8. The size-17 azimuth (D17) adds 0.3 kg, so revision B of the spec restates it as P1 ≤ 6.1 kg, production ≤ 5.1 kg. **Restated figures await Bruno's confirmation** |
 | D29 | Printer, dryer, services (Q12) | Bambu Lab H2S + AMS HT; JLCCNC for aluminium, JLC3DP for MJF PA12, Xometry Europe as backup |
 | D30 | Arca clamp on the prototype (Q13) | Buy a standard 60 mm clamp |
 | D31 | Roll travel with long lenses (Q14) | Accept 155° of travel (+5° to −150°) with the 200–600 on its foot for prototype P1; study a wider payload offset or a raised roll axis in the Phase 3 CAD |
 
-**Open follow-up from D17:** the spec's calculations, mass budget, cost model and parts list were written with size 14 on azimuth. They need a revision for size 17 (one more ST-202, one fewer ST-201) before Phase 3 starts.
+**D17 follow-up, done 20 Nov 2026:** revision B of the spec reruns the calculations, mass budget, cost model and parts list with size 17 on azimuth (two ST-202, one ST-201).
+
+## Awaiting Bruno's approval
+
+Not decisions yet.
+
+| # | Question | Recommendation |
+|---|---|---|
+| Q15 | Motor on azimuth | 48 mm StepperOnline 17HS19-2004S1 on azimuth only (same mount, +110 g). The size-17 reducer drags more in the cold: at −20 °C a 7 kg load in the EQ extreme has a margin of 0.84 at 8°/s and 1.08 at 6°/s with the 38 mm motor of D23, against 1.23 and 1.55 with the 48 mm motor. Until decided, the spec keeps the 38 mm motor on all axes |
+| D28 restated | Weight target after D17 | Prototype P1 ≤ 6.1 kg, production ≤ 5.1 kg |

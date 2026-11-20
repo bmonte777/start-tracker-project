@@ -1,50 +1,54 @@
 # Phase 2 — Engineering Spec
 
-20 Nov 2026 · Bruno · Star Tracker Project, Phase 2
+20 Nov 2026 · Bruno · Star Tracker Project, Phase 2 · Revision B (size 17 on azimuth, D17)
 
 Live copy: [Phase 2 — Engineering Spec](https://claude.ai/artifact/HrJ3eDJexNkq9QpU9hBu8x) · Parts list: [Sheet](https://claude.ai/artifact/9T9Gpvm2vWPRYqJtPChJa8) and `hardware/bom/master-parts-list.csv` · Calculations: `docs/calc/phase2_calcs.py`
 
 ## Summary
 
-The design meets the tracking targets on paper: 2.4″ RMS in EQ-wedge mode and 2.7″ RMS in alt-az mode at 300 mm over 5 minutes, but only with periodic error correction (PEC) trained on each head. Without PEC the same budget gives about 14″ (EQ) and 17″ (alt-az).
+The design meets the tracking targets on paper: 2.2″ RMS in EQ-wedge mode and 2.7″ RMS in alt-az mode at 300 mm over 5 minutes, but only with periodic error correction (PEC) trained on each head. Without PEC the same budget gives about 14″ (EQ) and 17″ (alt-az).
 
 Five findings change the design or the plan:
 
 1. **The output encoders need hollow-shaft reducers.** A solid cup-type reducer blocks the axis, so an on-axis MT6835 cannot see the output. Hollow units fix this and also carry the cables through the axes.
-2. **The head is heavy.** Three housed reducers put prototype P1 at about 5.7 kg and production at about 5.0 kg, against 1.5 kg for a Polaris and 4.1 kg for a ZWO AM3.
+2. **The head is heavy.** Three housed reducers put prototype P1 at about 6.0 kg and production at about 5.2 kg, against 1.5 kg for a Polaris and 4.1 kg for a ZWO AM3.
 3. **Two parts must be metal from the first prototype.** A printed altitude arm bends 120″ under the reference rig; in aluminium it bends 7″.
-4. **Reducers are 42–57 % of the material cost.** Landed cost at 1,000 units is about €1,050 with catalogue reducer prices, or about €765 if we buy component sets at OEM prices.
-5. **The camera stays put with power off for the reference rig** in normal poses (safety factor 1.6 or more). It can creep when rolled 90° outward in EQ mode (0.9) or with a 7 kg load left unbalanced. No brake is planned; the firmware parks the head before the battery runs out.
+4. **Reducers are 43–58 % of the material cost.** Landed cost at 1,000 units is about €1,090 with catalogue reducer prices, or about €770 if we buy component sets at OEM prices.
+5. **The camera stays put with power off for the reference rig** in every pose (safety factor 1.1 at worst, 2.0 or more in normal poses). It can still creep with a 7 kg load left unbalanced. No brake is planned; the firmware parks the head before the battery runs out.
 
-**Change request CR1 (touches D2): size 17 on azimuth.** In EQ-wedge mode gravity loads the azimuth axis, which D2 sized as the smallest. With the payload hanging beside the tower, the reference rig puts 4.1 N·m on it. A 7 kg load rolled outward at latitude 15° puts 17.6 N·m on it, above the size-14 average-torque limit of 11 N·m. Size 17 on azimuth costs 0.3 kg and about €36 and lifts that margin from 0.6× to 2.1×. Until you approve it, the spec keeps size 14 and limits 7 kg loads in EQ mode to ±30° of roll.
+**Change request CR1 (touches D2): size 17 on azimuth.** In EQ-wedge mode gravity loads the azimuth axis, which D2 sized as the smallest. With the payload hanging beside the tower, the reference rig puts 4.1 N·m on it. A 7 kg load rolled outward at latitude 15° puts 17.6 N·m on it, above the size-14 average-torque limit of 11 N·m. Size 17 on azimuth costs 0.3 kg and about €36 and lifts that margin from 0.6× to 2.1×. Approved as D17: this revision uses size 17 on azimuth throughout, and the ±30° roll limit at 7 kg is gone.
 
 All numbers come from `docs/calc/phase2_calcs.py`. Prices were read on 20 Nov 2026 at USD 1 = EUR 0.91.
 
-## Decisions pending your approval
+## Decisions from this phase
 
-None of these is covered by D1–D16. The spec below uses the recommended option for each, marked *pending approval*.
+**Approved by Bruno on 20 Nov 2026 (“Approve all”).** CR1 and Q1–Q14 are now decisions D17–D31 in the decisions log. Revision B, the same day, reruns the calculations, mass budget, cost model and parts list with size 17 on azimuth (D17).
+
+None of these was covered by D1–D16. Q1–Q14 are now D18–D31, and only Q15 is open. The spec uses the recommended option for each; an open one is marked *pending approval*.
 
 | # | Question | Recommendation | Why |
 | --- | --- | --- | --- |
-| Q1 | Reducer format | Hollow-shaft housed units: Laifual LHT-14-100-U-III (azimuth, roll) and LHT-17-100-U-III (altitude) | On-axis encoder and cables through the bore; costs about 0.7 kg over solid units |
+| Q1 | Reducer format | Hollow-shaft housed units: Laifual LHT-17-100-U-III (azimuth, altitude) and LHT-14-100-U-III (roll) | On-axis encoder and cables through the bore; costs about 0.7 kg over solid units |
 | Q2 | Where the electronics sit | Battery, boards and azimuth motor all above the azimuth bearing | Azimuth turns without limit and needs no slip ring |
 | Q3 | Roll geometry | Roll axis parallel to the lens axis, 130 mm below it, with an L-shaped shelf and Arca clamp | A lens on its foot cannot sit on the roll axis; the offset only adds a known torque |
 | Q4 | Wedge range | Tilt 0–75° (latitudes 15–90° N and S), fine adjust 34′ per turn, locks flat for alt-az | Covers Portugal, Spain and the 2028 Kimberley eclipse at 15° S |
 | Q5 | Motion MCU | Raspberry Pi RP2354A | PIO step timing, lowest cost, open tools; reasons in section 6 |
-| Q6 | Motor and belt | StepperOnline 17HE15-1504S on all axes; 20T:60T GT2, 9 mm wide, 200 mm belt | 2.3× torque margin at 8°/s and 20 °C with 7 kg in alt-az mode; the 9 mm belt has 1.8× tension margin |
+| Q6 | Motor and belt | StepperOnline 17HE15-1504S on all axes; 20T:60T GT2, 9 mm wide, 200 mm belt | 2.3× torque margin at 8°/s and 20 °C with 7 kg in alt-az mode; the 9 mm belt has 1.5× tension margin |
 | Q7 | Metal parts on P1 | Altitude arm and roll shelf CNC-machined in 6061 from the first prototype | Finding 3 |
 | Q8 | Brake | None; low-battery park, end-stop bumpers | Finding 5 |
 | Q9 | Slew speed in the cold | 8°/s down to 0 °C, 6°/s at −20 °C | Grease drag leaves only 1.2× margin at 8°/s and −20 °C |
 | Q10 | Power chips | BQ25792 + TPS25751 (charge port), TPS25752A + TPS55288 (27 W camera port), TPS61288 (12 V), BQ40Z50-R2 in the pack | TI reference pairing that needs no PD firmware; pack shows its own charge on LEDs |
-| Q11 | Weight target | P1 ≤ 5.8 kg, production ≤ 4.9 kg, with a weight-cutting pass in Phase 8 | Finding 2 |
+| Q11 | Weight target | P1 ≤ 6.1 kg, production ≤ 5.1 kg (restated for the size-17 azimuth, to confirm), with a weight-cutting pass in Phase 8 | Finding 2 |
 | Q12 | Printer, dryer, services | Bambu Lab H2S + AMS HT; JLCCNC for aluminium, JLC3DP for MJF PA12, Xometry Europe as backup | Confirms D15 with current prices |
 | Q13 | Arca clamp on the prototype | Buy a standard 60 mm clamp | Saves a machined part while the layout is still moving |
 
 **Q14, found while checking clearances: roll travel with long lenses.** With the 200–600 on its foot the roll axis has 155° of travel, not 380°, because the tower is in the way on one side (section 2.4). I recommend accepting this for prototype P1 and studying two alternatives in the Phase 3 CAD: moving the payload 23 mm further out, which gives a camera on an L-bracket its full turn but adds 20 % to the azimuth load in EQ mode; or raising the roll axis level with the altitude axis, which opens about 42° toward the tower but unbalances the altitude axis.
 
+**Q15, new in revision B: a longer motor on azimuth.** The size-17 reducer drags more than the size 14 did. At −20 °C a 7 kg load in the EQ extreme now has a margin of 0.84 at 8°/s and 1.08 at 6°/s, so it would slew at 4°/s. I recommend the 48 mm 17HS19-2004S1 on azimuth only: it fits the same mount, adds 110 g, and gives 1.23 at 8°/s and 1.55 at 6°/s. Until you decide, the spec keeps the 38 mm motor of D23 on all three axes.
+
 Two things I could not do from here:
 
-- **Repo access.** Attaching bmonte777/start-tracker-project with push access was blocked on my side. The files are ready in the repo layout and sent to you as downloads.
+- **Repo access.** Done after you granted access: the Phase 2 files are on the branch phase-2-engineering-spec of bmonte777/start-tracker-project.
 - **Your app code.** I could not open bmonte777/Benro-Polaris-Controller, so the app section assumes the shell technology your current app already uses.
 
 ## 1. Product requirements
@@ -68,24 +72,24 @@ Refined from the starting list in the Phase 2 brief. *Expected* is what the calc
 
 | Requirement | Target | Expected | Conditions |
 | --- | --- | --- | --- |
-| Tracking, EQ-wedge mode | ≤ 3″ RMS over 5 min | 2.4″ | 300 mm, reference rig, PEC on, polar error ≤ 2′, wind ≤ 3 m/s |
+| Tracking, EQ-wedge mode | ≤ 3″ RMS over 5 min | 2.2″ | 300 mm, reference rig, PEC on, polar error ≤ 2′, wind ≤ 3 m/s |
 | Tracking, alt-az mode | ≤ 5″ RMS over 5 min | 2.7″ | As above, altitude ≤ 60° |
 | Go-to | ≤ 2′ (2σ) after alignment | 59″ RMS, 1.97′ at 2σ | N-point model and gear-error map applied |
 | Go-to after plate-solve centring | ≤ 20″ | — | One solve-and-correct cycle |
-| Backlash at the output | ≤ 20″ | 12″ altitude, 26″ azimuth and roll raw; ≤ 10″ with encoder correction | Friction reversal of ±0.3 N·m |
-| Rated payload | 7 kg | Lowest margin 1.5 (azimuth bearing, EQ mode at 75° tilt) | Alt-az: any pose. EQ: roll within ±30° unless CR1 is approved |
+| Backlash at the output | ≤ 20″ | 12″ azimuth and altitude, 26″ roll raw; ≤ 10″ with encoder correction | Friction reversal of ±0.3 N·m |
+| Rated payload | 7 kg | Lowest margin 1.1 (roll reducer against its average-torque limit); bearings 2.4 or more | Any pose, either mode, wedge up to 75° |
 | Reference payload | 3.2 kg | — | A7R V + 200–600 on its foot |
-| Slew speed | 8°/s | 8°/s to 0 °C, 6°/s at −20 °C *(pending Q9)* | 12 V motor rail |
+| Slew speed | 8°/s | 8°/s to 0 °C, 6°/s at −20 °C *(D26); 4°/s at −20 °C for 7 kg in the EQ extreme unless Q15 is approved* | 12 V motor rail |
 | Settle after a slew | ≤ 2 s to within 2″ | 0.9–2.1 s | Tripod mode at 10 Hz, damping 2–5 % |
 | Operating temperature | −20 to +40 °C | Internal air 46.5 °C at 40 °C ambient | Tracking, charging and powering the camera |
 | Sealing | IPX4 prototype, IPX6 production | — | D9 |
 | Runtime, alt-az tracking at 20 °C | ≥ 12 h | 23 h | 2S2P P50B |
 | Runtime, tracking + camera power | ≥ 7 h | 7.7 h | Camera drawing 5 W |
-| Weight with wedge and battery | P1 ≤ 5.8 kg, production ≤ 4.9 kg *(pending Q11)* | 5.67 kg and 5.03 kg | Section 3.9 |
-| Azimuth range | Unlimited | — | No slip ring *(pending Q2)* |
+| Weight with wedge and battery | P1 ≤ 6.1 kg, production ≤ 5.1 kg (D28, restated; to confirm) | 5.97 kg and 5.23 kg | Section 3.9 |
+| Azimuth range | Unlimited | — | No slip ring *(D19)* |
 | Altitude range | −10° to +95° | — | Soft limits, bumpers at −15° and +100° |
-| Roll range | ±190° mechanical | +5° to −150° with the reference rig | The tower on one side and the tripod on the other limit a long lens; its rotating collar covers the gap (pending Q14) |
-| Wedge range | Tilt 0–75° *(pending Q4)* | — | Latitudes 15–90° |
+| Roll range | ±190° mechanical | +5° to −150° with the reference rig | The tower on one side and the tripod on the other limit a long lens; its rotating collar covers the gap (D31) |
+| Wedge range | Tilt 0–75° *(D21)* | — | Latitudes 15–90° |
 
 ### 1.3 Interfaces
 
@@ -104,7 +108,7 @@ Refined from the starting list in the Phase 2 brief. *Expected* is what the calc
 
 ## 2. Kinematic layout
 
-The head is a single-arm fork: a tower on the azimuth body carries the altitude axis, and the payload hangs beside the tower on the roll stage so a long lens can swing past the head. *(Layout pending Q1–Q4.)*
+The head is a single-arm fork: a tower on the azimuth body carries the altitude axis, and the payload hangs beside the tower on the roll stage so a long lens can swing past the head. *(Layout: D18–D21.)*
 
 ![Layout, front view with key dimensions](img/02-layout-front-view.png)
 
@@ -115,7 +119,7 @@ The lens sits 130 mm above the roll axis and 70 mm from the tower. The altitude 
 | Axis | Reducer | Range | Limited by | What crosses the axis |
 | --- | --- | --- | --- | --- |
 | Wedge | Manual hinge and arc | Tilt 0–75° | Clamp bolts | Nothing |
-| Azimuth | Size 14 (size 17 if CR1) | Unlimited | — | Nothing; all electronics ride above it |
+| Azimuth | Size 17 (D17) | Unlimited | — | Nothing; all electronics ride above it |
 | Altitude | Size 17 | −10° to +95° | Soft limits; bumpers at −15° and +100° | Roll harness, 15 wires, through the hollow shaft |
 | Roll | Size 14 | ±190° mechanical; +5° to −150° with the 200–600 on its foot | Soft limits; the camera cable; the tower and tripod for long lenses | Encoder tube only |
 
@@ -154,7 +158,7 @@ The reference rig clears the head and tripod up to 85° altitude. The lens is 11
 
 Above 85° the camera body meets the azimuth body by about 3 mm, so this rig gets a soft limit at +85°. Each rig has its own envelope in the app. Alt-az tracking stops at 80° anyway, because azimuth and roll rates run away near the zenith.
 
-**Roll travel with a long lens is one-sided.** The lens axis sits 130 mm from the roll axis and 70 mm from the tower, so rolling toward the tower brings the barrel against it after about 6° (130 mm × sin 6° = 14 mm, the whole clearance), so the soft limit is +5°. Rolling away is free until the lens drops toward the tripod at about −150°. That leaves 155° of travel. A camera frame repeats every 180°, so the firmware picks the start angle that keeps a night of de-rotation inside the window, and the 200–600’s rotating collar re-clocks the camera by hand for the 25° of framings that fall outside it. *(Pending Q14.)*
+**Roll travel with a long lens is one-sided.** The lens axis sits 130 mm from the roll axis and 70 mm from the tower, so rolling toward the tower brings the barrel against it after about 6° (130 mm × sin 6° = 14 mm, the whole clearance), so the soft limit is +5°. Rolling away is free until the lens drops toward the tripod at about −150°. That leaves 155° of travel. A camera frame repeats every 180°, so the firmware picks the start angle that keeps a night of de-rotation inside the window, and the 200–600’s rotating collar re-clocks the camera by hand for the 25° of framings that fall outside it. *(D31.)*
 
 ### 2.5 Centre of gravity and balance
 
@@ -175,7 +179,7 @@ The roll offset cannot be balanced out, because a lens on its foot cannot sit on
 
 ## 3. Load and stiffness calculations
 
-Altitude and roll carry the rated 7 kg with margin; azimuth does so in alt-az mode but runs out of margin in EQ-wedge mode, which is the reason for CR1. Each result below shows formula → numbers → result.
+All three axes carry the rated 7 kg now that azimuth is size 17 (D17). Roll has the least margin, 1.13 against its average-torque limit. Each result below shows formula → numbers → result.
 
 ### 3.1 Assumptions
 
@@ -208,9 +212,9 @@ In alt-az mode the azimuth axis is vertical and carries no gravity torque at all
 
 ### 3.3 Strain-wave reducers
 
-|  | Azimuth and roll | Altitude |
+|  | Roll | Azimuth and altitude |
 | --- | --- | --- |
-| Model *(pending Q1)* | Laifual LHT-14-100-U-III | Laifual LHT-17-100-U-III |
+| Model *(D18)* | Laifual LHT-14-100-U-III | Laifual LHT-17-100-U-III |
 | Type | Hollow-shaft housed unit with crossed-roller output bearing | Same |
 | Ratio | 100:1 | 100:1 |
 | Rated torque at 2,000 rpm input | 7.8 N·m | 24 N·m |
@@ -228,13 +232,13 @@ In alt-az mode the azimuth axis is vertical and carries no gravity torque at all
 
 Torque ratings and weight are from Laifual’s tables. Stiffness, backdriving torque and bearing data are Harmonic Drive’s figures for the same size (CSF-2UH-LW), used as a stand-in until Laifual sends its datasheet. Supplier listings for these units range from USD 180 to USD 588, so the prices need a quote.
 
-| Margin = limit ÷ design torque | Azimuth, size 14 | Azimuth, size 17 (CR1) | Altitude | Roll |
+| Margin = limit ÷ design torque | Azimuth, size 17 | Azimuth with size 14, before D17 | Altitude | Roll |
 | --- | --- | --- | --- | --- |
-| Against the average-torque limit | 0.60 | 2.12 | 4.89 | 1.13 |
-| Against the repeated-peak limit | 1.52 | 2.94 | 6.77 | 2.87 |
-| Against the momentary-peak limit | 2.94 | 5.88 | 13.53 | 5.53 |
+| Against the average-torque limit | 2.12 | 0.60 | 4.89 | 1.13 |
+| Against the repeated-peak limit | 2.94 | 1.52 | 6.77 | 2.87 |
+| Against the momentary-peak limit | 5.88 | 2.94 | 13.53 | 5.53 |
 
-With size 14, a 7 kg load in EQ mode reaches the 11 N·m average limit at 30° of roll at latitude 37°. The reference rig stays under it in every pose (7.35 N·m).
+Size 17 on azimuth takes the 17.63 N·m worst case at 45 % of its 39 N·m average limit. With size 14 the same load passed the 11 N·m limit at 30° of roll.
 
 ### 3.4 Output bearings
 
@@ -246,35 +250,35 @@ The crossed-roller bearing inside each reducer is the output bearing; no separat
 | Roll, 7 kg | 10.31 N·m | 3.3 | 59″ |
 | Altitude, reference rig | 3.82 N·m | 13.8 | 12″ |
 | Altitude, 7 kg, rolled 90° | 15.91 N·m | 3.3 | 51″ |
-| Azimuth, reference rig, alt-az | 5.13 N·m | 6.6 | 29″ |
-| Azimuth, reference rig, EQ at 37° | 7.99 N·m | 4.2 | 46″ |
-| Azimuth, 7 kg, alt-az, rolled 90° | 18.25 N·m | 1.8 | 105″ |
-| Azimuth, 7 kg, EQ at 15°, rolled 90° | 22.30 N·m | 1.5 (2.4 with size 17) | 128″ (72″) |
+| Azimuth, reference rig, alt-az | 5.13 N·m | 10.2 | 16.5″ |
+| Azimuth, reference rig, EQ at 37° | 7.99 N·m | 6.6 | 26″ |
+| Azimuth, 7 kg, alt-az, rolled 90° | 18.25 N·m | 2.9 | 59″ |
+| Azimuth, 7 kg, EQ at 15°, rolled 90° | 22.30 N·m | 2.4 | 72″ |
 
 Example: roll, 7 kg: M = 7 × 9.81 × √(0.075² + 0.130²) = 10.31 N·m; tilt = 10.31 ÷ 36,000 = 2.86 ×10⁻⁴ rad = 59″.
 
 ### 3.5 Belt stage
 
-A 9 mm GT2 belt on 20 and 60 teeth gives the 3:1 stage with 1.8× tension margin. *(Pending Q6.)*
+A 9 mm GT2 belt on 20 and 60 teeth gives the 3:1 stage with 1.5× tension margin. *(D23.)*
 
 | Item | Formula → numbers | Result |
 | --- | --- | --- |
 | Pitch diameters | z × 2 mm ÷ π | 12.73 mm and 38.20 mm |
 | Centre distance, 200 mm belt | L = 2C + π(D+d)/2 + (D−d)²/4C | 58.62 mm |
 | Wrap on the small pulley | 180° − 2·asin\[(D−d)/2C\] | 154.9°, 8.6 teeth in mesh |
-| Belt pull at the design torque | 0.149 N·m ÷ 6.37 mm | 23.4 N |
-| Working tension, 6 mm belt | Generic GT2 figure | 27.8 N → margin 1.19 |
-| Working tension, 9 mm belt | 27.8 × 9/6 | 41.7 N → margin 1.78 |
-| Static tension per span | Chosen | 12 N |
-| Radial load on the motor shaft | 2 × 12 × sin(154.9°/2) | 23.4 N |
-| Tension check by plucking the span | f = √(T/μ) ÷ 2L, μ = 12.6 g/m, L = 57.2 mm | about 270 Hz |
+| Belt pull at the design torque | 0.177 N·m ÷ 6.37 mm | 27.8 N |
+| Working tension, 6 mm belt | Generic GT2 figure | 27.8 N → margin 1.00 |
+| Working tension, 9 mm belt | 27.8 × 9/6 | 41.7 N → margin 1.50 |
+| Static tension per span | Chosen | 14 N |
+| Radial load on the motor shaft | 2 × 14 × sin(154.9°/2) | 27.3 N |
+| Tension check by plucking the span | f = √(T/μ) ÷ 2L, μ = 12.6 g/m, L = 57.2 mm | about 290 Hz |
 | Error from pulley run-out of 0.04 mm | (0.02 mm ÷ 19.1 mm) ÷ 100 | ±2.2″ at the output |
 
 Pulleys are specified with run-out of 0.03 mm or less. At the highest current the firmware allows, belt pull is 46.7 N, above the working figure; the current limit in section 3.6 keeps it out of that range.
 
 ### 3.6 Stepper motor at 12 V
 
-The StepperOnline 17HE15-1504S drives every axis: 42 N·cm holding torque, 1.5 A, 2.3 Ω, 4.0 mH, 38 mm long, 280 g. *(Pending Q6.)*
+The StepperOnline 17HE15-1504S drives every axis: 42 N·cm holding torque, 1.5 A, 2.3 Ω, 4.0 mH, 38 mm long, 280 g. *(D23.)*
 
 - Torque constant: Kₜ = 0.42 ÷ (√2 × 1.5) = 0.198 N·m/A.
 - Speed at 8°/s: 8 × 300 ÷ 360 × 60 = 400 rpm; back-EMF = 0.198 × 41.9 rad/s = 8.3 V of the 11.5 V available.
@@ -295,15 +299,17 @@ Torque needed at the motor: T = \[Tₒᵤₜ ÷ (100 × 0.70) + drag\] ÷ (3 × 
 
 | Case | Needed, 20 °C | Margin at 8°/s, 20 °C | Needed, −20 °C | Margin at 8°/s, −20 °C | Margin at 6°/s, −20 °C |
 | --- | --- | --- | --- | --- | --- |
-| Reference rig, any pose | 0.053 N·m | 2.80 | 0.096 N·m | 1.54 | 1.99 |
+| Reference rig, any pose | 0.060 N·m | 2.47 | 0.123 N·m | 1.20 | 1.55 |
 | 7 kg, alt-az mode | 0.063 N·m | 2.33 | 0.125 N·m | 1.19 | 1.53 |
-| 7 kg, EQ extreme (azimuth) | 0.107 N·m | 1.39 | 0.149 N·m | 0.99 | 1.28 |
+| 7 kg, EQ extreme (azimuth) | 0.114 N·m | 1.30 | 0.177 N·m | 0.84 | 1.08 |
 
-Current settings with a 2× torque margin: tracking 0.25 A RMS at 20 °C and 0.63 A at −20 °C; slewing 0.76 A; ceiling 1.06 A. The 48 mm 17HS19-2004S1 fits the same mount and gives 0.218 N·m at 400 rpm, for 110 g more per axis, if the bench test shows less than the calculated curve.
+Current settings with a 2× torque margin: tracking 0.30 A RMS at 20 °C and 0.75 A at −20 °C; slewing 0.81 A; ceiling 1.06 A. The 48 mm 17HS19-2004S1 fits the same mount and gives 0.218 N·m at 400 rpm, for 110 g more per axis, if the bench test shows less than the calculated curve.
+
+The size-17 reducer on azimuth drags more than the size 14 did, so the cold margins are lower than in the first issue of this spec. At −20 °C the 7 kg EQ extreme slews at 4°/s (margin 1.18). The 48 mm motor on azimuth alone gives 1.23 at 8°/s and 1.55 at 6°/s. *(Pending Q15.)*
 
 ### 3.7 Deflection under load: printed or aluminium
 
-The two cantilevers must be aluminium; the housings can be printed. *(Pending Q7.)*
+The two cantilevers must be aluminium; the housings can be printed. *(D24.)*
 
 | Part and section | Formula | Reference rig, printed | Reference rig, aluminium | 7 kg, printed | 7 kg, aluminium |
 | --- | --- | --- | --- | --- | --- |
@@ -312,7 +318,7 @@ The two cantilevers must be aluminium; the housings can be printed. *(Pending Q7
 
 E = 4.2 GPa for dry printed PAHT-CF (assumed) and 69 GPa for 6061. Printed nylon also creeps under a standing load and softens as it takes up moisture, which the formula does not show.
 
-Adding the reducer wind-up (azimuth 159″, altitude 12″ in the typical EQ pose) and the bearing tilts gives a static sag of 168″ RSS with aluminium arms and 223″ with printed arms. This sag is repeatable, so the pointing model removes it. What smears a star is its change as the sky turns 1.25° in 5 minutes: 168″ × sin 1.25° = 3.7″ of drift, or 1.06″ RMS (printed arms: 4.9″ and 1.41″). Size 17 on azimuth cuts its wind-up from 159″ to 83″.
+Adding the reducer wind-up (azimuth 83″, altitude 12″ in the typical EQ pose) and the bearing tilts gives a static sag of 93″ RSS with aluminium arms and 174″ with printed arms. This sag is repeatable, so the pointing model removes it. What smears a star is its change as the sky turns 1.25° in 5 minutes: 93″ × sin 1.25° = 2.0″ of drift, or 0.59″ RMS (printed arms: 3.8″ and 1.10″). With size 14 on azimuth, its wind-up alone was 159″.
 
 ### 3.8 Settle time after a slew
 
@@ -320,7 +326,7 @@ The head settles faster than the tripod. Natural frequency f = (1/2π)√(K1/J):
 
 | Axis | Reference rig | 7 kg | Ringing from a hard stop, 7 kg (α/ω²) |
 | --- | --- | --- | --- |
-| Azimuth | 32 Hz | 21 Hz | 3.3″ |
+| Azimuth | 47 Hz | 31 Hz | 1.5″ |
 | Altitude | 60 Hz | 38 Hz | 1.0″ |
 | Roll | 45 Hz | 31 Hz | 1.6″ |
 
@@ -328,21 +334,21 @@ On a tripod whose lowest mode is 10 Hz, the same stop excites 14.6″. It decays
 
 ### 3.9 Power off: does the camera stay put?
 
-Holding torque = reducer backdriving torque + motor detent × 300 = 1.8 + 0.016 × 300 = 6.6 N·m on azimuth and roll, and 3.3 + 4.8 = 8.1 N·m on altitude. The 1.6 N·cm detent is a typical figure, not on the datasheet page; it will be measured.
+Holding torque = reducer backdriving torque + motor detent × 300 = 1.8 + 0.016 × 300 = 6.6 N·m on roll, and 3.3 + 4.8 = 8.1 N·m on azimuth and altitude. The 1.6 N·cm detent is a typical figure, not on the datasheet page; it will be measured.
 
 | Margin = holding ÷ load | Azimuth (EQ mode) | Altitude | Roll |
 | --- | --- | --- | --- |
-| Reference rig, typical pose | 1.6 | 14 | No load |
-| Reference rig, worst pose | 0.9 | 4.2 | 1.6 |
-| 7 kg, worst pose | 0.4 | 1.1 | 0.7 |
+| Reference rig, typical pose | 2.0 | 14 | No load |
+| Reference rig, worst pose | 1.1 | 4.2 | 1.6 |
+| 7 kg, worst pose | 0.5 | 1.1 | 0.7 |
 
-No brake is fitted. *(Pending Q8.)* The firmware parks the head at 5 % charge in a balanced pose (roll 0°, altitude level), TPU bumpers stop the altitude axis before the camera can reach the tower, and a pulled pack leaves the gear friction to slow any motion.
+No brake is fitted. *(D25.)* The firmware parks the head at 5 % charge in a balanced pose (roll 0°, altitude level), TPU bumpers stop the altitude axis before the camera can reach the tower, and a pulled pack leaves the gear friction to slow any motion.
 
 ### 3.10 Mass budget
 
 | Group | Prototype P1 | Production |
 | --- | --- | --- |
-| Reducers (2 × size 14, 1 × size 17) | 2.40 kg | 1.40 kg (simple hollow units in our own housings) |
+| Reducers (2 × size 17, 1 × size 14) | 2.70 kg | 1.60 kg (simple hollow units in our own housings) |
 | Stepper motors × 3 | 0.84 kg | 0.84 kg |
 | Pulleys and belts | 0.14 kg | 0.14 kg |
 | Battery pack | 0.34 kg | 0.34 kg |
@@ -350,13 +356,13 @@ No brake is fitted. *(Pending Q8.)* The firmware parks the head at 5 % charge in
 | Housings and covers | 0.56 kg (printed) | 0.95 kg (aluminium + moulded covers) |
 | Aluminium parts: wedge, base, arm, shelf, clamp | 1.08 kg | 1.08 kg |
 | Fasteners, inserts, seals | 0.15 kg | 0.12 kg |
-| **Total** | **5.67 kg** | **5.03 kg** |
+| **Total** | **5.97 kg** | **5.23 kg** |
 
-Solid cup-type reducers would save 0.71 kg on P1 but leave no place for the on-axis encoders.
+Solid cup-type reducers would save 0.85 kg on P1 but leave no place for the on-axis encoders.
 
 ## 4. Accuracy budget
 
-The predicted tracking error is 2.40″ RMS in EQ-wedge mode and 2.73″ RMS in alt-az mode, against targets of 3″ and 5″. Periodic error of the reducers is the largest term in both, and PEC is what brings it down.
+The predicted tracking error is 2.19″ RMS in EQ-wedge mode and 2.71″ RMS in alt-az mode, against targets of 3″ and 5″. Periodic error of the reducers is the largest term in both, and PEC is what brings it down.
 
 **What is measured.** RMS displacement of a star about its mean position during one 5-minute exposure, at 300 mm (2.59″ per pixel on the A7R V), reference rig, aluminium arms, wind up to 3 m/s. A steady drift of d arc-seconds counts as d ÷ √12. The tripod and the ground are outside the budget.
 
@@ -367,15 +373,15 @@ The predicted tracking error is 2.40″ RMS in EQ-wedge mode and 2.73″ RMS in 
 | Reducer periodic error, RA axis | 1.70″ | ±20″ typical raw = 14.1″ RMS; PEC leaves 12 % |
 | Belt and pulley run-out | 0.26″ | ±2.16″ per pulley, two pulleys; PEC leaves 12 % |
 | Stepper microstep non-linearity | 0.76″ | ±5 % of 1.8° ÷ 300 = ±1.08″ |
-| Differential flexure | 1.06″ | Section 3.7: 3.7″ drift ÷ √12 |
+| Differential flexure | 0.59″ | Section 3.7: 2.0″ drift ÷ √12 |
 | Polar alignment error of 2′, not corrected | 0.76″ | 120″ × 0.0219 rad = 2.63″ drift ÷ √12 |
-| Wind gusts at 3 m/s | 0.55″ | 0.023 N·m ÷ K1 = 0.99″ on RA, 0.47″ on Dec |
+| Wind gusts at 3 m/s | 0.33″ | 0.023 N·m ÷ K1 = 0.47″ on RA and on Dec |
 | Encoder loop noise | 0.30″ | Allowance |
 | Low-speed friction ripple | 0.30″ | Allowance |
 | Thermal drift of the structure | 0.20″ | Allowance |
 | Refraction left after the model, 45° altitude | 0.06″ | 2.04″ per degree of altitude; model removes 90 % |
 | Clock and step timing | 0.04″ | 30 ppm crystal = 0.135″ in 5 min; GNSS pulse trims it |
-| **Total (root sum of squares)** | **2.40″** |  |
+| **Total (root sum of squares)** | **2.19″** |  |
 
 ### 4.2 Alt-az mode
 
@@ -387,23 +393,23 @@ The predicted tracking error is 2.40″ RMS in EQ-wedge mode and 2.73″ RMS in 
 | Stepper microstep non-linearity, two axes | 0.94″ | 0.76″ and 0.76″ × cos 45° |
 | Roll axis error at the corner of the frame | 0.71″ | 14.1″ × (21.6 mm ÷ 300 mm) × 0.7; no PEC needed |
 | Altitude reversal at the meridian | 0.50″ | 12″ lost motion, corrected by the encoder |
-| Wind gusts at 3 m/s | 0.42″ | As above, azimuth × cos 45° |
+| Wind gusts at 3 m/s | 0.29″ | As above, azimuth × cos 45° |
 | Belt and pulley run-out, two axes | 0.32″ | As above |
 | Differential flexure | 0.30″ | Azimuth is vertical, so less changes |
 | Encoder loop noise | 0.30″ | Allowance |
 | Thermal drift of the structure | 0.20″ | Allowance |
 | Refraction left after the model | 0.06″ | As above |
 | Clock and step timing | 0.04″ | As above |
-| **Total (root sum of squares)** | **2.73″** |  |
+| **Total (root sum of squares)** | **2.71″** |  |
 
 ### 4.3 What moves the result
 
 | Change | EQ-wedge | Alt-az |
 | --- | --- | --- |
-| Baseline | 2.40″ | 2.73″ |
+| Baseline | 2.19″ | 2.71″ |
 | PEC switched off | 14.4″ | 17.4″ |
-| Reducer at the catalogue limit of 1.5′ instead of ±20″ | 4.18″ | — |
-| Printed altitude arm and shelf | 2.57″ | — |
+| Reducer at the catalogue limit of 1.5′ instead of ±20″ | 4.06″ | — |
+| Printed altitude arm and shelf | 2.38″ | — |
 
 A reducer at its catalogue limit misses the 3″ target even with PEC. Each reducer is therefore measured on arrival, and the best one goes on azimuth.
 
@@ -418,7 +424,7 @@ At sidereal rate the motor turns once in 287 s, the wave generator once in 862 s
 - **Encoder role.** The MT6835 resolves 0.62″, but its linearity is ±0.07° (±252″). It gives absolute position at power-up, catches slipped steps and corrects lost motion. Fine tracking comes from the gear train with PEC. Each encoder is mapped against motor steps once at assembly.
 - **Backlash.** The gear mesh has none. A friction reversal of ±0.3 N·m winds the reducer by 2 × 0.3 ÷ K1 = 26″ (size 14) or 12″ (size 17); belt tooth clearance adds 2.2″. The encoder loop takes this below 10″.
 - **Go-to.** Gear-error map 10″ per axis, flexure left by the model 30″, alignment model 45″, level and polar error 20″: 59″ RMS, 1.97′ at 2σ. Without the gear-error map it is 73″ RMS, 2.4′ at 2σ.
-- **600 mm.** The same 2.4″ is 1.9 pixels RMS at 1.29″ per pixel, so 600 mm needs shorter subs or drift correction between frames, as D5 expects.
+- **600 mm.** The same 2.2″ is 1.7 pixels RMS at 1.29″ per pixel, so 600 mm needs shorter subs or drift correction between frames, as D5 expects.
 
 ## 5. Power and battery
 
@@ -444,7 +450,7 @@ Working:
 - **Alt-az tracking.** (3 × 0.51 W) ÷ 0.90 boost efficiency + 0.90 W ÷ 0.90 = 2.7 W; 62.9 Wh ÷ 2.7 W = 23 h.
 - **Camera.** 5 W assumed for the A7R V, ÷ 0.92 = 5.4 W.
 
-### 5.2 Pack and power chain *(pending Q10)*
+### 5.2 Pack and power chain *(D27)*
 
 | Function | Part | Key data |
 | --- | --- | --- |
@@ -481,7 +487,7 @@ Two processors split the work: an ESP32-S3 handles everything that talks, and an
 
 Power enters at port A or comes from the pack, and the system rail feeds the three converters. The encoders report to the RP2354A, which steps the drivers; nothing in the motion chain waits on Wi-Fi.
 
-### 6.1 Motion MCU: RP2354A *(pending Q5)*
+### 6.1 Motion MCU: RP2354A *(D22)*
 
 The RP2354A (an RP2350A with 2 MB of flash in the package, A4 stepping) is the pick over the STM32G474.
 
@@ -677,6 +683,7 @@ One shared web UI in your Blue Hour design, with Day, Night and Red modes, runs 
 ```
 start-tracker-project/
   docs/            01-research-report.md, 02-decisions-log.md, 02-engineering-spec.md, calc/, img/, prompts/
+  website/         product website (planned)
   hardware/        cad/, drawings/, bom/master-parts-list.csv, print-profiles/
   electronics/     mainboard/, cartridge-board/, battery-board/, harness/
   firmware/        motion/ (RP2354A), app/ (ESP32-S3), common/ (link protocol), sim/, tests/
@@ -702,7 +709,7 @@ To run one: open the repo on github.com, click **Actions**, pick the workflow on
 
 ## 8. Prototype manufacturing plan
 
-Housings are printed, the load-carrying cantilevers and the wedge are machined, and everything that turns or computes is bought. *(Equipment and services pending Q12.)*
+Housings are printed, the load-carrying cantilevers and the wedge are machined, and everything that turns or computes is bought. *(Equipment and services: D29.)*
 
 ### 8.1 Process for each part group
 
@@ -756,7 +763,7 @@ The AMS HT dries only while it is connected to the printer.
 
 | Round | What is built | What it proves |
 | --- | --- | --- |
-| P0: one-axis bench rig | One size-14 cartridge on a plate, with the mainboard on the bench | Periodic error, backlash, drag at −20 °C, detent, the speed–torque curve, PEC |
+| P0: one-axis bench rig | One size-17 cartridge on a plate, with the mainboard on the bench | Periodic error, backlash, drag at −20 °C, detent, the speed–torque curve, PEC |
 | P1: full head | Printed housings, machined arm, shelf and wedge | Layout, clearances, wiring, firmware, power |
 | P2: full head, final-quality parts | MJF housings, seals, anodised metal | Tracking accuracy, IPX4, cold and heat, runtime |
 
@@ -764,7 +771,7 @@ P0 costs one reducer and tests every assumption marked *to be measured* before t
 
 ## 9. Cost model
 
-One head costs about €2,000 to build as a prototype, €1,390 at 100 units and €1,010 at 1,000 units, before tooling. The three reducers are 42–57 % of the material cost, so the reducer deal sets the retail price more than anything else.
+One head costs about €2,050 to build as a prototype, €1,430 at 100 units and €1,040 at 1,000 units, before tooling. The three reducers are 43–58 % of the material cost, so the reducer deal sets the retail price more than anything else.
 
 All figures are in euros without VAT, from the parts list in section 10. Prices marked *quoted* there were read from supplier pages on 20 Nov 2026; the rest are estimates until Phase 3 and 4 replace them with quotes.
 
@@ -772,17 +779,17 @@ All figures are in euros without VAT, from the parts list in section 10. Prices 
 
 | Group | 1 unit | 100 units | 1,000 units |
 | --- | --- | --- | --- |
-| Axis cartridges (ST-2xx), reducers included | €1,002 | €828 | €649 |
+| Axis cartridges (ST-2xx), reducers included | €1,045 | €867 | €681 |
 | Structure, wedge, clamp (ST-3xx) | €479 | €259 | €165 |
 | Electronics (ST-5xx) | €207 | €98 | €74 |
 | Battery pack (ST-6xx) | €54 | €42 | €28 |
 | Fasteners and seals (ST-7xx) | €27 | €11 | €6 |
 | Accessories and packaging (ST-8xx) | €13 | €7 | €5 |
-| **Materials** | **€1,782** | **€1,246** | **€926** |
+| **Materials** | **€1,826** | **€1,286** | **€959** |
 | Assembly and test labour | Your own time | €75 | €33 |
-| Freight and import (12 %) or scrap and overhead (5 %) | €214 | €66 | €48 |
-| **Cost per head** | **€1,996** | **€1,387** | **€1,007** |
-| Of which the three reducers | €746 | €660 | €532 |
+| Freight and import (12 %) or scrap and overhead (5 %) | €219 | €68 | €50 |
+| **Cost per head** | **€2,045** | **€1,429** | **€1,042** |
+| Of which the three reducers | €783 | €692 | €560 |
 
 Assumptions: at 100 units the housings are MJF PA12 and the metal is CNC; at 1,000 units the housings are CNC aluminium and the covers are moulded. Labour is 3 hours at €25 for 100 units and 1.5 hours at €22 for 1,000.
 
@@ -801,12 +808,12 @@ Die-casting is not worth it for the first 1,000 heads. Tools for four housings w
 
 |  | Catalogue reducers (housed units) | OEM component sets at USD 95 each |
 | --- | --- | --- |
-| Landed cost at 1,000 units, tooling included | €1,052 | €765 |
-| Retail at 2.0× (lean, direct sales) | €2,100 | €1,530 |
-| Retail at 2.5× (direct sales with room for support and warranty) | €2,630 | €1,910 |
-| Retail at 3.5× (through dealers) | €3,680 | €2,680 |
+| Landed cost at 1,000 units, tooling included | €1,087 | €771 |
+| Retail at 2.0× (lean, direct sales) | €2,170 | €1,540 |
+| Retail at 2.5× (direct sales with room for support and warranty) | €2,720 | €1,930 |
+| Retail at 3.5× (through dealers) | €3,800 | €2,700 |
 
-Hardware sold direct usually needs 2 to 2.5 times its landed cost; a dealer channel needs about 3.5 times. That puts the direct price between about €1,900 and €2,650 without VAT, depending on the reducer deal.
+Hardware sold direct usually needs 2 to 2.5 times its landed cost; a dealer channel needs about 3.5 times. That puts the direct price between about €1,950 and €2,700 without VAT, depending on the reducer deal.
 
 For comparison, a European dealer lists the Benro Polaris Astro at USD 1,470 and the ZWO AM3N at USD 2,190; ZWO’s own US store lists the AM3N at USD 1,499. The OEM component-set price is my assumption and is the first number to test with Laifual and Leaderdrive.
 
@@ -825,30 +832,30 @@ The skeleton lists 87 lines, each with an ID, name, quantity, prototype and prod
 | ST-801 to ST-805 | Tools, cable, labels, packaging | 5 |
 | ST-9xx | Reserved for tooling and test fixtures | — |
 
-The Sheet’s line totals are formulas, and its bottom row sums materials per head: €1,781.97, €1,246.37 and €926.32. Those are the figures section 9 starts from.
+The Sheet’s line totals are formulas, and its bottom row sums materials per head: €1,825.65, €1,285.50 and €959.08. Those are the figures section 9 starts from.
 
 Phase 3 splits the screw sets and each housing into single parts, down to the last screw. Phase 4 does the same for the passive components on each board.
 
 ## 11. Risk register and prototype test plan
 
-The three risks that could sink the targets are reducer periodic error, cold-weather drag and the azimuth load in EQ mode. The one-axis bench rig (P0) tests the first two before the full head is built.
+The three risks that could sink the targets are reducer periodic error, cold-weather drag and weight. The one-axis bench rig (P0) tests the first two before the full head is built.
 
 ### 11.1 Risks
 
 | # | Risk | Effect | Likelihood | What we do about it |
 | --- | --- | --- | --- | --- |
-| R1 | Reducer periodic error above ±20″, or not repeatable | Tracking misses 3″ (4.2″ at the catalogue limit) | Medium | Measure every unit on P0; PEC with several harmonics; best unit on azimuth; second source |
+| R1 | Reducer periodic error above ±20″, or not repeatable | Tracking misses 3″ (4.1″ at the catalogue limit) | Medium | Measure every unit on P0; PEC with several harmonics; best unit on azimuth; second source |
 | R2 | Grease drag at −20 °C above the assumed four times | Slews stall in the cold | Medium | Freezer test on P0; low-temperature grease; 48 mm motor; 6°/s cold limit |
-| R3 | Azimuth overloaded in EQ mode at 7 kg | Margin 0.6 on the average-torque limit, 1.5 on the bearing | High with size 14 | CR1 (size 17); roll limit of ±30° at 7 kg; counterweight bosses |
-| R4 | Weight of 5.0–5.7 kg puts buyers off | Fewer sales against a 1.5 kg Polaris | High | Phase 8 weight pass: simple hollow units, shorter motors, pocketed metal |
-| R5 | Reducer cost | Retail €2,630 instead of €1,910 | High | Ask Laifual and Leaderdrive for component-set prices at 300 and 3,000 pieces now |
+| R3 | The size-17 azimuth reducer drags more in the cold | At −20 °C a 7 kg load in the EQ extreme slews at 4°/s (margin 1.18), not 6°/s | High | Q15: 48 mm motor on azimuth; slew speed lowered automatically by load; freezer test on P0 |
+| R4 | Weight of 5.2–6.0 kg puts buyers off | Fewer sales against a 1.5 kg Polaris | High | Phase 8 weight pass: simple hollow units, shorter motors, pocketed metal |
+| R5 | Reducer cost | Retail €2,720 instead of €1,930 | High | Ask Laifual and Leaderdrive for component-set prices at 300 and 3,000 pieces now |
 | R6 | Printed housings creep or swell | Belt tension and reducer alignment drift | Medium | Metal cantilevers from P1; MJF for P2; aluminium in production |
 | R7 | Encoder magnet off-centre | Linearity worse than ±0.07° | Low | Magnet seated in the turned tube; map every encoder at assembly |
 | R8 | Camera hits the head or tripod | Damage | Medium | Rig envelope and soft limits; bumpers; 2 s button stop |
 | R9 | Heavy rig drops when power is cut | Damage | Low for the reference rig | Balance check; park at 5 %; warning in the app above 4 kg |
 | R10 | Stepper noise reaches GNSS or the encoder lines | Lost fix, encoder errors | Medium | Antenna at the top of the board away from the drivers; SPI with ground between lines; StealthChop |
 | R11 | Three rotating joints defeat IPX6 | Water inside | Medium | V-rings plus labyrinth; prove IPX4 on P2 first |
-| R12 | Hollow reducers have long lead times | Schedule | Medium | Order the P0 unit as soon as Q1 is approved; listings show 5–35 days |
+| R12 | Hollow reducers have long lead times | Schedule | Medium | Order the P0 unit now that D18 is approved; listings show 5–35 days |
 | R13 | Swappable Li-ion pack mishandled | Safety | Low | Gauge with protection, second-level protector and fuse, keyed blade connector |
 | R14 | Your app code does not drop in as assumed | Phase 6 effort | Unknown | Read the Benro-Polaris-Controller repo before Phase 6 planning |
 
@@ -856,14 +863,14 @@ The three risks that could sink the targets are reducer periodic error, cold-wea
 
 | # | What | How | Equipment | Pass |
 | --- | --- | --- | --- | --- |
-| T1 | Backlash and lost motion | Step the axis forward and back in 5″ moves and read a dial indicator on a 200 mm arm (1 µm = 1.03″); repeat with the encoder loop on | 1 µm dial indicator, arm | ≤ 20″ raw on altitude, ≤ 30″ on azimuth and roll; ≤ 10″ with the loop |
+| T1 | Backlash and lost motion | Step the axis forward and back in 5″ moves and read a dial indicator on a 200 mm arm (1 µm = 1.03″); repeat with the encoder loop on | 1 µm dial indicator, arm | ≤ 20″ raw on azimuth and altitude, ≤ 30″ on roll; ≤ 10″ with the loop |
 | T2 | Periodic error | Bench: laser on the output, spot filmed on a wall 10 m away (1 mm = 20.6″) for three wave-generator turns (43 min at sidereal). Sky: 5 s frames of a star near the equator for 45 min, centroids by plate solve | Laser, camera, the app’s solver | ≤ ±20″ raw; repeatable within 3″ turn to turn |
 | T3 | PEC | Train, then repeat T2 | As T2 | ≤ 2″ RMS left |
 | T4 | Tracking | 20 exposures of 5 min at 300 mm, at 30°, 45° and 60° altitude, in each mode; star centroids from 5 s frames taken alongside | A7R V + 200–600, solver | ≤ 3″ RMS EQ, ≤ 5″ RMS alt-az |
 | T5 | Go-to | 30 targets across the sky after alignment, plate-solve each | Solver | 95 % within 2′ |
 | T6 | Speed and torque | Lift a known weight on an arm at rising speed until StallGuard trips; at 20 °C and in a freezer at −20 °C | Weights, freezer, log | At or above the section 3.6 curve; 8°/s at 20 °C with 7 kg |
 | T7 | Stiffness | Hang 1 kg on the clamp at a known arm and read the dial indicator; compare with section 3.7. Tap test logged by the IMU for natural frequency | Dial indicator, IMU log | Within 30 % of prediction; settle ≤ 2 s |
-| T8 | Power-off holding | Add weight until the axis creeps | Weights | ≥ 6 N·m azimuth and roll, ≥ 8 N·m altitude |
+| T8 | Power-off holding | Add weight until the axis creeps | Weights | ≥ 6 N·m roll, ≥ 8 N·m azimuth and altitude |
 | T9 | Power | Log pack voltage and current from the gauge for 10 min in each mode; one full discharge while tracking | Gauge log | Within 20 % of section 5.1; ≥ 12 h tracking |
 | T10 | Thermal | Track, charge and power the camera in a box at 40 °C for 2 h; log thermistors and pack temperature | Heated box | Inside air ≤ 55 °C; motors ≤ 80 °C |
 | T11 | Wind | Fan at 3 and 5 m/s across the reference rig while tracking; encoder and star logs | Fan, anemometer | ≤ 1″ RMS added at 3 m/s |
