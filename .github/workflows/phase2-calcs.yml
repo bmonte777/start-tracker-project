@@ -1,0 +1,21 @@
+# Runs only when started by hand: Actions tab > "Phase 2 calculations" > Run workflow.
+name: Phase 2 calculations
+on:
+  workflow_dispatch:
+jobs:
+  calcs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run the calculations and rebuild the parts-list CSV
+        run: python docs/calc/phase2_calcs.py > phase2_results_printout.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: phase2-calculations
+          path: |
+            docs/calc/phase2_results.json
+            hardware/bom/master-parts-list.csv
+            phase2_results_printout.json
