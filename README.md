@@ -4,7 +4,7 @@ Open-source 3-axis motorised astro head: star tracking, go-to, panoramas, time-l
 
 ## Status
 - Phase 1: research — done → [`docs/01-research-report.md`](docs/01-research-report.md)
-- Phase 2: requirements and architecture — waiting on design decisions (report §10)
+- Phase 2: engineering spec — decisions approved → [`docs/02-decisions-log.md`](docs/02-decisions-log.md), prompt in [`docs/prompts/phase-2-prompt.md`](docs/prompts/phase-2-prompt.md)
 
 ## Repository layout (planned)
 | Folder | Contents |
