@@ -32,8 +32,9 @@ Decisions taken in Phase 3:
 | D38 | Raised-hinge wedge, arcs below, two clamp knobs, M3 tangent screw at 55′ per turn (Q20) |
 | D39 | Removable wedge: the head stands on any tripod by itself; on two dowels and one coin screw on the wedge |
 | D40 | Five payload envelopes (P1–P5) replace the single reference lens; roll limits set per payload |
+| D41 | No further weight cutting: P1 stays at 6.21 kg (head) and 6.83 kg (with wedge) |
 
-Bruno confirmed the five payload envelopes cover almost all gear (D40). Still open: whether to go lighter still (options in the Mass section).
+Bruno confirmed the five payload envelopes cover almost all gear (D40), and the weight stays as it is (D41). Nothing in Phase 3 is open.
 
 ## Layout and frames
 
@@ -183,7 +184,7 @@ Fasteners come from the joint table: 162 stainless screws, 32 aluminium screws, 
 
 Centre of gravity of the head on its wedge (no payload): X 22.1, Y −7.0, Z 128.0 mm. With payload P3, everything that turns in altitude (5.54 kg) has its centre 10.7 mm above the altitude axis (0.58 N·m), and the roll stage plus payload (3.99 kg) sits 129 mm from the roll axis, as D20 intends. The other payloads are in the table above.
 
-Lighter still, if wanted (not done; each needs Bruno's go-ahead):
+Further savings that were looked at and not taken (D41):
 
 | Option | Saving | Cost |
 | --- | --- | --- |
