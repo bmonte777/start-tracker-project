@@ -1,0 +1,299 @@
+[
+ [
+  2,
+  "ST-207",
+  "Motor plate with belt-tension block",
+  "machined",
+  "Aluminium 6061-T6",
+  3,
+  "2:1"
+ ],
+ [
+  3,
+  "ST-208",
+  "Encoder reference tube, size 17 (azimuth, altitude)",
+  "turned",
+  "Stainless steel 304",
+  2,
+  "1:1"
+ ],
+ [
+  4,
+  "ST-210",
+  "Cartridge housing, size 14 (roll)",
+  "printed",
+  "PAHT-CF (Bambu)",
+  1,
+  "1:2"
+ ],
+ [
+  5,
+  "ST-211",
+  "Cartridge housing, size 17 (azimuth, altitude)",
+  "printed",
+  "PAHT-CF (Bambu)",
+  2,
+  "1:2"
+ ],
+ [
+  6,
+  "ST-212",
+  "Cartridge rear cover / encoder-board carrier, size 17",
+  "printed",
+  "ASA",
+  2,
+  "1:1"
+ ],
+ [
+  7,
+  "ST-215",
+  "Encoder reference tube, size 14 (roll)",
+  "turned",
+  "Stainless steel 304",
+  1,
+  "1:1"
+ ],
+ [
+  8,
+  "ST-216",
+  "Cartridge rear cover / encoder-board carrier, size 14",
+  "printed",
+  "ASA",
+  1,
+  "1:1"
+ ],
+ [
+  9,
+  "ST-217",
+  "Roll cartridge enclosure",
+  "printed",
+  "ASA",
+  1,
+  "1:2"
+ ],
+ [
+  10,
+  "ST-301",
+  "Base plate with 3/8in-16 socket",
+  "machined",
+  "Aluminium 6061-T6",
+  1,
+  "1:1"
+ ],
+ [
+  11,
+  "ST-302",
+  "Wedge lower plate with azimuth fine adjust",
+  "machined",
+  "Aluminium 6061-T6",
+  1,
+  "1:2"
+ ],
+ [
+  12,
+  "ST-303",
+  "Wedge upper plate (azimuth reducer mount)",
+  "machined",
+  "Aluminium 6061-T6",
+  1,
+  "1:1"
+ ],
+ [
+  13,
+  "ST-305",
+  "Wedge latitude arc",
+  "machined",
+  "Aluminium 6061-T6",
+  2,
+  "2:1"
+ ],
+ [
+  14,
+  "ST-310",
+  "Azimuth body (main housing)",
+  "printed",
+  "PAHT-CF (Bambu)",
+  1,
+  "1:2"
+ ],
+ [
+  15,
+  "ST-311",
+  "Tower (altitude housing)",
+  "printed",
+  "PAHT-CF (Bambu)",
+  1,
+  "1:2.5"
+ ],
+ [
+  16,
+  "ST-312",
+  "Altitude arm",
+  "machined",
+  "Aluminium 6061-T6",
+  1,
+  "1:2.5"
+ ],
+ [
+  17,
+  "ST-313",
+  "Roll shelf (L-arm) with clamp seat",
+  "machined",
+  "Aluminium 6061-T6",
+  1,
+  "1:2"
+ ],
+ [
+  18,
+  "ST-315",
+  "Front bezel with OLED window",
+  "printed",
+  "ASA",
+  1,
+  "1:2"
+ ],
+ [
+  19,
+  "ST-316",
+  "Button cap",
+  "printed",
+  "TPU 95A",
+  4,
+  "5:1"
+ ],
+ [
+  20,
+  "ST-317",
+  "Battery bay tray",
+  "printed",
+  "ASA",
+  1,
+  "1:2"
+ ],
+ [
+  21,
+  "ST-318",
+  "Battery door with snap latch",
+  "printed",
+  "ASA",
+  1,
+  "1:1"
+ ],
+ [
+  22,
+  "ST-319",
+  "Top cover with GNSS window",
+  "printed",
+  "ASA",
+  1,
+  "1:2"
+ ],
+ [
+  23,
+  "ST-320",
+  "Cable guide / strain relief",
+  "printed",
+  "TPU 95A",
+  3,
+  "5:1"
+ ],
+ [
+  24,
+  "ST-322",
+  "End-stop bumper (altitude)",
+  "printed",
+  "TPU 95A",
+  2,
+  "5:1"
+ ],
+ [
+  25,
+  "ST-323",
+  "Gasket, body to tower",
+  "printed",
+  "TPU 95A",
+  1,
+  "1:2"
+ ],
+ [
+  26,
+  "ST-324",
+  "Gasket, top cover",
+  "printed",
+  "TPU 95A",
+  1,
+  "1:2"
+ ],
+ [
+  27,
+  "ST-325",
+  "Gasket, battery door",
+  "printed",
+  "TPU 95A",
+  1,
+  "2:1"
+ ],
+ [
+  28,
+  "ST-327",
+  "Gasket, bezel",
+  "printed",
+  "TPU 95A",
+  1,
+  "1:2"
+ ],
+ [
+  29,
+  "ST-328",
+  "Gasket, roll enclosure",
+  "printed",
+  "TPU 95A",
+  1,
+  "1:1"
+ ],
+ [
+  30,
+  "ST-605",
+  "Pack shell, lower half",
+  "printed",
+  "ASA",
+  1,
+  "1:2"
+ ],
+ [
+  31,
+  "ST-606",
+  "Cell holder (end)",
+  "printed",
+  "ASA",
+  2,
+  "2:1"
+ ],
+ [
+  32,
+  "ST-610",
+  "Pack gasket",
+  "printed",
+  "TPU 95A",
+  1,
+  "1:1"
+ ],
+ [
+  33,
+  "ST-611",
+  "Pack light pipe + button",
+  "printed",
+  "PETG (clear)",
+  1,
+  "5:1"
+ ],
+ [
+  34,
+  "ST-612",
+  "Pack shell, upper half",
+  "printed",
+  "ASA",
+  1,
+  "1:2"
+ ]
+]
