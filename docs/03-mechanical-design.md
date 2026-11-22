@@ -33,7 +33,7 @@ Decisions taken in Phase 3:
 | D39 | Removable wedge: the head stands on any tripod by itself; on two dowels and one coin screw on the wedge |
 | D40 | Five payload envelopes (P1–P5) replace the single reference lens; roll limits set per payload |
 
-Still open: whether the five envelopes cover the gear Bruno wants to support (the table in Payload envelopes), and whether to go lighter still (options in the Mass section).
+Bruno confirmed the five payload envelopes cover almost all gear (D40). Still open: whether to go lighter still (options in the Mass section).
 
 ## Layout and frames
 

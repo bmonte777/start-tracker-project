@@ -25,7 +25,7 @@ Branch `phase-3-mechanical-design`. Rev C, 22 Nov 2026. Read this first if you p
 - Rev C: D39 removable wedge (ST-303 head base plate with its own 3/8"-16 bushing; ST-331 wedge top plate, ST-332 coin
   screw, ST-333 dowels; `Item.wedge` flags wedge parts; `HEAD_ON_TRIPOD_DZ`). D40 payload envelopes `params.RIGS` P1–P5
   replace the single reference lens; `assembly.rig_y0/rig_info`, `checks.payloads()`; dovetail bars sit rear-flush with the clamp.
-- Open: Bruno to confirm the five envelopes; further weight options (doc, Mass section).
+- D40 confirmed by Bruno. Open: further weight options (doc, Mass section).
 
 ## Key results (rev C)
 
@@ -47,4 +47,4 @@ Branch `phase-3-mechanical-design`. Rev C, 22 Nov 2026. Read this first if you p
 - Bought parts are envelopes from datasheets; replace with maker STEP files when downloaded.
 - 60T pulley bolt pattern to confirm on the Laifual drawing before ordering.
 - Phase 4 takes the board outlines in the doc as fixed inputs, reruns the power budget for the 16 V rail (D33) and reviews D26.
-- Pull request #4: Phase 3 mechanical design (branch phase-3-mechanical-design). Merge once the payload envelopes are confirmed.
+- Pull request #4: Phase 3 mechanical design (branch phase-3-mechanical-design). All decisions approved; ready to merge.
