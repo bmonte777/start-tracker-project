@@ -1,0 +1,87 @@
+name: Phase 4 electronics build
+
+# Checks and rebuilds the electronics outputs from the KiCad projects in hardware/electronics:
+# ERC, DRC, Gerbers, drill files, JLCPCB BOM and placement files, STEP models, renders, harness drawings
+# and the board viewer page. Runs only when started by hand
+# (Actions tab -> Phase 4 electronics build -> Run workflow). Nothing is committed back; the results
+# are attached to the run as one download called "phase4-electronics".
+
+on:
+  workflow_dispatch:
+    inputs:
+      boards:
+        description: "Board folders (space separated)"
+        required: false
+        default: "cartridge-board mainboard"
+      regenerate:
+        description: "Rebuild schematic and layout from design.py first, laying the committed routes on the mainboard (no autorouting here): yes / no"
+        required: false
+        default: "no"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: kicad/kicad:9.0
+      options: --user root
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tools (SVG converter, PDF tools) and KiCad's library tables
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends librsvg2-bin poppler-utils python3-pil
+          # without the global library tables ERC reports every symbol as "library not configured"
+          mkdir -p "$HOME/.config/kicad/9.0"
+          cp /usr/share/kicad/template/*-lib-table "$HOME/.config/kicad/9.0/"
+      - name: Calculations
+        run: python3 docs/calc/phase4_calcs.py > /dev/null
+      # The mainboard is routed off-line by tools/grouter.py (needs numpy, scipy, matplotlib and numba, 15-20 minutes) and
+      # the result is committed as mainboard/st-501.routes.json. Here layout.py only lays those routes on the board;
+      # the cartridge board has no route plan and its committed layout is checked as it is.
+      - name: Rebuild from design.py (only when asked)
+        if: ${{ inputs.regenerate == 'yes' }}
+        working-directory: hardware/electronics
+        run: |
+          python3 tools/stfp.py
+          python3 tools/layout.py mainboard | tail -5
+      - name: ERC and DRC
+        id: check
+        continue-on-error: true
+        working-directory: hardware/electronics
+        run: python3 tools/check.py ${{ inputs.boards }}
+      # fabrication files are only made for a board whose own checks are clean
+      - name: Fabrication files, renders
+        working-directory: hardware/electronics
+        run: |
+          for b in ${{ inputs.boards }}; do
+            if python3 tools/check.py $b > /dev/null; then python3 tools/fab.py $b; else echo "$b: checks not clean, no fabrication files"; fi
+          done
+      - name: Harness drawings, tables, board viewer
+        working-directory: hardware/electronics
+        run: |
+          python3 harness/harness.py
+          python3 tools/docgen.py > /dev/null
+          python3 tools/viewer.py
+      - name: List what is still open on the mainboard
+        if: always()
+        working-directory: hardware/electronics
+        run: python3 tools/openlist.py mainboard || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase4-electronics
+          path: |
+            hardware/electronics/fab/
+            hardware/electronics/*/out/*-erc.json
+            hardware/electronics/*/out/*-drc.json
+            hardware/electronics/harness/
+            hardware/electronics/doc/
+            hardware/electronics/*/doc/*-open-connections.*
+            docs/img/04-*.png
+            docs/calc/phase4_calcs.md
+            docs/calc/phase4_results.json
+      - name: Fail the run if a check found errors
+        if: steps.check.outcome == 'failure'
+        run: |
+          echo "ERC or DRC reported errors: see the ERC and DRC step and the *-drc.json files in the download"
+          exit 1
