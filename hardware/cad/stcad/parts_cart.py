@@ -144,9 +144,9 @@ def _tube(size):
     s -= cyl(t["magnet_d"] / 2 + 0.03, 2.6, z=c["z_magnet"] - 2.6 + 0.01)
     zs = c["z_magnet"] - t["solid_end"] - t["slot_l"]
     s -= box(-t["slot_w"] / 2, t["slot_w"] / 2, 0, 6, zs, zs + t["slot_l"])
-    for (x, y) in polar(2, 7.0, 90):
+    for (x, y) in polar(2, t["screw_pcd"] / 2, 90):
         s -= cyl(P.TAP["M3"] / 2, t["flange_t"] + 0.2, x, y, z0 - 0.1)
-    feat("tap", "M3", (0, 7, z0), "-Z", None, "2x on PCD 14, through the flange")
+    feat("tap", "M3", (0, t["screw_pcd"] / 2, z0), "-Z", None, f"2x on PCD {t['screw_pcd']:.0f}, through the flange")
     feat("bore", "6.03 +0.02/0", (0, 0, c["z_magnet"]), "-Z", 2.6, "magnet seat, magnet glued (Loctite 638)")
     feat("slot", f"{t['slot_w']} x {t['slot_l']}", (0, 5, zs), "Y", None, "cable window, one side")
     return s

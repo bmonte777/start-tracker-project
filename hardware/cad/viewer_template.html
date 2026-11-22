@@ -60,6 +60,7 @@ canvas { display: block; width: 100%; height: 100%; }
 .ctl output { font-family: var(--font-mono); color: var(--ink); font-variant-numeric: tabular-nums; }
 input[type=range] { width: 100%; accent-color: var(--accent); }
 .btns { display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto; }
+select { font: inherit; font-size: 12px; padding: 5px 6px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); max-width: 260px; }
 button { font: inherit; font-size: 12px; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
 button[aria-pressed="true"] { background: var(--accent); color: var(--panel); border-color: var(--accent); }
 button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -94,7 +95,9 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
       <div class="ctl"><label for="al">Altitude <output id="alo">0&deg;</output></label><input id="al" type="range" min="-15" max="100" value="0"></div>
       <div class="ctl"><label for="rl">Roll <output id="rlo">0&deg;</output></label><input id="rl" type="range" min="-145" max="10" value="0"></div>
       <div class="btns">
+        <select id="rigsel" aria-label="Payload"></select>
         <button id="rig" aria-pressed="true">Payload</button>
+        <button id="wedgebtn" aria-pressed="true">Wedge</button>
         <button id="edges" aria-pressed="true">Edges</button>
         <button id="fit">Fit view</button>
         <button id="clear">Clear selection</button>
@@ -102,7 +105,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
       </div>
     </div>
     <div class="info" id="info"><h2>Nothing selected</h2><div class="sub">Pick a part to see its ID, material, process and mass.</div></div>
-    <div class="legend">Ranges: altitude bumpers &minus;15&deg; / +100&deg;; roll +10&deg; to &minus;145&deg; with the 200&ndash;600 on its foot.</div>
+    <div class="legend">Altitude bumpers &minus;15&deg; / +100&deg;. Roll limits depend on the payload (see the design doc).</div>
   </main>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
@@ -111,7 +114,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 const MODEL = "__MODEL_DATA__";
 const PARTS = __PARTS__;
 const K = __PARAMS__;
-const STEP_NAMES = {1:"Step 1 - base and wedge", 2:"Step 2 - cartridges (bench)", 3:"Step 3 - azimuth cartridge and body", 4:"Step 4 - wedge upper plate", 5:"Step 5 - hinge", 6:"Step 6 - tower and altitude cartridge", 7:"Step 7 - arm and roll cartridge", 8:"Step 8 - shelf and clamp", 9:"Step 9 - electronics and covers", 10:"Step 10 - battery", 99:"Reference payload"};
+const STEP_NAMES = {1:"Step 1 - base and wedge", 2:"Step 2 - cartridges (bench)", 3:"Step 3 - azimuth cartridge and body", 4:"Step 4 - head base plate", 5:"Step 5 - wedge top plate, hinge, head on wedge", 6:"Step 6 - tower and altitude cartridge", 7:"Step 7 - arm and roll cartridge", 8:"Step 8 - shelf and clamp", 9:"Step 9 - electronics and covers", 10:"Step 10 - battery", 99:"Reference payload"};
 
 const canvas = document.getElementById('c');
 const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
@@ -157,14 +160,14 @@ async function load() {
     (G[r.stage] || G.az).add(m);
     meshes.push(m);
   }
-  buildList(); fit(); applySliders();
+  buildList(); showRig(); fit(); applySliders();
   document.getElementById('loading').remove();
 }
 
 function buildList(filter = '') {
   const list = document.getElementById('list'); list.innerHTML = '';
   const byStep = {};
-  meshes.forEach((m, i) => { (byStep[m.userData.step] ||= []).push(i); });
+  meshes.forEach((m, i) => { if (m.userData.stage !== 'rig') (byStep[m.userData.step] ||= []).push(i); });
   const f = filter.trim().toLowerCase();
   Object.keys(byStep).map(Number).sort((a, b) => a - b).forEach(st => {
     const rows = byStep[st].filter(i => !f || (meshes[i].userData.name + ' ' + meshes[i].userData.pid).toLowerCase().includes(f));
@@ -232,7 +235,19 @@ document.getElementById('q').addEventListener('input', e => buildList(e.target.v
 document.getElementById('fit').onclick = fit;
 document.getElementById('clear').onclick = () => select(null);
 document.getElementById('edges').onclick = e => { edgesOn = !edgesOn; e.target.setAttribute('aria-pressed', edgesOn); select(selected); };
-document.getElementById('rig').onclick = e => { const on = e.target.getAttribute('aria-pressed') !== 'true'; e.target.setAttribute('aria-pressed', on); meshes.forEach(m => { if (m.userData.stage === 'rig') m.visible = on; }); };
+let rigOn = true, curRig = K.ref_rig, wedgeOn = true;
+function showRig() { meshes.forEach(m => { if (m.userData.stage === 'rig') m.visible = rigOn && m.userData.rig === curRig; }); }
+const rs = document.getElementById('rigsel');
+Object.entries(K.rigs).forEach(([k, r]) => { const o = document.createElement('option'); o.value = k; o.textContent = `${k}: ${r.name} (${r.kg} kg)`; if (k === curRig) o.selected = true; rs.appendChild(o); });
+rs.onchange = () => { curRig = rs.value; showRig(); };
+document.getElementById('rig').onclick = e => { rigOn = !rigOn; e.target.setAttribute('aria-pressed', rigOn); showRig(); };
+document.getElementById('wedgebtn').onclick = e => {
+  wedgeOn = !wedgeOn; e.target.setAttribute('aria-pressed', wedgeOn);
+  meshes.forEach(m => { if (m.userData.wedge) m.visible = wedgeOn; });
+  const wd = document.getElementById('wd'); if (!wedgeOn) { wd.value = 0; } wd.disabled = !wedgeOn;
+  root.position.z = wedgeOn ? 0 : -K.head_drop; applySliders();
+  document.getElementById('wdo').textContent = wedgeOn ? document.getElementById('wdo').textContent : 'no wedge (on tripod)';
+};
 function setTheme(dark) {
   document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
   document.getElementById('theme').setAttribute('aria-pressed', dark);

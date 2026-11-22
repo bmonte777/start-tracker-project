@@ -38,6 +38,7 @@ OPTS = {
     "ST-327": dict(views=("left",), datum="bbox"),
     "ST-328": dict(views=("front",), datum="bbox"),
     "ST-610": dict(views=("top",), datum="bbox"),
+    "ST-303": dict(views=("front", "top"), datum="origin", section=True),
     "ST-208": dict(views=("front", "top"), datum="origin", section=True),
     "ST-215": dict(views=("front", "top"), datum="origin", section=True),
     "ST-211": dict(views=("front", "top"), datum="origin", section=True),

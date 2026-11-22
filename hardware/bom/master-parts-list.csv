@@ -26,12 +26,15 @@ ST-218,"V-ring VA-80, NBR (altitude, on the arm hub)",1,NBR,NBR,buy,SKF / Simply
 ST-219,"V-ring VA-65, NBR (roll, on the shelf)",1,NBR,NBR,buy,SKF / Simply Bearings,2.40,1.05,0.65,2.40,1.05,0.65,est,
 ST-301,Base plate with 3/8in-16 socket,1,aluminium 6061 CNC,"aluminium 6061 CNC, hard anodised",make,JLCCNC,32.76,13.65,8.19,32.76,13.65,8.19,est (JLCCNC class),
 ST-302,Wedge lower plate with azimuth fine adjust,1,aluminium 6061 CNC,aluminium 6061 CNC,make,JLCCNC,72.80,16.38,10.01,72.80,16.38,10.01,est (JLCCNC class),
-ST-303,Wedge upper plate (azimuth reducer mount),1,aluminium 6061 CNC,aluminium 6061 CNC,make,JLCCNC,70.98,18.20,10.92,70.98,18.20,10.92,est (JLCCNC class),
+ST-303,"Head base plate (azimuth reducer mount, 3/8in-16 tripod socket)",1,aluminium 6061 CNC,aluminium 6061 CNC,make,JLCCNC,43.68,18.20,10.92,43.68,18.20,10.92,est (JLCCNC class),D39: stays on the head; the head stands on any tripod without the wedge
 ST-304,"Wedge hinge pin, dia 8 h6 x 80, ends tapped M3",1,stainless ground,stainless ground,buy,Misumi,3.64,1.82,1.09,3.64,1.82,1.09,est,retained by 2 x M3x6 ISO 7380 + ST-751
 ST-305,Wedge latitude arc with clamp,2,aluminium 6061 CNC,aluminium 6061 CNC,make,JLCCNC,25.48,9.10,5.46,50.96,18.20,10.92,est (JLCCNC class),fixed to ST-303; clamp knobs on ST-302 press it (D38)
 ST-306,"Azimuth fine-adjust thumb screw M5 x 25, stainless",2,stainless + alu knob,stainless + alu knob,buy,Misumi,1.60,0.70,0.40,3.20,1.40,0.80,est,push the base boss from both sides
-ST-307,3/8in-16 stainless thread bushing,1,stainless,stainless,buy,camera hardware supplier,2.73,1.36,0.91,2.73,1.36,0.91,est,
+ST-307,3/8in-16 stainless thread bushing,2,stainless,stainless,buy,camera hardware supplier,2.73,1.36,0.91,5.46,2.72,1.82,est,"one in the base ST-301, one in the head base ST-303 (D39)"
 ST-308,"Latitude clamp knob, thumb screw M5 x 16, stainless",2,stainless,stainless,buy,Misumi / Accu,1.40,0.60,0.35,2.80,1.20,0.70,est,
+ST-331,"Wedge top plate (removable wedge, D39)",1,aluminium 6061 CNC,aluminium 6061 CNC,make,JLCCNC,63.70,16.38,10.01,63.70,16.38,10.01,est (JLCCNC class),"hinge knuckle, arcs, 2 dowels; head held by ST-332"
+ST-332,"Wedge screw 3/8in-16 x 10, coin slot, stainless",1,stainless,stainless,buy,camera hardware supplier,1.50,0.60,0.30,1.50,0.60,0.30,est,holds the head on the wedge top plate (D39)
+ST-333,"Dowel pin 4 m6 x 10, stainless",2,stainless,stainless,buy,Misumi / Accu,0.40,0.15,0.08,0.80,0.30,0.16,est,"anti-rotation, head on the wedge (D39)"
 ST-309,"Latitude tangent screw, knurled thumb screw M3 x 25",1,stainless,stainless,buy,Misumi / Accu,1.00,0.50,0.30,1.00,0.50,0.30,est,"fine adjust, D38"
 ST-310,Azimuth body (main housing),1,MJF PA12 (JLC3DP),aluminium 6061 CNC,make,"JLC3DP (MJF PA12), D29",46.09,45.50,40.95,46.09,45.50,40.95,"est (JLC3DP MJF, USD 0.275 / g, spec 8)","W1 + W2 (D35): MJF PA12, 2.0 mm walls; 184 g printed"
 ST-311,Tower (altitude housing),1,MJF PA12 (JLC3DP),aluminium 6061 CNC,make,"JLC3DP (MJF PA12), D29",45.95,42.77,36.40,45.95,42.77,36.40,"est (JLC3DP MJF, USD 0.275 / g, spec 8)","W1 + W2 (D35): MJF PA12, 2.0 mm walls; 184 g printed"
@@ -98,15 +101,14 @@ ST-705,"Heat-set insert set M4/M5, about 16 pcs",0,brass,not used (tapped alumin
 ST-706,"Dowel pin set, dia 3 m6, 6 pcs",0,steel,steel,buy,Misumi,1.82,0.73,0.46,0.00,0.00,0.00,est,replaced in Phase 3 by single lines ST-710 to ST-762
 ST-707,Gasket and O-ring set,0,NBR / TPU,silicone / EPDM,buy,generic,5.46,2.73,1.82,0.00,0.00,0.00,est,replaced in Phase 3 by single lines ST-710 to ST-762
 ST-708,Thread locker and grease (per head),1,-,-,buy,Loctite / Kluber,1.82,0.46,0.27,1.82,0.46,0.27,est,
-ST-710,"Screw ISO 4762 M3 x 6, stainless A2",4,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.07,0.03,0.02,0.28,0.12,0.08,est (pack),Encoder tube ST-208 to wedge upper plate (azimuth); Roll encoder tube ST-215 to shelf
-ST-711,"Screw ISO 4762 M3 x 8, stainless A2",12,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.07,0.03,0.02,0.84,0.36,0.24,est (pack),Motor to motor plate ST-207 (x3)
+ST-710,"Screw ISO 4762 M3 x 6, stainless A2",2,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.07,0.03,0.02,0.14,0.06,0.04,est (pack),Roll encoder tube ST-215 to shelf
+ST-711,"Screw ISO 4762 M3 x 8, stainless A2",14,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.07,0.03,0.02,0.98,0.42,0.28,est (pack),Encoder tube ST-208 to head base plate ST-303 (azimuth); Motor to motor plate ST-207 (x3)
 ST-712,"Screw ISO 4762 M3 x 10, stainless A2",16,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.07,0.03,0.02,1.12,0.48,0.32,quoted (pack),Arm ST-312 to altitude reducer output
 ST-713,"Screw ISO 4762 M3 x 12, stainless A2",27,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.07,0.03,0.02,1.89,0.81,0.54,est (pack),60T pulley ST-205 to reducer input stub (x3); Belt tension screw (x3); Roll shelf ST-313 to roll reducer output
-ST-714,"Screw ISO 4762 M3 x 16, stainless A2",3,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.08,0.04,0.02,0.24,0.12,0.06,est (pack),"Roll enclosure ST-217 to arm pad (gasket ST-328, O-ring ST-329)"
-ST-715,"Screw ISO 4762 M3 x 20, stainless A2",16,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.09,0.04,0.03,1.44,0.64,0.48,est (pack),Azimuth reducer output flange to wedge upper plate ST-303
-ST-716,"Screw ISO 4762 M3 x 30, stainless A2",10,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.12,0.05,0.03,1.20,0.50,0.30,est (pack),Carrier ST-212/216 posts to housing flange (x3); Pack shell halves ST-605/612 (gasket ST-610)
-ST-717,"Screw ISO 4762 M3 x 45, aluminium 7075-T6",8,aluminium 7075-T6,aluminium 7075-T6,buy,Fastener Express / RC hardware,0.90,0.45,0.25,7.20,3.60,2.00,"est (7075 M3 x 27, 50 pcs USD 36.95, Fastener Express)",Reducer size 14 to cartridge housing ST-210; D35 weight saving
-ST-718,"Screw ISO 4762 M3 x 50, aluminium 7075-T6",24,aluminium 7075-T6,aluminium 7075-T6,buy,Fastener Express / RC hardware,0.90,0.45,0.25,21.60,10.80,6.00,"est (7075 M3 x 27, 50 pcs USD 36.95, Fastener Express)",Reducer size 17 to cartridge housing ST-211 (x2 axes); D35 weight saving
+ST-714,"Screw ISO 4762 M3 x 16, stainless A2",19,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.08,0.04,0.02,1.52,0.76,0.38,est (pack),"Azimuth reducer output flange to head base plate ST-303; Roll enclosure ST-217 to arm pad (gasket ST-328, O-ring ST-329)"
+ST-715,"Screw ISO 4762 M3 x 30, stainless A2",10,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.12,0.05,0.03,1.20,0.50,0.30,est (pack),Carrier ST-212/216 posts to housing flange (x3); Pack shell halves ST-605/612 (gasket ST-610)
+ST-716,"Screw ISO 4762 M3 x 45, aluminium 7075-T6",8,aluminium 7075-T6,aluminium 7075-T6,buy,Fastener Express / RC hardware,0.90,0.45,0.25,7.20,3.60,2.00,"est (7075 M3 x 27, 50 pcs USD 36.95, Fastener Express)",Reducer size 14 to cartridge housing ST-210; D35 weight saving
+ST-717,"Screw ISO 4762 M3 x 50, aluminium 7075-T6",24,aluminium 7075-T6,aluminium 7075-T6,buy,Fastener Express / RC hardware,0.90,0.45,0.25,21.60,10.80,6.00,"est (7075 M3 x 27, 50 pcs USD 36.95, Fastener Express)",Reducer size 17 to cartridge housing ST-211 (x2 axes); D35 weight saving
 ST-720,"Screw ISO 7380 M3 x 5, stainless A2",2,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.08,0.04,0.02,0.16,0.08,0.04,est (pack),Altitude encoder tube to arm hub
 ST-721,"Screw ISO 7380 M3 x 6, stainless A2",14,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.08,0.04,0.02,1.12,0.56,0.28,est (pack),Bumpers ST-322 to tower; Encoder board ST-520 to carrier (x3); Hinge pin ST-304 retaining screws; Mainboard ST-501 to bezel bosses
 ST-722,"Screw ISO 7380 M3 x 8, stainless A2",16,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.08,0.04,0.02,1.28,0.64,0.32,est (pack),Battery tray ST-317 to door ST-318; Head-side blade connector ST-609 to bracket; Motor plate to housing walls (x3)
@@ -115,7 +117,7 @@ ST-724,"Screw ISO 7380 M3 x 12, stainless A2",6,stainless A2,stainless A4,buy,Ac
 ST-730,"Screw ISO 4762 M4 x 16, stainless A2",4,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.13,0.06,0.04,0.52,0.24,0.16,est (pack),Roll cartridge to arm pad
 ST-732,"Screw ISO 7380 M4 x 10, stainless A2",4,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.13,0.06,0.03,0.52,0.24,0.12,est (pack),Azimuth cartridge to body floor
 ST-733,"Screw ISO 7380 M4 x 12, stainless A2",4,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.13,0.06,0.03,0.52,0.24,0.12,est (pack),Altitude cartridge to tower wall
-ST-740,"Screw ISO 7380 M5 x 12, stainless A2",6,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.19,0.09,0.05,1.14,0.54,0.30,est (pack),Base ST-301 to wedge lower plate ST-302 (azimuth lock); Latitude arcs ST-305 to wedge upper plate ST-303
+ST-740,"Screw ISO 7380 M5 x 12, stainless A2",6,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.19,0.09,0.05,1.14,0.54,0.30,est (pack),Base ST-301 to wedge lower plate ST-302 (azimuth lock); Latitude arcs ST-305 to wedge top plate ST-331
 ST-741,"Screw ISO 7380 M5 x 16, stainless A2",4,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.22,0.10,0.06,0.88,0.40,0.24,est (pack),Tower to body (with gasket ST-323)
 ST-750,"Washer ISO 7089 M3, stainless A2",12,stainless A2,stainless A4,buy,Accu / Bossard,0.03,0.01,0.01,0.36,0.12,0.12,est (pack),motor plate clamp
 ST-751,"Washer ISO 7093 M3, stainless A2",2,stainless A2,stainless A4,buy,Accu / Bossard,0.04,0.01,0.01,0.08,0.02,0.02,est (pack),hinge pin ends

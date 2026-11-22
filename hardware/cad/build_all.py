@@ -13,7 +13,7 @@ from build123d import Compound, export_step  # noqa: E402
 from stcad import params as P, assembly as A  # noqa: E402
 from stcad.core import REGISTRY, part_mass  # noqa: E402
 
-STEPS = ["parts", "assembly", "renders", "steps", "drawings", "bom", "fab", "checks", "viewer"]
+STEPS = ["parts", "assembly", "checks", "renders", "steps", "sheets", "drawings", "bom", "fab", "viewer"]
 
 
 def do_parts():
@@ -60,6 +60,27 @@ def do_renders():
 def do_steps():
     from stcad import scenes
     scenes.step_images(os.path.join(ROOT, "docs", "img"))
+
+
+def do_sheets():
+    """Picture sheets for the design doc: 3 x 2 renders and 2 x 5 assembly steps."""
+    from PIL import Image
+    img = os.path.join(ROOT, "docs", "img")
+
+    def grid(names, cols, w, h, out):
+        rows = (len(names) + cols - 1) // cols
+        sh = Image.new("RGB", (cols * w, rows * h), "white")
+        for k, n in enumerate(names):
+            f = os.path.join(img, n)
+            if os.path.exists(f):
+                im = Image.open(f).convert("RGB")
+                im.thumbnail((w, h), Image.LANCZOS)
+                sh.paste(im, ((k % cols) * w + (w - im.width) // 2, (k // cols) * h + (h - im.height) // 2))
+        sh.save(os.path.join(img, out))
+
+    grid(["03-three-quarter.png", "03-exploded.png", "03-no-wedge.png", "03-payload-p5.png",
+          "03-swing-85.png", "03-roll-limits.png"], 2, 778, 588, "03-renders-sheet.png")
+    grid([f"03-step-{k:02d}.png" for k in range(1, 11)], 2, 658, 494, "03-steps-sheet.png")
 
 
 def do_drawings():
@@ -122,7 +143,9 @@ def do_viewer():
         if pid not in parts:
             parts[pid] = dict(name=r["Name"], kind="Bought" if r["Make/Buy"] == "buy" else r["Make/Buy"], material=r["Material (prototype)"],
                               qty=int(float(r["Qty per head"] or 0)), mass_g=None, files="-")
-    k = dict(hinge_x=P.WEDGE_HINGE_X, hinge_z=P.WEDGE_HINGE_Z, z_alt=P.Z_ALT, x_roll=P.X_ROLL, z_roll=P.Z_ROLL)
+    k = dict(hinge_x=P.WEDGE_HINGE_X, hinge_z=P.WEDGE_HINGE_Z, z_alt=P.Z_ALT, x_roll=P.X_ROLL, z_roll=P.Z_ROLL,
+             head_drop=P.HEAD_ON_TRIPOD_DZ, ref_rig=P.REF_RIG,
+             rigs={rk: dict(name=r["name"], kg=r["kg"]) for rk, r in P.RIGS.items()})
     html = (tpl.replace("__MODEL_DATA__", data).replace("__REV__", P.REV).replace("__DATE__", P.DATE)
             .replace("__PARTS__", json.dumps(parts, separators=(",", ":"))).replace("__PARAMS__", json.dumps(k)))
     open(os.path.join(ROOT, "hardware", "viewer", "star-tracker-viewer.html"), "w").write(html)

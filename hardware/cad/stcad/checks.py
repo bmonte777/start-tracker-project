@@ -6,7 +6,8 @@ from . import params as P
 from . import assembly as A
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "out")
-EXCLUDE = [("Belt", "Pulley"), ("Reducer", "Cartridge housing")]     # belt teeth mesh; crush-rib press fit
+EXCLUDE = [("Belt", "Pulley"), ("Reducer", "Cartridge housing"), ("Wedge screw", "3/8in-16 bushing (head)"),
+           ("Dowel", "Head base plate"), ("Dowel", "Wedge top plate")]     # belt teeth mesh; crush-rib press fit
 
 
 def _bb(s):
@@ -43,18 +44,28 @@ def _group(pose, names_pred):
     return [A.placed(it, pose) for it in A.items() if names_pred(it)]
 
 
-def min_dist(shapes_a, shapes_b):
-    best = (1e9, None, None)
-    for i, a in enumerate(shapes_a):
-        ba = _bb(a)
-        for j, b in enumerate(shapes_b):
-            bb = _bb(b)
+def min_dist(shapes_a, shapes_b, cap=None):
+    """Exact minimum distance between two groups. Pairs are tried nearest bounding box first, so most are skipped.
+    With `cap`, pairs whose boxes are further apart than cap are ignored (returns cap if none is closer)."""
+    bas = [_bb(a) for a in shapes_a]
+    bbs = [_bb(b) for b in shapes_b]
+    pairs = []
+    for i, ba in enumerate(bas):
+        for j, bb in enumerate(bbs):
             gap = max(0, max(ba[k] - bb[k + 3] for k in range(3)), max(bb[k] - ba[k + 3] for k in range(3)))
-            if gap > best[0]:
-                continue
-            d = a.distance_to(b)
-            if d < best[0]:
-                best = (d, i, j)
+            if cap is None or gap <= cap:
+                pairs.append((gap, i, j))
+    pairs.sort()
+    best = (1e9 if cap is None else cap, None, None)
+    for gap, i, j in pairs:
+        if gap >= best[0]:
+            break
+        d = shapes_a[i].distance_to(shapes_b[j])
+        if d < best[0]:
+            best = (d, i, j)
+    if best[1] is None and pairs:
+        gap, i, j = pairs[0]
+        best = (best[0], i, j)
     return best
 
 
@@ -75,7 +86,10 @@ def camera_swing():
         names = [it.name for it in A.items() if head_fixed(it)]
         rig = A.rig_shapes(pose)
         d, i, j = min_dist(list(rig.values()), fixed)
-        out.append(dict(alt=th, min_mm=round(d, 1), rig=list(rig.keys())[i], part=names[j]))
+        zmin = min(v.bounding_box().min.Z for v in rig.values())
+        out.append(dict(alt=th, min_mm=round(d, 1), rig=list(rig.keys())[i], part=names[j],
+                        above_tripod_wedge_mm=round(zmin, 1),
+                        above_tripod_no_wedge_mm=round(zmin - P.HEAD_ON_TRIPOD_DZ, 1)))
     return out
 
 
@@ -98,6 +112,7 @@ def arm_swing():
 def roll_travel(alt=0.0, step=1.0, margin=2.0):
     """Roll the reference rig toward the tower (+) and away (-) until the clearance drops below `margin`."""
     others = [it for it in A.items() if it.stage != "roll" and it.name not in ("Reducer size 14 (roll)",)]
+    oth = [A.placed(it, dict(A.HOME, alt=alt)) for it in others]     # roll does not move these
     res = {}
     for sign in (+1, -1):
         last_ok, hit = 0.0, None
@@ -105,7 +120,7 @@ def roll_travel(alt=0.0, step=1.0, margin=2.0):
         while abs(phi) <= 200:
             pose = dict(A.HOME, alt=alt, roll=phi)
             rig = A.rig_shapes(pose)
-            d, i, j = min_dist(list(rig.values()), [A.placed(it, pose) for it in others])
+            d, i, j = min_dist(list(rig.values()), oth, cap=margin)
             if d < margin:
                 hit = dict(at=phi, min_mm=round(d, 1), rig=list(rig.keys())[i], part=others[j].name)
                 break
@@ -121,6 +136,13 @@ def roll_travel(alt=0.0, step=1.0, margin=2.0):
             break
         phi -= 5
     res["below_tripod_plate_at_deg"] = phi
+    phi = 0.0
+    while phi > -200:
+        rg = A.rig_shapes(dict(A.HOME, alt=alt, roll=phi))
+        if min(v.bounding_box().min.Z for v in rg.values()) < P.HEAD_ON_TRIPOD_DZ:
+            break
+        phi -= 5
+    res["below_tripod_no_wedge_at_deg"] = phi
     pose0 = dict(A.HOME, alt=alt)
     rig = A.rig_shapes(pose0)
     d, i, j = min_dist(list(rig.values()), [A.placed(it, pose0) for it in others])
@@ -220,17 +242,20 @@ def mass_cog(extra_kg):
                 for k, v in enumerate((c.X, c.Y, c.Z)):
                     s3[k] += m * v
         if rig:
-            r = A.rig_shapes(A.HOME)
-            for k2, mk in (("lens", P.LENS["mass"]), ("camera", P.CAMERA["mass"])):
-                c = r[k2].center()
+            ri = A.rig_info()
+            for k2, mk in ri["masses"].items():
+                c = ri["cgs"][k2]
                 mm += mk
-                for k, v in enumerate((c.X, c.Y, c.Z)):
+                for k, v in enumerate(c):
                     s3[k] += mk * v
         return mm, [v / mm for v in s3]
     m_alt, cg_alt = cg_of(lambda it: it.stage in ("alt", "roll"), rig=True)
     m_roll, cg_roll = cg_of(lambda it: it.stage == "roll", rig=True)
     m_rs, cg_rs = cg_of(lambda it: it.stage in ("roll",) or (it.stage == "alt" and ("(roll)" in it.name or "enclosure" in it.name)))
+    from .joints import wedge_fastener_kg
+    wedge_kg = sum(it.kg() for it in its if it.wedge) + wedge_fastener_kg()
     return dict(total_kg=round(tot, 3), cog_mm=[round(v, 1) for v in cog],
+                wedge_kg=round(wedge_kg, 3), head_only_kg=round(tot - wedge_kg, 3),
                 groups={k: round(v, 3) for k, v in groups.items()},
                 spec_groups={g[0]: g[1] for g in SPEC_GROUPS},
                 per_part={k: dict(name=v[0], kg=round(v[1], 4), qty=v[2]) for k, v in sorted(per_part.items())},
@@ -241,7 +266,29 @@ def mass_cog(extra_kg):
                 roll_stage_hardware=dict(kg=round(m_rs, 3), cg=[round(v, 1) for v in cg_rs]))
 
 
-def main(which=("interference", "motor48", "camera", "arm", "roll", "wedge", "mass")):
+def payloads():
+    """Every payload envelope: balance, loads, camera swing, roll travel, tripod clearance (wedge on and off)."""
+    out = {}
+    for key in P.RIGS:
+        A.RIG = key
+        inf = A.rig_info(key)
+        cs = camera_swing()
+        r0, r45 = roll_travel(0.0), roll_travel(45.0)
+        worst = min(cs, key=lambda c: c["min_mm"])
+        out[key] = dict(name=inf["name"], kg=round(inf["kg"], 2), mount_center_y=round(inf["mount_center_y"], 1),
+                        alt_residual_Nm=round(inf["alt_residual_Nm"], 2), alt_offbalance_Nm=round(inf["alt_offbalance_Nm"], 2),
+                        alt_dz_mm=round(inf["alt_dz_mm"], 1), roll_r_mm=round(inf["roll_r_mm"], 1),
+                        roll_torque_90_Nm=round(inf["roll_torque_90_Nm"], 2),
+                        camera_swing=cs, camera_min=worst,
+                        camera_at_85=[c for c in cs if c["alt"] == 85][0],
+                        tripod_min_wedge_mm=min(c["above_tripod_wedge_mm"] for c in cs),
+                        tripod_min_no_wedge_mm=min(c["above_tripod_no_wedge_mm"] for c in cs),
+                        roll_alt0=r0, roll_alt45=r45)
+    A.RIG = None
+    return out
+
+
+def main(which=("interference", "motor48", "camera", "arm", "roll", "wedge", "payloads", "mass")):
     t = time.time()
     res = {}
     if "interference" in which:
@@ -257,6 +304,8 @@ def main(which=("interference", "motor48", "camera", "arm", "roll", "wedge", "ma
         res["roll_travel_alt45"] = roll_travel(45.0)
     if "wedge" in which:
         res["wedge_tilt"] = wedge_tilt()
+    if "payloads" in which:
+        res["payloads"] = payloads()
     if "mass" in which:
         from .joints import fastener_kg
         res["mass"] = mass_cog(dict(fasteners=fastener_kg(), harness=0.06))

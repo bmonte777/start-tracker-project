@@ -117,9 +117,44 @@ def build_wedge_lower():
     return s
 
 
-# ============================================================================== ST-303 wedge upper plate
+# ============================================================================== ST-303 head base plate (D39)
+def build_head_base():
+    """Stays on the head: carries the azimuth reducer output and encoder tube; 3/8"-16 socket for a tripod,
+    two dowel holes for the wedge top plate ST-331."""
+    z0, zt = P.Z_UPPER_PLATE_TOP, P.Z_AZ_OUT
+    s = cyl(P.HEAD_BASE_R, zt - z0, z=z0)
+    s += cyl(40.0, 1.5, z=38.3)                                              # V-ring back shoulder
+    feat("pin", "75 h9", (0, 0, 39.8), "Z", zt - 39.8, "V-ring VA-75 seat (ST-213); 1.5 mm shoulder ring at Z 38.3")
+    s -= cyl(22.5, 2.5, z=zt - 2.5 + 0.01)
+    feat("bore", "45 H7", (0, 0, zt), "-Z", 2.5, "azimuth reducer output pilot")
+    tr = P.ENC_TUBE["flange_d"] / 2 + 0.1
+    s -= cyl(tr, 3.0, z=zt - 5.5)
+    feat("bore", f"{2 * tr:.1f}", (0, 0, zt - 2.5), "-Z", 3.0, "encoder tube flange seat")
+    r = P.RED[17]
+    for (x, y) in polar(r["n_tap"], r["pcd_tap"] / 2):
+        s -= cyl(P.CLEAR["M3"] / 2, zt - z0 + 1, x, y, z0 - 0.5)
+        s -= cyl(3.0, 4.0, x, y, z0 - 0.01)
+    feat("cbore", "3.4 / 6.0x4", (27, 0, z0), "Z", None, "16x on PCD 54; output flange M3x16 ISO 4762 from below", 16)
+    for (x, y) in polar(2, P.ENC_TUBE["screw_pcd"] / 2, 90):
+        s -= cyl(P.CLEAR["M3"] / 2, 12, x, y, z0 - 0.5)
+        s -= cyl(3.0, 4.3, x, y, z0 - 0.01)
+    feat("cbore", "3.4 / 6.0x4.3", (0, 11, z0), "Z", None, "2x on PCD 22; encoder tube M3x8 ISO 4762 from below", 2)
+    s -= cyl(6.0, 8.0, z=z0 - 0.01)
+    feat("bore", "12 H7", (0, 0, z0), "Z", 8.0, "3/8in-16 bushing ST-307 pressed in with Loctite 638 (tripod / wedge screw)")
+    for a in P.WEDGE_PIN_ANG:
+        x, y = P.WEDGE_PIN_R * math.cos(math.radians(a)), P.WEDGE_PIN_R * math.sin(math.radians(a))
+        s -= cyl(2.0, 6.0, x, y, z0 - 0.01)
+    feat("bore", "4 H7", (32.4, 6.4, z0), "Z", 6.0, "2x dowel holes at R33, 11.25 / 191.25 deg (wedge top plate pins)", 2)
+    s -= Pos(0, 0, z0 - 0.01) * extrude(Circle(23.5) - Circle(15.5), 8.0)
+    feat("pocket", "ring 31 / 47", (19.5, 0, z0), "Z", 8.0, "lightening ring from below")
+    return s
+
+
+# ============================================================================== ST-331 wedge top plate (D39)
 def build_wedge_upper():
-    z0, z1, zt = P.Z_UPPER_BOT, P.Z_UPPER_PLATE_TOP, P.Z_AZ_OUT
+    """Wedge accessory: hinged top plate. The head stands on it, located by 2 dowels and held by one
+    3/8"-16 coin-slot screw ST-332 from below. Latitude arcs bolt to its sides."""
+    z0, z1 = P.Z_UPPER_BOT, P.Z_UPPER_PLATE_TOP
     hx, hz = P.WEDGE_HINGE_X, P.WEDGE_HINGE_Z
     s = Pos(-4, 0, z0) * extrude(RectangleRounded(96, P.WEDGE_W, 8), z1 - z0)
     s += box(hx - 9, -50, -18.3, 18.3, z0, z1)                               # knuckle block
@@ -127,32 +162,22 @@ def build_wedge_upper():
     s += cyl(9.0, 36.6, hx, -18.3, hz, "Y")
     s -= cyl(4.0, 120, hx, -60, hz, "Y")
     feat("bore", "8 H7", (hx, -18, hz), "Y", None, "hinge knuckle")
-    s += cyl(37.5, zt - z1, z=z1)                                            # boss = V-ring seat
-    s += cyl(40.0, 1.5, z=38.3)                                              # V-ring back shoulder
-    feat("pin", "75 h9", (0, 0, 39.8), "Z", zt - 39.8, "V-ring VA-75 seat (ST-213); 1.5 mm shoulder ring at Z 38.3")
-    s -= cyl(22.5, 2.5, z=zt - 2.5 + 0.01)
-    feat("bore", "45 H7", (0, 0, zt), "-Z", 2.5, "azimuth reducer output pilot")
-    s -= cyl(10.1, 3.0, z=zt - 5.5)
-    feat("bore", "20.2", (0, 0, zt - 2.5), "-Z", 3.0, "encoder tube flange seat")
-    r = P.RED[17]
-    for (x, y) in polar(r["n_tap"], r["pcd_tap"] / 2):
-        s -= cyl(P.CLEAR["M3"] / 2, zt - z0 + 1, x, y, z0 - 0.5)
-        s -= cyl(3.0, 30.0 - z0, x, y, z0 - 0.01)
-    feat("cbore", "3.4 / 6.0 to Z30", (27, 0, z0), "Z", None, "16x on PCD 54; output flange M3x20 ISO 4762, head seat at Z 30", 16)
-    s -= cyl(22.0, 36.0 - z0, z=z0 - 0.01)
-    feat("pocket", "44", (0, 0, z0), "Z", 36.0 - z0, "boss hollowed from below to Z 36")
-    s -= cyl(3.25, 20, z=30)
-    for (x, y) in polar(2, 7.0, 90):
-        s -= cyl(P.CLEAR["M3"] / 2, 10, x, y, 35.0)
-    feat("thru", "3.4", (0, 7, 36), "Z", None, "2x on PCD 14 from inside the pocket; encoder tube M3x6 ISO 4762", 2)
+    s -= cyl(5.1, 20, z=z0 - 1)
+    s -= cyl(9.7, 4.6, z=z0 - 0.01)
+    feat("cbore", "10.2 / 19.4x4.6", (0, 0, z0), "Z", None, "3/8in-16 x 10 coin-slot screw ST-332 from below holds the head")
+    for a in P.WEDGE_PIN_ANG:
+        x, y = P.WEDGE_PIN_R * math.cos(math.radians(a)), P.WEDGE_PIN_R * math.sin(math.radians(a))
+        s -= cyl(1.98, 6.0, x, y, z1 - 6.0 + 0.01)
+    feat("bore", "4 M6 press", (32.4, 6.4, z1), "-Z", 6.0, "2x dowel 4 m6 x 10 (ST-333) pressed, 4 mm proud", 2)
     for sy in (-1, 1):
         for x in (-46.0, -34.0):
             s -= cyl(P.TAP["M5"] / 2, 11, x, sy * (P.WEDGE_W / 2 + 0.01), 26.0, "-Y" if sy > 0 else "Y")
     feat("tap", "M5", (-46, P.WEDGE_W / 2, 26.0), "-Y", 10, "4x side faces at X -46 / -34, Z 26; latitude arcs", 4)
-    # W3 (D35): ribbed pockets from below, 2 mm skin, kept clear of the reducer screw ring and arc taps
     reg = Pos(-4, 0) * RectangleRounded(88, 84, 4)
     reg -= Rectangle(200, 5) + Rectangle(5, 200)
-    reg -= Circle(33.0)
+    reg -= Circle(13.0)
+    for a in P.WEDGE_PIN_ANG:
+        reg -= Pos(P.WEDGE_PIN_R * math.cos(math.radians(a)), P.WEDGE_PIN_R * math.sin(math.radians(a))) * Circle(5.0)
     for sy in (-1, 1):
         reg -= Pos(-40, sy * 40) * Rectangle(22, 16)
     s -= Pos(0, 0, z0 - 0.01) * extrude(reg, (z1 - z0) - 2.0)
@@ -329,8 +354,8 @@ def build_arm():
     feat("pin", "80 h9 / 70", (xa, 0, P.Z_ALT), "-X", 2.5, "V-ring VA-80 seat ring (ST-218)")
     s -= cyl(22.5, 2.5, xa - 0.01, 0, P.Z_ALT, "X")
     feat("bore", "45 H7", (xa, 0, P.Z_ALT), "X", 2.5, "altitude reducer output pilot")
-    s -= cyl(10.1, 3.0, xa + 2.5, 0, P.Z_ALT, "X")
-    feat("bore", "20.2", (xa + 2.5, 0, P.Z_ALT), "X", 3.0, "encoder tube flange seat")
+    s -= cyl(P.ENC_TUBE["flange_d"] / 2 + 0.1, 3.0, xa + 2.5, 0, P.Z_ALT, "X")
+    feat("bore", f"{P.ENC_TUBE['flange_d'] + 0.2:.1f}", (xa + 2.5, 0, P.Z_ALT), "X", 3.0, "encoder tube flange seat")
     s -= cyl(4.0, 20, xa - 1, 0, P.Z_ALT, "X")
     feat("thru", "8", (xa + t, 0, P.Z_ALT), "-X", None, "roll harness exit from the encoder tube")
     r = P.RED[17]
@@ -338,10 +363,10 @@ def build_arm():
         s -= cyl(P.CLEAR["M3"] / 2, t + 1, xa - 0.5, u, P.Z_ALT + v, "X")
         s -= cyl(P.CBORE["M3"][0] / 2, P.CBORE["M3"][1] + 0.1, xa + t + 0.01, u, P.Z_ALT + v, "-X")
     feat("cbore", "3.4 / 6.0x3.3", (xa + t, 27, P.Z_ALT), "-X", None, "16x on PCD 54; output flange M3x10 ISO 4762", 16)
-    for (u, v) in polar(2, 7.0, 90):
+    for (u, v) in polar(2, P.ENC_TUBE["screw_pcd"] / 2, 90):
         s -= cyl(P.CLEAR["M3"] / 2, t + 1, xa - 0.5, u, P.Z_ALT + v, "X")
         s -= cyl(3.0, 1.9, xa + t + 0.01, u, P.Z_ALT + v, "-X")
-    feat("cbore", "3.4 / 6.0x1.9", (xa + t, 0, P.Z_ALT + 7), "-X", None, "2x on PCD 14; encoder tube M3x5 ISO 7380", 2)
+    feat("cbore", "3.4 / 6.0x1.9", (xa + t, 0, P.Z_ALT + 11), "-X", None, "2x on PCD 22; encoder tube M3x5 ISO 7380", 2)
     s += cyl(3.0, -2.5, xa, pin[0], pin[1], "X")
     feat("pin", "6", (xa, pin[0], pin[1]), "-X", 2.5, "end-stop boss at R62, 296 deg; hits bumpers ST-322 (1 mm running gap to the tower)")
     # cable guide holes and lightening
@@ -370,18 +395,18 @@ def build_shelf():
     feat("pin", "65 h9 / 55", (xr, y0, zr), "-Y", 2.5, "V-ring VA-65 seat ring (ST-219)")
     s -= cyl(18.0, 2.5, xr, y0 - 0.01, zr, "Y")
     feat("bore", "36 H7", (xr, y0, zr), "Y", 2.5, "roll reducer output pilot")
-    s -= cyl(10.1, 3.0, xr, y0 + 2.5, zr, "Y")
+    s -= cyl(P.ENC_TUBE["flange_d"] / 2 + 0.1, 3.0, xr, y0 + 2.5, zr, "Y")
     s -= cyl(3.25, 20, xr, y0 - 1, zr, "Y")
-    feat("bore", "20.2", (xr, y0 + 2.5, zr), "Y", 3.0, "encoder tube flange seat")
+    feat("bore", f"{P.ENC_TUBE['flange_d'] + 0.2:.1f}", (xr, y0 + 2.5, zr), "Y", 3.0, "encoder tube flange seat")
     r = P.RED[14]
     for (u, v) in polar(r["n_tap"], r["pcd_tap"] / 2):
         s -= cyl(P.CLEAR["M3"] / 2, t + 1, xr + u, y0 - 0.5, zr + v, "Y")
         s -= cyl(P.CBORE["M3"][0] / 2, P.CBORE["M3"][1] + 0.1, xr + u, y0 + t + 0.01, zr + v, "-Y")
     feat("cbore", "3.4 / 6.0x3.3", (xr + 22, y0 + t, zr), "-Y", None, "12x on PCD 44; output flange M3x12", 12)
-    for (u, v) in polar(2, 7.0, 90):
+    for (u, v) in polar(2, P.ENC_TUBE["screw_pcd"] / 2, 90):
         s -= cyl(P.CLEAR["M3"] / 2, t + 1, xr + u, y0 - 0.5, zr + v, "Y")
         s -= cyl(P.CBORE["M3"][0] / 2, P.CBORE["M3"][1] + 0.1, xr + u, y0 + t + 0.01, zr + v, "-Y")
-    feat("cbore", "3.4 / 6.0x3.3", (xr, y0 + t, zr + 7), "-Y", None, "2x on PCD 14; encoder tube M3x6 ISO 4762", 2)
+    feat("cbore", "3.4 / 6.0x3.3", (xr, y0 + t, zr + 11), "-Y", None, "2x on PCD 22; encoder tube M3x6 ISO 4762", 2)
     s -= cyl(5.1, 20, xr, P.CLAMP_CY, zr + st - 11, "Z")
     s -= cyl(9.5, 4.5, xr, P.CLAMP_CY, zr + st - 11, "Z")
     feat("cbore", "10.2 / 19x4.5", (xr, P.CLAMP_CY, zr + st - 10), "Z", None, "clamp 3/8\"-16 x 12 coin-slot screw (D36)")
@@ -406,7 +431,12 @@ STRUCT_PARTS = [
                      finish=P.MAT["6061"]["finish"], tol="ISO 2768-m", group="3xx", color=(0.70, 0.71, 0.73),
                      notes=["Hinge bore 8 H7 in line through both knuckles.",
                             "Engrave azimuth scale +/-10 deg every 1 deg on the +X tab, 0.2 deep."])),
-    register(PartDef("ST-303", "Wedge upper plate (azimuth reducer mount)", "machined", "6061", 1, build_wedge_upper,
+    register(PartDef("ST-331", "Wedge top plate (removable wedge, D39)", "machined", "6061", 1, build_wedge_upper,
+                     finish=P.MAT["6061"]["finish"], tol="ISO 2768-m; top face flat within 0.03", group="3xx",
+                     color=(0.70, 0.71, 0.73),
+                     notes=["Press the two dowels ST-333 into the 6 mm blind holes from the top, 4 mm proud.",
+                            "Hinge bore 8 H7 in line with the knuckles of ST-302."])),
+    register(PartDef("ST-303", "Head base plate (azimuth reducer mount, tripod socket)", "machined", "6061", 1, build_head_base,
                      finish=P.MAT["6061"]["finish"], tol="ISO 2768-m; pilot 45 H7 square to the base within 0.02",
                      group="3xx", color=(0.70, 0.71, 0.73),
                      notes=["Seat face for the reducer (Z 45) flat within 0.01 and parallel to the underside within 0.02.",

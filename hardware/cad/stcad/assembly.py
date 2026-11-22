@@ -29,6 +29,7 @@ class Item:
     color: tuple = (0.6, 0.6, 0.6)
     group: str = ""
     explode: tuple = (0, 0, 0)        # explode direction * distance, world mm (home pose)
+    wedge: bool = False               # part of the removable wedge accessory (D39)
     _shape: Part | None = field(default=None, repr=False)
 
     def local_shape(self):
@@ -69,13 +70,24 @@ def items():
     g = REGISTRY
     ident = Location()
     # ---------------------------------------------------------------- ground and wedge
-    I("Base plate", "ST-301", "ground", ident, None, color=g["ST-301"].color, explode=(0, 0, -170))
-    I("Wedge lower plate", "ST-302", "ground", ident, None, color=g["ST-302"].color, explode=(0, 0, -125))
-    I("Latitude arc +Y", "ST-305", "wedge", ident, None, color=g["ST-305"].color, explode=(0, 60, -70))
-    I("Latitude arc -Y", "ST-305", "wedge", Pos(0, -(P.WEDGE_W + 6.0), 0), None, color=g["ST-305"].color, explode=(0, -60, -70))
-    I("Hinge pin 8 h6", "ST-304", "ground", Pos(P.WEDGE_HINGE_X, 0, P.WEDGE_HINGE_Z), B.hinge_pin, mass=0.041, color=(0.85, 0.85, 0.88), explode=(0, -150, -100))
-    I("3/8in-16 bushing", "ST-307", "ground", ident, B.bushing38, mass=0.006, color=(0.85, 0.85, 0.88), explode=(0, 0, -200))
-    I("Wedge upper plate", "ST-303", "wedge", ident, None, color=g["ST-303"].color, explode=(0, 0, -70))
+    W = dict(wedge=True)
+    I("Base plate", "ST-301", "ground", ident, None, color=g["ST-301"].color, explode=(0, 0, -200), **W)
+    I("Wedge lower plate", "ST-302", "ground", ident, None, color=g["ST-302"].color, explode=(0, 0, -160), **W)
+    I("Latitude arc +Y", "ST-305", "wedge", ident, None, color=g["ST-305"].color, explode=(0, 60, -110), **W)
+    I("Latitude arc -Y", "ST-305", "wedge", Pos(0, -(P.WEDGE_W + 6.0), 0), None, color=g["ST-305"].color, explode=(0, -60, -110), **W)
+    I("Hinge pin 8 h6", "ST-304", "ground", Pos(P.WEDGE_HINGE_X, 0, P.WEDGE_HINGE_Z), B.hinge_pin, mass=0.041, color=(0.85, 0.85, 0.88), explode=(0, -150, -130), **W)
+    I("3/8in-16 bushing (base)", "ST-307", "ground", ident, B.bushing38, mass=0.006, color=(0.85, 0.85, 0.88), explode=(0, 0, -230), **W)
+    I("Wedge top plate", "ST-331", "wedge", ident, None, color=g["ST-331"].color, explode=(0, 0, -110), **W)
+    import math as _m
+    for k, a in enumerate(P.WEDGE_PIN_ANG):
+        I(f"Dowel 4 m6 x 10 ({k + 1})", "ST-333", "wedge",
+          Pos(P.WEDGE_PIN_R * _m.cos(_m.radians(a)), P.WEDGE_PIN_R * _m.sin(_m.radians(a)), P.Z_UPPER_PLATE_TOP - 6.0),
+          B.dowel4, mass=0.001, color=(0.85, 0.85, 0.88), explode=(0, 0, -90), **W)
+    I("Wedge screw 3/8in-16 x 10, coin slot", "ST-332", "wedge", Pos(0, 0, P.Z_UPPER_BOT + 4.5), B.coin_screw38,
+      mass=0.012, color=(0.85, 0.85, 0.88), explode=(0, 0, -140), **W)
+    I("Head base plate", "ST-303", "wedge", ident, None, color=g["ST-303"].color, explode=(0, 0, -60))
+    I("3/8in-16 bushing (head)", "ST-307", "wedge", Pos(0, 0, P.Z_UPPER_PLATE_TOP), B.bushing38, mass=0.006,
+      color=(0.85, 0.85, 0.88), explode=(0, 0, -75))
     I("V-ring VA-75 (azimuth)", "ST-213", "wedge", Pos(0, 0, 39.8), lambda: B.vring(75.0), mass=0.004,
       color=(0.08, 0.08, 0.08), explode=(0, 0, -45))
     # ---------------------------------------------------------------- cartridges
@@ -214,9 +226,68 @@ def placed(item, pose, explode=0.0):
     return s
 
 
-def rig_shapes(pose):
+RIG = None              # payload envelope key used by rig_shapes(); None = params.REF_RIG
+_RIG_CACHE = {}
+_ALT_HW = None
+
+
+def _alt_hardware():
+    """Mass and CG of everything that turns in altitude, without payload (home pose)."""
+    global _ALT_HW
+    if _ALT_HW is None:
+        mm, s3 = 0.0, [0.0, 0.0, 0.0]
+        for it in items():
+            if it.stage in ("alt", "roll"):
+                m = it.kg()
+                c = placed(it, HOME).center()
+                mm += m
+                for k, v in enumerate((c.X, c.Y, c.Z)):
+                    s3[k] += m * v
+        _ALT_HW = (mm, [v / mm for v in s3])
+    return _ALT_HW
+
+
+def rig_y0(key):
+    """Camera mount plane Y that balances payload `key` on the altitude axis (what the user does by
+    sliding the foot or dovetail in the clamp)."""
+    if key not in _RIG_CACHE:
+        mh, ch = _alt_hardware()
+        _, mas, cg, _ = B.rig_parts(key, 0.0)
+        mr = sum(mas.values())
+        yr = sum(mas[k] * cg[k][1] for k in mas) / mr          # rig CG Y relative to y0
+        y0 = -(mh * ch[1]) / mr - yr
+        # the mount can only slide as far as the clamp jaws still hold it
+        yc = B.rig_parts(key, y0)[3]
+        lim = P.RIGS[key]["mount_L"] / 2 - P.CLAMP["L"] / 2
+        if abs(yc - P.CLAMP_CY) > lim:
+            y0 -= (yc - P.CLAMP_CY) - math.copysign(lim, yc - P.CLAMP_CY)
+        _RIG_CACHE[key] = y0
+    return _RIG_CACHE[key]
+
+
+def rig_info(key=None):
+    """Masses, CG (home pose) and clamp reach of a payload envelope."""
+    key = key or RIG or P.REF_RIG
+    y0 = rig_y0(key)
+    sol, mas, cg, yc = B.rig_parts(key, y0)
+    mr = sum(mas.values())
+    c = [sum(mas[k] * cg[k][i] for k in mas) / mr for i in range(3)]
+    r = P.RIGS[key]
+    mh, ch = _alt_hardware()
+    dy = (mh * ch[1] + mr * c[1]) / (mh + mr)            # alt group CG off the axis after sliding
+    dz = (mh * (ch[2] - P.Z_ALT) + mr * (c[2] - P.Z_ALT)) / (mh + mr)
+    return dict(key=key, name=r["name"], y0=y0, kg=mr, cg=c, mount_center_y=yc, masses=mas, cgs=cg,
+                alt_group_kg=mh + mr, alt_dy_mm=dy, alt_dz_mm=dz,
+                alt_residual_Nm=(mh + mr) * 9.81 * abs(dy) / 1000.0,
+                alt_offbalance_Nm=(mh + mr) * 9.81 * math.hypot(dy, dz) / 1000.0,
+                roll_r_mm=math.hypot(c[0] - P.X_ROLL, c[2] - P.Z_ROLL),
+                roll_torque_90_Nm=mr * 9.81 * math.hypot(c[0] - P.X_ROLL, c[2] - P.Z_ROLL) / 1000.0)
+
+
+def rig_shapes(pose, key=None):
+    key = key or RIG or P.REF_RIG
     L = stage_loc("rig", pose)
-    return {k: v.moved(L) for k, v in B.reference_rig().items()}
+    return {k: v.moved(L) for k, v in B.reference_rig(key).items()}
 
 
 HOME = dict(wedge=0.0, az=0.0, alt=0.0, roll=0.0)

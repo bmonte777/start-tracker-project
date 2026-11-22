@@ -48,7 +48,7 @@ def filament_eur(pid):
 MJF_USD_PER_G = 0.275      # JLC3DP MJF PA12, as cited in the Phase 2 spec section 8
 
 # JLCCNC one-off estimates in USD, anodising included (Phase 2 kept for 100 / 1,000)
-CNC_USD = {"ST-301": 36, "ST-302": 80, "ST-303": 78, "ST-305": 28, "ST-207": 26, "ST-312": 118, "ST-313": 66,
+CNC_USD = {"ST-301": 36, "ST-302": 80, "ST-303": 48, "ST-331": 70, "ST-305": 28, "ST-207": 26, "ST-312": 118, "ST-313": 66,
            "ST-208": 12, "ST-215": 11}
 
 def screw_price(std, size, L):
@@ -136,14 +136,21 @@ def build_parts():
     # ---- 3xx
     machined("ST-301")
     machined("ST-302")
-    machined("ST-303")
+    machined("ST-303", name="Head base plate (azimuth reducer mount, 3/8in-16 tripod socket)",
+             note="D39: stays on the head; the head stands on any tripod without the wedge")
     keep("ST-304", name="Wedge hinge pin, dia 8 h6 x 80, ends tapped M3", note="retained by 2 x M3x6 ISO 7380 + ST-751")
     machined("ST-305", note="fixed to ST-303; clamp knobs on ST-302 press it (D38)")
     keep("ST-306", name="Azimuth fine-adjust thumb screw M5 x 25, stainless", qty=2, pr=E(1.6, 0.7, 0.4), src="est",
          note="push the base boss from both sides")
-    keep("ST-307")
+    keep("ST-307", qty=2, note="one in the base ST-301, one in the head base ST-303 (D39)")
     new("ST-308", "Latitude clamp knob, thumb screw M5 x 16, stainless", 2, "stainless", "stainless", "buy",
         "Misumi / Accu", E(1.4, 0.6, 0.35), "est", "")
+    new("ST-331", "Wedge top plate (removable wedge, D39)", 1, "aluminium 6061 CNC", "aluminium 6061 CNC", "make",
+        "JLCCNC", (round(CNC_USD["ST-331"] * USD, 2), 16.38, 10.01), "est (JLCCNC class)", "hinge knuckle, arcs, 2 dowels; head held by ST-332")
+    new("ST-332", "Wedge screw 3/8in-16 x 10, coin slot, stainless", 1, "stainless", "stainless", "buy",
+        "camera hardware supplier", E(1.5, 0.6, 0.3), "est", "holds the head on the wedge top plate (D39)")
+    new("ST-333", "Dowel pin 4 m6 x 10, stainless", 2, "stainless", "stainless", "buy", "Misumi / Accu",
+        E(0.40, 0.15, 0.08), "est", "anti-rotation, head on the wedge (D39)")
     new("ST-309", "Latitude tangent screw, knurled thumb screw M3 x 25", 1, "stainless", "stainless", "buy",
         "Misumi / Accu", E(1.0, 0.5, 0.3), "est", "fine adjust, D38")
     printed("ST-310")

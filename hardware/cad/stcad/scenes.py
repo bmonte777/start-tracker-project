@@ -39,20 +39,20 @@ def placed_mesh(it, pose, explode=0.0, tol=0.2):
 _RIG = {}
 
 
-def rig_meshes(pose, tol=0.3, color_cam=(0.22, 0.22, 0.24), color_lens=(0.86, 0.87, 0.89), oid0=1000):
-    if not _RIG:
-        for k, s in B.reference_rig().items():
-            _RIG[k] = R.tess(s, tol, 0.4)
+def rig_meshes(pose, tol=0.3, color_cam=(0.22, 0.22, 0.24), color_lens=(0.86, 0.87, 0.89), oid0=1000, key=None):
+    key = key or P.REF_RIG
+    if key not in _RIG:
+        _RIG[key] = {k: R.tess(s, tol, 0.4) for k, s in B.reference_rig(key).items()}
     L = A.stage_loc("rig", pose)
     Rm, tv = _trsf(L)
     out = []
-    for j, (k, (v, t)) in enumerate(_RIG.items()):
+    for j, (k, (v, t)) in enumerate(_RIG[key].items()):
         col = color_cam if k == "camera" else (color_lens if k == "lens" else (0.25, 0.25, 0.27))
         out.append((v @ Rm.T + tv, t, col, oid0 + j))
     return out
 
 
-def scene(pose, explode=0.0, filt=None, highlight=None, grey=None, rig=False, tol=0.2, oid0=0):
+def scene(pose, explode=0.0, filt=None, highlight=None, grey=None, rig=False, tol=0.2, oid0=0, key=None):
     its = A.items()
     ms = []
     for k, it in enumerate(its):
@@ -66,7 +66,7 @@ def scene(pose, explode=0.0, filt=None, highlight=None, grey=None, rig=False, to
             col = (0.95, 0.55, 0.15)
         ms.append((v, t, col, oid0 + k))
     if rig:
-        ms += rig_meshes(pose)
+        ms += rig_meshes(pose, key=key)
     return ms
 
 
@@ -79,11 +79,12 @@ def save(ms, path, az, el, title=None, sub=None, W=1600, H=1200, fit=None):
 
 
 STEP_OF = {   # assembly step that installs each item (by name prefix or pid)
-    1: lambda it: it.pid in ("ST-301", "ST-302", "ST-307"),
+    1: lambda it: it.pid in ("ST-301", "ST-302") or it.name == "3/8in-16 bushing (base)",
     3: lambda it: it.pid == "ST-310" or ("(azimuth)" in it.name and not it.name.startswith(("Encoder tube", "Encoder magnet")))
                   or it.name == "Cable guide (body)",
-    4: lambda it: it.pid in ("ST-303", "ST-213", "ST-305") or it.name in ("Encoder tube (azimuth)", "Encoder magnet (azimuth)"),
-    5: lambda it: it.pid == "ST-304",
+    4: lambda it: it.pid in ("ST-303", "ST-213") or it.name in ("Encoder tube (azimuth)", "Encoder magnet (azimuth)",
+                                                              "3/8in-16 bushing (head)"),
+    5: lambda it: it.pid in ("ST-304", "ST-305", "ST-331", "ST-332", "ST-333"),
     6: lambda it: it.pid in ("ST-311", "ST-323", "ST-322") or ("(altitude)" in it.name and not it.name.startswith(("Encoder tube", "Encoder magnet")) and "V-ring" not in it.name)
                   or it.name == "Cable guide (tower)",
     7: lambda it: it.pid in ("ST-312", "ST-217", "ST-328", "ST-329", "ST-218") or it.name in ("Encoder tube (altitude)", "Encoder magnet (altitude)", "Cable guide (arm)")
@@ -101,28 +102,48 @@ def step_of(it):
     return 2
 
 
+def _checks():
+    import json
+    f = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "out", "checks.json")
+    try:
+        return json.load(open(f))
+    except Exception:
+        return {}
+
+
 def renders(img_dir):
     os.makedirs(img_dir, exist_ok=True)
     H = A.HOME
+    ref = P.REF_RIG
+    rname = P.RIGS[ref]["name"]
+    pr = _checks().get("payloads", {}).get(ref, {})
+    gap85 = (pr.get("camera_at_85") or {}).get("min_mm")
+    r0 = pr.get("roll_alt0", {})
+    t_lim = r0.get("toward_tower", {}).get("limit_deg", P.ROLL_TOWARD_TOWER_MAX)
+    a_lim = r0.get("away", {}).get("limit_deg", -145.0)
     out = {}
     out["three_quarter"] = save(scene(H, rig=True), f"{img_dir}/03-three-quarter.png", -50, 24,
-                                "Star tracker P1 - three-quarter view", "With the reference rig (A7R V + FE 200-600) balanced")
+                                "Star tracker P1 - three-quarter view", f"With payload {ref} ({rname}) balanced")
     out["front"] = save(scene(H, rig=True), f"{img_dir}/03-front.png", -90, 0, "Front view (from -Y)", "Lens points into the page")
     out["side"] = save(scene(H, rig=True), f"{img_dir}/03-side.png", 0, 0, "Side view (from the payload side, +X)")
     out["top"] = save(scene(H, rig=True), f"{img_dir}/03-top.png", -90, 89.9, "Top view")
     save(scene(H), f"{img_dir}/03-head-three-quarter.png", -50, 24, "Head without payload")
+    save(scene(H, filt=lambda it: not it.wedge, rig=True, key="P1"), f"{img_dir}/03-no-wedge.png", -50, 24,
+         "Wedge left at home (D39): head straight on the tripod", "Alt-az use with payload P1; the head's own 3/8in-16 socket takes the tripod screw")
+    save(scene(dict(H, alt=20.0), rig=True, key="P5"), f"{img_dir}/03-payload-p5.png", -50, 20,
+         "Largest payload envelope P5: 90 mm refractor, 7 kg", "Balanced on the altitude axis by sliding the tube in its rings on the dovetail")
     save(scene(H, explode=1.0), f"{img_dir}/03-exploded.png", -50, 22, "Exploded view",
          "Every part we make or buy except screws; the viewer page lets you slide this")
     save(scene(H, explode=1.0), f"{img_dir}/03-exploded-rear.png", 135, 22, "Exploded view from the battery side")
     pose = dict(H, alt=85.0)
     save(scene(pose, rig=True), f"{img_dir}/03-swing-85.png", -90, 0, "Camera swing at +85 deg altitude",
-         "Nearest point: camera to azimuth body 14.5 mm")
+         f"Payload {ref}; nearest point {gap85} mm" if gap85 is not None else f"Payload {ref}")
     # roll limits: both extremes drawn together
     ms = scene(H)
-    ms += rig_meshes(dict(H, roll=P.ROLL_TOWARD_TOWER_MAX), color_cam=(0.20, 0.35, 0.75), color_lens=(0.55, 0.68, 0.95), oid0=2000)
-    ms += rig_meshes(dict(H, roll=-145.0), color_cam=(0.80, 0.40, 0.10), color_lens=(0.98, 0.75, 0.50), oid0=3000)
-    save(ms, f"{img_dir}/03-roll-limits.png", -90, 0, "Roll travel with the 200-600 on its foot",
-         "Blue: +10 deg toward the tower (lens meets the arm hub). Orange: -145 deg (camera meets the roll enclosure)")
+    ms += rig_meshes(dict(H, roll=t_lim), color_cam=(0.20, 0.35, 0.75), color_lens=(0.55, 0.68, 0.95), oid0=2000)
+    ms += rig_meshes(dict(H, roll=a_lim), color_cam=(0.80, 0.40, 0.10), color_lens=(0.98, 0.75, 0.50), oid0=3000)
+    save(ms, f"{img_dir}/03-roll-limits.png", -90, 0, f"Roll travel with payload {ref} ({rname})",
+         f"Blue: {t_lim:+.0f} deg toward the tower. Orange: {a_lim:+.0f} deg away. Limits differ per payload (see checks)")
     save(scene(dict(H, wedge=52.0, alt=30.0), rig=True), f"{img_dir}/03-eq-mode.png", -60, 18,
          "EQ mode: wedge tilted 52 deg (latitude 38 deg N, Lisbon)", "Azimuth becomes right ascension")
     cart = lambda it: "(azimuth)" in it.name  # noqa: E731
@@ -138,8 +159,8 @@ def renders(img_dir):
 def step_images(img_dir):
     os.makedirs(img_dir, exist_ok=True)
     H = A.HOME
-    titles = {1: "Base plate and wedge lower plate", 2: "Build the three axis cartridges", 3: "Azimuth cartridge into the body",
-              4: "Body onto the wedge upper plate, arcs on", 5: "Upper plate onto the lower plate: hinge pin",
+    titles = {1: "Wedge: base plate and lower plate", 2: "Build the three axis cartridges", 3: "Azimuth cartridge into the body",
+              4: "Head base plate onto the azimuth output", 5: "Wedge top plate, arcs and hinge; head onto the wedge",
               6: "Altitude cartridge into the tower, tower onto the body", 7: "Arm, roll cartridge and roll enclosure",
               8: "Roll shelf and Arca clamp", 9: "Mainboard, bezel and top cover", 10: "Battery pack, tray and door"}
     paths = {}
@@ -150,7 +171,11 @@ def step_images(img_dir):
         else:
             ms = scene(H, filt=lambda it, k=k: step_of(it) <= k, highlight=lambda it, k=k: step_of(it) == k)
         az = 125 if k in (9, 10) else -50
-        save(ms, p, az, 24, f"Step {k}: {titles[k]}", "New parts in orange", W=1200, H=900)
+        el = 24
+        if k == 4:   # the head base plate sits under the body: show the head without the wedge, from below
+            el = -28
+            ms = scene(H, filt=lambda it: step_of(it) in (2, 3, 4), highlight=lambda it: step_of(it) == 4)
+        save(ms, p, az, el, f"Step {k}: {titles[k]}", "New parts in orange", W=1200, H=900)
         paths[k] = p
     return paths
 
@@ -167,13 +192,15 @@ def viewer_data(tol=0.3):
         w = v @ Rm.T + tv
         q = np.round(w / 0.05).astype(np.int16)
         recs.append(dict(name=it.name, pid=it.pid, stage=it.stage, color=[round(c, 3) for c in it.color],
-                         explode=[round(e, 1) for e in it.explode], step=step_of(it),
+                         explode=[round(e, 1) for e in it.explode], step=step_of(it), wedge=bool(it.wedge),
                          p=base64.b64encode(q.tobytes()).decode(), i=base64.b64encode(t.astype(np.uint32).tobytes()).decode()))
-    for k, s in B.reference_rig().items():
-        v, t = R.tess(s, tol, 0.45)
-        q = np.round(v / 0.05).astype(np.int16)
-        recs.append(dict(name=f"Reference rig: {k}", pid="RIG", stage="rig", color=[0.86, 0.87, 0.89] if k == "lens" else [0.25, 0.25, 0.27],
-                         explode=[0, 0, 0], step=99, p=base64.b64encode(q.tobytes()).decode(),
-                         i=base64.b64encode(t.astype(np.uint32).tobytes()).decode()))
+    for rk in P.RIGS:
+        for k, s in B.reference_rig(rk).items():
+            v, t = R.tess(s, tol, 0.45)
+            q = np.round(v / 0.05).astype(np.int16)
+            recs.append(dict(name=f"{rk} {k}", pid="RIG", rig=rk, stage="rig",
+                             color=[0.86, 0.87, 0.89] if k == "lens" else [0.25, 0.25, 0.27],
+                             explode=[0, 0, 0], step=99, wedge=False, p=base64.b64encode(q.tobytes()).decode(),
+                             i=base64.b64encode(t.astype(np.uint32).tobytes()).decode()))
     raw = json.dumps(recs, separators=(",", ":")).encode()
     return base64.b64encode(gzip.compress(raw, 9)).decode(), len(raw)

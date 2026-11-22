@@ -92,7 +92,7 @@
  [
   12,
   "ST-303",
-  "Wedge upper plate (azimuth reducer mount)",
+  "Head base plate (azimuth reducer mount, tripod socket)",
   "machined",
   "Aluminium 6061-T6",
   1,
@@ -253,6 +253,15 @@
  ],
  [
   30,
+  "ST-331",
+  "Wedge top plate (removable wedge, D39)",
+  "machined",
+  "Aluminium 6061-T6",
+  1,
+  "1:1"
+ ],
+ [
+  31,
   "ST-605",
   "Pack shell, lower half",
   "printed",
@@ -261,7 +270,7 @@
   "1:2"
  ],
  [
-  31,
+  32,
   "ST-606",
   "Cell holder (end)",
   "printed",
@@ -270,7 +279,7 @@
   "2:1"
  ],
  [
-  32,
+  33,
   "ST-610",
   "Pack gasket",
   "printed",
@@ -279,7 +288,7 @@
   "1:1"
  ],
  [
-  33,
+  34,
   "ST-611",
   "Pack light pipe + button",
   "printed",
@@ -288,7 +297,7 @@
   "5:1"
  ],
  [
-  34,
+  35,
   "ST-612",
   "Pack shell, upper half",
   "printed",

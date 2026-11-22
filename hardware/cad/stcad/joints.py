@@ -15,10 +15,12 @@ JOINTS = [
     (1, "3/8in-16 bushing ST-307 into base ST-301", "-", "-", 0, 1, "press", 0, "638", "press in, wipe off, cure 1 h"),
     (1, "Base ST-301 to wedge lower plate ST-302 (azimuth lock)", "ISO 7380", "M5", 12, 2, "alu", 4.5, "-", "with washer ST-752; leave loose until set"),
     (1, "Azimuth fine-adjust push screws ST-306", "thumb", "M5", 25, 2, "alu", 0, "-", "finger tight, push the base boss"),
-    (4, "Latitude arcs ST-305 to wedge upper plate ST-303", "ISO 7380", "M5", 12, 4, "alu", 4.5, "243", ""),
+    (5, "Latitude arcs ST-305 to wedge top plate ST-331", "ISO 7380", "M5", 12, 4, "alu", 4.5, "243", ""),
+    (5, "Dowels ST-333 into wedge top plate ST-331", "-", "-", 0, 2, "press", 0, "-", "press into the 6 mm blind holes from the top, 4 mm proud"),
     (5, "Hinge pin ST-304 retaining screws", "ISO 7380", "M3", 6, 2, "alu", 1.0, "243", "with large washer ST-751 each end"),
     (5, "Latitude clamp knobs ST-308", "thumb", "M5", 16, 2, "alu", 0, "-", "finger tight"),
     (5, "Latitude tangent screw ST-309 (D38)", "thumb", "M3", 25, 1, "alu", 0, "-", ""),
+    (5, "Head onto the wedge top plate ST-331 (D39)", "coin", "3/8", 10, 1, "head", 0, "-", "coin-slot screw ST-332 from below, wedge tilted to 45 deg; dowels locate"),
     # ---- azimuth cartridge (and the same for altitude and roll)
     (2, "Reducer size 17 to cartridge housing ST-211 (x2 axes)", "ISO 4762", "M3", 50, 24, "insert", 0.6, "-", "12 per reducer, criss-cross; 7075 aluminium screws, 0.6 N\u00b7m max"),
     (2, "Reducer size 14 to cartridge housing ST-210", "ISO 4762", "M3", 45, 8, "insert", 0.6, "-", "criss-cross; 7075 aluminium screws, 0.6 N\u00b7m max"),
@@ -28,10 +30,11 @@ JOINTS = [
     (2, "Belt tension screw (x3)", "ISO 4762", "M3", 12, 3, "alu", 0.3, "-", "turn until the span reads 290 Hz"),
     (2, "Encoder board ST-520 to carrier (x3)", "ISO 7380", "M3", 6, 6, "plastic", 0.3, "-", "cuts its own thread in ASA"),
     (2, "Carrier ST-212/216 posts to housing flange (x3)", "ISO 4762", "M3", 30, 6, "insert", 0.5, "-", ""),
-    (4, "Encoder tube ST-208 to wedge upper plate (azimuth)", "ISO 4762", "M3", 6, 2, "alu", 1.0, "243", "from inside the boss pocket"),
+    (4, "3/8in-16 bushing ST-307 into head base ST-303", "-", "-", 0, 1, "press", 0, "638", "press in, wipe off, cure 1 h"),
+    (4, "Encoder tube ST-208 to head base plate ST-303 (azimuth)", "ISO 4762", "M3", 8, 2, "alu", 1.0, "243", "from below"),
     # ---- body, tower, cartridges in place
     (3, "Azimuth cartridge to body floor", "ISO 7380", "M4", 10, 4, "insert", 1.2, "-", "from below"),
-    (4, "Azimuth reducer output flange to wedge upper plate ST-303", "ISO 4762", "M3", 20, 16, "reducer", 2.0, "243", "from below, criss-cross"),
+    (4, "Azimuth reducer output flange to head base plate ST-303", "ISO 4762", "M3", 16, 16, "reducer", 2.0, "243", "from below, criss-cross"),
     (6, "Altitude cartridge to tower wall", "ISO 7380", "M4", 12, 4, "insert", 1.2, "-", "from outside the +X face"),
     (6, "Bumpers ST-322 to tower", "ISO 7380", "M3", 6, 2, "insert", 0.4, "-", ""),
     (3, "Cable guides ST-320 to body", "ISO 7380", "M3", 12, 2, "insert", 0.4, "-", ""),
@@ -54,6 +57,12 @@ JOINTS = [
     (10, "Pack shell halves ST-605/612 (gasket ST-610)", "ISO 4762", "M3", 30, 4, "insert", 0.5, "-", "pack stays closed: user never opens it"),
     (10, "Battery tray ST-317 to door ST-318", "ISO 7380", "M3", 8, 2, "plastic", 0.3, "-", ""),
 ]
+
+# joints that belong to the removable wedge accessory (D39): their fasteners leave with the wedge
+WEDGE_JOINTS = {"Base ST-301 to wedge lower plate ST-302 (azimuth lock)", "Azimuth fine-adjust push screws ST-306",
+                "Latitude arcs ST-305 to wedge top plate ST-331", "Hinge pin ST-304 retaining screws",
+                "Latitude clamp knobs ST-308", "Latitude tangent screw ST-309 (D38)", "Head onto the wedge top plate ST-331 (D39)"}
+WEDGE_WASHERS = {"hinge pin ends", "azimuth lock"}
 
 WASHERS = [("ISO 7089", "M3", 12, "motor plate clamp"), ("ISO 7093", "M3", 2, "hinge pin ends"), ("ISO 7089", "M5", 2, "azimuth lock")]
 
@@ -108,4 +117,12 @@ def fastener_kg():
     g += sum({"M3": 0.1, "M4": 0.3, "M5": 0.45}[sz] * q for _, sz, q, _ in WASHERS)
     ins = insert_summary()
     g += ins["M3"] * 0.25 + ins["M4"] * 0.55 + ins["M5"] * 0.9
+    return g / 1000.0
+
+
+def wedge_fastener_kg():
+    """Fasteners that leave with the wedge (screws + washers)."""
+    g = sum(screw_mass_g(size, L, std) * qty for (st, j, std, size, L, qty, *_r) in JOINTS
+            if j in WEDGE_JOINTS and std not in ("-",))
+    g += sum({"M3": 0.1, "M4": 0.3, "M5": 0.45}[sz] * q for _, sz, q, use in WASHERS if use in WEDGE_WASHERS)
     return g / 1000.0

@@ -160,22 +160,61 @@ def bushing38():
     return cyl(6.0, 8.0) - cyl(4.5, 10, z=-1)
 
 
-# ----------------------------------------------------------------------------- reference rig
-def reference_rig():
-    """A7R V + FE 200-600 on its foot, in payload frame = world frame at alt 0, roll 0.
-    Returns dict of solids (lens, camera, foot)."""
-    L, C = P.LENS, P.CAMERA
-    y0 = P.LENS_MOUNT_Y
-    lens = Pos(P.X_ROLL, y0, P.Z_LENS) * Rot(-90, 0, 0) * Cylinder(L["D"] / 2, L["L"] + L["hood_L"],
-                                                                     align=(_C, _C, _MIN))
-    xt = P.X_ROLL - C["mount_from_tower_side"]
-    zb = P.Z_LENS - C["axis_above_bottom"]
-    cam = box(xt, xt + C["W"], y0 - C["body_depth"], y0, zb, zb + C["H"] - 14)
-    cam += box(P.X_ROLL - 20, P.X_ROLL + 20, y0 - C["body_depth"], y0 - 10, zb + C["H"] - 14, zb + C["H"])
-    cam += box(xt + C["W"] - 33, xt + C["W"], y0, y0 + 20, zb, zb + C["H"] - 22)        # grip
-    foot = box(P.X_ROLL - 19, P.X_ROLL + 19, P.FOOT_CY - P.FOOT_L / 2, P.FOOT_CY + P.FOOT_L / 2, P.Z_ROLL + P.R_CLAMP_SEAT,
-               P.Z_LENS - L["D"] / 2 + 6)
-    return {"lens": lens, "camera": cam, "foot": foot}
+def coin_screw38(length=10.0):
+    """3/8in-16 coin-slot screw: head 19 x 4.5 below z=0, shank up."""
+    return cyl(9.5, 4.5, z=-4.5) + cyl(4.75, length) - box(-9.6, 9.6, -0.6, 0.6, -4.6, -3.0)
+
+
+def dowel4(length=10.0):
+    return cyl(2.0, length)
+
+
+# ----------------------------------------------------------------------------- payload envelopes
+def rig_parts(key, y0):
+    """Payload envelope `key` (params.RIGS) with its camera mount plane at Y = y0, world frame at alt 0, roll 0.
+    Returns (solids dict, masses dict, CG of each solid as (x, y, z))."""
+    r, C = P.RIGS[key], P.CAMERA
+    za = P.Z_ROLL + P.R_CLAMP_SEAT + r["H"]
+    sol, mas, cg = {}, {}, {}
+    sol["lens"] = Pos(P.X_ROLL, y0, za) * Rot(-90, 0, 0) * Cylinder(r["D"] / 2, r["L"], align=(_C, _C, _MIN))
+    if r["cam"] == "mirrorless":
+        xt = P.X_ROLL - C["mount_from_tower_side"]
+        zb = za - C["axis_above_bottom"]
+        cam = box(xt, xt + C["W"], y0 - C["body_depth"], y0, zb, zb + C["H"] - 14)
+        cam += box(P.X_ROLL - 20, P.X_ROLL + 20, y0 - C["body_depth"], y0 - 10, zb + C["H"] - 14, zb + C["H"])
+        cam += box(xt + C["W"] - 33, xt + C["W"], y0, y0 + 20, zb, zb + C["H"] - 22)
+        cam_kg = C["mass"]
+        cgc = (xt + C["W"] / 2, y0 - C["body_depth"] / 2, zb + C["H"] / 2)
+    else:
+        cam = Pos(P.X_ROLL, y0, za) * Rot(90, 0, 0) * Cylinder(r["cam_D"] / 2, r["cam_L"], align=(_C, _C, _MIN))
+        cam_kg = r["cam_kg"]
+        cgc = (P.X_ROLL, y0 - r["cam_L"] / 2, za)
+    sol["camera"] = cam
+    extra = max(r["kg"] - r["ota_kg"] - cam_kg, 0.0)
+    mas["lens"], cg["lens"] = r["ota_kg"] + extra, (P.X_ROLL, y0 + r["L"] * 0.45, za)
+    mas["camera"], cg["camera"] = cam_kg, cgc
+    m = mas["lens"] + mas["camera"]
+    ycg = (mas["lens"] * cg["lens"][1] + mas["camera"] * cg["camera"][1]) / m
+    zs = P.Z_ROLL + P.R_CLAMP_SEAT
+    if r["mount"] == "plate":                       # L-plate under the camera body
+        yc = y0 - C["body_depth"] / 2
+        top = za - C["axis_above_bottom"]
+    elif r["mount"] == "foot":                      # lens foot or collar under the balance point
+        yc = ycg
+        top = za - r["D"] / 2 + 6
+    else:                                           # dovetail bar: rear end flush with the clamp's rear jaw, so it
+        yc = P.CLAMP_CY - P.CLAMP["L"] / 2 + r["mount_L"] / 2   # never reaches back over the roll cartridge;
+        top = za - r["D"] / 2 + 2                   # the tube is balanced by sliding it in its rings on the bar
+    sol["mount"] = box(P.X_ROLL - 19, P.X_ROLL + 19, yc - r["mount_L"] / 2, yc + r["mount_L"] / 2, zs, max(top, zs + 8))
+    mas["mount"], cg["mount"] = 0.0, (P.X_ROLL, yc, zs + 5)
+    return sol, mas, cg, yc
+
+
+def reference_rig(key=None, y0=None):
+    """Solids of a payload envelope, balanced on the altitude axis (see assembly.rig_y0)."""
+    from .assembly import rig_y0
+    key = key or P.REF_RIG
+    return rig_parts(key, rig_y0(key) if y0 is None else y0)[0]
 
 
 from build123d import Align as _Al  # noqa: E402

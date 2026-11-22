@@ -15,7 +15,7 @@ Items tagged D34-D38 are Phase 3 decisions approved by Bruno (docs/02-decisions-
 import math
 import os
 
-REV = "B"
+REV = "C"
 DATE = "2026-11-22"
 
 # ---------------------------------------------------------------------------------------------
@@ -143,7 +143,8 @@ for _s in (17, 14):
     CART[_s]["z_board"] = CART[_s]["z_magnet"] + 2.0                      # board underside
     CART[_s]["z_cover_top"] = CART[_s]["z_board"] + 1.6 + 8.0
 
-ENC_TUBE = dict(OD=10.0, ID=6.5, flange_d=18.0, flange_t=3.0, solid_end=6.0, slot_w=4.0, slot_l=12.0,
+# D39: flange 28 / screws on PCD 22 so the head base keeps a central 3/8"-16 socket under the azimuth tube
+ENC_TUBE = dict(OD=10.0, ID=6.5, flange_d=28.0, screw_pcd=22.0, flange_t=3.0, solid_end=6.0, slot_w=4.0, slot_l=12.0,
                 magnet_d=6.0, magnet_h=2.5)
 ENC_BOARD_D = 30.0
 ENC_BOARD_HOLE_PCD = 23.0
@@ -166,13 +167,36 @@ LENS = dict(D=111.5, L=318.0, hood_L=7.0, mass=2.115)
 CAMERA = dict(W=131.3, H=96.9, D=82.4, body_depth=62.0, mass=0.723,
               mount_from_tower_side=58.0,    # ASSUMPTION: lens axis 58 mm from the tower-side edge
               axis_above_bottom=46.0)        # ASSUMPTION: lens axis 46 mm above the camera base
-LENS_MOUNT_Y = -84.0                         # camera mount plane for altitude balance (see checks: alt group CG)
+LENS_MOUNT_Y = -84.0                         # legacy (rev A/B): camera mount plane for the 200-600 rig
+
+# Payload envelopes (rev C): the head is checked against a family of payloads, not one lens.
+# D, L = lens / tube envelope (dew shield included); H = optical axis above the clamp seat; mount = what sits
+# in the Arca clamp; cam = mirrorless body (box) or astro camera + flattener (cylinder D x L); kg = whole payload.
+RIGS = {
+    "P1": dict(name="Mirrorless + standard zoom on an Arca L-plate", D=88.0, L=120.0, ota_kg=0.70, cam="mirrorless",
+               H=56.0, mount="plate", mount_L=70.0, kg=1.55),
+    "P2": dict(name="Mirrorless + 70-200 f/2.8 on its collar", D=88.0, L=200.0, ota_kg=1.12, cam="mirrorless",
+               H=70.0, mount="foot", mount_L=80.0, kg=1.95, collar_D=118.3),
+    "P3": dict(name="Mirrorless + 150-600 class lens on its foot", D=121.0, L=320.0, ota_kg=2.90, cam="mirrorless",
+               H=90.0, mount="foot", mount_L=100.0, kg=3.75),
+    "P4": dict(name="72 mm class refractor + astro camera", D=95.0, L=420.0, ota_kg=1.96, cam="astro", cam_D=80.0,
+               cam_L=110.0, cam_kg=0.60, H=75.0, mount="dovetail", mount_L=200.0, kg=2.70),
+    "P5": dict(name="90 mm class refractor, full 7 kg", D=121.0, L=510.0, ota_kg=4.17, cam="astro", cam_D=90.0,
+               cam_L=140.0, cam_kg=1.00, H=95.0, mount="dovetail", mount_L=250.0, kg=7.00),
+}
+REF_RIG = "P3"                               # the payload shown in renders and the viewer
 
 # Ranges (spec 1.2 and 2.1)
 ALT_MIN, ALT_MAX = -10.0, 95.0
 ALT_BUMP_MIN, ALT_BUMP_MAX = -15.0, 100.0
 ROLL_TOWARD_TOWER_MAX = 10.0                 # D34 (study result)
 ROLL_AWAY_MAX = -150.0
+
+# D39 removable wedge: head base plate ST-303 (stays on the head) and wedge top plate ST-331
+HEAD_BASE_R = 37.5                  # = V-ring seat radius; the head stands on this disc on a tripod
+WEDGE_PIN_R = 33.0                  # 2 x dowel 4 m6 at this radius, anti-rotation head <-> wedge
+WEDGE_PIN_ANG = (11.25, 191.25)     # between the reducer screw cbores
+HEAD_ON_TRIPOD_DZ = Z_UPPER_PLATE_TOP   # without the wedge the head drops this far (tripod top at Z 30 in head frame)
 
 # Materials: density g/cm3, and print settings from spec 8.2
 MAT = {
