@@ -1,0 +1,1402 @@
+{
+ "interference_home": {
+  "pose": "home",
+  "n_parts": 92,
+  "hits": []
+ },
+ "motor48": {
+  "nearest": [
+   {
+    "part": "Cartridge housing (altitude)",
+    "min_mm": 1.6
+   },
+   {
+    "part": "Azimuth body",
+    "min_mm": 3.2
+   },
+   {
+    "part": "Gasket body-tower",
+    "min_mm": 3.2
+   },
+   {
+    "part": "Tower",
+    "min_mm": 3.2
+   },
+   {
+    "part": "Motor plate (altitude)",
+    "min_mm": 11.5
+   },
+   {
+    "part": "Motor 38 mm (altitude)",
+    "min_mm": 21.4
+   }
+  ],
+  "own_cartridge": [
+   {
+    "part": "Cartridge housing (azimuth)",
+    "min_mm": 4.1
+   },
+   {
+    "part": "Pulley 60T (azimuth)",
+    "min_mm": 19.8
+   },
+   {
+    "part": "Pulley 20T (azimuth)",
+    "min_mm": 0.0
+   },
+   {
+    "part": "Belt 2GT-200-9 (azimuth)",
+    "min_mm": 3.6
+   },
+   {
+    "part": "Motor plate (azimuth)",
+    "min_mm": 0.0
+   }
+  ],
+  "motor_top_z": 170.0,
+  "body_top_z": 125.0,
+  "tower_inner_top_z": 276.0
+ },
+ "camera_swing": [
+  {
+   "alt": -10,
+   "min_mm": 30.0,
+   "rig": "lens",
+   "part": "Bumper 2",
+   "above_tripod_wedge_mm": 177.6,
+   "above_tripod_no_wedge_mm": 147.6
+  },
+  {
+   "alt": 0,
+   "min_mm": 30.3,
+   "rig": "lens",
+   "part": "Bumper 2",
+   "above_tripod_wedge_mm": 190.0,
+   "above_tripod_no_wedge_mm": 160.0
+  },
+  {
+   "alt": 20,
+   "min_mm": 31.6,
+   "rig": "lens",
+   "part": "Tower",
+   "above_tripod_wedge_mm": 183.0,
+   "above_tripod_no_wedge_mm": 153.0
+  },
+  {
+   "alt": 40,
+   "min_mm": 31.6,
+   "rig": "lens",
+   "part": "Tower",
+   "above_tripod_wedge_mm": 137.0,
+   "above_tripod_no_wedge_mm": 107.0
+  },
+  {
+   "alt": 60,
+   "min_mm": 31.6,
+   "rig": "lens",
+   "part": "Tower",
+   "above_tripod_wedge_mm": 101.7,
+   "above_tripod_no_wedge_mm": 71.7
+  },
+  {
+   "alt": 70,
+   "min_mm": 25.7,
+   "rig": "camera",
+   "part": "Azimuth body",
+   "above_tripod_wedge_mm": 89.4,
+   "above_tripod_no_wedge_mm": 59.4
+  },
+  {
+   "alt": 80,
+   "min_mm": 18.0,
+   "rig": "camera",
+   "part": "Azimuth body",
+   "above_tripod_wedge_mm": 81.2,
+   "above_tripod_no_wedge_mm": 51.2
+  },
+  {
+   "alt": 85,
+   "min_mm": 15.5,
+   "rig": "camera",
+   "part": "Azimuth body",
+   "above_tripod_wedge_mm": 78.8,
+   "above_tripod_no_wedge_mm": 48.8
+  },
+  {
+   "alt": 90,
+   "min_mm": 14.0,
+   "rig": "camera",
+   "part": "Azimuth body",
+   "above_tripod_wedge_mm": 77.4,
+   "above_tripod_no_wedge_mm": 47.4
+  },
+  {
+   "alt": 95,
+   "min_mm": 13.5,
+   "rig": "camera",
+   "part": "Azimuth body",
+   "above_tripod_wedge_mm": 68.8,
+   "above_tripod_no_wedge_mm": 38.8
+  }
+ ],
+ "arm_swing": [
+  {
+   "alt": -15,
+   "min_mm": 0.0,
+   "moving": "Altitude arm",
+   "fixed": "Bumper 1"
+  },
+  {
+   "alt": -10,
+   "min_mm": 1.0,
+   "moving": "Altitude arm",
+   "fixed": "Tower"
+  },
+  {
+   "alt": 0,
+   "min_mm": 1.0,
+   "moving": "Altitude arm",
+   "fixed": "Tower"
+  },
+  {
+   "alt": 30,
+   "min_mm": 1.0,
+   "moving": "Altitude arm",
+   "fixed": "Tower"
+  },
+  {
+   "alt": 60,
+   "min_mm": 1.0,
+   "moving": "Altitude arm",
+   "fixed": "Tower"
+  },
+  {
+   "alt": 90,
+   "min_mm": 1.0,
+   "moving": "Altitude arm",
+   "fixed": "Tower"
+  },
+  {
+   "alt": 100,
+   "min_mm": 0.0,
+   "moving": "Altitude arm",
+   "fixed": "Bumper 2"
+  }
+ ],
+ "roll_travel_alt0": {
+  "toward_tower": {
+   "limit_deg": 8.0,
+   "stop": {
+    "at": 9.0,
+    "min_mm": 0.9,
+    "rig": "lens",
+    "part": "Altitude arm"
+   }
+  },
+  "away": {
+   "limit_deg": -150.0,
+   "stop": {
+    "at": -155.0,
+    "min_mm": 0.4,
+    "rig": "lens",
+    "part": "Roll cartridge enclosure"
+   }
+  },
+  "below_tripod_plate_at_deg": -120.0,
+  "below_tripod_no_wedge_at_deg": -105.0,
+  "clearance_at_0_mm": 2.7,
+  "clearance_at_0_part": "Cartridge housing (roll)"
+ },
+ "roll_travel_alt45": {
+  "toward_tower": {
+   "limit_deg": 8.0,
+   "stop": {
+    "at": 9.0,
+    "min_mm": 0.9,
+    "rig": "lens",
+    "part": "Altitude arm"
+   }
+  },
+  "away": {
+   "limit_deg": -150.0,
+   "stop": {
+    "at": -155.0,
+    "min_mm": 0.4,
+    "rig": "lens",
+    "part": "Roll cartridge enclosure"
+   }
+  },
+  "below_tripod_plate_at_deg": -100.0,
+  "below_tripod_no_wedge_at_deg": -80.0,
+  "clearance_at_0_mm": 2.7,
+  "clearance_at_0_part": "Cartridge housing (roll)"
+ },
+ "wedge_tilt": [
+  {
+   "tilt": 0,
+   "hits": []
+  },
+  {
+   "tilt": 30,
+   "hits": []
+  },
+  {
+   "tilt": 60,
+   "hits": []
+  },
+  {
+   "tilt": 75,
+   "hits": []
+  }
+ ],
+ "payloads": {
+  "P1": {
+   "name": "Mirrorless + standard zoom on an Arca L-plate",
+   "kg": 1.55,
+   "mount_center_y": 13.0,
+   "alt_residual_Nm": 0.02,
+   "alt_offbalance_Nm": 1.12,
+   "alt_dz_mm": -34.2,
+   "roll_r_mm": 102.2,
+   "roll_torque_90_Nm": 1.55,
+   "camera_swing": [
+    {
+     "alt": -10,
+     "min_mm": 29.5,
+     "rig": "camera",
+     "part": "Reducer size 17 (altitude)",
+     "above_tripod_wedge_mm": 173.9,
+     "above_tripod_no_wedge_mm": 143.9
+    },
+    {
+     "alt": 0,
+     "min_mm": 29.5,
+     "rig": "camera",
+     "part": "Reducer size 17 (altitude)",
+     "above_tripod_wedge_mm": 190.0,
+     "above_tripod_no_wedge_mm": 160.0
+    },
+    {
+     "alt": 20,
+     "min_mm": 29.5,
+     "rig": "camera",
+     "part": "Reducer size 17 (altitude)",
+     "above_tripod_wedge_mm": 184.6,
+     "above_tripod_no_wedge_mm": 154.6
+    },
+    {
+     "alt": 40,
+     "min_mm": 29.5,
+     "rig": "camera",
+     "part": "Reducer size 17 (altitude)",
+     "above_tripod_wedge_mm": 184.0,
+     "above_tripod_no_wedge_mm": 154.0
+    },
+    {
+     "alt": 60,
+     "min_mm": 29.5,
+     "rig": "camera",
+     "part": "Reducer size 17 (altitude)",
+     "above_tripod_wedge_mm": 188.4,
+     "above_tripod_no_wedge_mm": 158.4
+    },
+    {
+     "alt": 70,
+     "min_mm": 29.5,
+     "rig": "camera",
+     "part": "Reducer size 17 (altitude)",
+     "above_tripod_wedge_mm": 192.4,
+     "above_tripod_no_wedge_mm": 162.4
+    },
+    {
+     "alt": 80,
+     "min_mm": 29.5,
+     "rig": "camera",
+     "part": "Reducer size 17 (altitude)",
+     "above_tripod_wedge_mm": 197.3,
+     "above_tripod_no_wedge_mm": 167.3
+    },
+    {
+     "alt": 85,
+     "min_mm": 29.5,
+     "rig": "camera",
+     "part": "Reducer size 17 (altitude)",
+     "above_tripod_wedge_mm": 200.0,
+     "above_tripod_no_wedge_mm": 170.0
+    },
+    {
+     "alt": 90,
+     "min_mm": 29.5,
+     "rig": "camera",
+     "part": "Reducer size 17 (altitude)",
+     "above_tripod_wedge_mm": 203.0,
+     "above_tripod_no_wedge_mm": 173.0
+    },
+    {
+     "alt": 95,
+     "min_mm": 29.5,
+     "rig": "camera",
+     "part": "Reducer size 17 (altitude)",
+     "above_tripod_wedge_mm": 200.8,
+     "above_tripod_no_wedge_mm": 170.8
+    }
+   ],
+   "camera_min": {
+    "alt": -10,
+    "min_mm": 29.5,
+    "rig": "camera",
+    "part": "Reducer size 17 (altitude)",
+    "above_tripod_wedge_mm": 173.9,
+    "above_tripod_no_wedge_mm": 143.9
+   },
+   "camera_at_85": {
+    "alt": 85,
+    "min_mm": 29.5,
+    "rig": "camera",
+    "part": "Reducer size 17 (altitude)",
+    "above_tripod_wedge_mm": 200.0,
+    "above_tripod_no_wedge_mm": 170.0
+   },
+   "tripod_min_wedge_mm": 173.9,
+   "tripod_min_no_wedge_mm": 143.9,
+   "roll_alt0": {
+    "toward_tower": {
+     "limit_deg": 9.0,
+     "stop": {
+      "at": 10.0,
+      "min_mm": 1.1,
+      "rig": "camera",
+      "part": "Altitude arm"
+     }
+    },
+    "away": {
+     "limit_deg": -175.0,
+     "stop": {
+      "at": -180.0,
+      "min_mm": 0.0,
+      "rig": "camera",
+      "part": "Base plate"
+     }
+    },
+    "below_tripod_plate_at_deg": -135.0,
+    "below_tripod_no_wedge_at_deg": -110.0,
+    "clearance_at_0_mm": 6.0,
+    "clearance_at_0_part": "Cartridge housing (roll)"
+   },
+   "roll_alt45": {
+    "toward_tower": {
+     "limit_deg": 9.0,
+     "stop": {
+      "at": 10.0,
+      "min_mm": 1.1,
+      "rig": "camera",
+      "part": "Altitude arm"
+     }
+    },
+    "away": {
+     "limit_deg": -190.0,
+     "stop": {
+      "at": -195.0,
+      "min_mm": 0.2,
+      "rig": "camera",
+      "part": "Azimuth body"
+     }
+    },
+    "below_tripod_plate_at_deg": -200.0,
+    "below_tripod_no_wedge_at_deg": -200.0,
+    "clearance_at_0_mm": 6.0,
+    "clearance_at_0_part": "Cartridge housing (roll)"
+   }
+  },
+  "P2": {
+   "name": "Mirrorless + 70-200 f/2.8 on its collar",
+   "kg": 1.95,
+   "mount_center_y": 18.0,
+   "alt_residual_Nm": 0.56,
+   "alt_offbalance_Nm": 0.96,
+   "alt_dz_mm": -21.0,
+   "roll_r_mm": 115.9,
+   "roll_torque_90_Nm": 2.22,
+   "camera_swing": [
+    {
+     "alt": -10,
+     "min_mm": 29.9,
+     "rig": "camera",
+     "part": "Reducer size 17 (altitude)",
+     "above_tripod_wedge_mm": 180.5,
+     "above_tripod_no_wedge_mm": 150.5
+    },
+    {
+     "alt": 0,
+     "min_mm": 29.9,
+     "rig": "camera",
+     "part": "Reducer size 17 (altitude)",
+     "above_tripod_wedge_mm": 190.0,
+     "above_tripod_no_wedge_mm": 160.0
+    },
+    {
+     "alt": 20,
+     "min_mm": 29.9,
+     "rig": "camera",
+     "part": "Reducer size 17 (altitude)",
+     "above_tripod_wedge_mm": 184.2,
+     "above_tripod_no_wedge_mm": 154.2
+    },
+    {
+     "alt": 40,
+     "min_mm": 29.9,
+     "rig": "camera",
+     "part": "Reducer size 17 (altitude)",
+     "above_tripod_wedge_mm": 159.3,
+     "above_tripod_no_wedge_mm": 129.3
+    },
+    {
+     "alt": 60,
+     "min_mm": 27.3,
+     "rig": "camera",
+     "part": "Azimuth body",
+     "above_tripod_wedge_mm": 142.3,
+     "above_tripod_no_wedge_mm": 112.3
+    },
+    {
+     "alt": 70,
+     "min_mm": 20.3,
+     "rig": "camera",
+     "part": "Azimuth body",
+     "above_tripod_wedge_mm": 137.5,
+     "above_tripod_no_wedge_mm": 107.5
+    },
+    {
+     "alt": 80,
+     "min_mm": 17.1,
+     "rig": "camera",
+     "part": "Azimuth body",
+     "above_tripod_wedge_mm": 135.3,
+     "above_tripod_no_wedge_mm": 105.3
+    },
+    {
+     "alt": 85,
+     "min_mm": 17.0,
+     "rig": "camera",
+     "part": "Azimuth body",
+     "above_tripod_wedge_mm": 135.2,
+     "above_tripod_no_wedge_mm": 105.2
+    },
+    {
+     "alt": 90,
+     "min_mm": 17.3,
+     "rig": "camera",
+     "part": "Azimuth body",
+     "above_tripod_wedge_mm": 135.9,
+     "above_tripod_no_wedge_mm": 105.9
+    },
+    {
+     "alt": 95,
+     "min_mm": 17.0,
+     "rig": "camera",
+     "part": "Azimuth body",
+     "above_tripod_wedge_mm": 128.7,
+     "above_tripod_no_wedge_mm": 98.7
+    }
+   ],
+   "camera_min": {
+    "alt": 85,
+    "min_mm": 17.0,
+    "rig": "camera",
+    "part": "Azimuth body",
+    "above_tripod_wedge_mm": 135.2,
+    "above_tripod_no_wedge_mm": 105.2
+   },
+   "camera_at_85": {
+    "alt": 85,
+    "min_mm": 17.0,
+    "rig": "camera",
+    "part": "Azimuth body",
+    "above_tripod_wedge_mm": 135.2,
+    "above_tripod_no_wedge_mm": 105.2
+   },
+   "tripod_min_wedge_mm": 128.7,
+   "tripod_min_no_wedge_mm": 98.7,
+   "roll_alt0": {
+    "toward_tower": {
+     "limit_deg": 9.0,
+     "stop": {
+      "at": 10.0,
+      "min_mm": 1.9,
+      "rig": "camera",
+      "part": "Cable guide (arm)"
+     }
+    },
+    "away": {
+     "limit_deg": -130.0,
+     "stop": {
+      "at": -135.0,
+      "min_mm": 1.2,
+      "rig": "camera",
+      "part": "Roll cartridge enclosure"
+     }
+    },
+    "below_tripod_plate_at_deg": -125.0,
+    "below_tripod_no_wedge_at_deg": -110.0,
+    "clearance_at_0_mm": 6.0,
+    "clearance_at_0_part": "Cartridge housing (roll)"
+   },
+   "roll_alt45": {
+    "toward_tower": {
+     "limit_deg": 9.0,
+     "stop": {
+      "at": 10.0,
+      "min_mm": 1.9,
+      "rig": "camera",
+      "part": "Cable guide (arm)"
+     }
+    },
+    "away": {
+     "limit_deg": -130.0,
+     "stop": {
+      "at": -135.0,
+      "min_mm": 1.2,
+      "rig": "camera",
+      "part": "Roll cartridge enclosure"
+     }
+    },
+    "below_tripod_plate_at_deg": -130.0,
+    "below_tripod_no_wedge_at_deg": -105.0,
+    "clearance_at_0_mm": 6.0,
+    "clearance_at_0_part": "Cartridge housing (roll)"
+   }
+  },
+  "P3": {
+   "name": "Mirrorless + 150-600 class lens on its foot",
+   "kg": 3.75,
+   "mount_center_y": 24.7,
+   "alt_residual_Nm": 0.0,
+   "alt_offbalance_Nm": 0.58,
+   "alt_dz_mm": 10.7,
+   "roll_r_mm": 135.5,
+   "roll_torque_90_Nm": 4.98,
+   "camera_swing": [
+    {
+     "alt": -10,
+     "min_mm": 30.0,
+     "rig": "lens",
+     "part": "Bumper 2",
+     "above_tripod_wedge_mm": 177.6,
+     "above_tripod_no_wedge_mm": 147.6
+    },
+    {
+     "alt": 0,
+     "min_mm": 30.3,
+     "rig": "lens",
+     "part": "Bumper 2",
+     "above_tripod_wedge_mm": 190.0,
+     "above_tripod_no_wedge_mm": 160.0
+    },
+    {
+     "alt": 20,
+     "min_mm": 31.6,
+     "rig": "lens",
+     "part": "Tower",
+     "above_tripod_wedge_mm": 183.0,
+     "above_tripod_no_wedge_mm": 153.0
+    },
+    {
+     "alt": 40,
+     "min_mm": 31.6,
+     "rig": "lens",
+     "part": "Tower",
+     "above_tripod_wedge_mm": 137.0,
+     "above_tripod_no_wedge_mm": 107.0
+    },
+    {
+     "alt": 60,
+     "min_mm": 31.6,
+     "rig": "lens",
+     "part": "Tower",
+     "above_tripod_wedge_mm": 101.7,
+     "above_tripod_no_wedge_mm": 71.7
+    },
+    {
+     "alt": 70,
+     "min_mm": 25.7,
+     "rig": "camera",
+     "part": "Azimuth body",
+     "above_tripod_wedge_mm": 89.4,
+     "above_tripod_no_wedge_mm": 59.4
+    },
+    {
+     "alt": 80,
+     "min_mm": 18.0,
+     "rig": "camera",
+     "part": "Azimuth body",
+     "above_tripod_wedge_mm": 81.2,
+     "above_tripod_no_wedge_mm": 51.2
+    },
+    {
+     "alt": 85,
+     "min_mm": 15.5,
+     "rig": "camera",
+     "part": "Azimuth body",
+     "above_tripod_wedge_mm": 78.8,
+     "above_tripod_no_wedge_mm": 48.8
+    },
+    {
+     "alt": 90,
+     "min_mm": 14.0,
+     "rig": "camera",
+     "part": "Azimuth body",
+     "above_tripod_wedge_mm": 77.4,
+     "above_tripod_no_wedge_mm": 47.4
+    },
+    {
+     "alt": 95,
+     "min_mm": 13.5,
+     "rig": "camera",
+     "part": "Azimuth body",
+     "above_tripod_wedge_mm": 68.8,
+     "above_tripod_no_wedge_mm": 38.8
+    }
+   ],
+   "camera_min": {
+    "alt": 95,
+    "min_mm": 13.5,
+    "rig": "camera",
+    "part": "Azimuth body",
+    "above_tripod_wedge_mm": 68.8,
+    "above_tripod_no_wedge_mm": 38.8
+   },
+   "camera_at_85": {
+    "alt": 85,
+    "min_mm": 15.5,
+    "rig": "camera",
+    "part": "Azimuth body",
+    "above_tripod_wedge_mm": 78.8,
+    "above_tripod_no_wedge_mm": 48.8
+   },
+   "tripod_min_wedge_mm": 68.8,
+   "tripod_min_no_wedge_mm": 38.8,
+   "roll_alt0": {
+    "toward_tower": {
+     "limit_deg": 8.0,
+     "stop": {
+      "at": 9.0,
+      "min_mm": 0.9,
+      "rig": "lens",
+      "part": "Altitude arm"
+     }
+    },
+    "away": {
+     "limit_deg": -150.0,
+     "stop": {
+      "at": -155.0,
+      "min_mm": 0.4,
+      "rig": "lens",
+      "part": "Roll cartridge enclosure"
+     }
+    },
+    "below_tripod_plate_at_deg": -120.0,
+    "below_tripod_no_wedge_at_deg": -105.0,
+    "clearance_at_0_mm": 2.7,
+    "clearance_at_0_part": "Cartridge housing (roll)"
+   },
+   "roll_alt45": {
+    "toward_tower": {
+     "limit_deg": 8.0,
+     "stop": {
+      "at": 9.0,
+      "min_mm": 0.9,
+      "rig": "lens",
+      "part": "Altitude arm"
+     }
+    },
+    "away": {
+     "limit_deg": -150.0,
+     "stop": {
+      "at": -155.0,
+      "min_mm": 0.4,
+      "rig": "lens",
+      "part": "Roll cartridge enclosure"
+     }
+    },
+    "below_tripod_plate_at_deg": -100.0,
+    "below_tripod_no_wedge_at_deg": -80.0,
+    "clearance_at_0_mm": 2.7,
+    "clearance_at_0_part": "Cartridge housing (roll)"
+   }
+  },
+  "P4": {
+   "name": "72 mm class refractor + astro camera",
+   "kg": 2.7,
+   "mount_center_y": 78.0,
+   "alt_residual_Nm": 0.0,
+   "alt_offbalance_Nm": 0.4,
+   "alt_dz_mm": -9.0,
+   "roll_r_mm": 120.0,
+   "roll_torque_90_Nm": 3.18,
+   "camera_swing": [
+    {
+     "alt": -10,
+     "min_mm": 41.7,
+     "rig": "lens",
+     "part": "Reducer size 17 (altitude)",
+     "above_tripod_wedge_mm": 159.6,
+     "above_tripod_no_wedge_mm": 129.6
+    },
+    {
+     "alt": 0,
+     "min_mm": 41.7,
+     "rig": "lens",
+     "part": "Reducer size 17 (altitude)",
+     "above_tripod_wedge_mm": 190.0,
+     "above_tripod_no_wedge_mm": 160.0
+    },
+    {
+     "alt": 20,
+     "min_mm": 41.7,
+     "rig": "lens",
+     "part": "Reducer size 17 (altitude)",
+     "above_tripod_wedge_mm": 153.0,
+     "above_tripod_no_wedge_mm": 123.0
+    },
+    {
+     "alt": 40,
+     "min_mm": 41.7,
+     "rig": "lens",
+     "part": "Reducer size 17 (altitude)",
+     "above_tripod_wedge_mm": 89.7,
+     "above_tripod_no_wedge_mm": 59.7
+    },
+    {
+     "alt": 60,
+     "min_mm": 41.7,
+     "rig": "lens",
+     "part": "Reducer size 17 (altitude)",
+     "above_tripod_wedge_mm": 42.7,
+     "above_tripod_no_wedge_mm": 12.7
+    },
+    {
+     "alt": 70,
+     "min_mm": 41.7,
+     "rig": "lens",
+     "part": "Reducer size 17 (altitude)",
+     "above_tripod_wedge_mm": 27.2,
+     "above_tripod_no_wedge_mm": -2.8
+    },
+    {
+     "alt": 80,
+     "min_mm": 35.9,
+     "rig": "lens",
+     "part": "Azimuth body",
+     "above_tripod_wedge_mm": 17.7,
+     "above_tripod_no_wedge_mm": -12.3
+    },
+    {
+     "alt": 85,
+     "min_mm": 32.5,
+     "rig": "lens",
+     "part": "Azimuth body",
+     "above_tripod_wedge_mm": 15.3,
+     "above_tripod_no_wedge_mm": -14.7
+    },
+    {
+     "alt": 90,
+     "min_mm": 29.8,
+     "rig": "lens",
+     "part": "Azimuth body",
+     "above_tripod_wedge_mm": 14.5,
+     "above_tripod_no_wedge_mm": -15.5
+    },
+    {
+     "alt": 95,
+     "min_mm": 27.5,
+     "rig": "lens",
+     "part": "Azimuth body",
+     "above_tripod_wedge_mm": 8.3,
+     "above_tripod_no_wedge_mm": -21.7
+    }
+   ],
+   "camera_min": {
+    "alt": 95,
+    "min_mm": 27.5,
+    "rig": "lens",
+    "part": "Azimuth body",
+    "above_tripod_wedge_mm": 8.3,
+    "above_tripod_no_wedge_mm": -21.7
+   },
+   "camera_at_85": {
+    "alt": 85,
+    "min_mm": 32.5,
+    "rig": "lens",
+    "part": "Azimuth body",
+    "above_tripod_wedge_mm": 15.3,
+    "above_tripod_no_wedge_mm": -14.7
+   },
+   "tripod_min_wedge_mm": 8.3,
+   "tripod_min_no_wedge_mm": -21.7,
+   "roll_alt0": {
+    "toward_tower": {
+     "limit_deg": 15.0,
+     "stop": {
+      "at": 16.0,
+      "min_mm": 0.9,
+      "rig": "lens",
+      "part": "Altitude arm"
+     }
+    },
+    "away": {
+     "limit_deg": -150.0,
+     "stop": {
+      "at": -155.0,
+      "min_mm": 0.2,
+      "rig": "lens",
+      "part": "Roll cartridge enclosure"
+     }
+    },
+    "below_tripod_plate_at_deg": -145.0,
+    "below_tripod_no_wedge_at_deg": -125.0,
+    "clearance_at_0_mm": 6.0,
+    "clearance_at_0_part": "Cartridge housing (roll)"
+   },
+   "roll_alt45": {
+    "toward_tower": {
+     "limit_deg": 15.0,
+     "stop": {
+      "at": 16.0,
+      "min_mm": 0.9,
+      "rig": "lens",
+      "part": "Altitude arm"
+     }
+    },
+    "away": {
+     "limit_deg": -150.0,
+     "stop": {
+      "at": -155.0,
+      "min_mm": 0.2,
+      "rig": "lens",
+      "part": "Roll cartridge enclosure"
+     }
+    },
+    "below_tripod_plate_at_deg": -85.0,
+    "below_tripod_no_wedge_at_deg": -65.0,
+    "clearance_at_0_mm": 6.0,
+    "clearance_at_0_part": "Cartridge housing (roll)"
+   }
+  },
+  "P5": {
+   "name": "90 mm class refractor, full 7 kg",
+   "kg": 7.0,
+   "mount_center_y": 103.0,
+   "alt_residual_Nm": 0.0,
+   "alt_offbalance_Nm": 2.66,
+   "alt_dz_mm": 30.9,
+   "roll_r_mm": 140.0,
+   "roll_torque_90_Nm": 9.61,
+   "camera_swing": [
+    {
+     "alt": -10,
+     "min_mm": 30.1,
+     "rig": "lens",
+     "part": "Bumper 2",
+     "above_tripod_wedge_mm": 150.9,
+     "above_tripod_no_wedge_mm": 120.9
+    },
+    {
+     "alt": 0,
+     "min_mm": 30.8,
+     "rig": "lens",
+     "part": "Bumper 2",
+     "above_tripod_wedge_mm": 190.0,
+     "above_tripod_no_wedge_mm": 160.0
+    },
+    {
+     "alt": 20,
+     "min_mm": 32.0,
+     "rig": "lens",
+     "part": "Tower",
+     "above_tripod_wedge_mm": 131.9,
+     "above_tripod_no_wedge_mm": 101.9
+    },
+    {
+     "alt": 40,
+     "min_mm": 32.0,
+     "rig": "lens",
+     "part": "Tower",
+     "above_tripod_wedge_mm": 35.0,
+     "above_tripod_no_wedge_mm": 5.0
+    },
+    {
+     "alt": 60,
+     "min_mm": 32.0,
+     "rig": "lens",
+     "part": "Tower",
+     "above_tripod_wedge_mm": -39.0,
+     "above_tripod_no_wedge_mm": -69.0
+    },
+    {
+     "alt": 70,
+     "min_mm": 32.0,
+     "rig": "lens",
+     "part": "Tower",
+     "above_tripod_wedge_mm": -64.5,
+     "above_tripod_no_wedge_mm": -94.5
+    },
+    {
+     "alt": 80,
+     "min_mm": 31.8,
+     "rig": "lens",
+     "part": "Azimuth body",
+     "above_tripod_wedge_mm": -81.1,
+     "above_tripod_no_wedge_mm": -111.1
+    },
+    {
+     "alt": 85,
+     "min_mm": 27.5,
+     "rig": "lens",
+     "part": "Azimuth body",
+     "above_tripod_wedge_mm": -86.0,
+     "above_tripod_no_wedge_mm": -116.0
+    },
+    {
+     "alt": 90,
+     "min_mm": 23.7,
+     "rig": "lens",
+     "part": "Azimuth body",
+     "above_tripod_wedge_mm": -88.5,
+     "above_tripod_no_wedge_mm": -118.5
+    },
+    {
+     "alt": 95,
+     "min_mm": 18.2,
+     "rig": "lens",
+     "part": "Azimuth body",
+     "above_tripod_wedge_mm": -96.4,
+     "above_tripod_no_wedge_mm": -126.4
+    }
+   ],
+   "camera_min": {
+    "alt": 95,
+    "min_mm": 18.2,
+    "rig": "lens",
+    "part": "Azimuth body",
+    "above_tripod_wedge_mm": -96.4,
+    "above_tripod_no_wedge_mm": -126.4
+   },
+   "camera_at_85": {
+    "alt": 85,
+    "min_mm": 27.5,
+    "rig": "lens",
+    "part": "Azimuth body",
+    "above_tripod_wedge_mm": -86.0,
+    "above_tripod_no_wedge_mm": -116.0
+   },
+   "tripod_min_wedge_mm": -96.4,
+   "tripod_min_no_wedge_mm": -126.4,
+   "roll_alt0": {
+    "toward_tower": {
+     "limit_deg": 8.0,
+     "stop": {
+      "at": 9.0,
+      "min_mm": 1.3,
+      "rig": "lens",
+      "part": "Altitude arm"
+     }
+    },
+    "away": {
+     "limit_deg": -155.0,
+     "stop": {
+      "at": -160.0,
+      "min_mm": 0.0,
+      "rig": "lens",
+      "part": "Roll cartridge enclosure"
+     }
+    },
+    "below_tripod_plate_at_deg": -130.0,
+    "below_tripod_no_wedge_at_deg": -115.0,
+    "clearance_at_0_mm": 6.0,
+    "clearance_at_0_part": "Cartridge housing (roll)"
+   },
+   "roll_alt45": {
+    "toward_tower": {
+     "limit_deg": 8.0,
+     "stop": {
+      "at": 9.0,
+      "min_mm": 1.3,
+      "rig": "lens",
+      "part": "Altitude arm"
+     }
+    },
+    "away": {
+     "limit_deg": -155.0,
+     "stop": {
+      "at": -160.0,
+      "min_mm": 0.0,
+      "rig": "lens",
+      "part": "Roll cartridge enclosure"
+     }
+    },
+    "below_tripod_plate_at_deg": -35.0,
+    "below_tripod_no_wedge_at_deg": 0.0,
+    "clearance_at_0_mm": 6.0,
+    "clearance_at_0_part": "Cartridge housing (roll)"
+   }
+  }
+ },
+ "mass": {
+  "total_kg": 6.83,
+  "cog_mm": [
+   22.1,
+   -7.0,
+   128.0
+  ],
+  "wedge_kg": 0.619,
+  "head_only_kg": 6.21,
+  "groups": {
+   "Reducers": 2.71,
+   "Stepper motors": 0.95,
+   "Pulleys and belts": 0.123,
+   "Battery pack": 0.381,
+   "Electronics and harness": 0.127,
+   "Housings and covers (printed)": 0.921,
+   "Aluminium parts and clamp": 1.22,
+   "Encoder tubes, magnets": 0.044,
+   "Fasteners, inserts, seals": 0.353
+  },
+  "spec_groups": {
+   "Reducers": 2.7,
+   "Stepper motors": 0.95,
+   "Pulleys and belts": 0.14,
+   "Battery pack": 0.34,
+   "Electronics and harness": 0.17,
+   "Housings and covers (printed)": 0.56,
+   "Aluminium parts and clamp": 1.08,
+   "Encoder tubes, magnets": 0.0,
+   "Fasteners, inserts, seals": 0.15
+  },
+  "per_part": {
+   "ST-201": {
+    "name": "Reducer size 14",
+    "kg": 0.71,
+    "qty": 1
+   },
+   "ST-202": {
+    "name": "Reducer size 17",
+    "kg": 2.0,
+    "qty": 2
+   },
+   "ST-203": {
+    "name": "Motor 38 mm",
+    "kg": 0.56,
+    "qty": 2
+   },
+   "ST-204": {
+    "name": "Pulley 20T",
+    "kg": 0.024,
+    "qty": 3
+   },
+   "ST-205": {
+    "name": "Pulley 60T",
+    "kg": 0.09,
+    "qty": 3
+   },
+   "ST-206": {
+    "name": "Belt 2GT-200-9",
+    "kg": 0.009,
+    "qty": 3
+   },
+   "ST-207": {
+    "name": "Motor plate",
+    "kg": 0.0784,
+    "qty": 3
+   },
+   "ST-208": {
+    "name": "Encoder tube",
+    "kg": 0.029,
+    "qty": 2
+   },
+   "ST-209": {
+    "name": "Encoder magnet",
+    "kg": 0.0015,
+    "qty": 3
+   },
+   "ST-210": {
+    "name": "Cartridge housing",
+    "kg": 0.1008,
+    "qty": 1
+   },
+   "ST-211": {
+    "name": "Cartridge housing",
+    "kg": 0.2292,
+    "qty": 2
+   },
+   "ST-212": {
+    "name": "Cartridge cover",
+    "kg": 0.0138,
+    "qty": 2
+   },
+   "ST-213": {
+    "name": "V-ring VA-75",
+    "kg": 0.004,
+    "qty": 1
+   },
+   "ST-214": {
+    "name": "Motor 48 mm",
+    "kg": 0.39,
+    "qty": 1
+   },
+   "ST-215": {
+    "name": "Encoder tube",
+    "kg": 0.014,
+    "qty": 1
+   },
+   "ST-216": {
+    "name": "Cartridge cover",
+    "kg": 0.0069,
+    "qty": 1
+   },
+   "ST-217": {
+    "name": "Roll cartridge enclosure",
+    "kg": 0.1106,
+    "qty": 1
+   },
+   "ST-218": {
+    "name": "V-ring VA-80",
+    "kg": 0.005,
+    "qty": 1
+   },
+   "ST-219": {
+    "name": "V-ring VA-65",
+    "kg": 0.003,
+    "qty": 1
+   },
+   "ST-301": {
+    "name": "Base plate",
+    "kg": 0.0963,
+    "qty": 1
+   },
+   "ST-302": {
+    "name": "Wedge lower plate",
+    "kg": 0.2451,
+    "qty": 1
+   },
+   "ST-303": {
+    "name": "Head base plate",
+    "kg": 0.1315,
+    "qty": 1
+   },
+   "ST-304": {
+    "name": "Hinge pin 8 h6",
+    "kg": 0.041,
+    "qty": 1
+   },
+   "ST-305": {
+    "name": "Latitude arc +Y",
+    "kg": 0.0198,
+    "qty": 2
+   },
+   "ST-307": {
+    "name": "3/8in-16 bushing",
+    "kg": 0.012,
+    "qty": 2
+   },
+   "ST-310": {
+    "name": "Azimuth body",
+    "kg": 0.1842,
+    "qty": 1
+   },
+   "ST-311": {
+    "name": "Tower",
+    "kg": 0.1836,
+    "qty": 1
+   },
+   "ST-312": {
+    "name": "Altitude arm",
+    "kg": 0.2499,
+    "qty": 1
+   },
+   "ST-313": {
+    "name": "Roll shelf",
+    "kg": 0.1495,
+    "qty": 1
+   },
+   "ST-314": {
+    "name": "Arca clamp 60 mm",
+    "kg": 0.071,
+    "qty": 1
+   },
+   "ST-315": {
+    "name": "Front bezel",
+    "kg": 0.0244,
+    "qty": 1
+   },
+   "ST-316": {
+    "name": "Button cap 1",
+    "kg": 0.002,
+    "qty": 4
+   },
+   "ST-317": {
+    "name": "Battery tray",
+    "kg": 0.0173,
+    "qty": 1
+   },
+   "ST-318": {
+    "name": "Battery door",
+    "kg": 0.0147,
+    "qty": 1
+   },
+   "ST-319": {
+    "name": "Top cover",
+    "kg": 0.026,
+    "qty": 1
+   },
+   "ST-320": {
+    "name": "Cable guide",
+    "kg": 0.0064,
+    "qty": 3
+   },
+   "ST-322": {
+    "name": "Bumper 1",
+    "kg": 0.0005,
+    "qty": 2
+   },
+   "ST-323": {
+    "name": "Gasket body-tower",
+    "kg": 0.0018,
+    "qty": 1
+   },
+   "ST-324": {
+    "name": "Gasket top cover",
+    "kg": 0.0021,
+    "qty": 1
+   },
+   "ST-325": {
+    "name": "Gasket battery door",
+    "kg": 0.0011,
+    "qty": 1
+   },
+   "ST-326": {
+    "name": "OLED window 38 x 22 x 1 PC",
+    "kg": 0.001,
+    "qty": 1
+   },
+   "ST-327": {
+    "name": "Gasket bezel",
+    "kg": 0.0019,
+    "qty": 1
+   },
+   "ST-328": {
+    "name": "Gasket roll enclosure",
+    "kg": 0.0028,
+    "qty": 1
+   },
+   "ST-329": {
+    "name": "O-ring 80 x 2",
+    "kg": 0.002,
+    "qty": 1
+   },
+   "ST-331": {
+    "name": "Wedge top plate",
+    "kg": 0.1256,
+    "qty": 1
+   },
+   "ST-332": {
+    "name": "Wedge screw 3/8in-16 x 10, coin slot",
+    "kg": 0.012,
+    "qty": 1
+   },
+   "ST-333": {
+    "name": "Dowel 4 m6 x 10",
+    "kg": 0.002,
+    "qty": 2
+   },
+   "ST-501": {
+    "name": "Mainboard",
+    "kg": 0.045,
+    "qty": 1
+   },
+   "ST-512": {
+    "name": "GNSS patch antenna",
+    "kg": 0.01,
+    "qty": 1
+   },
+   "ST-520": {
+    "name": "Encoder board",
+    "kg": 0.012,
+    "qty": 3
+   },
+   "ST-601": {
+    "name": "Cell P50B 1",
+    "kg": 0.28,
+    "qty": 4
+   },
+   "ST-602": {
+    "name": "Battery board",
+    "kg": 0.015,
+    "qty": 1
+   },
+   "ST-605": {
+    "name": "Pack shell lower",
+    "kg": 0.03,
+    "qty": 1
+   },
+   "ST-606": {
+    "name": "Cell holder -Y",
+    "kg": 0.0048,
+    "qty": 2
+   },
+   "ST-608": {
+    "name": "Pack-side blade connector",
+    "kg": 0.008,
+    "qty": 1
+   },
+   "ST-609": {
+    "name": "Head-side blade connector",
+    "kg": 0.008,
+    "qty": 1
+   },
+   "ST-610": {
+    "name": "Pack gasket",
+    "kg": 0.001,
+    "qty": 1
+   },
+   "ST-611": {
+    "name": "Pack light pipe",
+    "kg": 0.0027,
+    "qty": 1
+   },
+   "ST-612": {
+    "name": "Pack shell upper",
+    "kg": 0.0315,
+    "qty": 1
+   }
+  },
+  "alt_group": {
+   "kg": 5.544,
+   "cg": [
+    132.0,
+    0.0,
+    235.7
+   ],
+   "dz_from_alt_axis": 10.7,
+   "dy_from_alt_axis": 0.0
+  },
+  "roll_stage_plus_rig": {
+   "kg": 3.988,
+   "cg": [
+    136.9,
+    23.0,
+    273.6
+   ],
+   "offset_from_roll_axis": 128.6
+  },
+  "roll_stage_hardware": {
+   "kg": 1.522,
+   "cg": [
+    130.7,
+    -58.2,
+    134.2
+   ]
+  }
+ },
+ "seconds": 389.9,
+ "x_roll": 135.5
+}

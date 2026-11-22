@@ -38,8 +38,8 @@ The reasoning and numbers are in `docs/02-engineering-spec.md`. The label in bra
 | D23 | Motor and belt (Q6) | StepperOnline 17HE15-1504S on all axes; 20T:60T GT2, 9 mm wide, 200 mm closed belt. **Azimuth motor changed by D32** |
 | D24 | Metal parts on prototype P1 (Q7) | Altitude arm and roll shelf CNC-machined in 6061 from the first prototype |
 | D25 | Brake (Q8) | None. Low-battery park at 5 % and end-stop bumpers |
-| D26 | Slew speed in the cold (Q9) | 8°/s down to 0 °C, 6°/s at −20 °C |
-| D27 | Power chips (Q10) | BQ25792 + TPS25751D (port A), TPS25752A + TPS55288 (27 W camera port B), TPS61288 (12 V), TPS62932 (3.3 V), BQ40Z50-R2 in the pack. The BQ25792 / TPS25751D pairing is to be confirmed in Phase 4 |
+| D26 | Slew speed in the cold (Q9) | 8°/s down to 0 °C, 6°/s at −20 °C. **Cold limit to be re-checked under D33 in Phase 4** |
+| D27 | Power chips (Q10) | BQ25792 + TPS25751D (port A), TPS25752A + TPS55288 (27 W camera port B), TPS61288 (12 V), TPS62932 (3.3 V), BQ40Z50-R2 in the pack. The BQ25792 / TPS25751D pairing is to be confirmed in Phase 4. **Motor rail raised to 16 V by D33** |
 | D28 | Weight target (Q11) | Prototype P1 ≤ 6.1 kg, production ≤ 5.1 kg, weight-cutting pass in Phase 8. First approved as 5.8 kg and 4.9 kg; restated after the size-17 azimuth (D17) added 0.3 kg, and confirmed with D32. Revision C of the spec predicts 6.08 kg and 5.34 kg, so production depends on the Phase 8 pass |
 | D29 | Printer, dryer, services (Q12) | Bambu Lab H2S + AMS HT; JLCCNC for aluminium, JLC3DP for MJF PA12, Xometry Europe as backup |
 | D30 | Arca clamp on the prototype (Q13) | Buy a standard 60 mm clamp |
@@ -54,3 +54,23 @@ The reasoning and numbers are in `docs/02-engineering-spec.md`. The label in bra
 | D32 | Azimuth motor (Q15, changes D23) | 48 mm StepperOnline 17HS19-2004S1 on azimuth only (part ST-214); altitude and roll keep the 38 mm 17HE15-1504S. Same mount, +110 g, about €3.50 more per head. At −20 °C a 7 kg load in the EQ extreme had a margin of 0.84 at 8°/s and 1.08 at 6°/s with the 38 mm motor; it has 1.23 and 1.51 with the 48 mm motor, so the cold limit of D26 holds for every load |
 
 The restated weight target was confirmed in the same reply and is recorded in D28. Revision C of the spec carries D32 through the calculations, mass budget, power budget, cost model and parts list.
+
+## 21 Nov 2026 — Phase 3 decisions
+
+| # | Topic | Decision |
+|---|---|---|
+| D33 | Motor rail voltage (Q16, changes D27) | Motor rail raised from 12 V to 16 V, still from the TPS61288 boost converter (rated to 18 V). Lifts the 7 kg cold-slew margin at 8°/s from about 1.2 to about 1.6, so the 6°/s cold limit of D26 may be dropped. No mechanical part changes. The rerun of `phase2_calcs.py`, the power budget and the D26 review belong to Phase 4. Approved by Bruno: "yes, it can be 16V" |
+| D34 | Roll axis offset (Q17, D31 study) | Roll axis 23 mm further from the azimuth axis (X 135.5 instead of 112.5). Roll travel +10° toward the tower to −145° away with the 200–600 on its foot; worst-case azimuth torque 19.45 N·m, 2.0× under the 39 N·m limit. Approved: "Yes, move it 23 mm" |
+| D35 | Weight changes for P1 (Q21, changes D28) | Make W1–W5 to bring P1 to about 6.8 kg (mount without payload): body and tower walls 2.0 mm (W1) and printed in MJF PA12 by JLC3DP (W2); ribbed pockets under ST-302 and ST-303 (W3); 6061 encoder tubes (W4); Sunwayfoto DDC-60i clamp, 71 g (W5). Also 7075 aluminium screws for the reducer-to-housing joints and deeper pockets in ST-301 and ST-313. The cartridge housings stay PAHT-CF for torsional stiffness. Approved: "Make the changes to reach 6.8 kg". Payload rating stays 7 kg (D4); further weight options are open with Bruno |
+| D36 | Arca clamp fixing (Q18, exception to D13) | One 3/8"-16 × 12 coin-slot screw (ST-330) fixes any standard clamp. Approved: "go with your recommendations" |
+| D37 | Roll shelf cantilever (Q19) | 30 mm from the roll output face to the clamp centre instead of 75 mm. Approved: "go with your recommendations" |
+| D38 | Wedge layout (Q20, refines D21) | Raised hinge with the latitude arcs hanging below it, two M5 clamp knobs, M3 tangent screw at R31 mm giving about 55′ per turn instead of 34′. Approved: "go with your recommendations" |
+
+## 22 Nov 2026 — Phase 3 rev C decisions
+
+| # | Topic | Decision |
+|---|---|---|
+| D39 | Removable wedge (Q21 option, changes D21 and D38) | The wedge comes off without tools: the head stands on a new head base plate (ST-303, Ø75 disc with its own pressed 3/8"-16 bushing) and sits on the wedge top plate (ST-331) on two Ø4 dowels (ST-333), held by one 3/8"-16 × 10 coin-slot screw from below (ST-332). For alt-az nights the wedge stays at home and the head screws straight onto any tripod. Head alone 6.21 kg, wedge 0.62 kg, both together 6.83 kg (the interface adds about 30 g). Approved: "I will go with the removable wedge" |
+| D40 | Payload envelopes instead of one reference lens (refines D4, D31, D34) | The design is checked against five generic payloads, not one lens: P1 mirrorless + standard zoom on an L-plate (1.55 kg), P2 70-200 f/2.8 on its collar (1.95 kg), P3 150-600 class lens on its foot (3.75 kg), P4 72 mm refractor + astro camera (2.70 kg), P5 90 mm refractor at the full 7 kg. Each is balanced on the altitude axis within the clamp's reach, and swing, roll travel, tripod clearance (wedge on and off) and loads are reported for each. Roll limits are set per payload in the firmware. Direction from Bruno: "This tracker is not just for me and my gear". Approved: "Yes, the 5 payloads do cover almost all gear" |
+
+The FE 200-600 foot-height question is closed by D40: the design no longer depends on one lens.

@@ -1,0 +1,451 @@
+{
+ "camera_swing": [
+  {
+   "alt": -10,
+   "min_mm": 11.8,
+   "rig": "lens",
+   "part": "Bumper 2"
+  },
+  {
+   "alt": 0,
+   "min_mm": 11.8,
+   "rig": "lens",
+   "part": "Bumper 2"
+  },
+  {
+   "alt": 20,
+   "min_mm": 13.2,
+   "rig": "lens",
+   "part": "Tower"
+  },
+  {
+   "alt": 40,
+   "min_mm": 13.2,
+   "rig": "lens",
+   "part": "Tower"
+  },
+  {
+   "alt": 60,
+   "min_mm": 12.0,
+   "rig": "camera",
+   "part": "Tower"
+  },
+  {
+   "alt": 70,
+   "min_mm": 3.6,
+   "rig": "camera",
+   "part": "Azimuth body"
+  },
+  {
+   "alt": 80,
+   "min_mm": 0.0,
+   "rig": "camera",
+   "part": "Azimuth body"
+  },
+  {
+   "alt": 85,
+   "min_mm": 0.0,
+   "rig": "camera",
+   "part": "Azimuth body"
+  },
+  {
+   "alt": 90,
+   "min_mm": 0.0,
+   "rig": "camera",
+   "part": "Azimuth body"
+  },
+  {
+   "alt": 95,
+   "min_mm": 0.0,
+   "rig": "camera",
+   "part": "Azimuth body"
+  }
+ ],
+ "roll_travel_alt0": {
+  "toward_tower": {
+   "limit_deg": 0.0,
+   "stop": {
+    "at": 1.0,
+    "min_mm": 1.0,
+    "rig": "lens",
+    "part": "Altitude arm"
+   }
+  },
+  "away": {
+   "limit_deg": -145.0,
+   "stop": {
+    "at": -150.0,
+    "min_mm": 1.8,
+    "rig": "camera",
+    "part": "Roll cartridge enclosure"
+   }
+  },
+  "below_tripod_plate_at_deg": -120.0,
+  "clearance_at_0_mm": 3.3,
+  "clearance_at_0_part": "Altitude arm"
+ },
+ "roll_travel_alt45": {
+  "toward_tower": {
+   "limit_deg": 0.0,
+   "stop": {
+    "at": 1.0,
+    "min_mm": 1.0,
+    "rig": "lens",
+    "part": "Altitude arm"
+   }
+  },
+  "away": {
+   "limit_deg": -145.0,
+   "stop": {
+    "at": -150.0,
+    "min_mm": 1.8,
+    "rig": "camera",
+    "part": "Roll cartridge enclosure"
+   }
+  },
+  "below_tripod_plate_at_deg": -100.0,
+  "clearance_at_0_mm": 3.3,
+  "clearance_at_0_part": "Altitude arm"
+ },
+ "mass": {
+  "total_kg": 6.833,
+  "cog_mm": [
+   16.1,
+   -6.3,
+   127.9
+  ],
+  "groups": {
+   "Reducers": 2.71,
+   "Stepper motors": 0.95,
+   "Pulleys and belts": 0.123,
+   "Battery pack": 0.381,
+   "Electronics and harness": 0.127,
+   "Housings and covers (printed)": 1.071,
+   "Aluminium parts and clamp": 1.344,
+   "Encoder tubes, magnets": 0.102,
+   "Fasteners, inserts, seals": 0.025
+  },
+  "spec_groups": {
+   "Reducers": 2.7,
+   "Stepper motors": 0.95,
+   "Pulleys and belts": 0.14,
+   "Battery pack": 0.34,
+   "Electronics and harness": 0.17,
+   "Housings and covers (printed)": 0.56,
+   "Aluminium parts and clamp": 1.08,
+   "Encoder tubes, magnets": 0.0,
+   "Fasteners, inserts, seals": 0.15
+  },
+  "per_part": {
+   "ST-201": {
+    "name": "Reducer size 14",
+    "kg": 0.71,
+    "qty": 1
+   },
+   "ST-202": {
+    "name": "Reducer size 17",
+    "kg": 2.0,
+    "qty": 2
+   },
+   "ST-203": {
+    "name": "Motor 38 mm",
+    "kg": 0.56,
+    "qty": 2
+   },
+   "ST-204": {
+    "name": "Pulley 20T",
+    "kg": 0.024,
+    "qty": 3
+   },
+   "ST-205": {
+    "name": "Pulley 60T",
+    "kg": 0.09,
+    "qty": 3
+   },
+   "ST-206": {
+    "name": "Belt 2GT-200-9",
+    "kg": 0.009,
+    "qty": 3
+   },
+   "ST-207": {
+    "name": "Motor plate",
+    "kg": 0.0784,
+    "qty": 3
+   },
+   "ST-208": {
+    "name": "Encoder tube",
+    "kg": 0.0679,
+    "qty": 2
+   },
+   "ST-209": {
+    "name": "Encoder magnet",
+    "kg": 0.0015,
+    "qty": 3
+   },
+   "ST-210": {
+    "name": "Cartridge housing",
+    "kg": 0.1008,
+    "qty": 1
+   },
+   "ST-211": {
+    "name": "Cartridge housing",
+    "kg": 0.2292,
+    "qty": 2
+   },
+   "ST-212": {
+    "name": "Cartridge cover",
+    "kg": 0.0138,
+    "qty": 2
+   },
+   "ST-213": {
+    "name": "V-ring VA-75",
+    "kg": 0.004,
+    "qty": 1
+   },
+   "ST-214": {
+    "name": "Motor 48 mm",
+    "kg": 0.39,
+    "qty": 1
+   },
+   "ST-215": {
+    "name": "Encoder tube",
+    "kg": 0.0325,
+    "qty": 1
+   },
+   "ST-216": {
+    "name": "Cartridge cover",
+    "kg": 0.0069,
+    "qty": 1
+   },
+   "ST-217": {
+    "name": "Roll cartridge enclosure",
+    "kg": 0.1106,
+    "qty": 1
+   },
+   "ST-218": {
+    "name": "V-ring VA-80",
+    "kg": 0.005,
+    "qty": 1
+   },
+   "ST-219": {
+    "name": "V-ring VA-65",
+    "kg": 0.003,
+    "qty": 1
+   },
+   "ST-301": {
+    "name": "Base plate",
+    "kg": 0.1053,
+    "qty": 1
+   },
+   "ST-302": {
+    "name": "Wedge lower plate",
+    "kg": 0.3038,
+    "qty": 1
+   },
+   "ST-303": {
+    "name": "Wedge upper plate",
+    "kg": 0.2739,
+    "qty": 1
+   },
+   "ST-304": {
+    "name": "Hinge pin 8 h6",
+    "kg": 0.041,
+    "qty": 1
+   },
+   "ST-305": {
+    "name": "Latitude arc +Y",
+    "kg": 0.0198,
+    "qty": 2
+   },
+   "ST-307": {
+    "name": "3/8in-16 bushing",
+    "kg": 0.006,
+    "qty": 1
+   },
+   "ST-310": {
+    "name": "Azimuth body",
+    "kg": 0.2554,
+    "qty": 1
+   },
+   "ST-311": {
+    "name": "Tower",
+    "kg": 0.2626,
+    "qty": 1
+   },
+   "ST-312": {
+    "name": "Altitude arm",
+    "kg": 0.2333,
+    "qty": 1
+   },
+   "ST-313": {
+    "name": "Roll shelf",
+    "kg": 0.1627,
+    "qty": 1
+   },
+   "ST-314": {
+    "name": "Arca clamp 60 mm",
+    "kg": 0.12,
+    "qty": 1
+   },
+   "ST-315": {
+    "name": "Front bezel",
+    "kg": 0.0244,
+    "qty": 1
+   },
+   "ST-316": {
+    "name": "Button cap 1",
+    "kg": 0.002,
+    "qty": 4
+   },
+   "ST-317": {
+    "name": "Battery tray",
+    "kg": 0.0174,
+    "qty": 1
+   },
+   "ST-318": {
+    "name": "Battery door",
+    "kg": 0.0147,
+    "qty": 1
+   },
+   "ST-319": {
+    "name": "Top cover",
+    "kg": 0.0263,
+    "qty": 1
+   },
+   "ST-320": {
+    "name": "Cable guide",
+    "kg": 0.0064,
+    "qty": 3
+   },
+   "ST-322": {
+    "name": "Bumper 1",
+    "kg": 0.0005,
+    "qty": 2
+   },
+   "ST-323": {
+    "name": "Gasket body-tower",
+    "kg": 0.0021,
+    "qty": 1
+   },
+   "ST-324": {
+    "name": "Gasket top cover",
+    "kg": 0.0021,
+    "qty": 1
+   },
+   "ST-325": {
+    "name": "Gasket battery door",
+    "kg": 0.0011,
+    "qty": 1
+   },
+   "ST-326": {
+    "name": "OLED window 38 x 22 x 1 PC",
+    "kg": 0.001,
+    "qty": 1
+   },
+   "ST-327": {
+    "name": "Gasket bezel",
+    "kg": 0.0019,
+    "qty": 1
+   },
+   "ST-328": {
+    "name": "Gasket roll enclosure",
+    "kg": 0.0028,
+    "qty": 1
+   },
+   "ST-329": {
+    "name": "O-ring 80 x 2",
+    "kg": 0.002,
+    "qty": 1
+   },
+   "ST-501": {
+    "name": "Mainboard",
+    "kg": 0.045,
+    "qty": 1
+   },
+   "ST-512": {
+    "name": "GNSS patch antenna",
+    "kg": 0.01,
+    "qty": 1
+   },
+   "ST-520": {
+    "name": "Encoder board",
+    "kg": 0.012,
+    "qty": 3
+   },
+   "ST-601": {
+    "name": "Cell P50B 1",
+    "kg": 0.28,
+    "qty": 4
+   },
+   "ST-602": {
+    "name": "Battery board",
+    "kg": 0.015,
+    "qty": 1
+   },
+   "ST-605": {
+    "name": "Pack shell lower",
+    "kg": 0.03,
+    "qty": 1
+   },
+   "ST-606": {
+    "name": "Cell holder -Y",
+    "kg": 0.0048,
+    "qty": 2
+   },
+   "ST-608": {
+    "name": "Pack-side blade connector",
+    "kg": 0.008,
+    "qty": 1
+   },
+   "ST-609": {
+    "name": "Head-side blade connector",
+    "kg": 0.008,
+    "qty": 1
+   },
+   "ST-610": {
+    "name": "Pack gasket",
+    "kg": 0.001,
+    "qty": 1
+   },
+   "ST-611": {
+    "name": "Pack light pipe",
+    "kg": 0.0027,
+    "qty": 1
+   },
+   "ST-612": {
+    "name": "Pack shell upper",
+    "kg": 0.0315,
+    "qty": 1
+   }
+  },
+  "alt_group": {
+   "kg": 4.716,
+   "cg": [
+    109.5,
+    -1.6,
+    222.3
+   ],
+   "dz_from_alt_axis": -2.7,
+   "dy_from_alt_axis": -1.6
+  },
+  "roll_stage_plus_rig": {
+   "kg": 3.157,
+   "cg": [
+    115.0,
+    26.4,
+    263.3
+   ],
+   "offset_from_roll_axis": 118.3
+  },
+  "roll_stage_hardware": {
+   "kg": 1.603,
+   "cg": [
+    107.9,
+    -55.6,
+    135.8
+   ]
+  }
+ },
+ "seconds": 297.8,
+ "x_roll": 112.5
+}
