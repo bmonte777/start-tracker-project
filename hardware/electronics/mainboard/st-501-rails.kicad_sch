@@ -2966,7 +2966,7 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "MPN" "SWPA5040S6R8MT" (at 110.49 30.48 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "LCSC" "C38117" (at 110.49 30.48 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "LCSC" "C36411" (at 110.49 30.48 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "08a69ba8-c117-56df-81e1-f2139e52de5f"))
 		(pin "2" (uuid "bf659295-e8d5-5d03-8fd7-5cf4e028c0ce"))
 		(instances
@@ -3065,7 +3065,7 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "MPN" "RC0402FR-0731K6L" (at 110.49 38.1 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "LCSC" "C137931" (at 110.49 38.1 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "LCSC" "C276265" (at 110.49 38.1 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "8e8c84ec-dba7-5cf2-b75b-984a12196fa6"))
 		(pin "2" (uuid "0328c5ec-5834-55ce-915a-f26985d55ac0"))
 		(instances
@@ -3408,7 +3408,6 @@
 			(at 110.49 95.25 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "LCSC" "C137985" (at 110.49 95.25 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "9a009db2-6651-5159-931c-af7f79ffa859"))
 		(pin "2" (uuid "2d39dad4-0e92-5fc4-b317-39c83108ca73"))
 		(instances
@@ -3858,7 +3857,7 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "MPN" "BZT52C12S" (at 271.78 149.86 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "LCSC" "C173437" (at 271.78 149.86 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "LCSC" "C14643" (at 271.78 149.86 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "87a96adf-5107-55b8-9777-accc0ae89ac5"))
 		(pin "2" (uuid "95bbcde9-9936-5f9d-ab95-f7301ebafe90"))
 		(instances
@@ -4065,7 +4064,6 @@
 			(at 317.5 157.48 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "LCSC" "C138038" (at 317.5 157.48 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "de0b2c87-d88c-540b-8aec-a1bf045dfff8"))
 		(pin "2" (uuid "1ffb41c1-edeb-5161-a5d5-64cb8fb6a96c"))
 		(instances
@@ -4097,11 +4095,10 @@
 			(at 363.22 157.48 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "MPN" "CL05B153KB5NNNC"
+		(property "MPN" "15 nF X7R 50 V 0402"
 			(at 363.22 157.48 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "LCSC" "C1541" (at 363.22 157.48 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "825d93f1-0bc5-5576-ba34-7764a5999936"))
 		(pin "2" (uuid "f006275d-1c63-5c34-82c9-3aa12af505d7"))
 		(instances
@@ -4133,8 +4130,10 @@
 			(at 180.34 165.1 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "MPN" "CL05C390JB5NNNC" (at 180.34 165.1 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "LCSC" "C1560" (at 180.34 165.1 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "MPN" "39 pF C0G 50 V 0402"
+			(at 180.34 165.1 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(pin "1" (uuid "e1a69d65-0c9d-5d36-a76e-7178b44bb3e7"))
 		(pin "2" (uuid "56750288-89e3-5dd1-afd2-7389884948b9"))
 		(instances
@@ -4170,7 +4169,6 @@
 			(at 226.06 165.1 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "LCSC" "C137945" (at 226.06 165.1 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "66ff6bac-6d41-56b1-b862-984f899acef4"))
 		(pin "2" (uuid "55db4aa7-ce47-5165-8b64-79ce063d8fb1"))
 		(instances
@@ -4236,7 +4234,6 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "MPN" "RC0402FR-0723K2L" (at 317.5 165.1 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "LCSC" "C137900" (at 317.5 165.1 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "631055ec-0751-586b-a8de-41cb569d6576"))
 		(pin "2" (uuid "a118a421-7d3b-5cb1-87e8-dbc555443f64"))
 		(instances
@@ -4272,7 +4269,6 @@
 			(at 363.22 165.1 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "LCSC" "C137943" (at 363.22 165.1 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "6456d5b6-036d-53f0-a68a-aa85d88e5bba"))
 		(pin "2" (uuid "31f6176a-60cf-59ac-87ef-f8bb07711c66"))
 		(instances

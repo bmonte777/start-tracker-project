@@ -3427,7 +3427,7 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "MPN" "BZT52C12S" (at 71.12 110.49 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "LCSC" "C173437" (at 71.12 110.49 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "LCSC" "C14643" (at 71.12 110.49 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "e5601d81-de1b-58e0-b717-94077e1d9d51"))
 		(pin "2" (uuid "ad25fb08-d400-5d75-820d-fede3f2872f6"))
 		(instances
@@ -3449,7 +3449,7 @@
 		(dnp no)
 		(uuid "ffe704a2-f234-50cc-9dc5-8bad94e530ae")
 		(property "Reference" "D2" (at 116.84 108.29 90) (effects (font (size 1 1))))
-		(property "Value" "SMBJ12A" (at 116.84 112.69 90) (effects (font (size 1 1))))
+		(property "Value" "SMBJ12A-TR" (at 116.84 112.69 90) (effects (font (size 1 1))))
 		(property "Footprint" "Diode_SMD:D_SMB"
 			(at 116.84 110.49 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -3459,8 +3459,8 @@
 			(at 116.84 110.49 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "MPN" "SMBJ12A" (at 116.84 110.49 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "LCSC" "C114001" (at 116.84 110.49 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "MPN" "SMBJ12A-TR" (at 116.84 110.49 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "LCSC" "C133677" (at 116.84 110.49 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "15a686ad-ccf3-5070-8b99-2dec22232de8"))
 		(pin "2" (uuid "56e9e880-09d9-5e7d-a93a-5f73a57edeaa"))
 		(instances
@@ -3851,7 +3851,7 @@
 			(at 195.58 134.62 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "MPN" "CL05B473KB5NNNC"
+		(property "MPN" "47 nF X7R 25 V 0402"
 			(at 195.58 134.62 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -3886,7 +3886,10 @@
 			(at 241.3 134.62 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "MPN" "CL05B473KB5NNNC" (at 241.3 134.62 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "MPN" "47 nF X7R 25 V 0402"
+			(at 241.3 134.62 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(pin "1" (uuid "1a502379-c8a1-57d5-b9b3-189ad845d6d2"))
 		(pin "2" (uuid "31e603b6-c857-5dac-91a8-e5a555da7603"))
 		(instances
@@ -3954,10 +3957,7 @@
 			(at 332.74 134.62 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "MPN" "CL05B102KB5NNNC"
-			(at 332.74 134.62 0)
-			(effects (font (size 1.27 1.27)) (hide yes))
-		)
+		(property "MPN" "0402B102K500NT" (at 332.74 134.62 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "LCSC" "C1523" (at 332.74 134.62 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "9acf6031-3c95-5338-a516-d2e94aa35def"))
 		(pin "2" (uuid "e78519f7-36c9-513f-8f49-b45734f03d94"))
@@ -4486,7 +4486,7 @@
 			(at 332.74 157.48 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "LCSC" "C137981" (at 332.74 157.48 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "LCSC" "C477746" (at 332.74 157.48 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "48307012-7536-51e1-8054-d77d01a495af"))
 		(pin "2" (uuid "198f7ffd-2677-5970-8877-72eb687e34d1"))
 		(instances
@@ -4522,7 +4522,7 @@
 			(at 149.86 165.1 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "LCSC" "C137927" (at 149.86 165.1 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "LCSC" "C138009" (at 149.86 165.1 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "97db4da9-331c-558a-9e4e-0bae30b5b16d"))
 		(pin "2" (uuid "c09fceaa-41e8-5d4e-8349-a33252884dde"))
 		(instances
@@ -4624,7 +4624,6 @@
 			(at 287.02 165.1 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "LCSC" "C137912" (at 287.02 165.1 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "149c204f-313b-5f89-b109-af27c896a61c"))
 		(pin "2" (uuid "3b1f7907-c61b-5a87-9476-214f0fb3249e"))
 		(instances

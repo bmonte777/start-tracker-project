@@ -1,0 +1,14 @@
+item,qty,use,maker,part
+JST GHR-15V-S housing,6,2 per cartridge harness,JST,GHR-15V-S
+"JST GH pre-crimped lead, 28 AWG, 305 mm, socket to socket",30,azimuth and altitude harness: 15 each,JST,AGHGH28K305
+JST GH crimp contact (for the roll harness),40,30 needed + spares,JST,SSHL-002T-P0.2
+"PTFE hook-up wire 28 AWG, 19-strand, 10 colours",12,metres; roll harness 15 x 0.68 m,generic,UL1213 28 AWG
+"JST GHR-04V-S lead, 4-way, ready-made 150 mm",1,battery data lead (cut in two),JST,GHR-04V-S
+"JST GHR-03V-S lead, 3-way, ready-made 150 mm",1,shutter lead (cut in two),JST,GHR-03V-S
+JST PHR-4 housing,3,motor plug,JST,PHR-4
+JST PH crimp contact,20,12 needed + spares,JST,SPH-002T-P0.5S
+XT30U-F and XT30U-M pair,1,battery power lead,Amass,XT30U
+"Silicone wire 18 AWG, red and black",1,0.25 m of each,generic,UL3135 18 AWG
+"NTC bead thermistor 10 k, B 3950, 1 %, 2 leads 100 mm",3,one per motor (D46),generic,MF52-103 3950
+"2.5 mm stereo panel jack, threaded nose",1,shutter port,CUI / generic,PJ-2.5 panel
+"Cable ties 2.5 x 100 mm, heat-shrink 2 / 4 / 6 mm, Kapton tape",1,set,generic,-

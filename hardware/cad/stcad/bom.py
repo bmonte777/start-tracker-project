@@ -62,7 +62,14 @@ def screw_price(std, size, L):
     return E(p1, p1 * 0.45, p1 * 0.27)
 
 
+def _phase4_costs():
+    import json
+    return json.load(open(os.path.join(ROOT, "hardware", "electronics", "fab", "costs.json")))
+
+
 def build_parts():
+    global P4
+    P4 = _phase4_costs()
     p2 = _load_phase2()
     old = {row[0]: list(row) for row in p2.PARTS}
     out = []
@@ -180,14 +187,33 @@ def build_parts():
         "camera hardware supplier", E(1.5, 0.6, 0.3), "est", "D13 exception, D36")
     # ---- 5xx unchanged (Phase 4 details them)
     for pid in [r[0] for r in p2.PARTS if r[0].startswith("ST-5")]:
+        # Phase 4: board lines priced from the board BOMs (hardware/electronics/tools/costs.py -> fab/costs.json).
+        # Parts with their own line below (large ICs, sockets, switches, LEDs) are not inside the board lines.
         if pid == "ST-501":
-            keep(pid, note="outline 100 x 60 x 1.6, 4 x M3 holes 4 mm from the corners, mounted on the bezel (Phase 3)")
+            c = P4["st-501"]
+            keep(pid, name="Mainboard: 4-layer PCB, assembly, passives, small semiconductors, inductors, connectors",
+                 pr=U(*[c["per_board"][k] for k in ("1", "100", "1000")]), src="est",
+                 note=f"Phase 4 BOM: {c['bom_lines']} lines; JLCPCB fees estimated; at 1 head the price is the minimum order "
+                      "(5 bare boards, 2 assembled). ICs listed separately below")
         elif pid == "ST-512":
-            keep(pid, note="stuck under the top cover's 1.5 mm window")
+            keep(pid, name="GNSS active patch antenna 25 x 25 mm with U.FL lead", note="under the top cover's 1.5 mm window; Q32 pending")
         elif pid == "ST-509":
-            keep(pid, name="16 V boost converter TPS61288 (motor rail, D33)", note="rail raised from 12 V by D33; recheck in Phase 4")
+            keep(pid, name="Boost converter TPS61288 (motor rail 16 V / 10 V, D33, D43)", note="LCSC C5219223")
+        elif pid == "ST-513":
+            keep(pid, name="Real-time clock RV-3028-C7 + MS621FE backup cell", note="Q28 pending (was a 0.1 F capacitor)")
+        elif pid == "ST-517":
+            keep(pid, name="USB-C receptacle, upright, GT-USB-7051A", note="prototype part, LCSC C2843970, not sealed; Q30 pending")
+        elif pid == "ST-518":
+            keep(pid, name="Tact switch TS-1187A", note="LCSC C318884; Q31 pending")
+        elif pid == "ST-519":
+            keep(pid, name="Status LEDs: red, green, blue, 0603 (set of 3)", note="Q34 pending")
         elif pid == "ST-520":
-            keep(pid, note="round 30 mm, 2 x M3 holes on PCD 23, MT6835 on the underside")
+            c = P4["st-520"]
+            keep(pid, name="Cartridge board: 2-layer PCB, assembly, passives, connectors",
+                 pr=U(*[c["per_board"][k] for k in ("1", "100", "1000")]), src="est",
+                 note=f"Phase 4 BOM: {c['bom_lines']} lines; round 30 mm, MT6835 on the underside (listed separately)")
+        elif pid == "ST-530":
+            keep(pid, name="Axis harness, JST-GH 15-way (190 / 280 / 680 mm)", note="D47 pinout; roll harness in PTFE wire")
         else:
             keep(pid)
     # ---- 6xx

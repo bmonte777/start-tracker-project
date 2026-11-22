@@ -1,0 +1,70 @@
+name: Phase 4 electronics build
+
+# Checks and rebuilds the electronics outputs from the KiCad projects in hardware/electronics:
+# ERC, DRC, Gerbers, drill files, JLCPCB BOM and placement files, STEP models, renders, harness drawings
+# and the board viewer page. Runs only when started by hand
+# (Actions tab -> Phase 4 electronics build -> Run workflow). Nothing is committed back; the results
+# are attached to the run as one download called "phase4-electronics".
+
+on:
+  workflow_dispatch:
+    inputs:
+      boards:
+        description: "Board folders (space separated)"
+        required: false
+        default: "cartridge-board mainboard"
+      regenerate:
+        description: "Rebuild schematic and layout from design.py and autoroute again (slow, result differs run to run): yes / no"
+        required: false
+        default: "no"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: kicad/kicad:9.0
+      options: --user root
+    env:
+      FREEROUTING_JAR: /opt/freerouting/freerouting.jar
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tools (Java for the autorouter, SVG converter)
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends default-jre-headless librsvg2-bin poppler-utils curl python3-pil
+          mkdir -p /opt/freerouting
+          curl -L -o /opt/freerouting/freerouting.jar https://github.com/freerouting/freerouting/releases/download/v2.1.0/freerouting-2.1.0.jar
+      - name: Calculations
+        run: python3 docs/calc/phase4_calcs.py > /dev/null
+      - name: Rebuild from design.py (only when asked)
+        if: ${{ inputs.regenerate == 'yes' }}
+        working-directory: hardware/electronics
+        run: |
+          python3 tools/stfp.py
+          for b in ${{ inputs.boards }}; do ROUTE_MINUTES=60 python3 tools/layout.py $b | tail -5; done
+      - name: ERC and DRC
+        working-directory: hardware/electronics
+        run: python3 tools/check.py ${{ inputs.boards }}
+      - name: Fabrication files, renders
+        working-directory: hardware/electronics
+        run: |
+          for b in ${{ inputs.boards }}; do python3 tools/fab.py $b; done
+      - name: Harness drawings, tables, board viewer
+        working-directory: hardware/electronics
+        run: |
+          python3 harness/harness.py
+          python3 tools/docgen.py > /dev/null
+          python3 tools/viewer.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase4-electronics
+          path: |
+            hardware/electronics/fab/
+            hardware/electronics/*/out/*-erc.json
+            hardware/electronics/*/out/*-drc.json
+            hardware/electronics/harness/
+            hardware/electronics/doc/
+            docs/img/04-*.png
+            docs/calc/phase4_calcs.md
+            docs/calc/phase4_results.json

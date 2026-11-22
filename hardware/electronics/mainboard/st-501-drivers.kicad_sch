@@ -4766,7 +4766,7 @@
 			(at 50.8 170.18 0)
 			(effects (font (size 1.27 1.27)) (justify left))
 		)
-		(property "Footprint" "Connector_JST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical"
+		(property "Footprint" "ST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical_3D"
 			(at 49.53 149.86 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -4872,7 +4872,6 @@
 			(at 30.48 195.58 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "LCSC" "C2933043" (at 30.48 195.58 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "05219d5d-9ba2-59ae-ab66-ac1ad4c4a5a8"))
 		(pin "2" (uuid "8a4e2fea-6b82-5d90-b6c9-7427a8c94cac"))
 		(instances
@@ -4908,7 +4907,6 @@
 			(at 74.93 195.58 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "LCSC" "C2933043" (at 74.93 195.58 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "21232855-91f4-5cd1-a3db-8bcc45263b58"))
 		(pin "2" (uuid "24a8a179-fc3f-5908-a578-681112378a2a"))
 		(instances
@@ -5332,7 +5330,7 @@
 		(dnp no)
 		(uuid "2b6309b6-e39d-54a2-898b-9074b6e65693")
 		(property "Reference" "FB2" (at 119.38 223.86 90) (effects (font (size 1 1))))
-		(property "Value" "BLM18PG221SN1D" (at 119.38 228.26 90) (effects (font (size 1 1))))
+		(property "Value" "BLM18PG121SN1D" (at 119.38 228.26 90) (effects (font (size 1 1))))
 		(property "Footprint" "Inductor_SMD:L_0603_1608Metric"
 			(at 119.38 226.06 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -5342,7 +5340,7 @@
 			(at 119.38 226.06 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "MPN" "BLM18PG221SN1D" (at 119.38 226.06 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "MPN" "BLM18PG121SN1D" (at 119.38 226.06 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "LCSC" "C14709" (at 119.38 226.06 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "4e4fb62a-c295-5e84-b086-8a2d2cd86d35"))
 		(pin "2" (uuid "b080a60c-4ca1-5d2a-9989-16cdb97c092e"))
@@ -5594,7 +5592,7 @@
 			(at 186.69 170.18 0)
 			(effects (font (size 1.27 1.27)) (justify left))
 		)
-		(property "Footprint" "Connector_JST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical"
+		(property "Footprint" "ST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical_3D"
 			(at 185.42 149.86 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -5700,7 +5698,6 @@
 			(at 165.1 195.58 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "LCSC" "C2933043" (at 165.1 195.58 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "76f186b9-1f3f-5dcb-80e5-dcc770542607"))
 		(pin "2" (uuid "dd170931-54b4-5907-823b-c4311d6ffaf2"))
 		(instances
@@ -5736,7 +5733,6 @@
 			(at 209.55 195.58 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "LCSC" "C2933043" (at 209.55 195.58 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "62c7f076-13cc-5b1c-ab9d-0a857afc2e37"))
 		(pin "2" (uuid "06b8b8fb-4d4e-568e-91a3-6b0982b1b401"))
 		(instances
@@ -6154,7 +6150,7 @@
 		(dnp no)
 		(uuid "17dc9303-a4f1-541b-810a-ff980f599a31")
 		(property "Reference" "FB3" (at 254 223.86 90) (effects (font (size 1 1))))
-		(property "Value" "BLM18PG221SN1D" (at 254 228.26 90) (effects (font (size 1 1))))
+		(property "Value" "BLM18PG121SN1D" (at 254 228.26 90) (effects (font (size 1 1))))
 		(property "Footprint" "Inductor_SMD:L_0603_1608Metric"
 			(at 254 226.06 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -6164,7 +6160,7 @@
 			(at 254 226.06 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "MPN" "BLM18PG221SN1D" (at 254 226.06 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "MPN" "BLM18PG121SN1D" (at 254 226.06 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "LCSC" "C14709" (at 254 226.06 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "95a6d2a4-d288-5c57-8a23-a503da5bcb15"))
 		(pin "2" (uuid "67e266e4-7269-507f-b655-3920634d1c96"))
@@ -6413,7 +6409,7 @@
 			(at 321.31 170.18 0)
 			(effects (font (size 1.27 1.27)) (justify left))
 		)
-		(property "Footprint" "Connector_JST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical"
+		(property "Footprint" "ST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical_3D"
 			(at 320.04 149.86 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -6519,7 +6515,6 @@
 			(at 299.72 195.58 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "LCSC" "C2933043" (at 299.72 195.58 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "9a7c9319-cae6-5652-881a-ae90d0137951"))
 		(pin "2" (uuid "1d528d5d-3bab-5218-9934-b61d2f59704d"))
 		(instances
@@ -6555,7 +6550,6 @@
 			(at 344.17 195.58 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "LCSC" "C2933043" (at 344.17 195.58 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "6fa62031-f6ce-5dbb-a84c-af5ea7848e6c"))
 		(pin "2" (uuid "31263d3f-76b6-5bfa-ac6a-835dd1adcf7b"))
 		(instances
@@ -6988,7 +6982,7 @@
 		(dnp no)
 		(uuid "e4876c7e-44f5-5973-9774-c6589a6f1dc7")
 		(property "Reference" "FB4" (at 388.62 223.86 90) (effects (font (size 1 1))))
-		(property "Value" "BLM18PG221SN1D" (at 388.62 228.26 90) (effects (font (size 1 1))))
+		(property "Value" "BLM18PG121SN1D" (at 388.62 228.26 90) (effects (font (size 1 1))))
 		(property "Footprint" "Inductor_SMD:L_0603_1608Metric"
 			(at 388.62 226.06 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -6998,7 +6992,7 @@
 			(at 388.62 226.06 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "MPN" "BLM18PG221SN1D" (at 388.62 226.06 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "MPN" "BLM18PG121SN1D" (at 388.62 226.06 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "LCSC" "C14709" (at 388.62 226.06 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "76a2013a-ab11-5133-b61c-9f919fa80fe1"))
 		(pin "2" (uuid "a1c2be95-ea20-5ab3-8a5d-ca7d0bd82608"))

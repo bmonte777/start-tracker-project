@@ -1,59 +1,36 @@
-# Phase 4 — progress
+# Phase 4 (electronics) — progress
 
-Branch `phase-4-electronics`. Read this first if you pick the work up in a new chat.
+Last update: 22 Nov 2026, 16:30 UTC. Branch `phase-4-electronics`, pull request #6 (draft). Phase 4 is **not complete**.
 
-## How the electronics are built
+## Done
+- Calculations: `docs/calc/phase4_calcs.py` (+ `.md`, `.json`). D42–D47 approved and in the decisions log.
+- ST-520 cartridge board: schematic, layout, fab package (`fab/st-520/`), ERC and DRC clean, fits its carrier. Order-ready.
+- ST-501 mainboard schematic: 7 sheets, 391 parts, 229 nets, ERC clean, netlist cross-checked. BOM in `mainboard/st-501-bom.csv`.
+- ST-501 placement: all parts placed, ground fan-out (249 vias), pours and planes defined, DRC clean except 499 unrouted connections.
+- Fit check (`hardware/cad/stcad/fit_boards.py`), harness drawings (`harness/`), cost model (`tools/costs.py`), parts list CSV and `bom_data.py`,
+  document (`docs/04-electronics.md` = Project `claude/05-electronics.md`), board viewer (`doc/board-viewer.html`), workflow file.
+- LCSC numbers in `tools/catalog.py` are all confirmed; blank means not confirmed. Never fill one in from memory (many remembered numbers were wrong).
 
-Every board is code: `hardware/electronics/<board>/design.py` holds the schematic (`build()`) and the layout (`layout()`, `finish()`).
-The tools in `hardware/electronics/tools/` turn it into ordinary KiCad 9 files and check them:
+## Next, in this order
+1. **Route the mainboard.** `python3 tools/layout.py mainboard` (inside KiCad 9 + Java). Freerouting 2.1.0 did not converge:
+   534 open connections after a 26-minute first pass. Notes for the next attempt:
+   - It ignores `--router.max_passes`; it saves a session only if its `--router.job_timeout` expires between passes, not during one.
+     Give it `JAVA_TOOL_OPTIONS=-Xmx5g` and a long limit, or route in KiCad by hand.
+   - Already fixed: In1 marked as a power layer (`pcb.plane_layer`), In2 planes added after routing, class widths 0.2–0.3 mm,
+     ground vias placed before routing (`pcb.plane_vias`), bare-hole keep-outs (`pcb.hole_keepouts`).
+   - Write the power stages, USB pairs, motor phases, sense lines, encoder SPI and GNSS feed as `pcb.track(...)` calls in
+     `mainboard/design.py:layout()` first (as done in `cartridge-board/design.py`), so the autorouter only has slow signals left.
+   - 21 ground pads found no via position (listed by the script); check they join the pours.
+   - Then `tools/fab.py mainboard`, `tools/viewer.py`, rerun `stcad.fit_boards`, look at the 3D render.
+2. **ST-602 battery board.** Needs the BQ40Z50 LED pin mapping (TI reference schematic figure) and the three-terminal fuse footprint.
+   Circuit definition is in `docs/04-electronics.md` section 5.3. Folder `battery-board/` does not exist yet.
+3. **Sheet** https://claude.ai/artifact/9T9Gpvm2vWPRYqJtPChJa8: copy the changed lines from `hardware/bom/master-parts-list.csv`
+   (ST-501, 509, 512, 513, 517, 518, 519, 520, 530). Needs the Claude Docs connector's `topic.sheets` guide first.
+4. Bruno's answers to Q28–Q35 (decisions log, "pending approval"). Q29 changes printed parts ST-212 / ST-216: do nothing in CAD before he approves.
+5. Fill the remaining sections of the Docs doc if any are still pending: https://claude.ai/artifact/9Y2pyZBkJu5i3eWqNy6xAx
+6. Run the workflow once on GitHub (Actions → Phase 4 electronics build) and fix what it reports.
+7. When 1–4 are done: final check of every value against its source, then write `claude/phase-5-prompt.md`.
 
-| Tool | Does |
-| --- | --- |
-| `schgen.py`, `symlib.py`, `kisx.py` | Write `.kicad_sch` files (label style: every pin carries its net name) and the model JSON |
-| `stlib.py`, `stfp.py` | Project symbol and footprint libraries in `hardware/electronics/lib/` (parts KiCad does not ship) |
-| `build.py <board>` | Schematic + ERC |
-| `netcheck.py <board>` | Compares the netlist KiCad extracts with the model |
-| `pcbgen.py`, `layout.py <board>` | Placement and hand-routed nets from `design.py`, Freerouting for the slow nets, zones, DRC with schematic parity |
-
-They need KiCad 9 (`kicad-cli`, `pcbnew` Python) and Java for Freerouting. In the Phase 4 chat they ran in an Ubuntu 26.04 chroot
-with KiCad 9.0.8; the GitHub workflow uses the `kicad/kicad:9.0` container.
-
-## Status by stage
-
-| Stage | Status | Where |
-| --- | --- | --- |
-| 1. Calculations (D33 rerun, D26 review, drivers, boost, charger, port B, rails, thermal) | Done | `docs/calc/phase4_calcs.py`, `phase4_results.json`, `phase4_calcs.md` |
-| 2. Mainboard ST-501 schematic | Not started | `mainboard/design.py` |
-| 3a. Cartridge board ST-520 schematic | Done: ERC 0 errors, 0 warnings; netlist matches the model | `cartridge-board/` |
-| 3b. Battery board ST-602 schematic | Not started | `battery-board/design.py` |
-| 4a. Cartridge board layout | Done: 0 unrouted, DRC clean with schematic parity; 3D render checked | `cartridge-board/st-520.kicad_pcb` |
-| 4b. Battery board layout | Not started | |
-| 4c. Mainboard layout | Not started | |
-| 5. Fit check in the Phase 3 assembly | Not started | |
-| 6. Harness drawings | Not started | `harness/` |
-| 7. Fab package, per-board BOMs, master parts list, cost model | Not started | `fab/` |
-| 8. Firmware hand-off, bring-up plan, viewer, Phase 4 doc, workflow, Phase 5 prompt | Not started | |
-
-## Findings so far
-
-- D27 confirmed: the TPS25751 datasheet lists the BQ25792 among the chargers its firmware drives (I2C address 0x6B).
-- D32: the two motors use different lead colours for the same phases. 17HE15-1504S: A+ black, A- blue, B+ green, B- red.
-  17HS19-2004S1: A+ black, A- green, B+ red, B- blue. Harnesses are wired by phase.
-- D33 rerun: at 16 V the 7 kg EQ extreme at -20 C has a margin of 1.48 at 8 deg/s and 1.50 at 6 deg/s, so the 6 deg/s cold limit no longer helps.
-- The TPS25752A needs a 5 V supply on PP5V (TI's own evaluation board has a separate 5 V converter), so a 5 V rail is added.
-- KiCad 9's 3D library has no model for the 15-way JST-GH header or the SMD JST-PH header; envelope models are generated for the fit check.
-
-## Questions for Bruno (work continues with the recommended option, marked pending approval)
-
-| # | Question | Recommendation |
-| --- | --- | --- |
-| Q22 | D26 cold slew limit | Drop the 6 deg/s limit: 8 deg/s over the whole -20 to +40 C range (changes D26) |
-| Q23 | Two-level motor rail | 16 V for slews, 10 V for tracking and holding, switched by one pin (VM_SEL): StealthChop cannot regulate the small tracking currents on 16 V |
-| Q24 | 5 V rail | Add a TPS62933 3 A buck for PP5V of both PD controllers (extends D27) |
-| Q25 | Inrush and reverse polarity | P-FET switch with soft start in front of the boost (also a true off for the motor rail), and a P-FET at the pack input against a reversed bench supply |
-| Q26 | Motor thermistor | A 10 k bead on wires taped to the motor case, soldered to two pads on the cartridge board, instead of a chip thermistor on the board 58 mm from the motor |
-| Q27 | Cartridge plug pinout | Phase A on pins 1-4, signals on 5-11, phase B on 12-15 (keeps each phase pair together and away from the encoder) |
-
-## Open access issue
-
-The session could attach the repository read-only. Commits are on the local branch; pushing and the pull request need push access.
+## Tools
+`tools/build.py <board>` schematic + ERC · `tools/layout.py <board> [--no-route]` · `tools/check.py <board>` · `tools/fab.py <board> [--bom-only]` ·
+`tools/docgen.py` · `tools/costs.py` · `tools/compose_doc.py` (reads `doc/status.json`) · `tools/viewer.py` · `harness/harness.py`.

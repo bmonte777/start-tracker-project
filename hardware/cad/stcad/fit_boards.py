@@ -27,11 +27,14 @@ FRAME = {
     "ST-501": Location(Plane(origin=(1.6, 0, 0), x_dir=(0, -1, 0), z_dir=(-1, 0, 0))),
 }
 STEP = {"ST-520": "st-520", "ST-501": "st-501"}
+DRAFT = {"ST-501": "mainboard"}
 CAP = 4.0     # mm: neighbours further away than this are not reported
 
 
 def board_solids(pid):
     path = os.path.join(FAB, STEP[pid], STEP[pid] + ".step")
+    if not os.path.exists(path):          # a board not released for fabrication yet: the draft export in its own folder
+        path = os.path.join(FAB, "..", DRAFT.get(pid, "-"), "out", STEP[pid] + ".step")
     if not os.path.exists(path):
         return None
     return list(import_step(path).solids())

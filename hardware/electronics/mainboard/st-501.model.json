@@ -114,7 +114,7 @@
    "owner": "U1",
    "fields": {
     "MPN": "BZT52C12S",
-    "LCSC": "C173437"
+    "LCSC": "C14643"
    },
    "sheet": "power",
    "pins": {
@@ -124,15 +124,15 @@
   },
   {
    "ref": "D2",
-   "value": "SMBJ12A",
+   "value": "SMBJ12A-TR",
    "footprint": "Diode_SMD:D_SMB",
    "lib_id": "Device:D_TVS",
    "dnp": false,
    "bom": true,
    "owner": "U1",
    "fields": {
-    "MPN": "SMBJ12A",
-    "LCSC": "C114001"
+    "MPN": "SMBJ12A-TR",
+    "LCSC": "C133677"
    },
    "sheet": "power",
    "pins": {
@@ -355,7 +355,7 @@
    "bom": true,
    "owner": "U2",
    "fields": {
-    "MPN": "CL05B473KB5NNNC"
+    "MPN": "47 nF X7R 25 V 0402"
    },
    "sheet": "power",
    "pins": {
@@ -372,7 +372,7 @@
    "bom": true,
    "owner": "U2",
    "fields": {
-    "MPN": "CL05B473KB5NNNC"
+    "MPN": "47 nF X7R 25 V 0402"
    },
    "sheet": "power",
    "pins": {
@@ -407,7 +407,7 @@
    "bom": true,
    "owner": "U2",
    "fields": {
-    "MPN": "CL05B102KB5NNNC",
+    "MPN": "0402B102K500NT",
     "LCSC": "C1523"
    },
    "sheet": "power",
@@ -678,7 +678,7 @@
    "owner": "U2",
    "fields": {
     "MPN": "RC0402FR-075K23L",
-    "LCSC": "C137981"
+    "LCSC": "C477746"
    },
    "sheet": "power",
    "pins": {
@@ -696,7 +696,7 @@
    "owner": "U2",
    "fields": {
     "MPN": "RC0402FR-0730K1L",
-    "LCSC": "C137927"
+    "LCSC": "C138009"
    },
    "sheet": "power",
    "pins": {
@@ -749,8 +749,7 @@
    "bom": true,
    "owner": "U2",
    "fields": {
-    "MPN": "RC0402FR-0726K7L",
-    "LCSC": "C137912"
+    "MPN": "RC0402FR-0726K7L"
    },
    "sheet": "power",
    "pins": {
@@ -1210,7 +1209,7 @@
    "bom": true,
    "owner": "U5",
    "fields": {
-    "MPN": "CL05B221KB5NNNC",
+    "MPN": "0402B221K500NT",
     "LCSC": "C1530"
    },
    "sheet": "usb_a",
@@ -1228,7 +1227,7 @@
    "bom": true,
    "owner": "U5",
    "fields": {
-    "MPN": "CL05B221KB5NNNC",
+    "MPN": "0402B221K500NT",
     "LCSC": "C1530"
    },
    "sheet": "usb_a",
@@ -1794,8 +1793,7 @@
    "bom": true,
    "owner": "U9",
    "fields": {
-    "MPN": "0.010 ohm 1 % 1 W current sense",
-    "LCSC": "C2903542"
+    "MPN": "0.010 ohm 1 % 1 W current sense"
    },
    "sheet": "usb_b",
    "pins": {
@@ -1902,8 +1900,7 @@
    "bom": true,
    "owner": "U9",
    "fields": {
-    "MPN": "RC0402FR-076K19L",
-    "LCSC": "C137999"
+    "MPN": "RC0402FR-076K19L"
    },
    "sheet": "usb_b",
    "pins": {
@@ -1920,8 +1917,7 @@
    "bom": true,
    "owner": "U9",
    "fields": {
-    "MPN": "RC0402FR-0744K2L",
-    "LCSC": "C137961"
+    "MPN": "RC0402FR-0744K2L"
    },
    "sheet": "usb_b",
    "pins": {
@@ -2459,7 +2455,7 @@
    "bom": true,
    "owner": "U9",
    "fields": {
-    "MPN": "CL05B221KB5NNNC",
+    "MPN": "0402B221K500NT",
     "LCSC": "C1530"
    },
    "sheet": "usb_b",
@@ -2477,7 +2473,7 @@
    "bom": true,
    "owner": "U9",
    "fields": {
-    "MPN": "CL05B221KB5NNNC",
+    "MPN": "0402B221K500NT",
     "LCSC": "C1530"
    },
    "sheet": "usb_b",
@@ -2698,7 +2694,7 @@
    "owner": "U10",
    "fields": {
     "MPN": "SWPA5040S6R8MT",
-    "LCSC": "C38117"
+    "LCSC": "C36411"
    },
    "sheet": "rails",
    "pins": {
@@ -2752,7 +2748,7 @@
    "owner": "U10",
    "fields": {
     "MPN": "RC0402FR-0731K6L",
-    "LCSC": "C137931"
+    "LCSC": "C276265"
    },
    "sheet": "rails",
    "pins": {
@@ -2935,8 +2931,7 @@
    "bom": true,
    "owner": "U11",
    "fields": {
-    "MPN": "RC0402FR-0754K9L",
-    "LCSC": "C137985"
+    "MPN": "RC0402FR-0754K9L"
    },
    "sheet": "rails",
    "pins": {
@@ -3170,7 +3165,7 @@
    "owner": "U12",
    "fields": {
     "MPN": "BZT52C12S",
-    "LCSC": "C173437"
+    "LCSC": "C14643"
    },
    "sheet": "rails",
    "pins": {
@@ -3277,8 +3272,7 @@
    "bom": true,
    "owner": "U12",
    "fields": {
-    "MPN": "RC0402FR-0784K5L",
-    "LCSC": "C138038"
+    "MPN": "RC0402FR-0784K5L"
    },
    "sheet": "rails",
    "pins": {
@@ -3295,8 +3289,7 @@
    "bom": true,
    "owner": "U12",
    "fields": {
-    "MPN": "CL05B153KB5NNNC",
-    "LCSC": "C1541"
+    "MPN": "15 nF X7R 50 V 0402"
    },
    "sheet": "rails",
    "pins": {
@@ -3313,8 +3306,7 @@
    "bom": true,
    "owner": "U12",
    "fields": {
-    "MPN": "CL05C390JB5NNNC",
-    "LCSC": "C1560"
+    "MPN": "39 pF C0G 50 V 0402"
    },
    "sheet": "rails",
    "pins": {
@@ -3331,8 +3323,7 @@
    "bom": true,
    "owner": "U12",
    "fields": {
-    "MPN": "RC0402FR-07365KL",
-    "LCSC": "C137945"
+    "MPN": "RC0402FR-07365KL"
    },
    "sheet": "rails",
    "pins": {
@@ -3367,8 +3358,7 @@
    "bom": true,
    "owner": "U12",
    "fields": {
-    "MPN": "RC0402FR-0723K2L",
-    "LCSC": "C137900"
+    "MPN": "RC0402FR-0723K2L"
    },
    "sheet": "rails",
    "pins": {
@@ -3385,8 +3375,7 @@
    "bom": true,
    "owner": "U12",
    "fields": {
-    "MPN": "RC0402FR-0736K5L",
-    "LCSC": "C137943"
+    "MPN": "RC0402FR-0736K5L"
    },
    "sheet": "rails",
    "pins": {
@@ -4479,14 +4468,14 @@
   },
   {
    "ref": "FB1",
-   "value": "BLM18PG221SN1D",
+   "value": "BLM18PG121SN1D",
    "footprint": "Inductor_SMD:L_0603_1608Metric",
    "lib_id": "Device:FerriteBead",
    "dnp": false,
    "bom": true,
    "owner": "U14",
    "fields": {
-    "MPN": "BLM18PG221SN1D",
+    "MPN": "BLM18PG121SN1D",
     "LCSC": "C14709"
    },
    "sheet": "mcu",
@@ -4935,7 +4924,7 @@
   {
    "ref": "J7",
    "value": "BM15B-GHS-TBT(LF)(SN)",
-   "footprint": "Connector_JST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical",
+   "footprint": "ST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical_3D",
    "lib_id": "Connector_Generic_MountingPin:Conn_01x15_MountingPin",
    "dnp": false,
    "bom": true,
@@ -4995,8 +4984,7 @@
    "bom": true,
    "owner": "U16",
    "fields": {
-    "MPN": "0.15 ohm 1 % 0.5 W current sense",
-    "LCSC": "C2933043"
+    "MPN": "0.15 ohm 1 % 0.5 W current sense"
    },
    "sheet": "drivers",
    "pins": {
@@ -5013,8 +5001,7 @@
    "bom": true,
    "owner": "U16",
    "fields": {
-    "MPN": "0.15 ohm 1 % 0.5 W current sense",
-    "LCSC": "C2933043"
+    "MPN": "0.15 ohm 1 % 0.5 W current sense"
    },
    "sheet": "drivers",
    "pins": {
@@ -5240,14 +5227,14 @@
   },
   {
    "ref": "FB2",
-   "value": "BLM18PG221SN1D",
+   "value": "BLM18PG121SN1D",
    "footprint": "Inductor_SMD:L_0603_1608Metric",
    "lib_id": "Device:FerriteBead",
    "dnp": false,
    "bom": true,
    "owner": "U16",
    "fields": {
-    "MPN": "BLM18PG221SN1D",
+    "MPN": "BLM18PG121SN1D",
     "LCSC": "C14709"
    },
    "sheet": "drivers",
@@ -5390,7 +5377,7 @@
   {
    "ref": "J8",
    "value": "BM15B-GHS-TBT(LF)(SN)",
-   "footprint": "Connector_JST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical",
+   "footprint": "ST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical_3D",
    "lib_id": "Connector_Generic_MountingPin:Conn_01x15_MountingPin",
    "dnp": false,
    "bom": true,
@@ -5450,8 +5437,7 @@
    "bom": true,
    "owner": "U18",
    "fields": {
-    "MPN": "0.15 ohm 1 % 0.5 W current sense",
-    "LCSC": "C2933043"
+    "MPN": "0.15 ohm 1 % 0.5 W current sense"
    },
    "sheet": "drivers",
    "pins": {
@@ -5468,8 +5454,7 @@
    "bom": true,
    "owner": "U18",
    "fields": {
-    "MPN": "0.15 ohm 1 % 0.5 W current sense",
-    "LCSC": "C2933043"
+    "MPN": "0.15 ohm 1 % 0.5 W current sense"
    },
    "sheet": "drivers",
    "pins": {
@@ -5695,14 +5680,14 @@
   },
   {
    "ref": "FB3",
-   "value": "BLM18PG221SN1D",
+   "value": "BLM18PG121SN1D",
    "footprint": "Inductor_SMD:L_0603_1608Metric",
    "lib_id": "Device:FerriteBead",
    "dnp": false,
    "bom": true,
    "owner": "U18",
    "fields": {
-    "MPN": "BLM18PG221SN1D",
+    "MPN": "BLM18PG121SN1D",
     "LCSC": "C14709"
    },
    "sheet": "drivers",
@@ -5845,7 +5830,7 @@
   {
    "ref": "J9",
    "value": "BM15B-GHS-TBT(LF)(SN)",
-   "footprint": "Connector_JST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical",
+   "footprint": "ST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical_3D",
    "lib_id": "Connector_Generic_MountingPin:Conn_01x15_MountingPin",
    "dnp": false,
    "bom": true,
@@ -5905,8 +5890,7 @@
    "bom": true,
    "owner": "U20",
    "fields": {
-    "MPN": "0.15 ohm 1 % 0.5 W current sense",
-    "LCSC": "C2933043"
+    "MPN": "0.15 ohm 1 % 0.5 W current sense"
    },
    "sheet": "drivers",
    "pins": {
@@ -5923,8 +5907,7 @@
    "bom": true,
    "owner": "U20",
    "fields": {
-    "MPN": "0.15 ohm 1 % 0.5 W current sense",
-    "LCSC": "C2933043"
+    "MPN": "0.15 ohm 1 % 0.5 W current sense"
    },
    "sheet": "drivers",
    "pins": {
@@ -6150,14 +6133,14 @@
   },
   {
    "ref": "FB4",
-   "value": "BLM18PG221SN1D",
+   "value": "BLM18PG121SN1D",
    "footprint": "Inductor_SMD:L_0603_1608Metric",
    "lib_id": "Device:FerriteBead",
    "dnp": false,
    "bom": true,
    "owner": "U20",
    "fields": {
-    "MPN": "BLM18PG221SN1D",
+    "MPN": "BLM18PG121SN1D",
     "LCSC": "C14709"
    },
    "sheet": "drivers",
@@ -6496,14 +6479,14 @@
   },
   {
    "ref": "FB5",
-   "value": "BLM18PG221SN1D",
+   "value": "BLM18PG121SN1D",
    "footprint": "Inductor_SMD:L_0603_1608Metric",
    "lib_id": "Device:FerriteBead",
    "dnp": false,
    "bom": true,
    "owner": "U24",
    "fields": {
-    "MPN": "BLM18PG221SN1D",
+    "MPN": "BLM18PG121SN1D",
     "LCSC": "C14709"
    },
    "sheet": "ui",
@@ -6557,7 +6540,7 @@
    "bom": true,
    "owner": "U24",
    "fields": {
-    "MPN": "CL05C470JB5NNNC",
+    "MPN": "0402CG470J500NT",
     "LCSC": "C1567"
    },
    "sheet": "ui",
@@ -6576,7 +6559,7 @@
    "owner": "U24",
    "fields": {
     "MPN": "LQG15HS47NJ02D",
-    "LCSC": "C77052"
+    "LCSC": "C97998"
    },
    "sheet": "ui",
    "pins": {
@@ -7083,7 +7066,7 @@
    "owner": "U26",
    "fields": {
     "MPN": "SM03B-GHS-TB(LF)(SN)",
-    "LCSC": "C189894"
+    "LCSC": "C514175"
    },
    "sheet": "ui",
    "pins": {
@@ -7138,8 +7121,7 @@
    "bom": true,
    "owner": "U26",
    "fields": {
-    "MPN": "ESD5Z5.0T1G",
-    "LCSC": "C84655"
+    "MPN": "ESD5Z5.0T1G"
    },
    "sheet": "ui",
    "pins": {
@@ -7156,8 +7138,7 @@
    "bom": true,
    "owner": "U26",
    "fields": {
-    "MPN": "ESD5Z5.0T1G",
-    "LCSC": "C84655"
+    "MPN": "ESD5Z5.0T1G"
    },
    "sheet": "ui",
    "pins": {

@@ -526,7 +526,7 @@ FIXED = {
     # 5 V and 3.3 V rails
     "U11": (-17.5, 20.3, 0, "B"), "L4": (-12.5, 26.2, 0, "B"), "C49": (-23.0, 26.2, 0, "B"), "U10": (-7.5, 12.5, 0, "B"), "L3": (-2.0, 12.5, 0, "B"),
     # sensors
-    "U24": (2.2, 2.0, 0, "B"), "U21": (-9.0, 0.0, 0, "B"), "U22": (-2.5, 20.5, 0, "B"), "U23": (-13.5, -0.5, 0, "B"),
+    "U24": (0.4, 1.7, 0, "B"), "U21": (-9.0, 0.0, 0, "B"), "U22": (-2.5, 20.5, 0, "B"), "U23": (-13.5, -0.5, 0, "B"),
     "J2": (13.4, -20.5, 180, "B"), "J12": (-45.5, -20.0, 90, "B"), "J5": (22.0, -21.5, 0, "B"), "J6": (22.0, -27.0, 0, "B"),
 }
 JACK = (-41.0, 11.0, 4.5)     # cut-out for the panel-mount 2.5 mm jack that sits in the bezel
@@ -561,27 +561,37 @@ def layout(pcb):
 
     # net classes. The widths are what still fits between 0.4 mm-pitch pins; the current itself is carried by the copper
     # areas that finish() lays over every power net (outer layers) and by the inner planes.
-    pcb.netclass("Power", 0.35, POWER_NETS)
-    pcb.netclass("Phase", 0.4, [f"{ax}_{p_}" for ax, _a in AXES for p_ in ("A1", "A2", "B1", "B2", "BRA", "BRB")])
-    pcb.netclass("Supply", 0.25, ["+3V3", "+3V3A", "+3V3G", "+1V1", "PDA_LDO3V3", "PDB_LDO3V3", "CHG_REGN", "PB_VCC", "BST_VCC", "RP_LX"]
+    pcb.netclass("Power", 0.3, POWER_NETS)
+    pcb.netclass("Phase", 0.3, PHASE_NETS)
+    pcb.netclass("Supply", 0.2, ["+3V3", "+3V3A", "+3V3G", "+1V1", "PDA_LDO3V3", "PDB_LDO3V3", "CHG_REGN", "PB_VCC", "BST_VCC", "RP_LX"]
                  + [f"{ax}_{p_}" for ax, _a in AXES for p_ in ("3V3", "5V")])
     pcb.sync_classes()
     # In1 is solid ground from the start, so the autorouter drops a via to it at every ground pin
+    pcb.plane_layer("In1")
+    # ground: a via to the In1 plane beside every ground pad, before anything else is routed
+    made, failed = pcb.plane_vias("GND", keep=[(-30.0, -30.0, 18.0, -23.9), (JACK[0] - JACK[2] - 0.5, JACK[1] - JACK[2] - 0.5,
+                                                                         JACK[0] + JACK[2] + 0.5, JACK[1] + JACK[2] + 0.5)])
+    print(f"ground fan-out: {made} vias; no place found for {len(failed)} pads: {' '.join(failed)}")
     pcb.zone("GND", "In1", pcb.rect(-49.5, -29.5, 49.5, 29.5), clearance=0.2, solid=True)
     return pcb
 
 
 POWER_NETS = ["VBAT", "VBAT_IN", "VSYS", "VM_IN", "VMOT", "VBUS_A", "VBUS_B", "VBUS_CHG", "VPB", "VPB_RAW", "PB_MID", "+5V",
               "CHG_SW1", "CHG_SW2", "CHG_PMID", "PB_SW1", "PB_SW2", "BST_SW", "SW_5V", "SW_3V3"]
+PHASE_NETS = [f"{ax}_{p_}" for ax, _a in AXES for p_ in ("A1", "A2", "B1", "B2", "BRA", "BRB")]
 POUR_NETS = ("GND",)
 
 
 def finish(pcb):
     """After the autorouter: copper areas over every power net, the inner power plane, ground on both outer faces."""
+    import math
     full = pcb.rect(-49.5, -29.5, 49.5, 29.5)
+    for ref in pcb.fps:                       # IC ground pads and thermal pads join the pours solidly
+        if ref.startswith(("U", "Q", "J", "L", "R", "C")):
+            pcb.solid(ref)
     # 1. each power net gets a filled area on the component side that spans all of its pads (KiCad keeps the clearance
     #    to everything else, so an area can only add copper to its own net)
-    for net in POWER_NETS + ["+3V3"]:
+    for net in POWER_NETS + PHASE_NETS:
         for side in ("B", "F"):
             pts = [xy for (r_, _p, xy, sd) in pcb.padpos.get(net, []) if sd == side and not r_.startswith("TP")]
             span = max(max(q[0] for q in pts) - min(q[0] for q in pts), max(q[1] for q in pts) - min(q[1] for q in pts)) if pts else 0

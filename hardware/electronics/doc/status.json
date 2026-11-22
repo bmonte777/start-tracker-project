@@ -1,0 +1,95 @@
+{
+ "status_rows": [
+  [
+   "Calculations",
+   "Done",
+   "`docs/calc/phase4_calcs.py`, `phase4_calcs.md`"
+  ],
+  [
+   "ST-520 cartridge board: schematic, layout, fab files",
+   "Done. ERC and DRC clean, fits the Phase 3 carrier",
+   "`hardware/electronics/cartridge-board/`, `fab/st-520/`"
+  ],
+  [
+   "ST-501 mainboard: schematic",
+   "Done. 391 parts, 229 nets, ERC clean, netlist cross-checked",
+   "`hardware/electronics/mainboard/`"
+  ],
+  [
+   "ST-501 mainboard: layout",
+   "**Not finished.** All 391 parts are placed, ground is connected, placement is DRC-clean; 499 signal and power connections are still unrouted. No fabrication files",
+   "section 5.2"
+  ],
+  [
+   "ST-602 battery board",
+   "**Not started** beyond the circuit definition; two inputs are missing",
+   "section 5.3"
+  ],
+  [
+   "Fit check",
+   "Done for ST-520 and for the ST-501 placement",
+   "section 6"
+  ],
+  [
+   "Wiring harnesses",
+   "Done: 6 drawings, pin tables, purchase list",
+   "`hardware/electronics/harness/`"
+  ],
+  [
+   "Per-board BOMs",
+   "Done for ST-520 and ST-501 (93 lines, 321 parts)",
+   "each board folder"
+  ],
+  [
+   "Master parts list, cost model",
+   "CSV and `bom_data.py` updated and cost model rerun; **the Sheet is not updated yet**",
+   "section 9"
+  ],
+  [
+   "Firmware hand-off, bring-up plan",
+   "Done",
+   "sections 10 and 11"
+  ],
+  [
+   "Board viewer",
+   "Done for ST-520; ST-501 shown as placement, marked in progress",
+   "artifact + `hardware/electronics/doc/board-viewer.html`"
+  ],
+  [
+   "GitHub Actions workflow",
+   "Written, started by hand only; not yet run on GitHub",
+   "`.github/workflows/phase4-electronics.yml`"
+  ],
+  [
+   "Phase 5 prompt",
+   "Held back until the mainboard is routed and the battery board exists",
+   "—"
+  ]
+ ],
+ "not_ready": "the mainboard cannot be ordered yet (its tracks are not routed), the battery board is not designed, and the Sheet still shows the Phase 3 prices. Phase 4 is therefore not complete, and the Phase 5 prompt is held back. `hardware/electronics/PROGRESS.md` says exactly where to pick up.",
+ "layout_status": "**The mainboard is placed but not routed, so it cannot be ordered yet.**\n\nWhat is done and checked: the outline, the four holes and the 9 mm jack cut-out; every part placed, with the front-face parts at the Phase 3 bezel positions; the three drivers beside their cartridge plugs with the sense resistors at the driver pins; the boost, charger and port B converters each grouped round their inductor; In1 as a solid ground plane with a via beside 249 ground pads (21 chip pads connect through the outer-layer pours instead); copper areas defined for every power and motor-phase net; In2 split into system-rail, motor-rail and 3.3 V areas. DRC on this state: no clearance, courtyard or hole errors; the only errors are the 499 connections not yet routed.\n\nWhat went wrong: the plan was to route the critical nets by hand in the layout script and leave the slow signals to Freerouting, as on the cartridge board. On this board the autorouter did not converge in the time available: its best run still had 534 open connections after a 26-minute first pass (that figure includes ground pins it does not count as connected to the plane), and it does not save a partial result when stopped. Three settings problems were found and fixed on the way (overlapping plane definitions, class widths too wide for 0.4 mm-pitch pins, the ground layer not marked as a plane), so the next attempt starts from a better place.\n\nWhat is left: route the power stages, USB pairs, motor phases, sense lines, encoder SPI and the GNSS feed by hand (in KiCad or in the script), then let the autorouter finish the slow signals with a longer run, and review the result in 3D. The placement renders below show the current state.\n\n![ST-501 placement, inner face](img/04-st-501-placement-inner.png)\n![ST-501 placement, front face](img/04-st-501-placement-front.png)",
+ "st602_status": "**Not designed yet; planned for the second board order.** It is not needed for the P0 bench round, which runs from a bench supply.\n\nCircuit as defined: BQ40Z50-R2 gauge and protector for 2 cells in series (2S2P pack), 1 mΩ sense resistor, charge and discharge N-FETs back to back, BQ294700 second-level over-voltage protector driving a three-terminal fuse, SMBus through 100 Ω and an ESD array to the blade connector, pads for B+, mid-point, B−, PACK+ and PACK−, charge-state LEDs behind the pack's light pipe with its button. Outline 32 × 40 mm, two layers.\n\nTwo inputs are missing before the schematic can be drawn responsibly: (1) which LED lights for which charge level on the gauge's three LED pins — this is only in a figure of TI's reference schematic that could not be read here; (2) the footprint drawing of the three-terminal fuse (LCSC had 5 pieces of ITV4030L1415NR, C3672030). The screw-free fixing of the board at the pack end is designed together with the board and is also open.",
+ "fit_note": "Reading the table: the cartridge boards rest on their carriers (0.09 mm is the copper thickness missing from the bare-board model) and nothing else is nearer than the magnet. **The chip-to-magnet gap is 0.81–0.82 mm, under the MT6835's 1.0 mm minimum: question Q29.**\n\nMainboard (placement model): the only overlap is the display's 4-pin header, drawn in the 3D model as a full-length stock header 10.1 mm tall; the bezel's inner face is 6 mm from the board. On the real board the display module is soldered by its own pins, trimmed to length, so this is a model artefact — but it also shows the display must sit low: check the module's height against the 0.58 mm left under the window when the first display arrives. The button caps end 3.5–3.7 mm from the board face and the chosen switch is 1.5 mm tall, which is the 2 mm of Q31. No overlap is reported at the USB-C sockets (they stand about 1.5 mm proud of the bezel's outer face, Q30) or at the buttons; whether every part carries a 3D model in the export has not been checked one by one, so this check is repeated when the layout is final. The GNSS antenna is no longer on the board (Q32), so the GNSS window check moves to the antenna's position under the top cover in the CAD, still to be drawn.",
+ "no_stock_how": {
+  "TPS25751DREFR": "not in JLCPCB's library (the S variant, C22460852, is: different package): buy through Parts Manager → Global sourcing",
+  "TPS25752ARSMR": "not in the library: Global sourcing",
+  "TPS55288RPMR": "not in the library: Global sourcing",
+  "LSM6DSVTR": "not in the library: Global sourcing",
+  "MAX-M10S-00B": "not in the library: Global sourcing, or hand-solder (castellated module)",
+  "RV-3028-C7 32.768kHz 1ppm TA QC": "not in the library: Global sourcing",
+  "MS621FE-FL11E": "not found: Global sourcing or hand-solder (2 tabs)",
+  "PESD24VS1UB": "number not confirmed: pick a 24 V SOD-323 ESD diode in the matcher",
+  "ESD5Z5.0T1G": "number not confirmed: pick in the matcher",
+  "AOTA-B201610S3R3-101-T": "3.3 µH for the RP2354A core supply; number not confirmed: pick the part Raspberry Pi names in its hardware design guide"
+ },
+ "quote_note": "These are estimates built from JLCPCB's public fee structure (two-sided standard assembly: about USD 50 set-up and USD 16 stencils per board type, about USD 3 per non-basic part type, USD 0.0017 per solder joint) and class prices for small parts; the order page gives the exact figure once the files are uploaded. Not included: the large ICs and modules, which have their own lines in the master parts list (about EUR 80 per head at prototype prices, so about EUR 400 for five sets), harness parts (about EUR 60 for five sets), shipping and import VAT. The mainboard line is an estimate for when its layout is released.",
+ "bom_note": "Against the Phase 3 list, materials move from EUR 1,895 / 1,320 / 976 to EUR 2,154 / 1,309 / 969 per head at 1 / 100 / 1,000: one head now carries the real minimum order (5 bare boards, 2 assembled, set-up fees), while at volume the boards cost less than the Phase 2 estimate. Updated files: `hardware/bom/master-parts-list.csv`, `docs/calc/bom_data.py`, `docs/calc/phase4_cost_model.json`. **The Sheet has not been updated yet** and still shows the Phase 3 figures for the ST-501, ST-520 and related lines.",
+ "sources": [
+  "JLCPCB parts library, read through the public mirror jlcsearch.tscircuit.com on 22 November 2026 (part numbers, basic / extended status, stock, price breaks): <https://jlcsearch.tscircuit.com/>",
+  "LCSC product pages for stock and price on 22 November 2026, e.g. TPS61288RQQR <https://www.lcsc.com/product-detail/C5219223.html>, MT6835GT <https://www.lcsc.com/product-detail/C2984637.html>, TMC2209-LA <https://www.lcsc.com/product-detail/C465949.html>, ESP32-S3-WROOM-1-N16R8 <https://www.lcsc.com/product-detail/C2913202.html>, RP2354A <https://www.lcsc.com/product-detail/C41378174.html>",
+  "Texas Instruments datasheets: TPS25751 <https://www.ti.com/lit/gpn/tps25751>, TPS25752 <https://www.ti.com/lit/gpn/tps25752>, BQ25792 <https://www.ti.com/lit/gpn/bq25792>, TPS61288 <https://www.ti.com/lit/gpn/tps61288>, TPS55288 <https://www.ti.com/lit/gpn/tps55288>, BQ40Z50-R2 <https://www.ti.com/lit/gpn/bq40z50-r2>, BQ2947 <https://www.ti.com/lit/gpn/bq2947>",
+  "MagnTek MT6835 datasheet (pinout, SPI mode, air gap 1.0–3.0 mm)",
+  "LCSC number cross-checks against public KiCad and atopile projects on GitHub (same manufacturer part and LCSC number together)",
+  "Freerouting 2.1.0 <https://github.com/freerouting/freerouting>; KiCad 9.0.8 <https://www.kicad.org/>"
+ ]
+}

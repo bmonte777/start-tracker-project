@@ -5236,7 +5236,6 @@
 			(at 76.2 190.5 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "LCSC" "C2903542" (at 76.2 190.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "99485a3c-b72c-5b2a-abb9-4de7a7eb0978"))
 		(pin "2" (uuid "927a063b-fa54-5457-9ee9-4e227ff0c923"))
 		(instances
@@ -5434,7 +5433,6 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "MPN" "RC0402FR-076K19L" (at 76.2 198.12 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "LCSC" "C137999" (at 76.2 198.12 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "3d5e3570-4756-5055-b96b-a96bf46ccc9d"))
 		(pin "2" (uuid "43251b4c-912a-57ad-81ae-fff0306967be"))
 		(instances
@@ -5470,7 +5468,6 @@
 			(at 121.92 198.12 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "LCSC" "C137961" (at 121.92 198.12 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "d39af480-0170-5ae0-91e2-c7bf5567762b"))
 		(pin "2" (uuid "23469e55-5fd4-5d74-8699-7b38f769e2f7"))
 		(instances
@@ -6482,10 +6479,7 @@
 			(at 121.92 236.22 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "MPN" "CL05B221KB5NNNC"
-			(at 121.92 236.22 0)
-			(effects (font (size 1.27 1.27)) (hide yes))
-		)
+		(property "MPN" "0402B221K500NT" (at 121.92 236.22 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "LCSC" "C1530" (at 121.92 236.22 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "637e64c2-aca2-55d1-9638-0b9c99e1dba5"))
 		(pin "2" (uuid "39ffaf8a-b20a-59ff-850f-a1d9b98a7462"))
@@ -6518,10 +6512,7 @@
 			(at 167.64 236.22 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "MPN" "CL05B221KB5NNNC"
-			(at 167.64 236.22 0)
-			(effects (font (size 1.27 1.27)) (hide yes))
-		)
+		(property "MPN" "0402B221K500NT" (at 167.64 236.22 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "LCSC" "C1530" (at 167.64 236.22 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "8f30d70b-bf6d-59e5-a823-0031441aae2f"))
 		(pin "2" (uuid "a6eaac3a-fc13-559d-a7bb-2903a60540a1"))

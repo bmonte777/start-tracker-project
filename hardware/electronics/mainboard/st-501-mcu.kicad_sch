@@ -5748,7 +5748,7 @@
 		(dnp no)
 		(uuid "5affcfde-e1b1-5842-a99e-06d77293dd53")
 		(property "Reference" "FB1" (at 25.4 237.83 90) (effects (font (size 1 1))))
-		(property "Value" "BLM18PG221SN1D" (at 25.4 242.23 90) (effects (font (size 1 1))))
+		(property "Value" "BLM18PG121SN1D" (at 25.4 242.23 90) (effects (font (size 1 1))))
 		(property "Footprint" "Inductor_SMD:L_0603_1608Metric"
 			(at 25.4 240.03 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -5758,7 +5758,7 @@
 			(at 25.4 240.03 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "MPN" "BLM18PG221SN1D" (at 25.4 240.03 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "MPN" "BLM18PG121SN1D" (at 25.4 240.03 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "LCSC" "C14709" (at 25.4 240.03 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "b21c66e9-60de-5b17-bcd4-4f93040621da"))
 		(pin "2" (uuid "a15d8235-22e6-56fc-a395-2b91437aaa05"))

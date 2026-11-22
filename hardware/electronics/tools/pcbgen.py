@@ -354,6 +354,8 @@ class PCB:
     def solid(self, ref, *nums):
         """Connect these pads to their zone without thermal spokes (fine-pitch IC and connector pads)."""
         for p in self.fps[ref].Pads():
+            if p.GetAttribute() == pcbnew.PAD_ATTRIB_NPTH or not p.GetNetname():
+                continue                      # bare holes keep their clearance from every pour
             if not nums or p.GetNumber() in [str(n) for n in nums]:
                 p.SetLocalZoneConnection(pcbnew.ZONE_CONNECTION_FULL)
 
@@ -394,6 +396,83 @@ class PCB:
     def rect(self, x0, y0, x1, y1):
         return [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
 
+    def plane_vias(self, net="GND", track=0.25, clear=0.16, keep=(), share=1.3):
+        """A via beside every surface-mount pad of a plane net, with a short track to it, placed before the autorouter runs.
+        A via is only put where it clears every pad of another net on both faces, the board edge and the keep rectangles;
+        pads that find no place are returned (the copper pours or a hand fix pick them up)."""
+        import math
+        vr = self.default_via[0] / 2
+        pads, mine = [], []
+        for ref, fp in self.fps.items():
+            c = self.xy(fp.GetPosition())
+            for p_ in fp.Pads():
+                bb = p_.GetBoundingBox()
+                a, b = self.xy(bb.GetOrigin()), self.xy(bb.GetEnd())
+                r = (min(a[0], b[0]), min(a[1], b[1]), max(a[0], b[0]), max(a[1], b[1]))
+                th = p_.GetAttribute() in (pcbnew.PAD_ATTRIB_PTH, pcbnew.PAD_ATTRIB_NPTH)
+                side = "*" if th else ("F" if p_.IsOnLayer(pcbnew.F_Cu) else "B")
+                item = dict(ref=ref, r=r, side=side, net=p_.GetNetname(), c=c, th=th, xy=self.xy(p_.GetPosition()), num=p_.GetNumber())
+                pads.append(item)
+                if item["net"] == net and not th:
+                    mine.append(item)
+
+        def rect_dist(r, x, y):
+            dx = max(r[0] - x, 0, x - r[2])
+            dy = max(r[1] - y, 0, y - r[3])
+            return math.hypot(dx, dy)
+
+        def via_ok(x, y):
+            b = self.bounds or (-1e9, -1e9, 1e9, 1e9)
+            if not (b[0] + vr + 0.3 <= x <= b[2] - vr - 0.3 and b[1] + vr + 0.3 <= y <= b[3] - vr - 0.3):
+                return False
+            if any(k[0] - vr <= x <= k[2] + vr and k[1] - vr <= y <= k[3] + vr for k in keep):
+                return False
+            for q in pads:
+                lim = vr + (0.05 if q["net"] == net else clear) + (0.45 if q["th"] else 0.0)
+                if q["r"][0] - lim < x < q["r"][2] + lim and q["r"][1] - lim < y < q["r"][3] + lim and rect_dist(q["r"], x, y) < lim:
+                    return False
+            return all(math.hypot(x - vx, y - vy) >= 0.85 for (vx, vy) in vias)
+
+        def seg_ok(a, b, side):
+            n = max(2, int(math.hypot(b[0] - a[0], b[1] - a[1]) / 0.1))
+            lim = track / 2 + clear
+            for i in range(n + 1):
+                x, y = a[0] + (b[0] - a[0]) * i / n, a[1] + (b[1] - a[1]) * i / n
+                for q in pads:
+                    if q["net"] != net and q["side"] in (side, "*") and rect_dist(q["r"], x, y) < lim:
+                        return False
+            return True
+
+        vias, failed, made = [], [], 0
+        for it in sorted(mine, key=lambda q: (q["r"][2] - q["r"][0]) * (q["r"][3] - q["r"][1])):
+            x0, y0 = it["xy"]
+            near = [v for v in vias if math.hypot(v[0] - x0, v[1] - y0) <= share and seg_ok((x0, y0), v, it["side"])]
+            if near:
+                v = min(near, key=lambda v: math.hypot(v[0] - x0, v[1] - y0))
+                self.track(net, [(x0, y0), v], track, it["side"])
+                continue
+            hw, hh = (it["r"][2] - it["r"][0]) / 2, (it["r"][3] - it["r"][1]) / 2
+            out = math.atan2(y0 - it["c"][1], x0 - it["c"][0]) if math.hypot(x0 - it["c"][0], y0 - it["c"][1]) > 0.05 else 0.0
+            done = False
+            for extra in (0.12, 0.35, 0.65, 1.0, 1.5):
+                for k in sorted(range(16), key=lambda k: abs(((k * math.pi / 8 - out + math.pi) % (2 * math.pi)) - math.pi)):
+                    ang = k * math.pi / 8
+                    ca, sa = math.cos(ang), math.sin(ang)
+                    reach = min(hw / abs(ca) if abs(ca) > 1e-6 else 1e9, hh / abs(sa) if abs(sa) > 1e-6 else 1e9) + vr + extra
+                    x, y = round(x0 + ca * reach, 3), round(y0 + sa * reach, 3)
+                    if via_ok(x, y) and seg_ok((x0, y0), (x, y), it["side"]):
+                        self.via(net, (x, y))
+                        self.track(net, [(x0, y0), (x, y)], track, it["side"])
+                        vias.append((x, y))
+                        made += 1
+                        done = True
+                        break
+                if done:
+                    break
+            if not done:
+                failed.append(f"{it['ref']}.{it['num']}")
+        return made, failed
+
     def zone(self, net, layer, pts=None, clearance=0.25, min_w=0.2, solid=False, priority=0):
         z = pcbnew.ZONE(self.board)
         z.SetLayer(LAYER[layer])
@@ -414,6 +493,24 @@ class PCB:
         z.SetIslandRemovalMode(pcbnew.ISLAND_REMOVAL_MODE_ALWAYS)
         self.board.Add(z)
         return z
+
+    def hole_keepouts(self, margin=0.3):
+        """No pour copper around bare (unplated) holes. The zone filler run from Python does not load the project's
+        hole-clearance rule, so the clearance is drawn explicitly."""
+        import math
+        layers = ["F", "B"] + (["In1", "In2"] if self.board.GetCopperLayerCount() == 4 else [])
+        n = 0
+        for fp in self.fps.values():
+            for p_ in fp.Pads():
+                if p_.GetAttribute() != pcbnew.PAD_ATTRIB_NPTH:
+                    continue
+                x, y = self.xy(p_.GetPosition())
+                d = p_.GetDrillSize()
+                r = max(pcbnew.ToMM(d.x), pcbnew.ToMM(d.y)) / 2 + margin
+                self.keepout(layers, [(x + r * math.cos(math.radians(a)), y + r * math.sin(math.radians(a))) for a in range(0, 360, 20)],
+                             tracks=False, vias=False, copper=True)
+                n += 1
+        return n
 
     def hull(self, pts, margin=0.8):
         """Convex outline around a set of points, grown by margin (for a copper area that spans the pads of one net)."""
@@ -500,6 +597,10 @@ class PCB:
     def import_ses(self, path):
         return pcbnew.ImportSpecctraSES(self.board, path)
 
+    def plane_layer(self, layer):
+        """Mark an inner layer as a power plane: the autorouter then keeps signals off it and drops vias into it."""
+        self.board.SetLayerType(LAYER[layer], pcbnew.LT_POWER)
+
     def autoroute(self, passes=30, jar=None):
         """Slow signals only: the critical nets are routed by hand before this is called."""
         jar = jar or os.environ.get("FREEROUTING_JAR", "/opt/freerouting/freerouting.jar")
@@ -509,9 +610,10 @@ class PCB:
             os.remove(ses)
         if not self.export_dsn(dsn):
             raise RuntimeError("DSN export failed")
-        r = subprocess.run(["java", "-Djava.awt.headless=true", "-jar", jar, "-de", dsn, "-do", ses, "-mp", str(passes),
-                            "-mt", "1", "--gui.enabled=false", "-da"], capture_output=True, text=True,
-                           timeout=int(os.environ.get("ROUTE_TIMEOUT", "3600")))
+        limit = int(os.environ.get("ROUTE_MINUTES", "20"))        # the router saves what it has when its own limit expires
+        r = subprocess.run(["java", "-Djava.awt.headless=true", "-jar", jar, "-de", dsn, "-do", ses,
+                            f"--router.max_passes={passes}", f"--router.job_timeout={limit // 60:02d}:{limit % 60:02d}:00",
+                            "-mt", "1", "--gui.enabled=false", "-da"], capture_output=True, text=True, timeout=limit * 60 + 900)
         if not os.path.exists(ses):
             raise RuntimeError("Freerouting produced no session file:\n" + r.stdout[-2000:] + r.stderr[-2000:])
         if not self.import_ses(ses):

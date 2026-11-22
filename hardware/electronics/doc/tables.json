@@ -1,0 +1,131 @@
+{
+ "esp_pins": "| ESP32-S3 pin | Module pad | Net | Use |\n|---|---|---|---|\n| IO0 | 27 | `ESP_IO0` | boot strap (low at reset = serial download); also on the programming pads |\n| IO1 | 39 | `BTN1` | button 1 (left), low when pressed |\n| IO2 | 38 | `BTN2` | button 2 |\n| IO3 | 15 | `IMU_INT` | LSM6DSV INT1 |\n| IO4 | 4 | `BTN3` | button 3 |\n| IO5 | 5 | `BTN4` | button 4 (right) |\n| IO6 | 6 | `WAKE_IRQ_N` | RTC alarm, open drain, wakes from deep sleep |\n| IO7 | 7 | `VSYS_MON` | system rail / 4.03 (100 k / 33 k), ADC1 |\n| IO8 | 12 | `I2C_SDA` | main I2C, 2.2 k pull-up |\n| IO9 | 17 | `I2C_SCL` | main I2C, 400 kHz |\n| IO10 | 18 | `PACK_SDA` | battery SMBus data (100 kHz) |\n| IO11 | 19 | `PACK_SCL` | battery SMBus clock |\n| IO12 | 20 | `LED_R` | status LED red, high = on |\n| IO13 | 21 | `LED_G` | status LED green |\n| IO14 | 22 | `LED_B` | status LED blue |\n| IO15 | 8 | `GNSS_PPS` | 1 pulse per second, to both MCUs |\n| IO16 | 9 | `LINK_SYNC` | time-sync strobe ESP32 -> RP2354A |\n| IO17 | 10 | `LINK_TX` | UART ESP32 TX -> RP2354A RX (GPIO1) |\n| IO18 | 11 | `LINK_RX` | UART RP2354A TX (GPIO0) -> ESP32 RX |\n| IO21 | 23 | `PWR_IRQ_N` | both PD controllers, open drain |\n| IO38 | 31 | `SWCLK_E` | SWD clock to the RP2354A (firmware update) |\n| IO39 | 32 | `SWDIO_E` | SWD data to the RP2354A |\n| IO40 | 33 | `RP_RUN` | RP2354A reset, low = reset |\n| IO41 | 34 | `SHUT_FOCUS` | optocoupler, high = focus (half press) |\n| IO42 | 35 | `SHUT_REL` | optocoupler, high = shutter |\n| IO45 | 26 | `ESP_IO45` | spare, test pad (strap: keep low at reset) |\n| IO46 | 16 | `PORTB_EN` | enables the camera-port converter (strap: low at reset) |\n| IO47 | 24 | `GNSS_TXD` | GNSS module TX -> ESP32 RX |\n| IO48 | 25 | `GNSS_RXD` | ESP32 TX -> GNSS module RX |\n| TXD0 | 37 | `ESP_TXD0` | debug UART on the programming pads |\n| RXD0 | 36 | `ESP_RXD0` | debug UART |\n| EN | 3 | `ESP_EN` | reset, 10 k / 1 uF |\n| USB_D- | 13 | `A_DN` | USB D- of port A (native USB serial / JTAG) |\n| USB_D+ | 14 | `A_DP` | USB D+ of port A |",
+ "rp_pins": "| RP2354A pin | Package pin | Net | Use |\n|---|---|---|---|\n| GPIO0 | 2 | `LINK_RX` | UART RP2354A TX (GPIO0) -> ESP32 RX |\n| GPIO1 | 3 | `LINK_TX` | UART ESP32 TX -> RP2354A RX (GPIO1) |\n| GPIO2 | 4 | `LINK_SYNC` | time-sync strobe ESP32 -> RP2354A |\n| GPIO3 | 5 | `GNSS_PPS` | 1 pulse per second, to both MCUs |\n| GPIO4 | 7 | `TMC_TX` | UART1 TX through 1 k onto the one-wire driver bus |\n| GPIO5 | 8 | `TMC_UART` | UART1 RX: the shared PDN_UART line of the three drivers |\n| GPIO6 | 9 | `DIAG_AZ` | driver DIAG (stall / fault), azimuth |\n| GPIO7 | 10 | `DIAG_ALT` | driver DIAG, altitude |\n| GPIO8 | 12 | `DIAG_ROLL` | driver DIAG, roll |\n| GPIO9 | 13 | `LED_RP` | heartbeat LED |\n| GPIO10 | 14 | `CS_ALT_M` |  |\n| GPIO11 | 15 | `CS_ROLL_M` |  |\n| GPIO12 | 16 | `ENC_MISO` | SPI1 RX, shared by the three encoders |\n| GPIO13 | 17 | `CS_AZ_M` |  |\n| GPIO14 | 18 | `ENC_SCK_M` | SPI1 SCK (mode 3) |\n| GPIO15 | 19 | `ENC_MOSI_M` | SPI1 TX |\n| GPIO16 | 27 | `STEP_AZ` |  |\n| GPIO17 | 28 | `DIR_AZ` |  |\n| GPIO18 | 29 | `STEP_ALT` |  |\n| GPIO19 | 31 | `DIR_ALT` |  |\n| GPIO20 | 32 | `STEP_ROLL` |  |\n| GPIO21 | 33 | `DIR_ROLL` |  |\n| GPIO22 | 34 | `DRV_EN_N` | all three driver enables, low = on, pulled high |\n| GPIO23 | 35 | `BOOST_EN` | motor-rail converter enable, pulled low |\n| GPIO24 | 36 | `VM_SEL` | motor rail level: low = 10 V, high = 16 V |\n| GPIO25 | 37 | `MOTOR_PWR_EN` | soft-start switch in front of the boost, pulled low |\n| GPIO26/ADC0 | 40 | `NTC_AZ_A` | motor thermistor, azimuth (10 k to 3.3 V) |\n| GPIO27/ADC1 | 41 | `NTC_ALT_A` | motor thermistor, altitude |\n| GPIO28/ADC2 | 42 | `NTC_ROLL_A` | motor thermistor, roll |\n| GPIO29/ADC3 | 43 | `VMOT_MON` | motor rail / 7.67 (100 k / 15 k) |\n| SWCLK | 24 | `RP_SWCLK` |  |\n| SWDIO | 25 | `RP_SWDIO` |  |\n| RUN | 26 | `RP_RUN` | RP2354A reset, low = reset |\n| USB_DM | 51 | `RP_USB_DM` |  |\n| USB_DP | 52 | `RP_USB_DP` |  |\n| USB_OTP_VDD | 53 | `+3V3` |  |\n| QSPI_IOVDD | 54 | `+3V3` |  |",
+ "test_points": "| Pad | Net | Pad | Net | Pad | Net |\n|---|---|---|---|---|---|\n| TP1 | `VBAT_IN` | TP2 | `VBAT` | TP3 | `VSYS` |\n| TP4 | `VBUS_CHG` | TP5 | `CHG_REGN` | TP6 | `CHG_STAT` |\n| TP7 | `CHG_QON` | TP8 | `PACK_SCL` | TP9 | `PACK_SDA` |\n| TP10 | `GND` | TP11 | `GND` | TP12 | `VBUS_A` |\n| TP13 | `PDA_SDAC` | TP14 | `PDA_SCLC` | TP15 | `PDA_LDO3V3` |\n| TP16 | `A_CC1` | TP17 | `A_CC2` | TP18 | `VBUS_B` |\n| TP19 | `VPB` | TP20 | `PDB_SDAC` | TP21 | `PDB_SCLC` |\n| TP22 | `PDB_LDO3V3` | TP23 | `B_DP` | TP24 | `B_DN` |\n| TP25 | `B_CC1` | TP26 | `B_CC2` | TP27 | `+3V3` |\n| TP28 | `+5V` | TP29 | `VM_IN` | TP30 | `VMOT` |\n| TP31 | `GND` | TP32 | `GND` | TP33 | `+1V1` |\n| TP34 | `+3V3A` | TP35 | `I2C_SDA` | TP36 | `I2C_SCL` |\n| TP37 | `LINK_TX` | TP38 | `LINK_RX` | TP39 | `LINK_SYNC` |\n| TP40 | `TMC_UART` | TP41 | `ENC_SCK_M` | TP42 | `ENC_MOSI_M` |\n| TP43 | `ENC_MISO` | TP44 | `GNSS_PPS` | TP45 | `RP_USB_DM` |\n| TP46 | `RP_USB_DP` | TP47 | `BOOTSEL_PAD` | TP48 | `IMU_INT` |\n| TP49 | `ESP_IO45` | TP50 | `PWR_IRQ_N` | TP51 | `WAKE_IRQ_N` |\n| TP52 | `NTC_AZ_A` | TP53 | `NTC_ALT_A` | TP54 | `NTC_ROLL_A` |\n| TP55 | `GNSS_RST` | TP56 | `GNSS_SAFE` | TP57 | `GNSS_TXD` |\n| TP58 | `GNSS_RXD` | TP59 | `RTC_VBAK` |",
+ "connectors": "| Ref | Part | Pins |\n|---|---|---|\n| J1 | BAT+ BAT- | 1 `VBAT_IN`, 2 `GND` |\n| J2 | SM04B-GHS-TB(LF)(SN) | 1 `SMBC_J`, 2 `SMBD_J`, 3 `PRES_J`, 4 `GND` |\n| J3 | USB-C A | A1 `GND`, A12 `GND`, B1 `GND`, B12 `GND`, A8 `None`, B8 `None`, A4 `VBUS_A`, A9 `VBUS_A`, B4 `VBUS_A`, B9 `VBUS_A`, A5 `A_CC1`, B5 `A_CC2`, A6 `A_DP`, B6 `A_DP`, A7 `A_DN`, B7 `A_DN` |\n| J4 | USB-C B | A1 `GND`, A12 `GND`, B1 `GND`, B12 `GND`, A8 `None`, B8 `None`, A4 `VBUS_B`, A9 `VBUS_B`, B4 `VBUS_B`, B9 `VBUS_B`, A5 `B_CC1`, B5 `B_CC2`, A6 `B_DP`, B6 `B_DP`, A7 `B_DN`, B7 `B_DN` |\n| J5 | TC2030 ESP32 | 1 `+3V3`, 2 `ESP_EN`, 3 `ESP_TXD0`, 4 `ESP_RXD0`, 5 `GND`, 6 `ESP_IO0` |\n| J6 | TC2030 RP2354 | 1 `+3V3`, 2 `RP_SWDIO`, 3 `RP_RUN`, 4 `RP_SWCLK`, 5 `GND`, 6 `LINK_RX` |\n| J7 | BM15B-GHS-TBT(LF)(SN) | 1 `AZ_A1`, 2 `AZ_A1`, 3 `AZ_A2`, 4 `AZ_A2`, 5 `GND`, 6 `AZ_CS`, 7 `AZ_SCK`, 8 `AZ_MOSI`, 9 `ENC_MISO`, 10 `NTC_AZ`, 11 `AZ_3V3`, 12 `AZ_B1`, 13 `AZ_B1`, 14 `AZ_B2`, 15 `AZ_B2` |\n| J8 | BM15B-GHS-TBT(LF)(SN) | 1 `ALT_A1`, 2 `ALT_A1`, 3 `ALT_A2`, 4 `ALT_A2`, 5 `GND`, 6 `ALT_CS`, 7 `ALT_SCK`, 8 `ALT_MOSI`, 9 `ENC_MISO`, 10 `NTC_ALT`, 11 `ALT_3V3`, 12 `ALT_B1`, 13 `ALT_B1`, 14 `ALT_B2`, 15 `ALT_B2` |\n| J9 | BM15B-GHS-TBT(LF)(SN) | 1 `ROLL_A1`, 2 `ROLL_A1`, 3 `ROLL_A2`, 4 `ROLL_A2`, 5 `GND`, 6 `ROLL_CS`, 7 `ROLL_SCK`, 8 `ROLL_MOSI`, 9 `ENC_MISO`, 10 `NTC_ROLL`, 11 `ROLL_3V3`, 12 `ROLL_B1`, 13 `ROLL_B1`, 14 `ROLL_B2`, 15 `ROLL_B2` |\n| J10 | U.FL GNSS | 1 `GNSS_ANT`, 2 `GND` |\n| J11 | OLED 1.3in SH1106 | 1 `OLED_P1`, 2 `OLED_P2`, 3 `I2C_SCL`, 4 `I2C_SDA` |\n| J12 | SM03B-GHS-TB(LF)(SN) | 1 `SH_TIP`, 2 `SH_RING`, 3 `SH_SLEEVE` |",
+ "st-501_stats": {
+  "parts": 321,
+  "no_lcsc": [
+   [
+    "0R01",
+    "0.010 ohm 1 % 1 W current sense"
+   ],
+   [
+    "0R15",
+    "0.15 ohm 1 % 0.5 W current sense"
+   ],
+   [
+    "100u 10V",
+    "100 uF 10 V polymer"
+   ],
+   [
+    "100u 25V",
+    "100 uF 25 V polymer hybrid"
+   ],
+   [
+    "15n",
+    "15 nF X7R 50 V 0402"
+   ],
+   [
+    "23k2",
+    "RC0402FR-0723K2L"
+   ],
+   [
+    "26k7",
+    "RC0402FR-0726K7L"
+   ],
+   [
+    "2u2",
+    "MWSC0630H2R2MT"
+   ],
+   [
+    "365k",
+    "RC0402FR-07365KL"
+   ],
+   [
+    "36k5",
+    "RC0402FR-0736K5L"
+   ],
+   [
+    "39p",
+    "39 pF C0G 50 V 0402"
+   ],
+   [
+    "3u3",
+    "AOTA-B201610S3R3-101-T"
+   ],
+   [
+    "44k2",
+    "RC0402FR-0744K2L"
+   ],
+   [
+    "47n",
+    "47 nF X7R 25 V 0402"
+   ],
+   [
+    "47u 25V",
+    "47 uF 25 V polymer"
+   ],
+   [
+    "54k9",
+    "RC0402FR-0754K9L"
+   ],
+   [
+    "6k19",
+    "RC0402FR-076K19L"
+   ],
+   [
+    "84k5",
+    "RC0402FR-0784K5L"
+   ],
+   [
+    "ESD5Z5.0T1G",
+    "ESD5Z5.0T1G"
+   ],
+   [
+    "LSM6DSVTR",
+    "LSM6DSVTR"
+   ],
+   [
+    "MAX-M10S",
+    "MAX-M10S-00B"
+   ],
+   [
+    "MS621FE",
+    "MS621FE-FL11E"
+   ],
+   [
+    "PESD24VS1UB",
+    "PESD24VS1UB"
+   ],
+   [
+    "RV-3028-C7",
+    "RV-3028-C7 32.768kHz 1ppm TA QC"
+   ],
+   [
+    "TPS25751DREFR",
+    "TPS25751DREFR"
+   ],
+   [
+    "TPS25752ARSMR",
+    "TPS25752ARSMR"
+   ],
+   [
+    "TPS55288RPMR",
+    "TPS55288RPMR"
+   ]
+  ],
+  "dnp": [
+   "R29",
+   "R98",
+   "R99"
+  ]
+ },
+ "st-520_stats": {
+  "parts": 9,
+  "no_lcsc": [],
+  "dnp": [
+   "RT1"
+  ]
+ }
+}

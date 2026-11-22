@@ -90,3 +90,18 @@ The reasoning and numbers are in `docs/04-electronics.md` and `docs/calc/phase4_
 | D47 | Cartridge plug pinout (Q27) | JST-GH 15-way, the same at both ends: 1–2 phase A1, 3–4 phase A2, 5 GND, 6 CS, 7 SCK, 8 MOSI, 9 MISO, 10 thermistor, 11 +3.3 V, 12–13 phase B1, 14–15 phase B2. Wired by phase, not by lead colour: the 38 mm and 48 mm motors use different colours for the same phases (D32 check) |
 
 D27 is confirmed: the TPS25751 datasheet lists the BQ25792 among the chargers its firmware drives.
+
+### Phase 4 — pending approval (not decisions yet)
+
+The Phase 4 design carries on with the recommended option for each of these. Nothing that changes a printed or machined part has been changed.
+
+| # | Question | Recommended, used in the design |
+|---|---|---|
+| Q28 | Clock backup | Seiko MS621FE rechargeable cell (about three months) instead of the 0.1 F capacitor (about two days) |
+| Q29 | Encoder chip-to-magnet gap is 0.8 mm with the real package; the MT6835 datasheet asks for 1.0–3.0 mm | Raise the encoder board 0.5 mm: carriers ST-212 and ST-216 get 0.5 mm taller posts (two printed parts change) |
+| Q30 | USB-C sockets | Upright GT-USB-7051A for the prototypes (in stock, not sealed, 1.5 mm proud of the bezel); a sealed socket when the bezel is revised |
+| Q31 | Buttons | TS-1187A (1.5 mm tall); the four printed button caps grow by 2 mm |
+| Q32 | GNSS antenna | Active patch on a coax lead (U.FL socket on the board), flat under the top cover |
+| Q33 | Shutter socket | Panel-mount 2.5 mm jack in the bezel, through a 9 mm cut-out in the mainboard, wired to plug J12 |
+| Q34 | Status light | Three single-colour 0603 LEDs behind the light pipe instead of one RGB package |
+| Q35 | Battery lead | Soldered to two pads on the mainboard, with an in-line XT30 |

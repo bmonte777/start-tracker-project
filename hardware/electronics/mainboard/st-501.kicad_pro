@@ -252,6 +252,60 @@
         "via_diameter": 0.5,
         "via_drill": 0.3,
         "wire_width": 6
+      },
+      {
+        "bus_width": 12,
+        "clearance": 0.127,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.2,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "Phase",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "priority": -1,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.3,
+        "via_diameter": 0.5,
+        "via_drill": 0.3,
+        "wire_width": 6
+      },
+      {
+        "bus_width": 12,
+        "clearance": 0.127,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.2,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "Power",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "priority": -1,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.3,
+        "via_diameter": 0.5,
+        "via_drill": 0.3,
+        "wire_width": 6
+      },
+      {
+        "bus_width": 12,
+        "clearance": 0.127,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.2,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "Supply",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "priority": -1,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.2,
+        "via_diameter": 0.5,
+        "via_drill": 0.3,
+        "wire_width": 6
       }
     ],
     "meta": {
@@ -259,7 +313,224 @@
     },
     "net_colors": null,
     "netclass_assignments": null,
-    "netclass_patterns": []
+    "netclass_patterns": [
+      {
+        "netclass": "Power",
+        "pattern": "VBAT"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "VBAT_IN"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "VSYS"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "VM_IN"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "VMOT"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "VBUS_A"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "VBUS_B"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "VBUS_CHG"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "VPB"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "VPB_RAW"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "PB_MID"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "+5V"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "CHG_SW1"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "CHG_SW2"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "CHG_PMID"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "PB_SW1"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "PB_SW2"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "BST_SW"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "SW_5V"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "SW_3V3"
+      },
+      {
+        "netclass": "Phase",
+        "pattern": "AZ_A1"
+      },
+      {
+        "netclass": "Phase",
+        "pattern": "AZ_A2"
+      },
+      {
+        "netclass": "Phase",
+        "pattern": "AZ_B1"
+      },
+      {
+        "netclass": "Phase",
+        "pattern": "AZ_B2"
+      },
+      {
+        "netclass": "Phase",
+        "pattern": "AZ_BRA"
+      },
+      {
+        "netclass": "Phase",
+        "pattern": "AZ_BRB"
+      },
+      {
+        "netclass": "Phase",
+        "pattern": "ALT_A1"
+      },
+      {
+        "netclass": "Phase",
+        "pattern": "ALT_A2"
+      },
+      {
+        "netclass": "Phase",
+        "pattern": "ALT_B1"
+      },
+      {
+        "netclass": "Phase",
+        "pattern": "ALT_B2"
+      },
+      {
+        "netclass": "Phase",
+        "pattern": "ALT_BRA"
+      },
+      {
+        "netclass": "Phase",
+        "pattern": "ALT_BRB"
+      },
+      {
+        "netclass": "Phase",
+        "pattern": "ROLL_A1"
+      },
+      {
+        "netclass": "Phase",
+        "pattern": "ROLL_A2"
+      },
+      {
+        "netclass": "Phase",
+        "pattern": "ROLL_B1"
+      },
+      {
+        "netclass": "Phase",
+        "pattern": "ROLL_B2"
+      },
+      {
+        "netclass": "Phase",
+        "pattern": "ROLL_BRA"
+      },
+      {
+        "netclass": "Phase",
+        "pattern": "ROLL_BRB"
+      },
+      {
+        "netclass": "Supply",
+        "pattern": "+3V3"
+      },
+      {
+        "netclass": "Supply",
+        "pattern": "+3V3A"
+      },
+      {
+        "netclass": "Supply",
+        "pattern": "+3V3G"
+      },
+      {
+        "netclass": "Supply",
+        "pattern": "+1V1"
+      },
+      {
+        "netclass": "Supply",
+        "pattern": "PDA_LDO3V3"
+      },
+      {
+        "netclass": "Supply",
+        "pattern": "PDB_LDO3V3"
+      },
+      {
+        "netclass": "Supply",
+        "pattern": "CHG_REGN"
+      },
+      {
+        "netclass": "Supply",
+        "pattern": "PB_VCC"
+      },
+      {
+        "netclass": "Supply",
+        "pattern": "BST_VCC"
+      },
+      {
+        "netclass": "Supply",
+        "pattern": "RP_LX"
+      },
+      {
+        "netclass": "Supply",
+        "pattern": "AZ_3V3"
+      },
+      {
+        "netclass": "Supply",
+        "pattern": "AZ_5V"
+      },
+      {
+        "netclass": "Supply",
+        "pattern": "ALT_3V3"
+      },
+      {
+        "netclass": "Supply",
+        "pattern": "ALT_5V"
+      },
+      {
+        "netclass": "Supply",
+        "pattern": "ROLL_3V3"
+      },
+      {
+        "netclass": "Supply",
+        "pattern": "ROLL_5V"
+      }
+    ]
   },
   "pcbnew": {
     "last_paths": {

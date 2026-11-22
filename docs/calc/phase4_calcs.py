@@ -143,7 +143,7 @@ for vm in (16.0, 10.0):
 sf = R["driver"]["stealth_floor"]
 row("Stepper drivers", "Lowest current StealthChop can regulate, 38 mm motor", "t_BLANK x f_PWM x V_M / R_coil / sqrt 2",
     f"1.33 us x 23.4 kHz x V_M / 2.3 ohm / 1.414", f"{sf['38 mm (2.3 ohm) at 16 V']:.3f} A RMS at 16 V, {sf['38 mm (2.3 ohm) at 10 V']:.3f} A at 10 V",
-    "TBL = 0, pwm_freq = 0. Holding (0.15 A) and tracking (0.18 A) sit at this floor on 16 V: see Q23")
+    "TBL = 0, pwm_freq = 0. Holding (0.15 A) and tracking (0.18 A) sit at this floor on 16 V: D43")
 row("Stepper drivers", "Same, 48 mm azimuth motor", "as above", "1.33 us x 23.4 kHz x V_M / 1.4 ohm / 1.414",
     f"{sf['48 mm (1.4 ohm) at 16 V']:.3f} A RMS at 16 V, {sf['48 mm (1.4 ohm) at 10 V']:.3f} A at 10 V",
     f"azimuth tracks at {cur['az']['track_20C']:.2f} A")
@@ -198,7 +198,7 @@ row("16 V motor rail (TPS61288)", "Design load", "calculated slew peak x 1.4", f
 row("16 V motor rail (TPS61288)", "Feedback divider, 16 V", "V_REF x (1 + R1 / (R2a || R2b))",
     f"0.6 x (1 + 365k / ({R2_LOW / 1e3:g}k || {R2_PAR / 1e3:g}k))", f"{V_HI:.2f} V", "VM_SEL high (Q4 on)")
 row("16 V motor rail (TPS61288)", "Feedback divider, tracking level", "V_REF x (1 + R1 / R2a)", f"0.6 x (1 + 365k / {R2_LOW / 1e3:g}k)",
-    f"{V_LO:.2f} V", "VM_SEL low (default); pending approval, Q23")
+    f"{V_LO:.2f} V", "VM_SEL low (default); D43")
 row("16 V motor rail (TPS61288)", "Duty cycle at the lowest input", "1 - V_IN x eta / V_OUT", f"1 - 6.0 x 0.90 / 16", f"{D_MAX:.3f}", "eta 0.90 assumed")
 row("16 V motor rail (TPS61288)", "Input (inductor average) current", "V_OUT x I_OUT / (V_IN x eta)", f"16 x {I_OUT} / (6.0 x 0.90)", f"{I_IN:.2f} A", "")
 row("16 V motor rail (TPS61288)", "Inductor ripple with 4.7 uH", "V_IN x D / (L x f_SW)", f"6.0 x {D_MAX:.3f} / (4.7 uH x 500 kHz)",
@@ -218,18 +218,18 @@ row("16 V motor rail (TPS61288)", "Compensation capacitors", "C_C = R_O C_O / (2
 row("16 V motor rail (TPS61288)", "Losses at the design load", "I^2 DCR + I^2 R_DS + 0.5 V I t f",
     f"{P_L:.2f} + {P_FET:.2f} + {P_SW:.2f} W", f"{P_L + P_FET + P_SW:.2f} W, efficiency {100 * (1 - (P_L + P_FET + P_SW) / (VOUT * I_OUT)):.0f} %",
     "20 mohm inductor, 6.5 / 8.5 mohm switches, 20 ns edges; the power budget keeps 90 %")
-# inrush: the boost has no output disconnect, so a P-FET switch (Q2) with a Miller capacitor sits in front of it
+# inrush: the boost has no output disconnect, so a P-FET switch (Q6) with a Miller capacitor sits in front of it
 C_RAIL = 3 * 22e-6 * 0.7 + C_POLY                 # ceramics at 8 V bias
 I_RES = VIN_MAX * math.sqrt(C_RAIL / L)
-RG, CGD, V_PLAT = 100e3, 10e-9, 2.5
+RG, CGD, V_PLAT = 10e3, 100e-9, 2.5
 DVDT = (VIN_MAX - V_PLAT) / RG / CGD
 I_INRUSH = C_RAIL * DVDT
 R["boost"].update(inrush_unswitched_a=round(I_RES), dvdt_v_per_ms=round(DVDT / 1e3, 1), inrush_a=round(I_INRUSH, 2),
                   t_ramp_ms=round(VIN_MAX / DVDT * 1e3, 1))
 row("Inrush and reverse polarity", "Inrush into the motor-rail capacitors without a switch", "V x sqrt(C / L)",
     f"8.6 x sqrt({C_RAIL * 1e6:.0f} uF / 4.7 uH)", f"{I_RES:.0f} A", "the boost's body diode passes the pack straight through; not acceptable")
-row("Inrush and reverse polarity", "With the P-FET switch Q2 and a 10 nF gate-drain capacitor", "C x (V_IN - V_plateau) / (R_G x C_GD)",
-    f"{C_RAIL * 1e6:.0f} uF x (8.6 - 2.5) / (100 k x 10 nF)", f"{I_INRUSH:.2f} A, rail up in {VIN_MAX / DVDT * 1e3:.1f} ms",
+row("Inrush and reverse polarity", "With the P-FET switch Q6 and a 100 nF gate-drain capacitor", "C x (V_IN - V_plateau) / (R_G x C_GD)",
+    f"{C_RAIL * 1e6:.0f} uF x (8.6 - 2.5) / (10 k x 100 nF)", f"{I_INRUSH:.2f} A, rail up in {VIN_MAX / DVDT * 1e3:.1f} ms",
     "MOTOR_PWR_EN; also gives a true off for the motor rail")
 
 # ------------------------------------------------------------------------------------------------
@@ -292,14 +292,14 @@ row("Camera port B (TPS25752A + TPS55288)", "Average inductor current limit", "3
     "1.5 x the working current")
 row("Camera port B (TPS25752A + TPS55288)", "Output current limit", "V_SNS / R_SNS", "33 mV / 10 mohm (register); 50 mV default",
     "3.3 A set by the PD controller; 5.0 A at power-up", "10 mohm, 1 %, 0.5 W: 0.09 W at 3 A")
-# 5 V rail for PP5V of both PD controllers (TPS62933, 3 A) - pending approval (Q22)
-V5_RT, V5_RB = 52.3e3, 10e3
-V5 = 0.8 * (1 + V5_RT / V5_RB)
-L5 = (VIN_MAX - V5) * V5 / (VIN_MAX * 500e3 * 0.9)
+# 5 V rail for PP5V of both PD controllers (TPS563201, 3 A, 580 kHz) - D44
+V5_RT, V5_RB = 54.9e3, 10e3
+V5 = 0.768 * (1 + V5_RT / V5_RB)
+L5 = (VIN_MAX - V5) * V5 / (VIN_MAX * 580e3 * 0.9)
 R["rail_5v"] = dict(v=round(V5, 3), l_calc_uh=round(L5 * 1e6, 2), l_uh=4.7, i_max=3.0)
-row("5 V rail (TPS62933, pending Q24)", "Output voltage", "0.8 V x (1 + R_T / R_B)", "0.8 x (1 + 52.3 k / 10 k)", f"{V5:.2f} V",
+row("5 V rail (TPS563201, D44)", "Output voltage", "0.768 V x (1 + R_T / R_B)", "0.768 x (1 + 54.9 k / 10 k)", f"{V5:.2f} V",
     "feeds PP5V on both PD controllers: 5 V / 3 A for port B and the cable supply (VCONN)")
-row("5 V rail (TPS62933, pending Q24)", "Inductor", "(V_IN - V_O) V_O / (V_IN f 0.3 I)", "(8.6 - 5) x 5 / (8.6 x 500 kHz x 0.9 A)",
+row("5 V rail (TPS563201, D44)", "Inductor", "(V_IN - V_O) V_O / (V_IN f 0.3 I)", "(8.6 - 5) x 5 / (8.6 x 580 kHz x 0.9 A)",
     f"{L5 * 1e6:.1f} uH -> 4.7 uH", "30 % ripple at 3 A")
 
 # ------------------------------------------------------------------------------------------------

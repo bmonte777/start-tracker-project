@@ -1,5 +1,5 @@
 """Fabrication outputs for one board, ready for JLCPCB: Gerbers + drill (zipped), BOM and pick-and-place in JLCPCB's
-column layout, a STEP model, renders and the schematic PDF.   usage: python3 fab.py <board-folder>
+column layout, a STEP model, renders and the schematic PDF.   usage: python3 fab.py <board-folder> [--bom-only]
 
 Outputs go to hardware/electronics/fab/<name>/ and docs/img/.
 """
@@ -41,10 +41,18 @@ def bom(model):
     return rows
 
 
-def main(folder):
+def main(folder, bom_only=False):
     name = [f[:-10] for f in os.listdir(folder) if f.endswith(".kicad_pcb")][0]
     pcb, sch = os.path.join(folder, name + ".kicad_pcb"), os.path.join(folder, name + ".kicad_sch")
     model = json.load(open(os.path.join(folder, name + ".model.json")))
+    if bom_only:                # a board whose layout is not released yet: its parts list only, in its own folder
+        b = bom(model)
+        with open(os.path.join(folder, f"{name}-bom.csv"), "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=["Comment", "Designator", "Footprint", "LCSC Part #", "MPN", "Qty"])
+            w.writeheader()
+            w.writerows(b)
+        print(f"{name}: {len(b)} BOM lines, {sum(r['Qty'] for r in b)} parts (BOM only; no fabrication files)")
+        return
     out = os.path.join(HERE, "..", "fab", name)
     img = os.path.join(HERE, "..", "..", "..", "docs", "img")
     gdir = os.path.join(out, "gerbers")
@@ -52,7 +60,7 @@ def main(folder):
     os.makedirs(gdir)
     os.makedirs(img, exist_ok=True)
     layers = "F.Cu,B.Cu,F.Paste,B.Paste,F.SilkS,B.SilkS,F.Mask,B.Mask,Edge.Cuts"
-    ncu = 4 if '"In1.Cu" signal' in open(pcb).read(20000) else 2
+    ncu = 4 if '"In1.Cu"' in open(pcb).read(20000) else 2
     if ncu == 4:
         layers = "F.Cu,In1.Cu,In2.Cu,B.Cu,F.Paste,B.Paste,F.SilkS,B.SilkS,F.Mask,B.Mask,Edge.Cuts"
     run("kicad-cli", "pcb", "export", "gerbers", "--layers", layers, "--subtract-soldermask", "--use-drill-file-origin", "-o", gdir + "/", pcb)
@@ -91,4 +99,4 @@ def main(folder):
 
 
 if __name__ == "__main__":
-    main(os.path.abspath(sys.argv[1]))
+    main(os.path.abspath(sys.argv[1]), bom_only="--bom-only" in sys.argv)

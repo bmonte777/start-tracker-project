@@ -53,6 +53,7 @@ def main(folder, route=True):
         print("unrouted before autoroute:", pcb.unrouted())
         print(pcb.autoroute(passes=int(os.environ.get("ROUTE_PASSES", getattr(mod, "ROUTE_PASSES", 20)))))
         print("stubs removed:", pcb.trim_stubs(getattr(mod, "POUR_NETS", ("GND",))))
+    pcb.hole_keepouts()
     if hasattr(mod, "finish"):
         mod.finish(pcb)
     pcb.fill()
