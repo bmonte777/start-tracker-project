@@ -1,0 +1,99 @@
+{
+ "interference_home": {
+  "pose": "home",
+  "n_parts": 87,
+  "hits": []
+ },
+ "arm_swing": [
+  {
+   "alt": -15,
+   "min_mm": 1.0,
+   "moving": "Altitude arm",
+   "fixed": "Tower"
+  },
+  {
+   "alt": -10,
+   "min_mm": 1.0,
+   "moving": "Altitude arm",
+   "fixed": "Tower"
+  },
+  {
+   "alt": 0,
+   "min_mm": 1.0,
+   "moving": "Altitude arm",
+   "fixed": "Tower"
+  },
+  {
+   "alt": 30,
+   "min_mm": 1.0,
+   "moving": "Altitude arm",
+   "fixed": "Tower"
+  },
+  {
+   "alt": 60,
+   "min_mm": 1.0,
+   "moving": "Altitude arm",
+   "fixed": "Tower"
+  },
+  {
+   "alt": 90,
+   "min_mm": 1.0,
+   "moving": "Altitude arm",
+   "fixed": "Tower"
+  },
+  {
+   "alt": 100,
+   "min_mm": 0.0,
+   "moving": "Altitude arm",
+   "fixed": "Bumper 2"
+  }
+ ],
+ "roll_travel_alt0": {
+  "toward_tower": {
+   "limit_deg": 10.0,
+   "stop": {
+    "at": 11.0,
+    "min_mm": 1.2,
+    "rig": "lens",
+    "part": "Altitude arm"
+   }
+  },
+  "away": {
+   "limit_deg": -145.0,
+   "stop": {
+    "at": -150.0,
+    "min_mm": 1.8,
+    "rig": "camera",
+    "part": "Roll cartridge enclosure"
+   }
+  },
+  "below_tripod_plate_at_deg": -120.0,
+  "clearance_at_0_mm": 19.5,
+  "clearance_at_0_part": "Cartridge housing (roll)"
+ },
+ "roll_travel_alt45": {
+  "toward_tower": {
+   "limit_deg": 10.0,
+   "stop": {
+    "at": 11.0,
+    "min_mm": 1.2,
+    "rig": "lens",
+    "part": "Altitude arm"
+   }
+  },
+  "away": {
+   "limit_deg": -145.0,
+   "stop": {
+    "at": -150.0,
+    "min_mm": 1.8,
+    "rig": "camera",
+    "part": "Roll cartridge enclosure"
+   }
+  },
+  "below_tripod_plate_at_deg": -100.0,
+  "clearance_at_0_mm": 19.5,
+  "clearance_at_0_part": "Cartridge housing (roll)"
+ },
+ "seconds": 394.6,
+ "x_roll": 135.5
+}

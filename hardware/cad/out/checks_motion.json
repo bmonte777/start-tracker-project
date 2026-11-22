@@ -1,0 +1,159 @@
+{
+ "interference_home": {
+  "pose": "home",
+  "n_parts": 86,
+  "hits": []
+ },
+ "camera_swing": [
+  {
+   "alt": -10,
+   "min_mm": 34.2,
+   "rig": "lens",
+   "part": "Bumper 2"
+  },
+  {
+   "alt": 0,
+   "min_mm": 34.3,
+   "rig": "lens",
+   "part": "Bumper 2"
+  },
+  {
+   "alt": 20,
+   "min_mm": 35.7,
+   "rig": "lens",
+   "part": "Reducer size 17 (altitude)"
+  },
+  {
+   "alt": 40,
+   "min_mm": 35.7,
+   "rig": "lens",
+   "part": "Reducer size 17 (altitude)"
+  },
+  {
+   "alt": 60,
+   "min_mm": 33.1,
+   "rig": "camera",
+   "part": "Azimuth body"
+  },
+  {
+   "alt": 70,
+   "min_mm": 23.2,
+   "rig": "camera",
+   "part": "Azimuth body"
+  },
+  {
+   "alt": 80,
+   "min_mm": 16.5,
+   "rig": "camera",
+   "part": "Azimuth body"
+  },
+  {
+   "alt": 85,
+   "min_mm": 14.6,
+   "rig": "camera",
+   "part": "Azimuth body"
+  },
+  {
+   "alt": 90,
+   "min_mm": 13.6,
+   "rig": "camera",
+   "part": "Azimuth body"
+  },
+  {
+   "alt": 95,
+   "min_mm": 13.5,
+   "rig": "camera",
+   "part": "Azimuth body"
+  }
+ ],
+ "arm_swing": [
+  {
+   "alt": -15,
+   "min_mm": 0.5,
+   "moving": "Altitude arm",
+   "fixed": "Tower"
+  },
+  {
+   "alt": -10,
+   "min_mm": 0.5,
+   "moving": "Altitude arm",
+   "fixed": "Tower"
+  },
+  {
+   "alt": 0,
+   "min_mm": 0.5,
+   "moving": "Altitude arm",
+   "fixed": "Tower"
+  },
+  {
+   "alt": 30,
+   "min_mm": 0.0,
+   "moving": "Altitude arm",
+   "fixed": "Azimuth body"
+  },
+  {
+   "alt": 60,
+   "min_mm": 0.5,
+   "moving": "Altitude arm",
+   "fixed": "Tower"
+  },
+  {
+   "alt": 90,
+   "min_mm": 0.5,
+   "moving": "Altitude arm",
+   "fixed": "Tower"
+  },
+  {
+   "alt": 100,
+   "min_mm": 0.0,
+   "moving": "Altitude arm",
+   "fixed": "Bumper 2"
+  }
+ ],
+ "roll_travel_alt0": {
+  "toward_tower": {
+   "limit_deg": 10.0,
+   "stop": {
+    "at": 11.0,
+    "min_mm": 1.2,
+    "rig": "lens",
+    "part": "Altitude arm"
+   }
+  },
+  "away": {
+   "limit_deg": -125.0,
+   "stop": {
+    "at": -130.0,
+    "min_mm": 1.0,
+    "rig": "camera",
+    "part": "Roll cartridge enclosure"
+   }
+  },
+  "clearance_at_0_mm": 8.9,
+  "clearance_at_0_part": "Cartridge housing (roll)"
+ },
+ "roll_travel_alt45": {
+  "toward_tower": {
+   "limit_deg": 10.0,
+   "stop": {
+    "at": 11.0,
+    "min_mm": 1.2,
+    "rig": "lens",
+    "part": "Altitude arm"
+   }
+  },
+  "away": {
+   "limit_deg": -125.0,
+   "stop": {
+    "at": -130.0,
+    "min_mm": 1.0,
+    "rig": "camera",
+    "part": "Roll cartridge enclosure"
+   }
+  },
+  "clearance_at_0_mm": 8.9,
+  "clearance_at_0_part": "Cartridge housing (roll)"
+ },
+ "seconds": 357.5,
+ "x_roll": 135.5
+}
