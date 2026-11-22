@@ -44,4 +44,4 @@ Branch `phase-3-mechanical-design`. Rev A, 21–22 Nov 2026. Read this first if 
 - Bought parts are envelopes from datasheets; replace with maker STEP files when downloaded.
 - 60T pulley bolt pattern to confirm on the Laifual drawing before ordering.
 - Phase 4 takes the board outlines in the doc as fixed inputs, reruns the power budget for the 16 V rail (D33) and reviews D26.
-- Push and pull request could not be made from the build session (no push access); see the doc for how the files were delivered.
+- Pull request: Phase 3 mechanical design (branch phase-3-mechanical-design). Merge once Q17-Q21 are answered.
