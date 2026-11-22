@@ -38,8 +38,8 @@ The reasoning and numbers are in `docs/02-engineering-spec.md`. The label in bra
 | D23 | Motor and belt (Q6) | StepperOnline 17HE15-1504S on all axes; 20T:60T GT2, 9 mm wide, 200 mm closed belt. **Azimuth motor changed by D32** |
 | D24 | Metal parts on prototype P1 (Q7) | Altitude arm and roll shelf CNC-machined in 6061 from the first prototype |
 | D25 | Brake (Q8) | None. Low-battery park at 5 % and end-stop bumpers |
-| D26 | Slew speed in the cold (Q9) | 8°/s down to 0 °C, 6°/s at −20 °C |
-| D27 | Power chips (Q10) | BQ25792 + TPS25751D (port A), TPS25752A + TPS55288 (27 W camera port B), TPS61288 (12 V), TPS62932 (3.3 V), BQ40Z50-R2 in the pack. The BQ25792 / TPS25751D pairing is to be confirmed in Phase 4 |
+| D26 | Slew speed in the cold (Q9) | 8°/s down to 0 °C, 6°/s at −20 °C. **Cold limit to be re-checked under D33 in Phase 4** |
+| D27 | Power chips (Q10) | BQ25792 + TPS25751D (port A), TPS25752A + TPS55288 (27 W camera port B), TPS61288 (12 V), TPS62932 (3.3 V), BQ40Z50-R2 in the pack. The BQ25792 / TPS25751D pairing is to be confirmed in Phase 4. **Motor rail raised to 16 V by D33** |
 | D28 | Weight target (Q11) | Prototype P1 ≤ 6.1 kg, production ≤ 5.1 kg, weight-cutting pass in Phase 8. First approved as 5.8 kg and 4.9 kg; restated after the size-17 azimuth (D17) added 0.3 kg, and confirmed with D32. Revision C of the spec predicts 6.08 kg and 5.34 kg, so production depends on the Phase 8 pass |
 | D29 | Printer, dryer, services (Q12) | Bambu Lab H2S + AMS HT; JLCCNC for aluminium, JLC3DP for MJF PA12, Xometry Europe as backup |
 | D30 | Arca clamp on the prototype (Q13) | Buy a standard 60 mm clamp |
@@ -54,3 +54,21 @@ The reasoning and numbers are in `docs/02-engineering-spec.md`. The label in bra
 | D32 | Azimuth motor (Q15, changes D23) | 48 mm StepperOnline 17HS19-2004S1 on azimuth only (part ST-214); altitude and roll keep the 38 mm 17HE15-1504S. Same mount, +110 g, about €3.50 more per head. At −20 °C a 7 kg load in the EQ extreme had a margin of 0.84 at 8°/s and 1.08 at 6°/s with the 38 mm motor; it has 1.23 and 1.51 with the 48 mm motor, so the cold limit of D26 holds for every load |
 
 The restated weight target was confirmed in the same reply and is recorded in D28. Revision C of the spec carries D32 through the calculations, mass budget, power budget, cost model and parts list.
+
+## 21 Nov 2026 — Phase 3 decisions
+
+| # | Topic | Decision |
+|---|---|---|
+| D33 | Motor rail voltage (Q16, changes D27) | Motor rail raised from 12 V to 16 V, still from the TPS61288 boost converter (rated to 18 V). Lifts the 7 kg cold-slew margin at 8°/s from about 1.2 to about 1.6, so the 6°/s cold limit of D26 may be dropped. No mechanical part changes. The rerun of `phase2_calcs.py`, the power budget and the D26 review belong to Phase 4. Approved by Bruno: "yes, it can be 16V" |
+
+### Pending approval (Phase 3, carried in the model with the recommended option)
+
+| # | Topic | Recommendation now in the CAD |
+|---|---|---|
+| Q17 | Roll travel toward the tower (D31 study) | Option A: roll axis 23 mm further from the azimuth axis (X 135.5). Travel +10° to −145° with the 200–600 on its foot; worst-case azimuth torque 19.45 N·m (2.0× under 39 N·m). Option B (raised roll axis) gives about +38° but drops the 7 kg power-off margin below 1 |
+| Q18 | Arca clamp fixing (exception to D13) | One 3/8"-16 × 12 coin-slot screw (ST-330), driven by a coin |
+| Q19 | Roll shelf cantilever | 30 mm instead of 75 mm |
+| Q20 | Wedge layout (refines D21) | Raised hinge with latitude arcs hanging below it, two M5 clamp knobs, M3 tangent screw at R31 mm giving about 55′ per turn instead of D21's 34′ |
+| Q21 | Weight target (changes D28) | Restate P1 as ≤ 7.2 kg (CAD: 7.21 kg); keep production ≤ 5.1 kg for the Phase 8 pass |
+
+Also asked: Bruno to measure the FE 200-600 foot height (lens axis to Arca base); 85 mm assumed.
