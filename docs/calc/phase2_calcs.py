@@ -40,7 +40,8 @@ e_alt = 0.080      # roll axis sits this far "below" the altitude axis
 m_rollstage = 0.70 + 0.28 + 0.12 + 0.16 + 0.12   # reducer + motor + housing + shelf + clamp
 m_tower = 1.00 + 0.28 + 0.17 + 0.05              # alt reducer + motor + tower print + board
 y_tower = 0.005    # tower CG to azimuth axis (tower straddles the axis)
-y_pay = 0.1125     # payload plane to azimuth axis: tower half-width 42.5 + lens radius 56 + 14 clearance
+y_pay = float(os.environ.get("ST_YPAY", "0.1355"))   # payload plane to azimuth axis. Phase 2: 0.1125 (tower half-width 42.5 + lens radius 56
+#                    + 14 clearance); D34 moved the roll axis 23 mm out, so the default is now 0.1355. ST_YPAY=0.1125 reproduces revision C.
 H_pay = 0.150      # payload CG height above azimuth bearing
 H_head = 0.080     # upper-head CG height above azimuth bearing
 m_head_upper = m_tower + m_rollstage + 0.90      # + az body, battery, electronics above az bearing
@@ -71,7 +72,7 @@ def kt_of(m):
 def i_ceiling_rms(m):
     """Highest RMS current the firmware may set: the motor rating (Ipk = Ir) or the driver full scale."""
     return min(m["Ir"] / math.sqrt(2), I_DRV_RMS)
-VBUS = 12.0
+VBUS = float(os.environ.get("ST_VBUS", "16.0"))   # motor rail: 16 V since D33. ST_VBUS=12 reproduces revision C of the Phase 2 spec.
 VDROP = 0.5
 
 # ----------------------------------------------------------------------------------------
@@ -493,8 +494,11 @@ R["belt_backlash_out_arcsec"] = round(asec(0.02e-3 / (d1 / 2000)) / N, 1)
 # ----------------------------------------------------------------------------------------
 # 10. Power, runtime, thermal
 # ----------------------------------------------------------------------------------------
+P_DRV = 0.10 * VBUS / 12.0                              # driver quiescent: 0.10 W at 12 V (Phase 2), scaled with the rail (8.3 mA)
+
+
 def p_motor(i_rms, ax="alt"):
-    return 2 * i_rms ** 2 * MOT_AX[ax]["R"] + 0.10      # copper loss both phases + driver
+    return 2 * i_rms ** 2 * MOT_AX[ax]["R"] + P_DRV     # copper loss both phases + driver
 
 
 def p3(i_rms):
@@ -531,10 +535,10 @@ r_th = 1 / (H_CONV * A_SURF)
 p_int = p3(0.30) + P_ELEC + 0.45 + 1.7     # tracking + PD-out loss + charger loss at 20 W
 i_az_cold, i_az_pk = R["current_settings"]["az"]["track_m20C"], I_PEAK["az"]
 R["thermal"] = dict(r_th=round(r_th, 2), p_internal=round(p_int, 1), rise=round(p_int * r_th, 1), internal_at_40C=round(40 + p_int * r_th, 1),
-                    motor_rise_065A=round((p_motor(0.65) - 0.1) * 12, 0), motor_rise_106A=round((p_motor(1.06) - 0.1) * 12, 0),
-                    motor_loss_065A=round(p_motor(0.65) - 0.1, 2), motor_loss_106A=round(p_motor(1.06) - 0.1, 2),
-                    az_motor_loss_065A=round(p_motor(0.65, "az") - 0.1, 2), az_motor_rise_065A=round((p_motor(0.65, "az") - 0.1) * 12, 0),
-                    az_motor_loss_peak=round(p_motor(i_az_pk, "az") - 0.1, 2), az_motor_rise_peak=round((p_motor(i_az_pk, "az") - 0.1) * 12, 0),
+                    motor_rise_065A=round((p_motor(0.65) - P_DRV) * 12, 0), motor_rise_106A=round((p_motor(1.06) - P_DRV) * 12, 0),
+                    motor_loss_065A=round(p_motor(0.65) - P_DRV, 2), motor_loss_106A=round(p_motor(1.06) - P_DRV, 2),
+                    az_motor_loss_065A=round(p_motor(0.65, "az") - P_DRV, 2), az_motor_rise_065A=round((p_motor(0.65, "az") - P_DRV) * 12, 0),
+                    az_motor_loss_peak=round(p_motor(i_az_pk, "az") - P_DRV, 2), az_motor_rise_peak=round((p_motor(i_az_pk, "az") - P_DRV) * 12, 0),
                     az_peak_current=i_az_pk)
 R["peak_slew_power_w"] = round((P_PEAK_MOTORS + 2.0) / ETA_BOOST + P_ELEC, 1)
 R["boost_current_peak"] = round((P_PEAK_MOTORS + 2.0) / VBUS, 2)
@@ -588,8 +592,10 @@ R["cost"]["retail_oem_low_high"] = [round(cogs_oem * 2.5, -1), round(cogs_oem * 
 R["cost"]["retail_multiples"] = {str(k): [round(landed_1000 * k, -1), round(cogs_oem * k, -1)] for k in (2.0, 2.5, 3.5)}
 
 if __name__ == "__main__":
-    out = os.path.join(os.path.dirname(__file__), "phase2_results.json")
+    R["inputs"] = dict(VBUS=VBUS, y_pay=y_pay)
+    out = os.environ.get("ST_OUT") or os.path.join(os.path.dirname(__file__), "phase2_results.json")
     with open(out, "w") as f:
         json.dump(R, f, indent=1)
-    bom_data.write_csv(os.path.join(os.path.dirname(__file__), "..", "..", "hardware", "bom", "master-parts-list.csv"))
-    print(json.dumps(R, indent=1))
+    if not os.environ.get("ST_OUT"):          # comparison runs (ST_OUT set) leave the parts list alone
+        bom_data.write_csv(os.path.join(os.path.dirname(__file__), "..", "..", "hardware", "bom", "master-parts-list.csv"))
+        print(json.dumps(R, indent=1))

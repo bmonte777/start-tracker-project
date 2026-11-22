@@ -1,2 +1,7 @@
 __pycache__/
 *.pyc
+hardware/electronics/*/out/
+*.kicad_prl
+*-backups/
+fp-info-cache
+_p2_*.json
