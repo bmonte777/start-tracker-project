@@ -10,6 +10,8 @@ This document covers the electronics of the head: the calculations behind every 
 
 **What you can do today:** answer Q28–Q35, and order the cartridge board (ST-520) if you want boards in hand early — its design does not change with Q29, but its encoder chip was out of stock on the check date. **What is not ready:** {{not_ready}}
 
+Board viewer (interactive BOM, Day / Night): <https://claude.ai/artifact/TntQCR18hPMWE3V6fTQ68L> · Docs version of this document: <https://claude.ai/artifact/9Y2pyZBkJu5i3eWqNy6xAx> · Parts list Sheet: <https://claude.ai/artifact/9T9Gpvm2vWPRYqJtPChJa8> · KiCad projects: `hardware/electronics/`.
+
 Everything in the tables below that depends on a board is read from the board files by script (`hardware/electronics/tools/docgen.py`), so pin numbers and net names cannot drift from the design.
 
 ## 2. Decisions
