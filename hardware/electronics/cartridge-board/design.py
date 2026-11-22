@@ -28,12 +28,12 @@ def build():
     pins = dict(J1_PINS)
     pins["MP"] = "GND"
     s.part("Connector_Generic_MountingPin:Conn_01x15_MountingPin", "J1", "BM15B-GHS-TBT",
-           "Connector_JST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical", pins, x=40, y=60, LCSC="C265111", MPN="BM15B-GHS-TBT(LF)(SN)")
+           "ST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical_3D", pins, x=40, y=60, LCSC="C5305069", MPN="BM15B-GHS-TBT(LF)(SN)")
 
     s.note(20, 118, "J2: motor lead, JST-PH 4-way. Wire by phase, not by colour:\nthe 38 mm and 48 mm motors use different colours (D32).", 1.5)
     s.part("Connector_Generic_MountingPin:Conn_01x04_MountingPin", "J2", "B4B-PH-SM4-TB",
-           "Connector_JST:JST_PH_B4B-PH-SM4-TB_1x04-1MP_P2.00mm_Vertical",
-           {1: "M_A1", 2: "M_A2", 3: "M_B1", 4: "M_B2", "MP": "GND"}, x=40, y=132, LCSC="C160260", MPN="B4B-PH-SM4-TB(LF)(SN)")
+           "ST:JST_PH_B4B-PH-SM4-TB_1x04-1MP_P2.00mm_Vertical_3D",
+           {1: "M_A1", 2: "M_A2", 3: "M_B1", 4: "M_B2", "MP": "GND"}, x=40, y=132, LCSC="C160354", MPN="B4B-PH-SM4-TB(LF)(SN)")
 
     s.note(95, 34, "U1: MT6835 21-bit encoder, on the underside at the board centre. SPI mode 3.\nTEST and TEST_EN stay open (factory pins).\n"
                    "CAL_EN: bridge TP7 to TP1 (3V3) to run self-calibration.", 1.5)
@@ -51,7 +51,7 @@ def build():
 
     s.note(95, 124, "Motor thermistor: 10 k B3950 bead on two wires, taped to the motor case\nand soldered to TH1. "
                     "RT1 (same value, on the board) is fitted only if no bead is used.", 1.5)
-    s.part("Connector_Generic:Conn_01x02", "TH1", "NTC 10k bead", "ST:WirePads_1x02_P2.0mm_1.5x2.4mm", {1: "NTC", 2: "GND"}, x=110, y=136)
+    s.part("Connector_Generic:Conn_01x02", "TH1", "NTC 10k bead", "ST:WirePads_1x02_P2.0mm_1.5x2.4mm", {1: "NTC", 2: "GND"}, x=110, y=136, bom=False)
     s.part("Device:Thermistor_NTC", "RT1", "10k B3950", "Resistor_SMD:R_0603_1608Metric", {1: "NTC", 2: "GND"}, x=150, y=136, rot=90, dnp=True,
            LCSC="C13564")
 
@@ -83,10 +83,12 @@ def layout(pcb):
     pcb.place("C3", 7.6, 2.0, rot=90, side="B", ref_text=False)
     pcb.place("R2", -5.7, 3.2, side="B", ref_text=False)
     pcb.place("R3", -5.3, -0.35, side="B", ref_text=False)
-    # top side
-    pcb.place("R1", 1.25, 1.75, rot=90, ref_text=False)
-    pcb.place("TH1", 4.4, -1.0, ref_text=False)
-    pcb.place("RT1", 4.4, -3.3, ref_text=False)
+    # the carrier ST-212/216 lies flat on the top face, open only at the two plug windows, so every other part with height
+    # is on the underside. The thermistor wires solder on at least 6.8 mm from the axis, clear of the encoder tube (r 5).
+    pcb.place("R1", 1.25, 4.7, rot=270, side="B", ref_text=False)
+    pcb.place("TH1", 7.0, -5.5, side="B", ref_text=False)
+    pcb.place("RT1", 5.2, -8.4, side="B", ref_text=False)
+    # top side: test pads only (flat copper), probed before the board is screwed to its carrier
     tps = [(x, y) for y in (1.05, -1.05, -3.15) for x in (-5.1, -2.95, -0.8)]
     for i, (x, y) in enumerate(tps):
         pcb.place(f"TP{i + 1}", x, y, ref_text=False)
@@ -94,6 +96,7 @@ def layout(pcb):
     pcb.solid("J1", 5, "MP")
     pcb.solid("J2", "MP")
     pcb.solid("TH1", 2)
+    pcb.solid("TP2", 1)
     for c in ("C1", "C2", "C3", "R3", "RT1"):
         pcb.solid(c)
 
@@ -118,10 +121,10 @@ def layout(pcb):
     pcb.track("ENC_MOSI", [("J1", 8), (0, 2.75)], t)
     pcb.via("ENC_MOSI", (0, 2.75))
     pcb.track("ENC_MOSI", [(0, 2.75), (0, 1.9), (-0.925, 0.975), ("U1", 6)], t, "B")
-    pcb.track("ENC_MISO", [("J1", 9), ("R1", 2)], t)
-    pcb.track("MISO_U", [("R1", 1), (1.25, 0.325)], t)
-    pcb.via("MISO_U", (1.25, 0.325))
-    pcb.track("MISO_U", [(1.25, 0.325), ("U1", 5)], t, "B")
+    pcb.track("ENC_MISO", [("J1", 9), (1.25, 6.0)], t)
+    pcb.via("ENC_MISO", (1.25, 6.0))
+    pcb.track("ENC_MISO", [(1.25, 6.0), ("R1", 2)], t, "B")
+    pcb.track("MISO_U", [("R1", 1), (1.25, 0.325), ("U1", 5)], t, "B")
     pcb.track("ENC_CS", [("J1", 6), (-2.5, 3.1), (-3.1, 2.5), (-4.6, 2.5)], t)
     pcb.via("ENC_CS", (-4.6, 2.5))
     pcb.track("ENC_CS", [(-4.6, 2.5), (-4.375, 2.275), ("U1", 8)], t, "B")
@@ -130,7 +133,7 @@ def layout(pcb):
     pcb.via("+3V3", (4.2, 2.9))
     pcb.track("+3V3", [(4.2, 2.9), (4.2, 2.5), (3.975, 2.275), ("U1", 9)], 0.3, "B")
     pcb.track("+3V3", [(4.2, 2.9), ("C1", 1), ("C2", 1), ("C3", 1)], 0.3, "B")
-    pcb.track("+3V3", [(4.2, 2.9), (3.65, 3.45), (-4.94, 3.45), ("R2", 1)], t, "B")
+    pcb.track("+3V3", [(4.2, 2.9), (4.9, 3.6), (4.9, 6.3), (4.3, 6.9), (-4.3, 6.9), (-4.94, 6.26), (-4.94, 3.45), ("R2", 1)], t, "B")
     pcb.track("CAL_EN", [("R3", 1), ("U1", 4)], t, "B")
     pcb.track("GND", [("U1", 12), (4.4, 0.325)], 0.25, "B")
 
@@ -150,5 +153,5 @@ def finish(pcb):
     ring = [(14.6 * math.cos(math.radians(a)), 14.6 * math.sin(math.radians(a))) for a in range(0, 360, 5)]
     pcb.zone("GND", "F", ring)
     pcb.zone("GND", "B", ring)
-    pcb.text("ST-520 A", 0, 7.0, 0.8, layer=pcbnew.B_SilkS)
-    pcb.text("NTC", 7.5, -1.0, 0.8, rot=90)
+    pcb.text("ST-520 A", 0, 8.6, 0.8, layer=pcbnew.B_SilkS)
+    pcb.text("NTC", 10.6, -5.5, 0.8, rot=90, layer=pcbnew.B_SilkS)

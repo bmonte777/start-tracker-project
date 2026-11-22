@@ -1,0 +1,93 @@
+[
+ {
+  "board": "ST-520",
+  "instance": "Encoder board (azimuth)",
+  "parts_in_step": 10,
+  "bbox": [
+   -15.0,
+   -15.0,
+   122.8,
+   15.0,
+   15.0,
+   131.6
+  ],
+  "overlaps": [],
+  "nearest": [
+   {
+    "part": "ST-212 Cartridge cover (azimuth)",
+    "distance": 0.09
+   },
+   {
+    "part": "ST-208 Encoder tube (azimuth)",
+    "distance": 0.82
+   },
+   {
+    "part": "ST-209 Encoder magnet (azimuth)",
+    "distance": 0.82
+   }
+  ],
+  "magnet_gap": 0.82
+ },
+ {
+  "board": "ST-520",
+  "instance": "Encoder board (altitude)",
+  "parts_in_step": 10,
+  "bbox": [
+   -40.6,
+   -15.0,
+   210.0,
+   -31.8,
+   15.0,
+   240.0
+  ],
+  "overlaps": [],
+  "nearest": [
+   {
+    "part": "ST-212 Cartridge cover (altitude)",
+    "distance": 0.09
+   },
+   {
+    "part": "ST-208 Encoder tube (altitude)",
+    "distance": 0.81
+   },
+   {
+    "part": "ST-209 Encoder magnet (altitude)",
+    "distance": 0.81
+   }
+  ],
+  "magnet_gap": 0.81
+ },
+ {
+  "board": "ST-520",
+  "instance": "Encoder board (roll)",
+  "parts_in_step": 10,
+  "bbox": [
+   120.5,
+   -104.6,
+   130.0,
+   150.5,
+   -95.8,
+   160.0
+  ],
+  "overlaps": [],
+  "nearest": [
+   {
+    "part": "ST-216 Cartridge cover (roll)",
+    "distance": 0.09
+   },
+   {
+    "part": "ST-215 Encoder tube (roll)",
+    "distance": 0.82
+   },
+   {
+    "part": "ST-209 Encoder magnet (roll)",
+    "distance": 0.82
+   }
+  ],
+  "magnet_gap": 0.82
+ },
+ {
+  "board": "ST-501",
+  "missing": true
+ }
+]

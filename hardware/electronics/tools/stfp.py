@@ -6,21 +6,29 @@ from kisx import Q, dump, parse
 KICAD_FP = os.environ.get("KICAD_FOOTPRINT_DIR", "/usr/share/kicad/footprints")
 
 
-def derived(lib, name, new_name, courtyard, note):
-    """Copy a KiCad library footprint with its courtyard replaced by the real body outline (x0, y0, x1, y1; Y down)."""
+def derived(lib, name, new_name, courtyard, note, model=None):
+    """Copy a KiCad library footprint. courtyard (x0, y0, x1, y1; Y down) replaces the library's; model replaces its 3D model."""
     path = os.path.join(KICAD_FP, lib + ".pretty", name + ".kicad_mod")
     if not os.path.exists(path):
         return None
     root = parse(open(path, encoding="utf-8").read())
     out = []
     for item in root:
-        if isinstance(item, list) and item and item[0].startswith("fp_") and any(isinstance(z, list) and z[0] == "layer" and z[1] == "F.CrtYd" for z in item):
+        if courtyard and isinstance(item, list) and item and item[0].startswith("fp_") and any(
+                isinstance(z, list) and z[0] == "layer" and z[1] == "F.CrtYd" for z in item):
+            continue
+        if model and isinstance(item, list) and item and item[0] == "model":
             continue
         out.append(item)
     out[1] = Q(new_name)
-    x0, y0, x1, y1 = courtyard
-    k = max(i for i, it in enumerate(out) if isinstance(it, list) and it[0] == "property") + 1
-    out.insert(k, ["fp_rect", ["start", x0, y0], ["end", x1, y1], ["stroke", ["width", 0.05], ["type", "solid"]], ["fill", "no"], ["layer", Q("F.CrtYd")]])
+    if courtyard:
+        x0, y0, x1, y1 = courtyard
+        k = max(i for i, it in enumerate(out) if isinstance(it, list) and it[0] == "property") + 1
+        out.insert(k, ["fp_rect", ["start", x0, y0], ["end", x1, y1], ["stroke", ["width", 0.05], ["type", "solid"]], ["fill", "no"],
+                       ["layer", Q("F.CrtYd")]])
+    if model:
+        k = max(i for i, it in enumerate(out) if isinstance(it, list)) + 0
+        out.insert(k, ["model", Q(model), ["offset", ["xyz", 0, 0, 0]], ["scale", ["xyz", 1, 1, 1]], ["rotate", ["xyz", 0, 0, 0]]])
     for it in out:
         if isinstance(it, list) and it[0] == "descr":
             it[1] = Q(str(it[1]) + " -- " + note)
@@ -96,6 +104,12 @@ _esp = derived("RF_Module", "ESP32-S3-WROOM-1", "ESP32-S3-WROOM-1_BodyCourtyard"
                "courtyard reduced to the module body; the antenna keep-out zone is unchanged")
 if _esp:
     FPS.append(_esp)
+for _lib, _name, _model in (("Connector_JST", "JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical", "JST_GH_BM15B-GHS-TBT_envelope.step"),
+                            ("Connector_JST", "JST_PH_B4B-PH-SM4-TB_1x04-1MP_P2.00mm_Vertical", "JST_PH_B4B-PH-SM4-TB_envelope.step")):
+    _d = derived(_lib, _name, _name + "_3D", None, "with an envelope 3D model (KiCad ships none for this part)",
+                 model="${KIPRJMOD}/../lib/3d/" + _model)
+    if _d:
+        FPS.append(_d)
 
 if __name__ == "__main__":
     out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "lib", "ST.pretty")

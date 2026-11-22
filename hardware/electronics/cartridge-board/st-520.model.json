@@ -6,12 +6,13 @@
   {
    "ref": "J1",
    "value": "BM15B-GHS-TBT",
-   "footprint": "Connector_JST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical",
+   "footprint": "ST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical_3D",
    "lib_id": "Connector_Generic_MountingPin:Conn_01x15_MountingPin",
    "dnp": false,
    "bom": true,
+   "owner": null,
    "fields": {
-    "LCSC": "C265111",
+    "LCSC": "C5305069",
     "MPN": "BM15B-GHS-TBT(LF)(SN)"
    },
    "sheet": "main",
@@ -37,12 +38,13 @@
   {
    "ref": "J2",
    "value": "B4B-PH-SM4-TB",
-   "footprint": "Connector_JST:JST_PH_B4B-PH-SM4-TB_1x04-1MP_P2.00mm_Vertical",
+   "footprint": "ST:JST_PH_B4B-PH-SM4-TB_1x04-1MP_P2.00mm_Vertical_3D",
    "lib_id": "Connector_Generic_MountingPin:Conn_01x04_MountingPin",
    "dnp": false,
    "bom": true,
+   "owner": null,
    "fields": {
-    "LCSC": "C160260",
+    "LCSC": "C160354",
     "MPN": "B4B-PH-SM4-TB(LF)(SN)"
    },
    "sheet": "main",
@@ -61,6 +63,7 @@
    "lib_id": "ST:MT6835GT",
    "dnp": false,
    "bom": true,
+   "owner": "U1",
    "fields": {
     "LCSC": "C2984637",
     "MPN": "MT6835GT-STD"
@@ -92,6 +95,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U1",
    "fields": {
     "LCSC": "C1525"
    },
@@ -108,6 +112,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U1",
    "fields": {
     "LCSC": "C52923"
    },
@@ -124,6 +129,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U1",
    "fields": {
     "LCSC": "C19702"
    },
@@ -140,6 +146,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U1",
    "fields": {
     "LCSC": "C25105"
    },
@@ -156,6 +163,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U1",
    "fields": {
     "LCSC": "C25744"
    },
@@ -172,6 +180,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U1",
    "fields": {
     "LCSC": "C25741"
    },
@@ -187,7 +196,8 @@
    "footprint": "ST:WirePads_1x02_P2.0mm_1.5x2.4mm",
    "lib_id": "Connector_Generic:Conn_01x02",
    "dnp": false,
-   "bom": true,
+   "bom": false,
+   "owner": "U1",
    "fields": {},
    "sheet": "main",
    "pins": {
@@ -202,6 +212,7 @@
    "lib_id": "Device:Thermistor_NTC",
    "dnp": true,
    "bom": true,
+   "owner": "U1",
    "fields": {
     "LCSC": "C13564"
    },
@@ -218,6 +229,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U1",
    "fields": {},
    "sheet": "main",
    "pins": {
@@ -231,6 +243,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U1",
    "fields": {},
    "sheet": "main",
    "pins": {
@@ -244,6 +257,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U1",
    "fields": {},
    "sheet": "main",
    "pins": {
@@ -257,6 +271,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U1",
    "fields": {},
    "sheet": "main",
    "pins": {
@@ -270,6 +285,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U1",
    "fields": {},
    "sheet": "main",
    "pins": {
@@ -283,6 +299,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U1",
    "fields": {},
    "sheet": "main",
    "pins": {
@@ -296,6 +313,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U1",
    "fields": {},
    "sheet": "main",
    "pins": {
@@ -309,6 +327,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U1",
    "fields": {},
    "sheet": "main",
    "pins": {
@@ -322,6 +341,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U1",
    "fields": {},
    "sheet": "main",
    "pins": {
@@ -335,6 +355,7 @@
    "lib_id": "Mechanical:MountingHole",
    "dnp": false,
    "bom": false,
+   "owner": "U1",
    "fields": {},
    "sheet": "main",
    "pins": {}
@@ -346,6 +367,7 @@
    "lib_id": "Mechanical:MountingHole",
    "dnp": false,
    "bom": false,
+   "owner": "U1",
    "fields": {},
    "sheet": "main",
    "pins": {}

@@ -559,25 +559,39 @@ def layout(pcb):
     if failed:
         print("AUTOPLACE FAILED:", " ".join(failed))
 
-    # net classes: the autorouter draws these nets at the stated width; the planes below carry the bulk of the current
-    pcb.netclass("Power", 0.6, ["VBAT", "VBAT_IN", "VSYS", "VM_IN", "VMOT", "VBUS_A", "VBUS_B", "VBUS_CHG", "VPB", "VPB_RAW", "PB_MID", "+5V",
-                                "CHG_SW1", "CHG_SW2", "CHG_PMID", "PB_SW1", "PB_SW2", "BST_SW", "SW_5V", "SW_3V3"])
-    pcb.netclass("Phase", 0.5, [f"{ax}_{p_}" for ax, _a in AXES for p_ in ("A1", "A2", "B1", "B2", "BRA", "BRB")])
-    pcb.netclass("Supply", 0.3, ["+3V3", "+3V3A", "+3V3G", "+1V1", "PDA_LDO3V3", "PDB_LDO3V3", "CHG_REGN", "PB_VCC", "BST_VCC", "RP_LX"]
+    # net classes. The widths are what still fits between 0.4 mm-pitch pins; the current itself is carried by the copper
+    # areas that finish() lays over every power net (outer layers) and by the inner planes.
+    pcb.netclass("Power", 0.35, POWER_NETS)
+    pcb.netclass("Phase", 0.4, [f"{ax}_{p_}" for ax, _a in AXES for p_ in ("A1", "A2", "B1", "B2", "BRA", "BRB")])
+    pcb.netclass("Supply", 0.25, ["+3V3", "+3V3A", "+3V3G", "+1V1", "PDA_LDO3V3", "PDB_LDO3V3", "CHG_REGN", "PB_VCC", "BST_VCC", "RP_LX"]
                  + [f"{ax}_{p_}" for ax, _a in AXES for p_ in ("3V3", "5V")])
     pcb.sync_classes()
-    # inner layers: In1 solid ground; In2 system rail under the power half, 3.3 V under the logic, motor rail under the drivers
-    full = pcb.rect(-49.5, -29.5, 49.5, 29.5)
-    pcb.zone("GND", "In1", full, clearance=0.2, solid=True)
-    pcb.zone("+3V3", "In2", full, clearance=0.2, solid=True, priority=0)
-    pcb.zone("VSYS", "In2", [(-49.5, -29.5), (-12.0, -29.5), (-12.0, -4.0), (-18.0, 3.0), (-18.0, 29.5), (-49.5, 29.5)], clearance=0.2, solid=True, priority=2)
-    pcb.zone("VSYS", "In2", pcb.rect(20.0, -29.5, 49.5, -9.0), clearance=0.2, solid=True, priority=2)
-    pcb.zone("VMOT", "In2", pcb.rect(5.0, -8.0, 49.5, 29.5), clearance=0.2, solid=True, priority=3)
+    # In1 is solid ground from the start, so the autorouter drops a via to it at every ground pin
+    pcb.zone("GND", "In1", pcb.rect(-49.5, -29.5, 49.5, 29.5), clearance=0.2, solid=True)
     return pcb
 
 
+POWER_NETS = ["VBAT", "VBAT_IN", "VSYS", "VM_IN", "VMOT", "VBUS_A", "VBUS_B", "VBUS_CHG", "VPB", "VPB_RAW", "PB_MID", "+5V",
+              "CHG_SW1", "CHG_SW2", "CHG_PMID", "PB_SW1", "PB_SW2", "BST_SW", "SW_5V", "SW_3V3"]
+POUR_NETS = ("GND",)
+
+
 def finish(pcb):
-    """After the autorouter: ground pours on both outer faces."""
+    """After the autorouter: copper areas over every power net, the inner power plane, ground on both outer faces."""
     full = pcb.rect(-49.5, -29.5, 49.5, 29.5)
+    # 1. each power net gets a filled area on the component side that spans all of its pads (KiCad keeps the clearance
+    #    to everything else, so an area can only add copper to its own net)
+    for net in POWER_NETS + ["+3V3"]:
+        for side in ("B", "F"):
+            pts = [xy for (r_, _p, xy, sd) in pcb.padpos.get(net, []) if sd == side and not r_.startswith("TP")]
+            span = max(max(q[0] for q in pts) - min(q[0] for q in pts), max(q[1] for q in pts) - min(q[1] for q in pts)) if pts else 0
+            if len(pts) >= 2 and span <= 30.0:      # rails that cross the board (VSYS, VMOT, +3V3) use the In2 plane instead
+                pcb.zone(net, side, pcb.hull(pts, 0.9), clearance=0.2, solid=True, priority=5)
+    # 2. In2: system rail under the power half, motor rail under the drivers, 3.3 V under the logic
+    pcb.zone("+3V3", "In2", full, clearance=0.2, solid=True, priority=0)
+    pcb.zone("VSYS", "In2", [(-49.5, -29.5), (-12.0, -29.5), (-12.0, -4.0), (-18.0, 3.0), (-18.0, 29.5), (-49.5, 29.5)], clearance=0.2,
+             solid=True, priority=2)
+    pcb.zone("VSYS", "In2", pcb.rect(20.0, -29.5, 49.5, -9.0), clearance=0.2, solid=True, priority=2)
+    pcb.zone("VMOT", "In2", pcb.rect(5.0, -8.0, 49.5, 29.5), clearance=0.2, solid=True, priority=3)
     pcb.zone("GND", "F", full, clearance=0.2)
     pcb.zone("GND", "B", full, clearance=0.2)

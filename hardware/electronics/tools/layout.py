@@ -51,7 +51,8 @@ def main(folder, route=True):
         sys.exit("not placed: " + " ".join(sorted(missing)))
     if route and pcb.unrouted():
         print("unrouted before autoroute:", pcb.unrouted())
-        print(pcb.autoroute(passes=getattr(mod, "ROUTE_PASSES", 20)))
+        print(pcb.autoroute(passes=int(os.environ.get("ROUTE_PASSES", getattr(mod, "ROUTE_PASSES", 20)))))
+        print("stubs removed:", pcb.trim_stubs(getattr(mod, "POUR_NETS", ("GND",))))
     if hasattr(mod, "finish"):
         mod.finish(pcb)
     pcb.fill()

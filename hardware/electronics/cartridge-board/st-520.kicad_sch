@@ -1740,7 +1740,7 @@
 			(at 40.64 80.01 0)
 			(effects (font (size 1.27 1.27)) (justify left))
 		)
-		(property "Footprint" "Connector_JST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical"
+		(property "Footprint" "ST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical_3D"
 			(at 39.37 59.69 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -1749,7 +1749,7 @@
 			(at 39.37 59.69 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "LCSC" "C265111" (at 39.37 59.69 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "LCSC" "C5305069" (at 39.37 59.69 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "MPN" "BM15B-GHS-TBT(LF)(SN)"
 			(at 39.37 59.69 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -1788,7 +1788,7 @@
 			(at 40.64 139.7 0)
 			(effects (font (size 1.27 1.27)) (justify left))
 		)
-		(property "Footprint" "Connector_JST:JST_PH_B4B-PH-SM4-TB_1x04-1MP_P2.00mm_Vertical"
+		(property "Footprint" "ST:JST_PH_B4B-PH-SM4-TB_1x04-1MP_P2.00mm_Vertical_3D"
 			(at 39.37 132.08 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -1797,7 +1797,7 @@
 			(at 39.37 132.08 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "LCSC" "C160260" (at 39.37 132.08 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "LCSC" "C160354" (at 39.37 132.08 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "MPN" "B4B-PH-SM4-TB(LF)(SN)"
 			(at 39.37 132.08 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -2029,7 +2029,7 @@
 		(at 110.49 135.89 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "a0bf1015-60f5-5fdb-abc1-e4386b8bbe5e")

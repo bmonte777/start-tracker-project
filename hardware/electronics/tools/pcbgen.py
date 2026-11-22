@@ -415,6 +415,25 @@ class PCB:
         self.board.Add(z)
         return z
 
+    def hull(self, pts, margin=0.8):
+        """Convex outline around a set of points, grown by margin (for a copper area that spans the pads of one net)."""
+        import math
+        ring = sorted({(round(x + margin * math.cos(math.radians(a)), 3), round(y + margin * math.sin(math.radians(a)), 3))
+                       for (x, y) in pts for a in range(0, 360, 45)})
+
+        def cross(o, a, b):
+            return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+        lo, up = [], []
+        for p in ring:
+            while len(lo) >= 2 and cross(lo[-2], lo[-1], p) <= 0:
+                lo.pop()
+            lo.append(p)
+        for p in reversed(ring):
+            while len(up) >= 2 and cross(up[-2], up[-1], p) <= 0:
+                up.pop()
+            up.append(p)
+        return lo[:-1] + up[:-1]
+
     def keepout(self, layers, pts, tracks=True, vias=True, copper=True):
         z = pcbnew.ZONE(self.board)
         ls = pcbnew.LSET()
@@ -491,7 +510,8 @@ class PCB:
         if not self.export_dsn(dsn):
             raise RuntimeError("DSN export failed")
         r = subprocess.run(["java", "-Djava.awt.headless=true", "-jar", jar, "-de", dsn, "-do", ses, "-mp", str(passes),
-                            "--gui.enabled=false", "-da"], capture_output=True, text=True, timeout=3600)
+                            "-mt", "1", "--gui.enabled=false", "-da"], capture_output=True, text=True,
+                           timeout=int(os.environ.get("ROUTE_TIMEOUT", "3600")))
         if not os.path.exists(ses):
             raise RuntimeError("Freerouting produced no session file:\n" + r.stdout[-2000:] + r.stderr[-2000:])
         if not self.import_ses(ses):
@@ -501,3 +521,27 @@ class PCB:
     def unrouted(self):
         self.board.BuildConnectivity()
         return self.board.GetConnectivity().GetUnconnectedCount(True)
+
+    def trim_stubs(self, keep=("GND",)):
+        """Remove track ends and vias the autorouter left connected at one end only (same as Tools > Cleanup Tracks & Vias).
+        Nets in keep are left alone: their stitching vias and stubs connect to copper pours that are added afterwards."""
+        removed = 0
+        for _round in range(20):
+            self.board.BuildConnectivity()
+            conn = self.board.GetConnectivity()
+            bad = []
+            for t in list(self.board.GetTracks()):
+                if t.GetNetname() in keep:
+                    continue
+                if t.Type() == pcbnew.PCB_VIA_T:
+                    if len(conn.GetConnectedTracks(t)) + len(conn.GetConnectedPads(t)) < 2 and not conn.GetConnectedPads(t):
+                        if len(conn.GetConnectedTracks(t)) < 2:
+                            bad.append(t)
+                elif conn.TestTrackEndpointDangling(t, True):
+                    bad.append(t)
+            if not bad:
+                break
+            for t in bad:
+                self.board.Remove(t)
+            removed += len(bad)
+        return removed
