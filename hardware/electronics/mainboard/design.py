@@ -771,7 +771,7 @@ def route_plan(pcb):
         dict(op="stitch", net="VMOT", polys=in2_polys("VMOT"),
              areas=[a["poly"] for a in areas if a["net"] == "VMOT" and a["side"] == "B"], max=6),
         dict(op="plane", net="+3V3", polys=[FULL], exclude=in2_polys("VSYS") + in2_polys("VMOT"), w=0.25),
-        dict(op="route", name="GNSS antenna feed", nets=["GNSS_ANT", "GNSS_RF"], widths=[0.35, 0.2], hard=True, layer_cost={"F": 100}),
+        dict(op="route", name="GNSS antenna feed", nets=["GNSS_ANT", "GNSS_RF"], widths=[0.35, 0.2], hard=True, layer_cost={"F": 100, "In2": 1000}),
         dict(op="route", name="switch nodes and power stages", hard=True, region_cost=1,
              nets=["CHG_SW1", "CHG_SW2", "PB_SW1", "PB_SW2", "BST_SW", "SW_3V3", "SW_5V", "CHG_PMID", "VBUS_CHG", "VM_IN", "VBAT_IN",
                    "VPB_RAW", "VPB", "PB_MID", "VBUS_A", "VBUS_B", "+5V"], widths=[1.0, 0.5, 0.3, 0.2, 0.15], order="given"),
@@ -784,10 +784,16 @@ def route_plan(pcb):
         dict(op="route", name="crystal and feedback", hard=True,
              nets=["RP_XIN", "RP_XOUT", "RP_XOUT_X", "FB_3V3", "FB_5V", "BST_FB", "BST_COMP*", "PB_COMP*", "VMSEL_D", "PB_FSW", "PB_ILIM",
                    "PB_MODE", "PB_DITH", "CHG_ILIM", "CHG_PROG", "CHG_TS", "SS_3V3", "*_VREF", "CHG_BATP", "CHG_SDRV"], widths=[0.15]),
-        dict(op="route", name="encoder SPI", nets=["ENC_MISO", "ENC_SCK_M", "ENC_MOSI_M", "CS_*_M", "*_SCK", "*_MOSI", "*_CS"], widths=[0.15]),
-        dict(op="rest", name="all other signals", widths=[0.15]),
+        # From here on the slow signals. First every signal pin of the fine-pitch chips gets a fixed way out to a ring
+        # 3 mm from its chip (tools/grouter.py: escape). Then the nets are routed; they may use the power layer (In2)
+        # where the outer faces leave no way, at five times the cost of an outer face. The planes on In2 close round
+        # such a track when the zones are filled.
+        dict(op="escape", name="escape of the fine-pitch chips", ring=3.0, layer_cost={"B": 3, "In2": 1000}),
+        dict(op="route", name="encoder SPI", nets=["ENC_MISO", "ENC_SCK_M", "ENC_MOSI_M", "CS_*_M", "*_SCK", "*_MOSI", "*_CS"], widths=[0.15],
+             layer_cost={"In2": 5}),
+        dict(op="rest", name="all other signals", widths=[0.15], layer_cost={"In2": 5}),
     ]
-    return dict(plan=dict(layers=["F", "B"], widths=[0.15, 0.2, 0.3, 0.35, 0.5, 1.0], steps=steps,
+    return dict(plan=dict(layers=["F", "B", "In2"], layer_cost={"In2": 1000}, widths=[0.15, 0.2, 0.3, 0.35, 0.5, 1.0], steps=steps,
                           class_widths={"*_3V3": [0.3, 0.2, 0.15], "PDA_LDO*": [0.2, 0.15], "PDB_LDO*": [0.2, 0.15]}),
                 regions=regions, cutouts=[list(JACK)],
                 keepouts=[dict(r=list(ANT), layers=["F", "B", "In1", "In2"])])
@@ -797,7 +803,7 @@ def finish(pcb):
     """After routing: copper areas over every power net, the inner power layer, the battery bus, ground on both outer faces."""
     full = pcb.rect(-49.5, -29.5, 49.5, 29.5)
     for ref in pcb.fps:                       # IC ground pads and thermal pads join the pours solidly
-        if ref.startswith(("U", "Q", "J", "L", "R", "C")):
+        if ref.startswith(("U", "Q", "J", "L", "R", "C", "SW")):
             pcb.solid(ref)
     for a in pour_areas(pcb):
         pcb.zone(a["net"], a["side"], a["poly"], clearance=0.2, solid=True, priority=5)

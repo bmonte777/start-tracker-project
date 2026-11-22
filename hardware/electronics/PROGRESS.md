@@ -1,6 +1,6 @@
 # Phase 4 (electronics) — progress
 
-Last update: 22 Nov 2026, 20:00 UTC. Branch `phase-4-electronics`, pull request #6 (draft). Phase 4 is **not complete**.
+Last update: 22 Nov 2026, 23:15 UTC (third Phase 4 chat; this one can push). Branch `phase-4-electronics`, pull request #6 (draft). Phase 4 is **not complete**.
 The second Phase 4 chat could not push (the repo attached read-only); Bruno uploaded its files to the branch by hand on GitHub.
 
 ## Done
@@ -10,11 +10,45 @@ The second Phase 4 chat could not push (the repo attached read-only); Bruno uplo
 - Harness drawings, cost model, parts list CSV and `bom_data.py`, firmware hand-off, bring-up plan, workflow file.
 - LCSC numbers in `tools/catalog.py` are all confirmed; blank means not confirmed. Never fill one in from memory.
 
-## ST-501 layout: where it stands (KiCad DRC, 22 Nov, `mainboard/out/st-501-drc.json`)
-- 3,826 track segments, 996 vias. **164 connections open in 84 nets** (of about 950): 79 on power and critical nets, 85 on slow signals.
-- Errors: 4 clearance (0.097–0.100 mm vs 0.127), 8 hole clearance (0.2493 vs 0.25), 2 starved thermals (SW1, SW3 ground pads). No shorts.
-- Warnings that matter: 35 dangling tracks, 12 dangling vias (left by connections that were taken up).
+## ST-501 layout: where it stands (KiCad DRC, 22 Nov evening, `mainboard/out/st-501-drc.json`)
+- 4,729 track segments, 1,211 vias; 444 segments (779 mm) of slow signals on In2. **98 connections open in 61 nets** (of about 950):
+  20 on plane nets (+3V3 11, GND 5, VSYS 2, VBAT 1, VMOT 1), 15 on critical nets, 63 on slow signals.
+- Errors: 5 track-to-pad clearances (0.100–0.125 vs 0.127; all a power track beside a pad of L2, L4, D6, Q8, TP37: cause not found). No shorts.
+- Warnings that matter: 62 dangling tracks, 21 dangling vias, 12 isolated copper islands, 1 hole-to-hole 0.49.
+- Every open connection with its position: `mainboard/doc/st-501-open-connections.md` / `.csv` (`tools/openlist.py mainboard`), with click steps
+  for finishing by hand.
 - No fab files. Fit check, viewer, 3D render not redone for the new placement.
+- **Bruno's rule was: three router cycles, then stop and hand over the list. The three are used (150, 111, 132 open). Do not start a
+  fourth without his answer to Q37 (hand-finish, six layers, or pin reassignment).**
+
+### The third chat's three cycles (22 Nov), so nobody repeats them
+Baseline reproduced exactly first (164 open) with the tool chain below.
+1. *Critical nets hard before the slow signals* (`hardnets` in `grouter.run`: at the first step that is not `hard`, every unit of the
+   earlier hard steps becomes hard). Hardening after *each* step was tried first and is worse: later critical steps need to move earlier ones.
+   Also fixed: `save()` dropped a pin stub when a track joined it part-way (13 false opens). → **150 open**.
+2. *Escape step* (`op="escape"`, `grouter.escape`), placed after the critical steps: per chip with 12 or more pads of 0.32 mm or less, each
+   signal pin gets a hard track to a ring 3 mm out; via rows by pin position on its side (`rows`: pin 0 of 4 any distance, 1 not before
+   1.1 mm, 3 not before 1.9 mm, 2 no via inside the ring); kept only if the neighbours can still get out; falls back to soft (takes up
+   plane drops). Removed `+ 0.01` in `half[VIA]`: with it a lane 0.5 mm from a via centre was blocked, which walled in every pin beside
+   a plane pin (this was the "boxed in" of the old notes). Vias now also keep 0.25 mm hole clearance to existing copper when they are
+   placed (the old 0.2493 errors). In2 opened for encoder and rest steps (`layers=["F","B","In2"]`, cost 5; critical steps 1000 = closed).
+   → 73 of 96 pins escaped, **111 open**, U14 12 instead of 34. **This is the committed state** (plus the closing pass).
+3. *Escape before the critical steps*: 93 of 96 pins out, encoder bus and USB complete, but critical nets lost room (+1V1 9 open,
+   RP_XIN, VREF …) → **132 open**. Not kept; `design.py` has the order of cycle 2.
+- *Closing pass* `tools/closer.py mainboard [routes.json]` (40 s): all copper fixed, joins what is still apart on free cells, never takes
+  anything up. 111 → **98**. Its island finder is geometric and more reliable than `live_groups()`.
+- *Freerouting 2.1.0 on top of the critical routes* (DSN edited: plane nets removed from the netlist so they are net-less copper,
+  finished nets in an ignored class): passes take 1–3 min but it routes almost nothing ("maze search algorithm could not be created",
+  "no connection found"); with all nets left in, one pass takes 12 min and also closes nothing. Do not spend more time on it.
+
+### Why it does not close (my reading)
+Not density. (1) U14's GPIOs were assigned by function, so most signals leave on the side away from their destination and must cross
+within 3 mm of the chip; (2) the VBAT bus takes the front face from y −15.9 to −11.3 right under U14's south side and under U13;
+(3) vias: 0.8 mm centre to centre and 0.96 mm for a track between two, against 0.4 mm pin pitch; (4) the rest step's rip-up has no
+memory (same nets take each other up until `max_rips`). A negotiated-congestion (PathFinder) rest step would fix (4) only.
+Recommended to Bruno (Q37): six layers with via-in-pad (free at JLCPCB from six layers: jlcpcb.com/resources/6-layer-pcbs); the router
+then needs: vias allowed on pads of the fine-pitch chips, two more signal layers (stack F, GND, sig, sig/power, GND or power, B), the
+VBAT bus on an inner layer.
 
 ### What was wrong with the first placement (do not go back to it)
 - Courtyard-to-courtyard margin 0.12 mm gave pad gaps of 0.42–0.44 mm; a 0.15 mm track with 0.127 mm clearance needs 0.44 mm. Nothing could pass between parts.
@@ -33,48 +67,51 @@ The second Phase 4 chat could not push (the repo attached read-only); Bruno uplo
 - Flow: `layout.py mainboard --dump` (40 s) → `grouter.py mainboard` (10–14 min) → `layout.py mainboard` (routes, zones, DRC; 40 s).
   `GR_CKPT=1` saves a checkpoint before the last step; `GR_RESUME=1` restarts from it. `--plot` writes `out/st-501-routes-{F,B}.png`.
 
-### What to fix in the router next (in this order)
-1. **The last step ("rest") takes finished critical nets up and cannot always restore them.** Each earlier step ends with 0 open; the 79 open power and critical
-   connections appear during "rest". Make the units of the earlier steps hard once their step ends (`commit(..., hard=True)` or flip `s["hard"]` and `build_maps()`),
-   and let "rest" take up only other "rest" nets.
-2. **Fan-out of the 0.4 mm-pitch chips (U14 RP2354A, U3, U6, U2).** A hard run of the "rest" step without taking anything up leaves 70 of 110 nets open with
-   "boxed in" / "no way": signal pins are walled in by the plane vias of neighbouring pins (`fanout()`, the on-axis vias, staggered 0.55 / 1.3 mm). A real escape
-   pattern is needed: per side of the chip, give every pin (signal and plane) its via slot in two or three staggered rows fanned out so that a 0.15 mm track passes
-   between vias (0.8 mm via pitch does not leave it: 0.5 pad + 2 × 0.127 + 0.15 = 0.904 mm needed), or route signal pins out on B first and add plane vias last.
-   Widening the bands (`escape_ring`) to 3 mm for U14 may be needed.
-3. Clearance misses of 0.03 mm: tracks whose ends sit where a neighbouring track of another class was added later; raise `MARGIN` to 0.04 or check ends in all classes.
-   Hole clearance 0.2493: add 0.005 more to the via half-width. Starved thermals: make SW1–SW4 ground pads solid (`pcb.solid`).
-4. `live_groups()` (used by the closing rounds) reports nets open that are connected; KiCad's DRC is the count to trust.
-5. If the router is not finished: open the board in KiCad and route the open connections by hand (they are short, the board is not dense).
+### Router notes that still hold
+- Flow: `layout.py mainboard --dump` (40 s) → `grouter.py mainboard` (critical part 90 s, escape 30 s, rest 13 min with In2) →
+  `closer.py mainboard` → `layout.py mainboard` (routes, zones, DRC; 40 s) → `openlist.py mainboard`.
+- `GR_CKPT_AT="<part of a step name>"` writes a checkpoint before that step (`GR_CKPT_FILE` = where, `GR_STOP=1` = stop there);
+  `GR_RESUME=1` restarts from `out/st-501.ckpt.pkl`; `GR_SKIP=escape` leaves an op out. A checkpoint made with two layers cannot be
+  resumed with three.
+- `live_groups()` (closing rounds inside the router) still reports connected nets as open; KiCad's DRC is the count to trust.
+- The 5 clearance errors: all a wide power track 0.100 mm from a pad of another power net; not explained yet (MARGIN is 0.02).
 
-### Floor-plan weakness to raise with Bruno
-The pack pads J1 are at the lower right, the charger U2 at the left: the battery rail crosses the board as a 4.6 mm front-face copper area, about 94 mm, about 10 mΩ
-(0.36 W at 6 A). There is no free 9 × 6 mm area on the inner face near U2 with the present placement rules. Options: accept it; or move J1 + Q1 next to U2 and
-shuffle U25/U26/J12/BT1 into the freed corner (changes harness lengths ST-531-PWR and ST-532).
+### Questions put to Bruno on 22 Nov (answers pending; recommended option used)
+- **Q36 battery rail**: keep the pack pads at the lower right (94 mm bus, about 10 mΩ, 0.36 W at 6 A) — recommended, no harness change;
+  on six layers the bus goes to an inner layer. Alternative: J1 + Q1 beside U2, shuffle U25/U26/J12/BT1 (changes ST-531-PWR, ST-532).
+- **Q37 how to finish ST-501**: six layers with via-in-pad (recommended) / finish 98 connections by hand / reassign RP2354A pins on four layers.
 
 ## Next, in this order
-1. **Finish the ST-501 routing** (above), DRC clean, 3D render, `tools/fab.py mainboard`, `python -m stcad.fit_boards` (hardware/cad), `tools/viewer.py`.
-2. **ST-602 battery board** (folder `battery-board/` does not exist yet). Inputs found on 22 Nov:
+1. **ST-501**: wait for Q37. Then finish the layout that way, DRC clean, 3D render, `tools/fab.py mainboard`,
+   `python -m stcad.fit_boards` (hardware/cad), `tools/viewer.py`. If Bruno hand-finishes: take his saved `.kicad_pcb` as the board
+   (do not run `layout.py` over it), run `check.py`, then fab.
+2. **ST-602 battery board** (folder `battery-board/` does not exist yet). Inputs, all read now:
    - LEDs: charlieplexed on LEDCNTLA/B/C as on TI's EVM: LED1 A→B, LED2 B→A, LED3 B→C, LED4 C→B, LED5 C→A (anode→cathode); 3, 4 or 5 LEDs by setting.
      Still to read in SLUUBK0: which positions a 3-LED display uses.
-   - Fuse body (Littelfuse ITV4030): 4.0 × 3.0 × 0.9 mm; A1 0.58, A2 0.50, A3 2.20, B1 0.80, B2 1.44, B3 1.03. Pad drawing and terminal numbering not read (figures).
-   - **ITV4030L1415 (C3672030) is the 4-cell part (heater 10.5–19.6 V): wrong for a 2S pack.** Use the 2-cell part of the series (ITV4030L0815); confirm its
-     heater range in the datasheet table and its LCSC number in JLCPCB's library before it goes in a BOM.
+   - Fuse **ITV4030L0815** (2 cells, 15 A, VOP 5.0–9.0 V, heater 2.2–3.3 Ω, fuse 1.0–3.0 mΩ; the L1415 at C3672030 is the 4-cell part and wrong).
+     Read from the datasheet drawing (rev. 08/22/23, page 4, static.chipdip.ru/lib/556/DOC043556381.pdf): terminals 1 and 3 = fuse ends,
+     2 = heater (to the fuse mid-point). Body 4.0 × 3.0 × 0.9; terminal 2 on a short edge, 3 and 1 on the long edges.
+     Land pattern: A1 1.20, A2 1.55, A3 2.40, B1 1.20, B2 1.60, B3 1.55, B4 0.90, B5 1.55 → pad 2 1.20 × 1.60 at (−1.97, 0);
+     pad 3 2.40 × 1.55 at (0.18, +1.225); pad 1 2.40 × 1.55 at (0.18, −1.225), origin at the body centre.
+     LCSC number of the L0815: not looked up yet — confirm in JLCPCB's library or leave blank.
+   - Screw-free fixing at the pack end: not designed.
 3. **Sheet** https://claude.ai/artifact/9T9Gpvm2vWPRYqJtPChJa8: copy the changed lines from `hardware/bom/master-parts-list.csv`
-   (ST-501, 509, 512, 513, 517, 518, 519, 520, 530, and ST-602 when priced).
+   (ST-501, 509, 512, 513, 517, 518, 519, 520, 530, and ST-602 when priced). Not done.
 4. Block and power-tree diagrams and board renders into the Docs doc https://claude.ai/artifact/9Y2pyZBkJu5i3eWqNy6xAx and `docs/04-electronics.md`.
-   The Docs doc still has the text of 22 Nov 16:30; `docs/04-electronics.md` is newer.
-5. Run the workflow once on GitHub (Actions → Phase 4 electronics build). It must be changed first: it calls Freerouting for the mainboard; it should
-   `pip install numba`, lay the committed `st-501.routes.json` on the board and not run the router. KiCad needs its global library tables
-   (`cp /usr/share/kicad/template/*-lib-table ~/.config/kicad/9.0/`), otherwise ERC gives 391 "library not configured" warnings.
+   Not done. The Docs doc still has the text of 22 Nov 16:30; `docs/04-electronics.md` and the Project copy `claude/05-electronics.md` are current.
+5. Workflow: changed on 22 Nov (no Freerouting, library tables copied, routes laid on the board only when `regenerate` = yes, fab files
+   only for a board whose checks are clean, list of open connections in the download, run fails if a check has errors). **Not yet run on
+   GitHub.** With the mainboard open it will end red at the last step: that is correct until ST-501 is finished.
 6. Final check of every value against its source; mark the pull request ready; then `claude/phase-5-prompt.md`.
-7. Q28, Q31–Q35 still await Bruno; carry on with the recommended options.
+7. Q28, Q31–Q37 await Bruno; carry on with the recommended options.
 
 ## Tool chain (as used on 22 Nov)
 KiCad 9.0.8 from Ubuntu 26.04 packages in a chroot (`debootstrap resolute`, then `apt install kicad kicad-footprints kicad-symbols kicad-packages3d
-default-jre librsvg2-bin poppler-utils python3-pil`), global library tables copied from the template. Router: Python 3 with numpy, scipy, matplotlib, numba.
+default-jre librsvg2-bin poppler-utils python3-pil`), global library tables copied from the template. Router: Python 3 with numpy, scipy, matplotlib, numba
+(host Python, outside the chroot; the chroot is entered only for `layout.py`, `check.py`, `fab.py`, `preview.py`). The chroot takes 4 minutes to build.
 
 ## Tools
-`tools/build.py <board>` schematic + ERC · `tools/layout.py <board> [--no-route | --dump]` · `tools/grouter.py <board> [--plot]` · `tools/check.py <board>` ·
+`tools/build.py <board>` schematic + ERC · `tools/layout.py <board> [--no-route | --dump]` · `tools/grouter.py <board> [--plot]` ·
+`tools/closer.py <board>` · `tools/openlist.py <board>` · `tools/check.py <board>` ·
 `tools/fab.py <board> [--bom-only]` · `tools/docgen.py` · `tools/costs.py` · `tools/compose_doc.py` (reads `doc/status.json`) · `tools/viewer.py` ·
 `tools/preview.py <board>` · `harness/harness.py`.

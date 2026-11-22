@@ -10,7 +10,11 @@ How it routes
 - The plan is worked through in the order design.py gives it: plane connections first (a via to the inner plane beside
   each pad), then each critical group with its own track widths, then everything else, shortest connection first.
 - Every fine-pitch IC pin gets a short straight stub first, so no later track can wall a pin in.
+- A step marked hard is fixed copper once the first step that is not hard begins: slow signals cannot take critical nets up.
+- op "escape": every signal pin of the fine-pitch chips gets a fixed track out to a ring round its chip, with the vias
+  of neighbouring pins in staggered rows (see escape()).
 - A connection that finds no way is routed over the tracks in its way; those nets are taken up and routed again.
+- tools/closer.py adds what is still open afterwards without moving anything; tools/openlist.py lists what KiCad still reports.
 - Clearances are kept by construction (copper is grown by clearance + half the track width before a path is searched);
   KiCad's DRC on the finished board is still the check that counts.
 """
@@ -120,7 +124,7 @@ def astar(occT, hardT, occV, hardV, hole, novia, reg, nid, src, tmask, tb, vcost
         nexp += 1
         if nexp > maxexp:
             break
-        for k in range(8):
+        for k in range(8 if lcost[l] < 1000 else 0):
             nx, ny = x + DX[k], y + DY[k]
             if nx < 0 or ny < 0 or nx >= W or ny >= H:
                 continue
@@ -284,13 +288,13 @@ class Router:
         self.widths = list(widths)
         self.cls = {w: i for i, w in enumerate(self.widths)}
         self.VIA = len(self.widths)            # class index of the via map
-        self.half = [w / 2 for w in self.widths] + [VIA_H / 2 + HOLE_CLR - CLR + 0.01]
+        self.half = [w / 2 for w in self.widths] + [VIA_H / 2 + HOLE_CLR - CLR]
         self.nid = {}
         self.names = {}
         self.shapes = []                        # dict(kind, layers, geom, hw, nid, hard, net)
         self.routes = {}                        # net -> list of connections (dict(segs, vias, shape indices))
         self.rips = {}
-        self.max_rips = 4
+        self.max_rips = 6
         self.reg_polys = pre.get("regions", [])
         self._static()
         self.build_maps()
@@ -358,6 +362,8 @@ class Router:
             r = s["hw"] + CLR + MARGIN + (self.half[k] if k != self.VIA else VIA_D / 2)
             if s.get("via") and k != self.VIA:
                 r = max(r, VIA_H / 2 + HOLE_CLR + self.half[k] + MARGIN)
+            elif k == self.VIA and not s.get("via") and s["nid"] != -1 and s["hw"] >= 0:
+                r = max(r, s["hw"] + HOLE_CLR + VIA_H / 2 + MARGIN)
             if r <= 0:
                 r = 0.001
             for l in s["layers"]:
@@ -940,19 +946,146 @@ def fanout(R, plane_nets, length=0.35, min_pads=12, max_pitch_dim=0.32, w=None, 
 
 
 def stub_cells(R, net, pad):
-    """Cells of the fan-out stub that belongs to this pad, if it has one."""
+    """Cells of the fan-out stub and of the escape track that belong to this pad, if it has them."""
     out = set()
+    key = (pad["ref"], pad["num"])
     for idxs in R.routes.get(f"{net}|{pad['ref']}.{pad['num']}|stub", []):
         for i in idxs:
             s = R.shapes[i]
-            if s.get("stub") == (pad["ref"], pad["num"]) and not s.get("dead"):
-                l = s["layers"][0]
-                ax, ay, bx, by = R.ix(s["geom"][0]), R.iy(s["geom"][1]), R.ix(s["geom"][2]), R.iy(s["geom"][3])
-                nsteps = max(abs(bx - ax), abs(by - ay))
-                sx, sy = (bx > ax) - (bx < ax), (by > ay) - (by < ay)
-                for t in range(nsteps + 1):
-                    out.add((l * R.H + ay + sy * t) * R.W + ax + sx * t)
+            if not s.get("dead") and (s.get("stub") == key or s.get("esc") == key):
+                out |= R.shape_cells(s)
     return out
+
+
+def escape(R, step, plane_nets, done, npads, push=None, crit=(), log=print):
+    """Escape routing for the fine-pitch chips, before the slow signals are routed.
+
+    Every signal pin that is still to be routed gets a fixed track from its pad out to a ring a few millimetres from the
+    chip, changing face by a via on the way where one fits. Vias right at the pins would wall the neighbouring pins in
+    (two vias need 0.8 mm between centres, a track between two vias 0.96 mm, the pins are 0.4 mm apart), so the pins of a
+    side take turns: the first of every four may put its via next to the pad, the second not before 1.1 mm out, the
+    fourth not before 1.9 mm, and the third stays on its own face until it is clear of the chip. A track is only kept if
+    the pins near it that are not done yet can still get out afterwards."""
+    by_ref = {}
+    for p in R.pre["pads"]:
+        by_ref.setdefault(p["ref"], []).append(p)
+    w = step.get("w", R.widths[0])
+    lc = np.array([step.get("layer_cost", {}).get(l, R.pre["plan"].get("layer_cost", {}).get(l, 1)) for l in R.layers], np.int64)
+    rows = step.get("rows", {0: 0.0, 1: 1.1, 3: 1.9, 2: 9.0})
+    total, failed = 0, []
+    for ref, pads in by_ref.items():
+        fine = [p for p in pads if min(p["r"][2] - p["r"][0], p["r"][3] - p["r"][1]) <= step.get("max_pad", 0.32) and p["side"] != "*"]
+        if len(fine) < step.get("min_pads", 12) or ref in step.get("skip", ()):
+            continue
+        D = step.get("ring", 3.0)
+        bx0, bx1 = min(p["r"][0] for p in fine), max(p["r"][2] for p in fine)
+        by0, by1 = min(p["r"][1] for p in fine), max(p["r"][3] for p in fine)
+        x0, x1, y0, y1 = bx0 - D, bx1 + D, by0 - D, by1 + D
+        i0, i1, j0, j1 = max(2, R.ix(x0)), min(R.W - 3, R.ix(x1)), max(2, R.iy(y0)), min(R.H - 3, R.iy(y1))
+        ring = set()
+        for l in range(R.NL):
+            if lc[l] >= 100:
+                continue
+            base = l * R.H * R.W
+            for i in range(i0, i1 + 1):
+                ring.add(base + j0 * R.W + i)
+                ring.add(base + j1 * R.W + i)
+            for j in range(j0, j1 + 1):
+                ring.add(base + j * R.W + i0)
+                ring.add(base + j * R.W + i1)
+        tb = (i0, j0, i1, j1)
+        cx, cy = (bx0 + bx1) / 2, (by0 + by1) / 2
+        # the place of every pad on its side of the chip decides its row
+        role = {}
+        sides = {}
+        for p in fine:
+            dx, dy = p["r"][2] - p["r"][0], p["r"][3] - p["r"][1]
+            sd = ("E" if p["x"] > cx else "W") if dx >= dy else ("N" if p["y"] > cy else "S")
+            sides.setdefault(sd, []).append(p)
+        for sd, ps in sides.items():
+            ps.sort(key=lambda p: (p["y"], p["x"]) if sd in "EW" else (p["x"], p["y"]))
+            for i, p in enumerate(ps):
+                role[(p["num"], p["x"], p["y"])] = i % 4
+        todo = [p for p in fine if p["net"] and p["net"] not in plane_nets and p["net"] not in done and p["net"] not in crit
+                and npads.get(p["net"], 0) >= 2]
+        # pins of critical nets are routed by their own steps afterwards; they only have to keep their way out
+        later = [p for p in fine if p["net"] in crit and p["net"] not in done and npads.get(p["net"], 0) >= 2]
+        if not todo:
+            continue
+        todo.sort(key=lambda p: math.atan2(p["y"] - cy, p["x"] - cx))
+        order = [p for k in (0, 2, 1, 3) for p in todo if role[(p["num"], p["x"], p["y"])] == k]
+        novia0 = R.novia
+
+        def mask(dmin):
+            m = novia0.copy()
+            a0, a1 = max(0, R.ix(bx0 - dmin)), min(R.W - 1, R.ix(bx1 + dmin))
+            b0, b1 = max(0, R.iy(by0 - dmin)), min(R.H - 1, R.iy(by1 + dmin))
+            m[b0:b1 + 1, a0:a1 + 1] = 1
+            return m
+
+        masks = {k: mask(min(v, D - 0.4)) for k, v in rows.items()}
+
+        def targets(p):
+            t = set(ring)
+            for q in R.pre["pads"]:               # another pad of the same net inside the ring is as good as the ring
+                if q["net"] == p["net"] and q is not p and not q["npth"] and x0 < q["x"] < x1 and y0 < q["y"] < y1 and q["ref"] != ref:
+                    t |= R.pad_cells(q)
+            return t
+
+        def way_out(p, m=None, soft=False):
+            nid = R.id(p["net"])
+            src = R.pad_cells(p) | stub_cells(R, p["net"], p)
+            R.novia = novia0 if m is None else m
+            try:
+                return R._search(nid, src, targets(p), tb, w, lc, soft=soft, vcost=step.get("via_cost", 60), regmul=step.get("region_cost", 3),
+                                 maxexp=400000)
+            finally:
+                R.novia = novia0
+
+        made = 0
+        while order:
+            p = order.pop(0)
+            nid = R.id(p["net"])
+            k = role[(p["num"], p["x"], p["y"])]
+            unit = f"{p['net']}|{p['ref']}.{p['num']}|stub"
+            near = [q for q in order + later if abs(q["x"] - p["x"]) + abs(q["y"] - p["y"]) < step.get("check", 2.5)]
+            ok_before = [q for q in near if way_out(q) is not None]
+            kept = False
+            for m, soft in ((masks[k], False), (masks[2], False), (novia0, False), (masks[k], True), (novia0, True)):
+                path = way_out(p, m, soft)
+                if path is None:
+                    continue
+                segs, vias, _c = R._path_to_copper(nid, path, w, soft)
+                if soft:
+                    v = R.victims(segs, vias, w, p["net"])
+                    for u in v:
+                        R.rip(u)
+                    if push:
+                        push(v)
+                    R.build_maps()
+                    novia0 = R.novia
+                    masks = {kk: mask(min(vv, D - 0.4)) for kk, vv in rows.items()}
+                idxs = R.commit(p["net"], segs, vias, w, hard=True, unit=unit)
+                for i in idxs:
+                    R.shapes[i]["esc"] = (p["ref"], p["num"])
+                shut = [q for q in ok_before if way_out(q) is None]
+                if shut and not soft and m is not novia0:
+                    for i in idxs:                # it would wall a neighbour in: take it back and try the next way
+                        R.shapes[i]["dead"] = True
+                    R.routes[unit].pop()
+                    R.build_maps()
+                    novia0 = R.novia
+                    masks = {kk: mask(min(vv, D - 0.4)) for kk, vv in rows.items()}
+                    continue
+                kept = True
+                break
+            if kept:
+                made += 1
+            else:
+                failed.append(f"{ref}.{p['num']} {p['net']}")
+        total += made
+        log(f"   escape {ref}: {made} of {len(todo)} pins")
+    return total, failed
 
 
 def groups_with_stubs(R, net):
@@ -1009,13 +1142,14 @@ def run(folder, plot=False):
     plane_nets = {s["net"] for s in plan["steps"] if s["op"] == "plane"}
     padkey = {f"{p['ref']}.{p['num']}@{p['x']},{p['y']}": p for p in pre["pads"]}
     done, report, queue = set(), {}, []
+    hardnets = set()
     lc_default = [plan.get("layer_cost", {}).get(l, 1) for l in R.layers]
     settings = {}                                # net -> (widths, layer cost, via cost, region cost)
     planes = {}                                  # net -> dict(step, region, tied pads)
 
     def lcost(step):
         c = step.get("layer_cost")
-        return [c.get(l, 1) for l in R.layers] if c else lc_default
+        return [c.get(l, plan.get("layer_cost", {}).get(l, 1)) for l in R.layers] if c else lc_default
 
     def push(units):
         for u in units:
@@ -1117,11 +1251,13 @@ def run(folder, plot=False):
 
     import pickle
     ck = os.path.join(folder, "out", name + ".ckpt.pkl")
+    ck_out = os.environ.get("GR_CKPT_FILE", ck)
     resume = None
     if os.environ.get("GR_RESUME") and os.path.exists(ck):
         st = pickle.load(open(ck, "rb"))
         R.shapes, R.routes, R.rips, R.nid, R.names = st["shapes"], st["routes"], {}, st["nid"], st["names"]
         done, report, settings = st["done"], st["report"], st["settings"]
+        hardnets = st.get("hardnets", set())
         resume = st["step"]
         R.build_maps()
         print(f"resumed after step {resume}")
@@ -1139,10 +1275,34 @@ def run(folder, plot=False):
                         tied.append(p)
                 planes[net] = dict(step=step, region=reg, tied=tied)
             continue
-        if op in ("rest",) and os.environ.get("GR_CKPT"):
+        if op in os.environ.get("GR_SKIP", "").split(","):
+            continue
+        at = os.environ.get("GR_CKPT_AT", "")
+        if (op in ("rest",) and os.environ.get("GR_CKPT")) or (at and at in step.get("name", op)):
             pickle.dump(dict(shapes=R.shapes, routes=R.routes, nid=R.nid, names=R.names, done=done, report=report, settings=settings,
-                             step=si - 1), open(ck, "wb"))
-        if op == "fanout":
+                             step=si - 1, hardnets=hardnets), open(ck_out, "wb"))
+            if at and os.environ.get("GR_STOP"):
+                print(f"checkpoint written before step '{step.get('name', op)}' after {time.time() - t0:.0f} s; stopping")
+                return {}
+        if op in ("route", "rest", "escape") and not step.get("hard") and hardnets:
+            # the critical groups are finished: from here on they are fixed copper. The slow signals route round them
+            # and can only take up one another (and the vias to the planes, which are simply made again elsewhere)
+            nh = 0
+            for n in hardnets:
+                for idxs in R.routes.get(n, []):
+                    for i in idxs:
+                        if not R.shapes[i]["hard"]:
+                            R.shapes[i]["hard"] = True
+                            nh += 1
+            print(f"{len(hardnets)} critical nets fixed ({nh} pieces of copper)")
+            hardnets.clear()
+            R.build_maps()
+        if op == "escape":
+            crit = {n for s_ in plan["steps"] if s_["op"] == "route" and s_.get("hard") for pat in s_["nets"] for n in allnets
+                    if fnmatch.fnmatchcase(n, pat)}
+            n, bad_ = escape(R, step, plane_nets, done, npads, push=push, crit=crit)
+            print(f"escape: {n} pins led out" + (f"; no way out for {len(bad_)}: {', '.join(bad_)}" if bad_ else "") + f" ({time.time() - ts:.1f} s)")
+        elif op == "fanout":
             regs = {s_["net"]: region_mask(R, s_["polys"], s_.get("exclude", [])) for s_ in plan["steps"] if s_["op"] == "plane" and not s_.get("surface")}
             n, nv = fanout(R, plane_nets, length=step.get("length", 0.35), plane_regions=regs)
             print(f"fan-out: {n} pin stubs, {nv} plane vias on chip pins")
@@ -1221,6 +1381,8 @@ def run(folder, plot=False):
             print(f"{step.get('name', op)}: {len(nets)} nets, {sum(1 for n in nets if report.get(n))} with open connections "
                   f"({time.time() - ts:.1f} s)")
         drain()
+        if op == "route" and step.get("hard"):
+            hardnets.update(nets)
     # last rounds: everything still open is tried again now that the board has settled, without taking anything up
     for rnd in range(3):
         todo = [k for k, v in report.items() if v]
@@ -1285,21 +1447,38 @@ def save(R, path, bad):
                     vias.append([net, s["geom"][0], s["geom"][1]])
                 else:
                     tracks.append([net, s["layer"], s["w"], s["geom"][0], s["geom"][1], s["geom"][2], s["geom"][3], 1 if s.get("stub") else 0])
-    # a fan-out stub nothing attached to is dropped
+    # a fan-out stub nothing is attached to is dropped; one that a track joins part-way is cut back to that point
     ends = {}
     for t in tracks:
         for (x, y) in ((t[3], t[4]), (t[5], t[6])):
             ends.setdefault((t[0], t[1], round(x, 3), round(y, 3)), 0)
             ends[(t[0], t[1], round(x, 3), round(y, 3))] += 1
-    viaset = {(v[0], round(v[1], 3), round(v[2], 3)) for v in vias}
+    viaxy = {}
+    for v in vias:
+        viaxy.setdefault(v[0], []).append((v[1], v[2]))
+    bynet = {}
+    for t in tracks:
+        if not t[7]:
+            bynet.setdefault((t[0], t[1]), []).append(t)
     keep = []
     for t in tracks:
         if t[7]:
+            stub = (t[3], t[4], t[5], t[6])
+            L = math.hypot(t[5] - t[3], t[6] - t[4])
             far = (t[0], t[1], round(t[5], 3), round(t[6], 3))
-            touched = ends[far] > 1 or (t[0], far[2], far[3]) in viaset or any(
-                o is not t and o[0] == t[0] and o[1] == t[1] and seg_dist((t[5], t[6], t[5], t[6]), (o[3], o[4], o[5], o[6])) < 0.01 for o in tracks)
-            if not touched:
+            reach = 0.0                       # how far along the stub (from the pad) something joins it
+            if ends[far] > 1:
+                reach = L
+            pts = [(o[3], o[4]) for o in bynet.get((t[0], t[1]), [])] + [(o[5], o[6]) for o in bynet.get((t[0], t[1]), [])] \
+                + viaxy.get(t[0], [])
+            for (x, y) in pts:
+                if seg_dist((x, y, x, y), stub) < 0.01:
+                    reach = max(reach, math.hypot(x - t[3], y - t[4]))
+            if reach <= 0.0:
                 continue
+            if reach < L - 0.01:
+                k = reach / L
+                t = t[:5] + [round(t[3] + (t[5] - t[3]) * k, 4), round(t[4] + (t[6] - t[4]) * k, 4)] + t[7:]
         keep.append(t[:7])
     with open(path, "w") as f:
         json.dump(dict(tracks=keep, vias=vias, open=bad), f, separators=(",", ":"))
