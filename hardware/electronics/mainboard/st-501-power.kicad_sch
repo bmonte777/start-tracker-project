@@ -1061,7 +1061,7 @@
 			(embedded_fonts no)
 		)
 	)
-	(text "Battery input. J1: XT30 from the battery bay (pad 2 is +). Q1 blocks a reversed bench supply. J2: pack SMBus and presence."
+	(text "Battery input. J1: two solder pads for the battery lead (pad 1 +, pad 2 -); the lead carries an in-line XT30.\nQ1 blocks a reversed bench supply. J2: pack SMBus and presence."
 		(exclude_from_sim no)
 		(at 20 20 0)
 		(effects (font (size 1.6 1.6)) (justify left bottom))
@@ -1078,7 +1078,7 @@
 		(stroke (width 0) (type default))
 		(uuid "404509dc-6c92-565a-ad51-22e38b67c0fe")
 	)
-	(global_label "GND"
+	(global_label "VBAT_IN"
 		(shape passive)
 		(at 29.21 39.37 180)
 		(effects (font (size 1 1)) (justify right))
@@ -1093,7 +1093,7 @@
 		(stroke (width 0) (type default))
 		(uuid "6875609b-4ddb-57ee-9375-dc6cc2d72a29")
 	)
-	(global_label "VBAT_IN"
+	(global_label "GND"
 		(shape passive)
 		(at 29.21 41.91 180)
 		(effects (font (size 1 1)) (justify right))
@@ -3216,13 +3216,13 @@
 		(at 35.56 39.37 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "0f411c14-8397-58a5-a6a6-39d178627ecd")
 		(property "Reference" "J1" (at 35.56 36.83 0) (effects (font (size 1.27 1.27))))
-		(property "Value" "XT30PW-M" (at 35.56 44.45 0) (effects (font (size 1.27 1.27))))
-		(property "Footprint" "Connector_AMASS:AMASS_XT30PW-M_1x02_P2.50mm_Horizontal"
+		(property "Value" "BAT+ BAT-" (at 35.56 44.45 0) (effects (font (size 1.27 1.27))))
+		(property "Footprint" "ST:WirePads_1x02_P5.0mm_3.5x5mm"
 			(at 35.56 39.37 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -3231,8 +3231,6 @@
 			(at 35.56 39.37 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "MPN" "XT30PW-M" (at 35.56 39.37 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "LCSC" "C431092" (at 35.56 39.37 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "b49ebd20-4c83-59ba-b1a4-fa140a905598"))
 		(pin "2" (uuid "dc24486a-8d41-567f-8013-ef95e44eb876"))
 		(instances

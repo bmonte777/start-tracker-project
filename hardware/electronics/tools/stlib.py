@@ -38,8 +38,9 @@ add("TPS25751D",
      (10, "I2Ct_IRQ", OC), (16, "I2Cc_SDA", B), (17, "I2Cc_SCL", O), (18, "I2Cc_IRQ", I), (5, "GPIO0", B), (6, "GPIO1", B), (7, "GPIO2", B),
      (19, "GPIO3", B), (37, "GPIO6", B), (36, "GPIO7", B), (13, "GPIO11", B), (11, "GND", PI), (12, "GND", P), (14, "GND", P), (31, "GND", P),
      (39, "EP_GND", P)],
-    [(32, "VBUS", P), (33, "VBUS", P), (23, "VBUS_IN", P), (24, "VBUS_IN", P), (25, "VBUS_IN", P), (20, "PPHV", P), (21, "PPHV", P),
-     (22, "PPHV", P), (15, "DRAIN", P), (30, "DRAIN", P), (40, "EP_DRAIN", P), (34, "PP5V", PI), (35, "PP5V", P), (28, "CC1", B), (29, "CC2", B),
+    # the package joins pins 20-22, 23-25, 32-33 and 34-35 into one wide pad each: the footprint numbers them 20, 23, 32, 34
+    [(32, "VBUS", P), (23, "VBUS_IN", P), (20, "PPHV", P), (15, "DRAIN", P), (30, "DRAIN", P), (40, "EP_DRAIN", P), (34, "PP5V", PI),
+     (28, "CC1", B), (29, "CC2", B),
      (26, "GPIO4/USB_P", B), (27, "GPIO5/USB_N", B)],
     "Package_DFN_QFN:Texas_REF0038A_WQFN-38-2EP_6x4mm_P0.4", "https://www.ti.com/lit/gpn/tps25751",
     "USB Type-C PD 3.1 controller with integrated 5 A bidirectional power path, WQFN-38 4 x 6 mm")

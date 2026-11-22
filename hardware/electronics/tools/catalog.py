@@ -36,7 +36,7 @@ PART = {  # active parts, connectors, magnetics
     "TPS61288": (None, "TPS61288RQQR", "C5219223"),
     "TPS62932": ("Package_TO_SOT_SMD:SOT-583-8", "TPS62932DRLR", "C3032935"),
     "TPS563201": ("Package_TO_SOT_SMD:TSOT-23-6", "TPS563201DDCR", "C116592"),
-    "ESP32": ("RF_Module:ESP32-S3-WROOM-1", "ESP32-S3-WROOM-1-N16R8", "C2913202"),
+    "ESP32": ("ST:ESP32-S3-WROOM-1_BodyCourtyard", "ESP32-S3-WROOM-1-N16R8", "C2913202"),
     "RP2354A": (None, "RP2354A", "C41378174"),
     "TMC2209": ("Package_DFN_QFN:VQFN-28-1EP_5x5mm_P0.5mm_EP3.7x3.7mm_ThermalVias", "TMC2209-LA-T", "C465949"),
     "MT6835": (None, "MT6835GT-STD", "C2984637"),
@@ -66,7 +66,7 @@ PART = {  # active parts, connectors, magnetics
     "CP100u25": ("Capacitor_SMD:CP_Elec_6.3x7.7", "100 uF 25 V polymer hybrid", ""),
     "CP47u25": ("Capacitor_SMD:CP_Elec_6.3x5.8", "47 uF 25 V polymer", ""),
     "CP100u10": ("Capacitor_SMD:CP_Elec_6.3x5.8", "100 uF 10 V polymer", ""),
-    "SUPERCAP": ("Capacitor_THT:CP_Radial_D8.0mm_P5.00mm", "0.1 F 5.5 V supercapacitor", ""),
+    "RTCBAT": ("Battery:BatteryHolder_Seiko_MS621F", "MS621FE-FL11E", ""),
     "LED_R": ("LED_SMD:LED_0603_1608Metric", "KT-0603R", "C2286"), "LED_G": ("LED_SMD:LED_0603_1608Metric", "19-217/GHC-YR1S2/3T", "C72043"),
     "LED_B": ("LED_SMD:LED_0603_1608Metric", "19-217/BHC-ZL1M2RY/3T", "C72041"),
     "TACT": ("Button_Switch_SMD:SW_Push_1P1T_XKB_TS-1187A", "TS-1187A-B-A-B", "C318884"),
@@ -78,6 +78,7 @@ PART = {  # active parts, connectors, magnetics
     "PH4V": ("Connector_JST:JST_PH_B4B-PH-SM4-TB_1x04-1MP_P2.00mm_Vertical", "B4B-PH-SM4-TB(LF)(SN)", "C160354"),
     "XT30": ("Connector_AMASS:AMASS_XT30PW-M_1x02_P2.50mm_Horizontal", "XT30PW-M", "C431092"),
     "UFL": ("Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical", "U.FL-R-SMT-1(80)", "C88374"),
+    "BATPADS": ("ST:WirePads_1x02_P5.0mm_3.5x5mm", "battery lead pads", ""),
     "NTC": ("Resistor_SMD:R_0603_1608Metric", "10 k B3950 NTC 0603", "C13564"),
 }
 

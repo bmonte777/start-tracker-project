@@ -1,7 +1,30 @@
 """Project footprint library ST.pretty (footprints KiCad 9 does not ship). Run: python3 stfp.py"""
 import os
 
-from kisx import Q, dump
+from kisx import Q, dump, parse
+
+KICAD_FP = os.environ.get("KICAD_FOOTPRINT_DIR", "/usr/share/kicad/footprints")
+
+
+def derived(lib, name, new_name, courtyard, note):
+    """Copy a KiCad library footprint with its courtyard replaced by the real body outline (x0, y0, x1, y1; Y down)."""
+    path = os.path.join(KICAD_FP, lib + ".pretty", name + ".kicad_mod")
+    if not os.path.exists(path):
+        return None
+    root = parse(open(path, encoding="utf-8").read())
+    out = []
+    for item in root:
+        if isinstance(item, list) and item and item[0].startswith("fp_") and any(isinstance(z, list) and z[0] == "layer" and z[1] == "F.CrtYd" for z in item):
+            continue
+        out.append(item)
+    out[1] = Q(new_name)
+    x0, y0, x1, y1 = courtyard
+    k = max(i for i, it in enumerate(out) if isinstance(it, list) and it[0] == "property") + 1
+    out.insert(k, ["fp_rect", ["start", x0, y0], ["end", x1, y1], ["stroke", ["width", 0.05], ["type", "solid"]], ["fill", "no"], ["layer", Q("F.CrtYd")]])
+    for it in out:
+        if isinstance(it, list) and it[0] == "descr":
+            it[1] = Q(str(it[1]) + " -- " + note)
+    return new_name, dump(out) + "\n"
 
 
 def _prop(key, val, y, layer, hide=False):
@@ -47,6 +70,8 @@ FPS = [
               [("", 0, 0, 3.2, 3.2, "npth")], ("circle", 2.9), smd=False),
     footprint("WirePads_1x02_P2.0mm_1.5x2.4mm", "Two solder pads for the wires of a bead thermistor (hand-soldered, no paste)",
               [(1, -1.0, 0, 1.5, 2.4, "smd_nopaste"), (2, 1.0, 0, 1.5, 2.4, "smd_nopaste")], (-2.0, -1.45, 2.0, 1.45), fab=(-1.75, -1.2, 1.75, 1.2)),
+    footprint("WirePads_1x02_P5.0mm_3.5x5mm", "Two solder pads for 16 AWG battery leads (hand-soldered, no paste)",
+              [(1, -2.5, 0, 3.5, 5.0, "smd_nopaste"), (2, 2.5, 0, 3.5, 5.0, "smd_nopaste")], (-4.5, -2.8, 4.5, 2.8), fab=(-4.25, -2.5, 4.25, 2.5)),
 ]
 
 
@@ -67,6 +92,10 @@ def _rpm0026a():
 
 
 FPS.append(_rpm0026a())
+_esp = derived("RF_Module", "ESP32-S3-WROOM-1", "ESP32-S3-WROOM-1_BodyCourtyard", (-9.3, -13.05, 9.3, 13.05),
+               "courtyard reduced to the module body; the antenna keep-out zone is unchanged")
+if _esp:
+    FPS.append(_esp)
 
 if __name__ == "__main__":
     out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "lib", "ST.pretty")

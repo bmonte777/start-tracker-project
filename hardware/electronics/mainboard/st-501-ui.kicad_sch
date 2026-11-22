@@ -596,60 +596,61 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Device:C_Polarized"
+		(symbol "Device:Battery_Cell"
 			(pin_numbers (hide yes))
-			(pin_names (offset 0.254))
+			(pin_names (offset 0) (hide yes))
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
-			(property "Reference" "C" (at 0.635 2.54 0) (effects (font (size 1.27 1.27)) (justify left)))
-			(property "Value" "C_Polarized"
-				(at 0.635 -2.54 0)
-				(effects (font (size 1.27 1.27)) (justify left))
-			)
-			(property "Footprint" "" (at 0.9652 -3.81 0) (effects (font (size 1.27 1.27)) (hide yes)))
-			(property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
-			(property "Description" "Polarized capacitor"
+			(property "Reference" "BT" (at 2.54 2.54 0) (effects (font (size 1.27 1.27)) (justify left)))
+			(property "Value" "Battery_Cell" (at 2.54 0 0) (effects (font (size 1.27 1.27)) (justify left)))
+			(property "Footprint" "" (at 0 1.524 90) (effects (font (size 1.27 1.27)) (hide yes)))
+			(property "Datasheet" "~" (at 0 1.524 90) (effects (font (size 1.27 1.27)) (hide yes)))
+			(property "Description" "Single-cell battery"
 				(at 0 0 0)
 				(effects (font (size 1.27 1.27)) (hide yes))
 			)
-			(property "ki_keywords" "cap capacitor" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
-			(property "ki_fp_filters" "CP_*" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
-			(symbol "C_Polarized_0_1"
+			(property "Sim.Device" "V" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
+			(property "Sim.Type" "DC" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
+			(property "Sim.Pins" "1=+ 2=-" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
+			(property "ki_keywords" "battery cell" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
+			(symbol "Battery_Cell_0_1"
 				(rectangle
-					(start -2.286 0.508)
-					(end 2.286 1.016)
-					(stroke (width 0) (type default))
-					(fill (type none))
-				)
-				(polyline
-					(pts (xy -1.778 2.286) (xy -0.762 2.286))
-					(stroke (width 0) (type default))
-					(fill (type none))
-				)
-				(polyline
-					(pts (xy -1.27 2.794) (xy -1.27 1.778))
-					(stroke (width 0) (type default))
-					(fill (type none))
-				)
-				(rectangle
-					(start 2.286 -0.508)
-					(end -2.286 -1.016)
+					(start -2.286 1.778)
+					(end 2.286 1.524)
 					(stroke (width 0) (type default))
 					(fill (type outline))
 				)
+				(rectangle
+					(start -1.524 1.016)
+					(end 1.524 0.508)
+					(stroke (width 0) (type default))
+					(fill (type outline))
+				)
+				(polyline (pts (xy 0 1.778) (xy 0 2.54)) (stroke (width 0) (type default)) (fill (type none)))
+				(polyline (pts (xy 0 0.762) (xy 0 0)) (stroke (width 0) (type default)) (fill (type none)))
+				(polyline
+					(pts (xy 0.762 3.048) (xy 1.778 3.048))
+					(stroke (width 0.254) (type default))
+					(fill (type none))
+				)
+				(polyline
+					(pts (xy 1.27 3.556) (xy 1.27 2.54))
+					(stroke (width 0.254) (type default))
+					(fill (type none))
+				)
 			)
-			(symbol "C_Polarized_1_1"
+			(symbol "Battery_Cell_1_1"
 				(pin passive line
-					(at 0 3.81 270)
-					(length 2.794)
-					(name "~" (effects (font (size 1.27 1.27))))
+					(at 0 5.08 270)
+					(length 2.54)
+					(name "+" (effects (font (size 1.27 1.27))))
 					(number "1" (effects (font (size 1.27 1.27))))
 				)
 				(pin passive line
-					(at 0 -3.81 90)
-					(length 2.794)
-					(name "~" (effects (font (size 1.27 1.27))))
+					(at 0 -2.54 90)
+					(length 2.54)
+					(name "-" (effects (font (size 1.27 1.27))))
 					(number "2" (effects (font (size 1.27 1.27))))
 				)
 			)
@@ -1322,7 +1323,7 @@
 		(effects (font (size 1.6 1.6)) (justify left bottom))
 		(uuid "5576a91d-7e64-5a9d-8e5a-ed99fab594c9")
 	)
-	(text "OLED 1.3 in SH1106 module on a 4-pin header (J14). R fitted for modules marked VCC-GND-SCL-SDA; swap to the two unfitted ones for GND-VCC."
+	(text "OLED 1.3 in SH1106 module on a 4-pin header (J11). R fitted for modules marked VCC-GND-SCL-SDA; swap to the two unfitted ones for GND-VCC."
 		(exclude_from_sim no)
 		(at 20 122 0)
 		(effects (font (size 1.6 1.6)) (justify left bottom))
@@ -1334,7 +1335,7 @@
 		(effects (font (size 1.6 1.6)) (justify left bottom))
 		(uuid "5c89967b-de40-572a-951b-b66fe7703c83")
 	)
-	(text "Shutter port J15 (to the 2.5 mm jack on the bezel): tip = shutter, ring = focus, sleeve = camera ground. Isolated from the head by U21-U22."
+	(text "Shutter port J12 (to the 2.5 mm jack on the bezel): tip = shutter, ring = focus, sleeve = camera ground. Isolated from the head by U25-U26."
 		(exclude_from_sim no)
 		(at 200 122 0)
 		(effects (font (size 1.6 1.6)) (justify left bottom))
@@ -2093,32 +2094,32 @@
 		)
 	)
 	(wire
-		(pts (xy 250.19 95.25) (xy 248.92 95.25))
+		(pts (xy 254 90.17) (xy 254 88.9))
 		(stroke (width 0) (type default))
-		(uuid "3e516f02-164d-5438-af51-daed432bb8b8")
+		(uuid "2c3c6a11-123b-5519-8a69-65ee0aaa3132")
 	)
 	(global_label "RTC_VBAK"
 		(shape passive)
-		(at 248.92 95.25 180)
-		(effects (font (size 1 1)) (justify right))
-		(uuid "127a5f70-91ca-5572-b2b2-27e01df0401d")
+		(at 254 88.9 90)
+		(effects (font (size 1 1)) (justify left))
+		(uuid "41502f36-8605-5593-b67e-51d65d0c70f0")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 248.92 95.25 0)
+			(at 254 88.9 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 	)
 	(wire
-		(pts (xy 257.81 95.25) (xy 259.08 95.25))
+		(pts (xy 254 97.79) (xy 254 99.06))
 		(stroke (width 0) (type default))
-		(uuid "945065b9-71b6-5f56-8e24-9431bd303491")
+		(uuid "20bddcfc-e151-550c-be6e-bc64f4231f48")
 	)
 	(global_label "GND"
 		(shape passive)
-		(at 259.08 95.25 0)
-		(effects (font (size 1 1)) (justify left))
-		(uuid "b6fd3748-5195-5c7d-a105-93cc2cd58f08")
+		(at 254 99.06 270)
+		(effects (font (size 1 1)) (justify right))
+		(uuid "98320214-a112-56c7-aa71-db3948b16596")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 259.08 95.25 0)
+			(at 254 99.06 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 	)
@@ -2155,13 +2156,13 @@
 	(wire
 		(pts (xy 341.63 95.25) (xy 340.36 95.25))
 		(stroke (width 0) (type default))
-		(uuid "55cd51c6-bab2-5d5a-899c-7e37056d6480")
+		(uuid "3e516f02-164d-5438-af51-daed432bb8b8")
 	)
 	(global_label "+3V3G"
 		(shape passive)
 		(at 340.36 95.25 180)
 		(effects (font (size 1 1)) (justify right))
-		(uuid "070a84a4-9ca4-5398-9982-6a33b79a9636")
+		(uuid "127a5f70-91ca-5572-b2b2-27e01df0401d")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 340.36 95.25 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -2170,13 +2171,13 @@
 	(wire
 		(pts (xy 349.25 95.25) (xy 350.52 95.25))
 		(stroke (width 0) (type default))
-		(uuid "18dd84e9-4970-5170-b175-4a40e49dcbeb")
+		(uuid "945065b9-71b6-5f56-8e24-9431bd303491")
 	)
 	(global_label "GND"
 		(shape passive)
 		(at 350.52 95.25 0)
 		(effects (font (size 1 1)) (justify left))
-		(uuid "efd3d836-4db6-5eb2-abd8-24a80a13ca97")
+		(uuid "b6fd3748-5195-5c7d-a105-93cc2cd58f08")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 350.52 95.25 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -2185,13 +2186,13 @@
 	(wire
 		(pts (xy 21.59 102.87) (xy 20.32 102.87))
 		(stroke (width 0) (type default))
-		(uuid "c06c1b5a-9db7-57cf-8b04-d7b54627411e")
+		(uuid "55cd51c6-bab2-5d5a-899c-7e37056d6480")
 	)
 	(global_label "+3V3G"
 		(shape passive)
 		(at 20.32 102.87 180)
 		(effects (font (size 1 1)) (justify right))
-		(uuid "7bddbd35-3a6d-5aa6-bee5-b885bc4d7e7b")
+		(uuid "070a84a4-9ca4-5398-9982-6a33b79a9636")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 20.32 102.87 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -2200,13 +2201,13 @@
 	(wire
 		(pts (xy 29.21 102.87) (xy 30.48 102.87))
 		(stroke (width 0) (type default))
-		(uuid "04a5c669-ac59-50af-b574-ef67a90ef8b2")
+		(uuid "18dd84e9-4970-5170-b175-4a40e49dcbeb")
 	)
 	(global_label "GND"
 		(shape passive)
 		(at 30.48 102.87 0)
 		(effects (font (size 1 1)) (justify left))
-		(uuid "7283aa08-766f-5441-be73-d76e80810a94")
+		(uuid "efd3d836-4db6-5eb2-abd8-24a80a13ca97")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 30.48 102.87 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -2215,13 +2216,13 @@
 	(wire
 		(pts (xy 67.31 102.87) (xy 66.04 102.87))
 		(stroke (width 0) (type default))
-		(uuid "4b056018-ed33-591e-bb0f-4ebe7bb081f8")
+		(uuid "c06c1b5a-9db7-57cf-8b04-d7b54627411e")
 	)
 	(global_label "GNSS_ANT"
 		(shape passive)
 		(at 66.04 102.87 180)
 		(effects (font (size 1 1)) (justify right))
-		(uuid "25c64162-fc37-576f-a2b1-0607138ea0e5")
+		(uuid "7bddbd35-3a6d-5aa6-bee5-b885bc4d7e7b")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 66.04 102.87 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -2230,13 +2231,13 @@
 	(wire
 		(pts (xy 74.93 102.87) (xy 76.2 102.87))
 		(stroke (width 0) (type default))
-		(uuid "bc2ce571-74fa-59a0-b0d5-a3b2630df723")
+		(uuid "04a5c669-ac59-50af-b574-ef67a90ef8b2")
 	)
 	(global_label "GNSS_RF"
 		(shape passive)
 		(at 76.2 102.87 0)
 		(effects (font (size 1 1)) (justify left))
-		(uuid "97d4d571-41f2-5738-9684-197352a03c32")
+		(uuid "7283aa08-766f-5441-be73-d76e80810a94")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 76.2 102.87 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -2305,13 +2306,13 @@
 	(wire
 		(pts (xy 204.47 102.87) (xy 203.2 102.87))
 		(stroke (width 0) (type default))
-		(uuid "afb37c52-d519-5559-85c1-a3456361e102")
+		(uuid "4b056018-ed33-591e-bb0f-4ebe7bb081f8")
 	)
 	(global_label "GNSS_BIAS"
 		(shape passive)
 		(at 203.2 102.87 180)
 		(effects (font (size 1 1)) (justify right))
-		(uuid "24b79f83-18da-59e5-bf16-2e1a4c495e80")
+		(uuid "25c64162-fc37-576f-a2b1-0607138ea0e5")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 203.2 102.87 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -2320,13 +2321,13 @@
 	(wire
 		(pts (xy 212.09 102.87) (xy 213.36 102.87))
 		(stroke (width 0) (type default))
-		(uuid "16d2750d-f0b0-5398-8e93-f44b8b8342ff")
+		(uuid "bc2ce571-74fa-59a0-b0d5-a3b2630df723")
 	)
 	(global_label "GND"
 		(shape passive)
 		(at 213.36 102.87 0)
 		(effects (font (size 1 1)) (justify left))
-		(uuid "e9f11093-936e-5a6f-8671-4963430531fe")
+		(uuid "97d4d571-41f2-5738-9684-197352a03c32")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 213.36 102.87 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -2665,13 +2666,13 @@
 	(wire
 		(pts (xy 67.31 195.58) (xy 66.04 195.58))
 		(stroke (width 0) (type default))
-		(uuid "44fc4639-fdf4-5a4f-9d17-bba067b2fa4a")
+		(uuid "afb37c52-d519-5559-85c1-a3456361e102")
 	)
 	(global_label "BTN1"
 		(shape passive)
 		(at 66.04 195.58 180)
 		(effects (font (size 1 1)) (justify right))
-		(uuid "fda5211a-c050-5422-b775-972537193f64")
+		(uuid "24b79f83-18da-59e5-bf16-2e1a4c495e80")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 66.04 195.58 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -2680,13 +2681,13 @@
 	(wire
 		(pts (xy 74.93 195.58) (xy 76.2 195.58))
 		(stroke (width 0) (type default))
-		(uuid "f2ef438f-effa-5fa5-94af-c3ba1eb56f09")
+		(uuid "16d2750d-f0b0-5398-8e93-f44b8b8342ff")
 	)
 	(global_label "GND"
 		(shape passive)
 		(at 76.2 195.58 0)
 		(effects (font (size 1 1)) (justify left))
-		(uuid "0586c6ea-ff1d-5e0f-9ec5-08b015ba6c62")
+		(uuid "e9f11093-936e-5a6f-8671-4963430531fe")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 76.2 195.58 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -2725,13 +2726,13 @@
 	(wire
 		(pts (xy 158.75 195.58) (xy 157.48 195.58))
 		(stroke (width 0) (type default))
-		(uuid "3a8d32e7-9f83-5ebf-b20d-abcfe2dfda34")
+		(uuid "44fc4639-fdf4-5a4f-9d17-bba067b2fa4a")
 	)
 	(global_label "BTN2"
 		(shape passive)
 		(at 157.48 195.58 180)
 		(effects (font (size 1 1)) (justify right))
-		(uuid "7434cc04-24fc-5270-bbca-033040cc2063")
+		(uuid "fda5211a-c050-5422-b775-972537193f64")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 157.48 195.58 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -2740,13 +2741,13 @@
 	(wire
 		(pts (xy 166.37 195.58) (xy 167.64 195.58))
 		(stroke (width 0) (type default))
-		(uuid "5590713d-cb9f-5c9f-b406-516cba2b8bbe")
+		(uuid "f2ef438f-effa-5fa5-94af-c3ba1eb56f09")
 	)
 	(global_label "GND"
 		(shape passive)
 		(at 167.64 195.58 0)
 		(effects (font (size 1 1)) (justify left))
-		(uuid "494311c1-fb8e-5105-af09-33e1306ea34e")
+		(uuid "0586c6ea-ff1d-5e0f-9ec5-08b015ba6c62")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 167.64 195.58 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -2785,13 +2786,13 @@
 	(wire
 		(pts (xy 250.19 195.58) (xy 248.92 195.58))
 		(stroke (width 0) (type default))
-		(uuid "7eea9a3a-7df5-525a-82a7-56aae962e9a9")
+		(uuid "3a8d32e7-9f83-5ebf-b20d-abcfe2dfda34")
 	)
 	(global_label "BTN3"
 		(shape passive)
 		(at 248.92 195.58 180)
 		(effects (font (size 1 1)) (justify right))
-		(uuid "f0a673ee-e583-5783-b858-d774445980c0")
+		(uuid "7434cc04-24fc-5270-bbca-033040cc2063")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 248.92 195.58 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -2800,13 +2801,13 @@
 	(wire
 		(pts (xy 257.81 195.58) (xy 259.08 195.58))
 		(stroke (width 0) (type default))
-		(uuid "3b598628-8f6a-55ae-a46c-50d8aa623577")
+		(uuid "5590713d-cb9f-5c9f-b406-516cba2b8bbe")
 	)
 	(global_label "GND"
 		(shape passive)
 		(at 259.08 195.58 0)
 		(effects (font (size 1 1)) (justify left))
-		(uuid "fd6d71af-669e-5c3b-aca9-316a832c9a70")
+		(uuid "494311c1-fb8e-5105-af09-33e1306ea34e")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 259.08 195.58 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -2845,13 +2846,13 @@
 	(wire
 		(pts (xy 341.63 195.58) (xy 340.36 195.58))
 		(stroke (width 0) (type default))
-		(uuid "1efac460-6685-5f9c-b8e7-47e77c86c0dd")
+		(uuid "7eea9a3a-7df5-525a-82a7-56aae962e9a9")
 	)
 	(global_label "BTN4"
 		(shape passive)
 		(at 340.36 195.58 180)
 		(effects (font (size 1 1)) (justify right))
-		(uuid "ff83b3d0-66b5-5048-8610-eb8dd0defc22")
+		(uuid "f0a673ee-e583-5783-b858-d774445980c0")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 340.36 195.58 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -2860,13 +2861,13 @@
 	(wire
 		(pts (xy 349.25 195.58) (xy 350.52 195.58))
 		(stroke (width 0) (type default))
-		(uuid "3cdb1a10-f7e0-5e26-9e7c-d714e9280c9a")
+		(uuid "3b598628-8f6a-55ae-a46c-50d8aa623577")
 	)
 	(global_label "GND"
 		(shape passive)
 		(at 350.52 195.58 0)
 		(effects (font (size 1 1)) (justify left))
-		(uuid "c1814917-1d76-564d-9b98-9f59fdc9ede9")
+		(uuid "fd6d71af-669e-5c3b-aca9-316a832c9a70")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 350.52 195.58 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -3917,35 +3918,32 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:C_Polarized")
-		(at 254 95.25 90)
+		(lib_id "Device:Battery_Cell")
+		(at 254 95.25 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "8f604611-d815-5f42-a774-97cee87bc5fa")
-		(property "Reference" "C134" (at 254 93.05 90) (effects (font (size 1 1))))
-		(property "Value" "0.1F 5.5V" (at 254 97.45 90) (effects (font (size 1 1))))
-		(property "Footprint" "Capacitor_THT:CP_Radial_D8.0mm_P5.00mm"
-			(at 254 95.25 90)
+		(uuid "fdbcbc9a-3694-5921-b2c7-5f6aacc23d39")
+		(property "Reference" "BT1" (at 256.54 92.71 0) (effects (font (size 1.27 1.27)) (justify left)))
+		(property "Value" "MS621FE" (at 256.54 95.25 0) (effects (font (size 1.27 1.27)) (justify left)))
+		(property "Footprint" "Battery:BatteryHolder_Seiko_MS621F"
+			(at 254 93.726 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "Datasheet" "~" (at 254 95.25 90) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "Description" "Polarized capacitor"
-			(at 254 95.25 90)
-			(effects (font (size 1.27 1.27)) (hide yes))
-		)
-		(property "MPN" "0.1 F 5.5 V supercapacitor"
+		(property "Datasheet" "~" (at 254 93.726 90) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Description" "Single-cell battery"
 			(at 254 95.25 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(pin "1" (uuid "98b2ba9e-4d8b-581e-a418-68c663e27507"))
-		(pin "2" (uuid "ee2b0dc2-0ff5-5c48-a596-bec91095fcd2"))
+		(property "MPN" "MS621FE-FL11E" (at 254 95.25 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(pin "1" (uuid "946cd8a7-ebf9-5d97-bb35-38b8d8d2634b"))
+		(pin "2" (uuid "c8deb9a1-dcb0-5459-a926-b5d4e8827e73"))
 		(instances
 			(project "st-501"
 				(path "/ec7c0848-7c11-5458-a70f-fdd3b16d5dd6/dc4ebc74-e5e9-52b5-a806-7b26cc9e93d9"
-					(reference "C134")
+					(reference "BT1")
 					(unit 1)
 				)
 			)
@@ -3992,8 +3990,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "d8ffc30e-7fef-519c-90a0-99a1d48d1971")
-		(property "Reference" "C135" (at 345.44 93.05 90) (effects (font (size 1 1))))
+		(uuid "8f604611-d815-5f42-a774-97cee87bc5fa")
+		(property "Reference" "C134" (at 345.44 93.05 90) (effects (font (size 1 1))))
 		(property "Value" "10u" (at 345.44 97.45 90) (effects (font (size 1 1))))
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 345.44 95.25 90)
@@ -4006,12 +4004,12 @@
 		)
 		(property "MPN" "CL10A106KP8NNNC" (at 345.44 95.25 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "LCSC" "C19702" (at 345.44 95.25 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(pin "1" (uuid "95a71eac-c872-564c-81e9-328fa6b8d652"))
-		(pin "2" (uuid "8cfff85b-b31a-5287-9142-2d6bb502c293"))
+		(pin "1" (uuid "98b2ba9e-4d8b-581e-a418-68c663e27507"))
+		(pin "2" (uuid "ee2b0dc2-0ff5-5c48-a596-bec91095fcd2"))
 		(instances
 			(project "st-501"
 				(path "/ec7c0848-7c11-5458-a70f-fdd3b16d5dd6/dc4ebc74-e5e9-52b5-a806-7b26cc9e93d9"
-					(reference "C135")
+					(reference "C134")
 					(unit 1)
 				)
 			)
@@ -4025,8 +4023,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "c908b895-f111-5849-b395-900222f75a1c")
-		(property "Reference" "C136" (at 25.4 100.67 90) (effects (font (size 1 1))))
+		(uuid "d8ffc30e-7fef-519c-90a0-99a1d48d1971")
+		(property "Reference" "C135" (at 25.4 100.67 90) (effects (font (size 1 1))))
 		(property "Value" "100n" (at 25.4 105.07 90) (effects (font (size 1 1))))
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 25.4 102.87 90)
@@ -4039,12 +4037,12 @@
 		)
 		(property "MPN" "CL05B104KO5NNNC" (at 25.4 102.87 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "LCSC" "C1525" (at 25.4 102.87 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(pin "1" (uuid "2da8b873-c58c-5edf-b4cc-d10b592d1cfa"))
-		(pin "2" (uuid "6a774cc4-b74b-5a51-9afa-913d1e54a766"))
+		(pin "1" (uuid "95a71eac-c872-564c-81e9-328fa6b8d652"))
+		(pin "2" (uuid "8cfff85b-b31a-5287-9142-2d6bb502c293"))
 		(instances
 			(project "st-501"
 				(path "/ec7c0848-7c11-5458-a70f-fdd3b16d5dd6/dc4ebc74-e5e9-52b5-a806-7b26cc9e93d9"
-					(reference "C136")
+					(reference "C135")
 					(unit 1)
 				)
 			)
@@ -4058,8 +4056,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "f225d039-5e46-50e3-a56d-ceb9efd9281c")
-		(property "Reference" "C137" (at 71.12 100.67 90) (effects (font (size 1 1))))
+		(uuid "c908b895-f111-5849-b395-900222f75a1c")
+		(property "Reference" "C136" (at 71.12 100.67 90) (effects (font (size 1 1))))
 		(property "Value" "47p" (at 71.12 105.07 90) (effects (font (size 1 1))))
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 71.12 102.87 90)
@@ -4072,12 +4070,12 @@
 		)
 		(property "MPN" "CL05C470JB5NNNC" (at 71.12 102.87 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "LCSC" "C1567" (at 71.12 102.87 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(pin "1" (uuid "e68803ab-e6c9-539b-8620-4369b818a35b"))
-		(pin "2" (uuid "b5427acc-64b4-54fd-a966-275b1afd6de1"))
+		(pin "1" (uuid "2da8b873-c58c-5edf-b4cc-d10b592d1cfa"))
+		(pin "2" (uuid "6a774cc4-b74b-5a51-9afa-913d1e54a766"))
 		(instances
 			(project "st-501"
 				(path "/ec7c0848-7c11-5458-a70f-fdd3b16d5dd6/dc4ebc74-e5e9-52b5-a806-7b26cc9e93d9"
-					(reference "C137")
+					(reference "C136")
 					(unit 1)
 				)
 			)
@@ -4157,8 +4155,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "a9fd135c-bf95-578c-b7fe-d5b584ec2782")
-		(property "Reference" "C138" (at 208.28 100.67 90) (effects (font (size 1 1))))
+		(uuid "f225d039-5e46-50e3-a56d-ceb9efd9281c")
+		(property "Reference" "C137" (at 208.28 100.67 90) (effects (font (size 1 1))))
 		(property "Value" "10n" (at 208.28 105.07 90) (effects (font (size 1 1))))
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 208.28 102.87 90)
@@ -4174,12 +4172,12 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "LCSC" "C15195" (at 208.28 102.87 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(pin "1" (uuid "c28a6fb5-089e-50e3-a2d1-740001a9e26f"))
-		(pin "2" (uuid "b8cfd13f-39bc-5d5d-a414-8d02c8ad8ba6"))
+		(pin "1" (uuid "e68803ab-e6c9-539b-8620-4369b818a35b"))
+		(pin "2" (uuid "b5427acc-64b4-54fd-a966-275b1afd6de1"))
 		(instances
 			(project "st-501"
 				(path "/ec7c0848-7c11-5458-a70f-fdd3b16d5dd6/dc4ebc74-e5e9-52b5-a806-7b26cc9e93d9"
-					(reference "C138")
+					(reference "C137")
 					(unit 1)
 				)
 			)
@@ -4523,8 +4521,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "8fb916de-8d4c-5955-ab9b-ea2ed91f34c6")
-		(property "Reference" "C139" (at 71.12 193.38 90) (effects (font (size 1 1))))
+		(uuid "a9fd135c-bf95-578c-b7fe-d5b584ec2782")
+		(property "Reference" "C138" (at 71.12 193.38 90) (effects (font (size 1 1))))
 		(property "Value" "100n" (at 71.12 197.78 90) (effects (font (size 1 1))))
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 71.12 195.58 90)
@@ -4537,12 +4535,12 @@
 		)
 		(property "MPN" "CL05B104KO5NNNC" (at 71.12 195.58 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "LCSC" "C1525" (at 71.12 195.58 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(pin "1" (uuid "0377b0d3-8145-59e7-8c95-24587a6eeda0"))
-		(pin "2" (uuid "1425d10c-3f55-54e0-9574-4b61aa6cc8fe"))
+		(pin "1" (uuid "c28a6fb5-089e-50e3-a2d1-740001a9e26f"))
+		(pin "2" (uuid "b8cfd13f-39bc-5d5d-a414-8d02c8ad8ba6"))
 		(instances
 			(project "st-501"
 				(path "/ec7c0848-7c11-5458-a70f-fdd3b16d5dd6/dc4ebc74-e5e9-52b5-a806-7b26cc9e93d9"
-					(reference "C139")
+					(reference "C138")
 					(unit 1)
 				)
 			)
@@ -4589,8 +4587,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "6e6607fc-7448-59d5-b588-ad32eb70a976")
-		(property "Reference" "C140" (at 162.56 193.38 90) (effects (font (size 1 1))))
+		(uuid "8fb916de-8d4c-5955-ab9b-ea2ed91f34c6")
+		(property "Reference" "C139" (at 162.56 193.38 90) (effects (font (size 1 1))))
 		(property "Value" "100n" (at 162.56 197.78 90) (effects (font (size 1 1))))
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 162.56 195.58 90)
@@ -4606,12 +4604,12 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "LCSC" "C1525" (at 162.56 195.58 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(pin "1" (uuid "633cc35e-e9c1-579a-80c8-4adc67b2c272"))
-		(pin "2" (uuid "38c8889f-6eca-59e3-ae15-f23a749ad365"))
+		(pin "1" (uuid "0377b0d3-8145-59e7-8c95-24587a6eeda0"))
+		(pin "2" (uuid "1425d10c-3f55-54e0-9574-4b61aa6cc8fe"))
 		(instances
 			(project "st-501"
 				(path "/ec7c0848-7c11-5458-a70f-fdd3b16d5dd6/dc4ebc74-e5e9-52b5-a806-7b26cc9e93d9"
-					(reference "C140")
+					(reference "C139")
 					(unit 1)
 				)
 			)
@@ -4658,8 +4656,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "80a36f51-424a-54f5-986b-1b7de3530c05")
-		(property "Reference" "C141" (at 254 193.38 90) (effects (font (size 1 1))))
+		(uuid "6e6607fc-7448-59d5-b588-ad32eb70a976")
+		(property "Reference" "C140" (at 254 193.38 90) (effects (font (size 1 1))))
 		(property "Value" "100n" (at 254 197.78 90) (effects (font (size 1 1))))
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 254 195.58 90)
@@ -4672,12 +4670,12 @@
 		)
 		(property "MPN" "CL05B104KO5NNNC" (at 254 195.58 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "LCSC" "C1525" (at 254 195.58 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(pin "1" (uuid "6b1c36ef-3c0c-50ae-8279-cf7dbc00b8ae"))
-		(pin "2" (uuid "4372c290-be44-5bad-b2a8-00a465503176"))
+		(pin "1" (uuid "633cc35e-e9c1-579a-80c8-4adc67b2c272"))
+		(pin "2" (uuid "38c8889f-6eca-59e3-ae15-f23a749ad365"))
 		(instances
 			(project "st-501"
 				(path "/ec7c0848-7c11-5458-a70f-fdd3b16d5dd6/dc4ebc74-e5e9-52b5-a806-7b26cc9e93d9"
-					(reference "C141")
+					(reference "C140")
 					(unit 1)
 				)
 			)
@@ -4724,8 +4722,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "9b5615f1-e333-5ebb-afe1-503c0339925b")
-		(property "Reference" "C142" (at 345.44 193.38 90) (effects (font (size 1 1))))
+		(uuid "80a36f51-424a-54f5-986b-1b7de3530c05")
+		(property "Reference" "C141" (at 345.44 193.38 90) (effects (font (size 1 1))))
 		(property "Value" "100n" (at 345.44 197.78 90) (effects (font (size 1 1))))
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 345.44 195.58 90)
@@ -4741,12 +4739,12 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "LCSC" "C1525" (at 345.44 195.58 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(pin "1" (uuid "3fbb0738-aed2-502b-82ec-caf55abed1c9"))
-		(pin "2" (uuid "8f7e126c-980c-5ae8-a9c9-ac5af81d746b"))
+		(pin "1" (uuid "6b1c36ef-3c0c-50ae-8279-cf7dbc00b8ae"))
+		(pin "2" (uuid "4372c290-be44-5bad-b2a8-00a465503176"))
 		(instances
 			(project "st-501"
 				(path "/ec7c0848-7c11-5458-a70f-fdd3b16d5dd6/dc4ebc74-e5e9-52b5-a806-7b26cc9e93d9"
-					(reference "C142")
+					(reference "C141")
 					(unit 1)
 				)
 			)

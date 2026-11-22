@@ -75,3 +75,18 @@ The restated weight target was confirmed in the same reply and is recorded in D2
 | D41 | No further weight cutting for P1 (closes the options left open by D35) | P1 stays at 6.21 kg for the head alone and 6.83 kg with the wedge. Titanium screws, a 2S1P battery, a pocketed arm and shelf, and a size-14 azimuth reducer are not taken. The production weight pass of D28 (Phase 8) is not affected. Approved: "No more weight cutting" |
 
 The FE 200-600 foot-height question is closed by D40: the design no longer depends on one lens.
+
+## 22 Nov 2026 — Phase 4 decisions (approved: "Go with all recommendations")
+
+The reasoning and numbers are in `docs/04-electronics.md` and `docs/calc/phase4_calcs.py`.
+
+| # | Topic | Decision |
+|---|---|---|
+| D42 | Slew speed in the cold (Q22, changes D26) | 8°/s over the whole −20 to +40 °C range; the 6°/s cold limit is dropped. At 16 V (D33) and with the Phase 3 geometry (D34), a 7 kg load in the EQ extreme at −20 °C has a margin of 1.48 at 8°/s and 1.50 at 6°/s, so slowing down no longer helps. The firmware still lowers the slew speed by itself if StallGuard reports a high load |
+| D43 | Two-level motor rail (Q23, refines D33) | The TPS61288 makes 16 V for slews and 10 V for tracking and holding, switched by one pin (VM_SEL, low = 10 V). On 16 V the drivers cannot regulate the small tracking currents: the StealthChop floor is 0.15 A on the 38 mm motors and 0.25 A on azimuth; on 10 V it is 0.10 A and 0.16 A |
+| D44 | 5 V rail (Q24, extends D27) | A TPS563201 buck (3 A) supplies PP5V of both PD controllers: 5 V / 3 A on port B and the cable supply. The TPS25752A needs it; TI's own evaluation board has a separate 5 V converter |
+| D45 | Inrush and reverse polarity (Q25) | A P-FET switch with soft start (MOTOR_PWR_EN) sits in front of the boost: 1.5 A inrush instead of about 62 A, and a true off for the motor rail. A second P-FET at the pack input blocks a reversed bench supply |
+| D46 | Motor thermistor (Q26) | A 10 k B3950 bead on two wires, taped to the motor case and soldered to two pads on the cartridge board. A chip thermistor on the board would sit 58 mm from the motor; its footprint stays on the board, not fitted |
+| D47 | Cartridge plug pinout (Q27) | JST-GH 15-way, the same at both ends: 1–2 phase A1, 3–4 phase A2, 5 GND, 6 CS, 7 SCK, 8 MOSI, 9 MISO, 10 thermistor, 11 +3.3 V, 12–13 phase B1, 14–15 phase B2. Wired by phase, not by lead colour: the 38 mm and 48 mm motors use different colours for the same phases (D32 check) |
+
+D27 is confirmed: the TPS25751 datasheet lists the BQ25792 among the chargers its firmware drives.

@@ -490,95 +490,59 @@
 				(pin passive line
 					(at 16.51 25.4 180)
 					(length 2.54)
-					(name "VBUS" (effects (font (size 1 1))))
-					(number "33" (effects (font (size 1 1))))
-				)
-				(pin passive line
-					(at 16.51 22.86 180)
-					(length 2.54)
 					(name "VBUS_IN" (effects (font (size 1 1))))
 					(number "23" (effects (font (size 1 1))))
 				)
 				(pin passive line
-					(at 16.51 20.32 180)
-					(length 2.54)
-					(name "VBUS_IN" (effects (font (size 1 1))))
-					(number "24" (effects (font (size 1 1))))
-				)
-				(pin passive line
-					(at 16.51 17.78 180)
-					(length 2.54)
-					(name "VBUS_IN" (effects (font (size 1 1))))
-					(number "25" (effects (font (size 1 1))))
-				)
-				(pin passive line
-					(at 16.51 15.24 180)
+					(at 16.51 22.86 180)
 					(length 2.54)
 					(name "PPHV" (effects (font (size 1 1))))
 					(number "20" (effects (font (size 1 1))))
 				)
 				(pin passive line
-					(at 16.51 12.7 180)
-					(length 2.54)
-					(name "PPHV" (effects (font (size 1 1))))
-					(number "21" (effects (font (size 1 1))))
-				)
-				(pin passive line
-					(at 16.51 10.16 180)
-					(length 2.54)
-					(name "PPHV" (effects (font (size 1 1))))
-					(number "22" (effects (font (size 1 1))))
-				)
-				(pin passive line
-					(at 16.51 7.62 180)
+					(at 16.51 20.32 180)
 					(length 2.54)
 					(name "DRAIN" (effects (font (size 1 1))))
 					(number "15" (effects (font (size 1 1))))
 				)
 				(pin passive line
-					(at 16.51 5.08 180)
+					(at 16.51 17.78 180)
 					(length 2.54)
 					(name "DRAIN" (effects (font (size 1 1))))
 					(number "30" (effects (font (size 1 1))))
 				)
 				(pin passive line
-					(at 16.51 2.54 180)
+					(at 16.51 15.24 180)
 					(length 2.54)
 					(name "EP_DRAIN" (effects (font (size 1 1))))
 					(number "40" (effects (font (size 1 1))))
 				)
 				(pin power_in line
-					(at 16.51 0 180)
+					(at 16.51 12.7 180)
 					(length 2.54)
 					(name "PP5V" (effects (font (size 1 1))))
 					(number "34" (effects (font (size 1 1))))
 				)
-				(pin passive line
-					(at 16.51 -2.54 180)
-					(length 2.54)
-					(name "PP5V" (effects (font (size 1 1))))
-					(number "35" (effects (font (size 1 1))))
-				)
 				(pin bidirectional line
-					(at 16.51 -5.08 180)
+					(at 16.51 10.16 180)
 					(length 2.54)
 					(name "CC1" (effects (font (size 1 1))))
 					(number "28" (effects (font (size 1 1))))
 				)
 				(pin bidirectional line
-					(at 16.51 -7.62 180)
+					(at 16.51 7.62 180)
 					(length 2.54)
 					(name "CC2" (effects (font (size 1 1))))
 					(number "29" (effects (font (size 1 1))))
 				)
 				(pin bidirectional line
-					(at 16.51 -10.16 180)
+					(at 16.51 5.08 180)
 					(length 2.54)
 					(name "GPIO4/USB_P" (effects (font (size 1 1))))
 					(number "26" (effects (font (size 1 1))))
 				)
 				(pin bidirectional line
-					(at 16.51 -12.7 180)
+					(at 16.51 2.54 180)
 					(length 2.54)
 					(name "GPIO5/USB_N" (effects (font (size 1 1))))
 					(number "27" (effects (font (size 1 1))))
@@ -1524,13 +1488,13 @@
 	(wire
 		(pts (xy 166.37 59.69) (xy 168.91 59.69))
 		(stroke (width 0) (type default))
-		(uuid "28879998-5b84-5a71-9e4a-e75a2d2adb22")
+		(uuid "d42d5e12-da7b-5a9a-921f-b0e2a9606036")
 	)
 	(global_label "VBUS_A"
 		(shape passive)
 		(at 168.91 59.69 0)
 		(effects (font (size 1 1)) (justify left))
-		(uuid "cf80f0e4-d7df-5f8d-9b79-a03d2d2023c9")
+		(uuid "3de13130-228f-5c29-948e-7bae4d336a74")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 168.91 59.69 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -1539,13 +1503,13 @@
 	(wire
 		(pts (xy 166.37 62.23) (xy 168.91 62.23))
 		(stroke (width 0) (type default))
-		(uuid "d42d5e12-da7b-5a9a-921f-b0e2a9606036")
+		(uuid "feafdf6d-9a20-5c36-88bf-c8b3a9dd85f6")
 	)
-	(global_label "VBUS_A"
+	(global_label "VBUS_CHG"
 		(shape passive)
 		(at 168.91 62.23 0)
 		(effects (font (size 1 1)) (justify left))
-		(uuid "3de13130-228f-5c29-948e-7bae4d336a74")
+		(uuid "bfcbb10b-e359-5f01-879d-a2cf6986a4f7")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 168.91 62.23 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -1554,13 +1518,13 @@
 	(wire
 		(pts (xy 166.37 64.77) (xy 168.91 64.77))
 		(stroke (width 0) (type default))
-		(uuid "ce07d766-85b0-5e89-9f1f-60ded92ea22f")
+		(uuid "56576082-1d5f-5909-83cd-1ed2623912d1")
 	)
-	(global_label "VBUS_A"
+	(global_label "PDA_DRAIN"
 		(shape passive)
 		(at 168.91 64.77 0)
 		(effects (font (size 1 1)) (justify left))
-		(uuid "43138fee-d96b-58fb-ac0c-03b96bb590d9")
+		(uuid "151c1fa7-e030-53d8-a094-152cac437fe6")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 168.91 64.77 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -1569,13 +1533,13 @@
 	(wire
 		(pts (xy 166.37 67.31) (xy 168.91 67.31))
 		(stroke (width 0) (type default))
-		(uuid "deef86b7-0dc1-5f6b-a0c3-5664503f283a")
+		(uuid "e2198cbb-cff4-5cd5-a58f-89af3c39a430")
 	)
-	(global_label "VBUS_A"
+	(global_label "PDA_DRAIN"
 		(shape passive)
 		(at 168.91 67.31 0)
 		(effects (font (size 1 1)) (justify left))
-		(uuid "52f1a427-65ad-5fd6-b207-7a623c4f85b7")
+		(uuid "53bb3d9b-5c6b-5945-bf23-4b92921f9926")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 168.91 67.31 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -1584,13 +1548,13 @@
 	(wire
 		(pts (xy 166.37 69.85) (xy 168.91 69.85))
 		(stroke (width 0) (type default))
-		(uuid "feafdf6d-9a20-5c36-88bf-c8b3a9dd85f6")
+		(uuid "9be9c794-99f2-56bd-b846-008eb00f9f39")
 	)
-	(global_label "VBUS_CHG"
+	(global_label "PDA_DRAIN"
 		(shape passive)
 		(at 168.91 69.85 0)
 		(effects (font (size 1 1)) (justify left))
-		(uuid "bfcbb10b-e359-5f01-879d-a2cf6986a4f7")
+		(uuid "c56a6b1d-0f20-5f29-ac4d-8c13973e348a")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 168.91 69.85 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -1599,13 +1563,13 @@
 	(wire
 		(pts (xy 166.37 72.39) (xy 168.91 72.39))
 		(stroke (width 0) (type default))
-		(uuid "033f9418-f1e3-5c1b-ba26-4baab4a66f7a")
+		(uuid "98170c6d-3961-5663-9dda-e4ca1b149542")
 	)
-	(global_label "VBUS_CHG"
+	(global_label "+5V"
 		(shape passive)
 		(at 168.91 72.39 0)
 		(effects (font (size 1 1)) (justify left))
-		(uuid "b327b8e6-ea50-5297-ba07-a62f236422b2")
+		(uuid "00ec3423-b7f5-577e-802b-79ff17e4e8aa")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 168.91 72.39 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -1614,13 +1578,13 @@
 	(wire
 		(pts (xy 166.37 74.93) (xy 168.91 74.93))
 		(stroke (width 0) (type default))
-		(uuid "8a7ba061-388d-59f3-9fa4-6747f887339a")
+		(uuid "8fa7ff22-a31d-5dec-a6ec-1490ba56155b")
 	)
-	(global_label "VBUS_CHG"
+	(global_label "A_CC1"
 		(shape passive)
 		(at 168.91 74.93 0)
 		(effects (font (size 1 1)) (justify left))
-		(uuid "919756c7-eb0b-5de4-8e39-8498ddaf60ac")
+		(uuid "bafb935c-679c-511a-934c-71e58ae924b7")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 168.91 74.93 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -1629,110 +1593,20 @@
 	(wire
 		(pts (xy 166.37 77.47) (xy 168.91 77.47))
 		(stroke (width 0) (type default))
-		(uuid "56576082-1d5f-5909-83cd-1ed2623912d1")
+		(uuid "a4082045-6414-568e-b864-2f624420c4d5")
 	)
-	(global_label "PDA_DRAIN"
+	(global_label "A_CC2"
 		(shape passive)
 		(at 168.91 77.47 0)
 		(effects (font (size 1 1)) (justify left))
-		(uuid "151c1fa7-e030-53d8-a094-152cac437fe6")
+		(uuid "650b5f77-3266-5169-9433-5b6abd970852")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 168.91 77.47 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 	)
-	(wire
-		(pts (xy 166.37 80.01) (xy 168.91 80.01))
-		(stroke (width 0) (type default))
-		(uuid "e2198cbb-cff4-5cd5-a58f-89af3c39a430")
-	)
-	(global_label "PDA_DRAIN"
-		(shape passive)
-		(at 168.91 80.01 0)
-		(effects (font (size 1 1)) (justify left))
-		(uuid "53bb3d9b-5c6b-5945-bf23-4b92921f9926")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 168.91 80.01 0)
-			(effects (font (size 1.27 1.27)) (hide yes))
-		)
-	)
-	(wire
-		(pts (xy 166.37 82.55) (xy 168.91 82.55))
-		(stroke (width 0) (type default))
-		(uuid "9be9c794-99f2-56bd-b846-008eb00f9f39")
-	)
-	(global_label "PDA_DRAIN"
-		(shape passive)
-		(at 168.91 82.55 0)
-		(effects (font (size 1 1)) (justify left))
-		(uuid "c56a6b1d-0f20-5f29-ac4d-8c13973e348a")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 168.91 82.55 0)
-			(effects (font (size 1.27 1.27)) (hide yes))
-		)
-	)
-	(wire
-		(pts (xy 166.37 85.09) (xy 168.91 85.09))
-		(stroke (width 0) (type default))
-		(uuid "98170c6d-3961-5663-9dda-e4ca1b149542")
-	)
-	(global_label "+5V"
-		(shape passive)
-		(at 168.91 85.09 0)
-		(effects (font (size 1 1)) (justify left))
-		(uuid "00ec3423-b7f5-577e-802b-79ff17e4e8aa")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 168.91 85.09 0)
-			(effects (font (size 1.27 1.27)) (hide yes))
-		)
-	)
-	(wire
-		(pts (xy 166.37 87.63) (xy 168.91 87.63))
-		(stroke (width 0) (type default))
-		(uuid "7b8f5fb6-d5a0-5d5c-bedc-ec87b3bb28d2")
-	)
-	(global_label "+5V"
-		(shape passive)
-		(at 168.91 87.63 0)
-		(effects (font (size 1 1)) (justify left))
-		(uuid "393c6679-fb54-5b92-b9f2-f92089e285bd")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 168.91 87.63 0)
-			(effects (font (size 1.27 1.27)) (hide yes))
-		)
-	)
-	(wire
-		(pts (xy 166.37 90.17) (xy 168.91 90.17))
-		(stroke (width 0) (type default))
-		(uuid "8fa7ff22-a31d-5dec-a6ec-1490ba56155b")
-	)
-	(global_label "A_CC1"
-		(shape passive)
-		(at 168.91 90.17 0)
-		(effects (font (size 1 1)) (justify left))
-		(uuid "bafb935c-679c-511a-934c-71e58ae924b7")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 168.91 90.17 0)
-			(effects (font (size 1.27 1.27)) (hide yes))
-		)
-	)
-	(wire
-		(pts (xy 166.37 92.71) (xy 168.91 92.71))
-		(stroke (width 0) (type default))
-		(uuid "a4082045-6414-568e-b864-2f624420c4d5")
-	)
-	(global_label "A_CC2"
-		(shape passive)
-		(at 168.91 92.71 0)
-		(effects (font (size 1 1)) (justify left))
-		(uuid "650b5f77-3266-5169-9433-5b6abd970852")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 168.91 92.71 0)
-			(effects (font (size 1.27 1.27)) (hide yes))
-		)
-	)
-	(no_connect (at 166.37 95.25) (uuid "e711e514-c09d-594a-b21c-da55b5ee0cd2"))
-	(no_connect (at 166.37 97.79) (uuid "4943f04c-5733-5715-9fde-02b1d4002463"))
+	(no_connect (at 166.37 80.01) (uuid "e711e514-c09d-594a-b21c-da55b5ee0cd2"))
+	(no_connect (at 166.37 82.55) (uuid "4943f04c-5733-5715-9fde-02b1d4002463"))
 	(wire
 		(pts (xy 229.87 57.15) (xy 227.33 57.15))
 		(stroke (width 0) (type default))
@@ -2720,22 +2594,16 @@
 		(pin "31" (uuid "403eb6ce-895c-5328-9bb2-7c9ab39a761e"))
 		(pin "39" (uuid "e933aecf-c7c2-5492-975e-e3db0b3ede38"))
 		(pin "32" (uuid "155c02fd-1ad9-5885-bd8c-3b279fa62acb"))
-		(pin "33" (uuid "a07d9af1-f937-5f91-a29a-a9bc94f80c9d"))
-		(pin "23" (uuid "90622737-c6e6-5806-adee-319b7515e59b"))
-		(pin "24" (uuid "9ae077e7-6fab-5d3e-bbf8-84aee48779dc"))
-		(pin "25" (uuid "9b7b8b8b-a3c3-5dbd-9a06-31c0efb15ab7"))
-		(pin "20" (uuid "f75791c9-ff3e-555f-81a2-43236e3d9a2b"))
-		(pin "21" (uuid "b899665e-52f5-52d6-a92b-6350bebe9faf"))
-		(pin "22" (uuid "838f24dc-63f2-5f15-b64b-9b4e8f1d5546"))
-		(pin "15" (uuid "95d9817f-478a-5e23-9d32-c1fc018f3bc0"))
-		(pin "30" (uuid "e0731e47-3361-5db1-9b16-a3e2cffddebe"))
-		(pin "40" (uuid "17de9b63-6bac-5fb4-b729-70bef0032b9f"))
-		(pin "34" (uuid "0b7e6ea8-001b-598a-9c95-978ddaecb110"))
-		(pin "35" (uuid "31faff4c-9ac3-55fc-8580-5382be39c423"))
-		(pin "28" (uuid "4b25e91e-d588-5d2c-ba82-b9b718d9d540"))
-		(pin "29" (uuid "d3b438e4-8acf-5ee2-9d40-5b8ec07065f2"))
-		(pin "26" (uuid "ca23a82d-b350-543f-8014-fabb662e140a"))
-		(pin "27" (uuid "7898f730-1b5b-5358-affa-cac25d7c049f"))
+		(pin "23" (uuid "02f371b0-54c2-5815-a601-eb9d8a2330a2"))
+		(pin "20" (uuid "269887c0-7a0b-502f-9ca5-26bbfc98d496"))
+		(pin "15" (uuid "3578b381-942d-58e1-8ea2-b1b412c4d151"))
+		(pin "30" (uuid "49c46b03-42e7-5416-b537-7f89b743ad93"))
+		(pin "40" (uuid "45a06a54-5b24-5962-8a74-149ec8b40fb1"))
+		(pin "34" (uuid "180e4ce9-676b-5bb9-9d9f-aa4c7abf4625"))
+		(pin "28" (uuid "db6b7748-d4db-5499-ac42-0ec4a3668d36"))
+		(pin "29" (uuid "789027d3-159a-546d-81ae-ffcd6963e7cf"))
+		(pin "26" (uuid "0ebf894b-290b-5f72-be38-1c0278159526"))
+		(pin "27" (uuid "e63d4b56-9369-57ab-ba11-d0e375ea005f"))
 		(instances
 			(project "st-501"
 				(path "/ec7c0848-7c11-5458-a70f-fdd3b16d5dd6/a12ab2cc-efb0-5077-95df-e400d7f6bb6d"

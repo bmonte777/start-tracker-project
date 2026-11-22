@@ -68,8 +68,9 @@ def build():
 
     # ------------------------------------------------------------------------------------------ 1 battery input and charger
     s = d.sheet("power", "Battery input, charger and system rail")
-    s.note(20, 20, "Battery input. J1: XT30 from the battery bay (pad 2 is +). Q1 blocks a reversed bench supply. J2: pack SMBus and presence.", 1.6)
-    ic(s, "Connector_Generic:Conn_01x02", "J", "XT30", {1: "GND", 2: "VBAT_IN"}, 35, 40)
+    s.note(20, 20, "Battery input. J1: two solder pads for the battery lead (pad 1 +, pad 2 -); the lead carries an in-line XT30.\n"
+                   "Q1 blocks a reversed bench supply. J2: pack SMBus and presence.", 1.6)
+    s.part("Connector_Generic:Conn_01x02", ref("J"), "BAT+ BAT-", cat.PART["BATPADS"][0], {1: "VBAT_IN", 2: "GND"}, x=35, y=40, bom=False)
     ic(s, "ST:PMOS_DFN33", "Q", "PFET", {"G": "Q1_G", "D": "VBAT_IN", "S": "VBAT"}, 80, 45)
     fp, f = cat.fields("P", "GH4H")
     s.part("Connector_Generic_MountingPin:Conn_01x04_MountingPin", ref("J"), cat.PART["GH4H"][1], fp,
@@ -173,7 +174,7 @@ def build():
     # ------------------------------------------------------------------------------------------ 3 USB-C port B
     s = d.sheet("usb_b", "USB-C port B: 27 W to the camera")
     s.note(20, 20, "Port B, source only: TPS25752A (I2C target address 0x21; ADCIN1 = 0, ADCIN2 = 0). 5 V / 3 A comes from the 5 V rail through the chip;\n"
-                   "9 V / 3 A comes from the TPS55288 (I2C 0x74) through Q4-Q5. Data pins go to pads for camera control in v2 (D6).", 1.6)
+                   "9 V / 3 A comes from the TPS55288 (I2C 0x74) through Q2-Q3. Data pins go to pads for camera control in v2 (D6).", 1.6)
     fp, f = cat.fields("P", "USBC")
     pins = dict(usb, **{"A4": "VBUS_B", "A9": "VBUS_B", "B4": "VBUS_B", "B9": "VBUS_B", "A5": "B_CC1", "B5": "B_CC2", "A6": "B_DP", "B6": "B_DP",
                         "A7": "B_DN", "B7": "B_DN"})
@@ -321,11 +322,11 @@ def build():
 
     # ------------------------------------------------------------------------------------------ 5 processors
     s = d.sheet("mcu", "ESP32-S3 (connectivity) and RP2354A (motion)")
-    s.note(20, 20, "ESP32-S3-WROOM-1-N16R8: Wi-Fi, BLE, USB, apps. Programs the RP2354A over SWD (IO38-IO40). J8: Tag-Connect for the ESP32 console.", 1.6)
+    s.note(20, 20, "ESP32-S3-WROOM-1-N16R8: Wi-Fi, BLE, USB, apps. Programs the RP2354A over SWD (IO38-IO40). J5: Tag-Connect for the ESP32 console.", 1.6)
     pins = {"GND": "GND", "3V3": "+3V3", "EN": "ESP_EN"}
     pins.update(ESP)
     ic(s, "RF_Module:ESP32-S3-WROOM-1", "U", "ESP32", pins, 70, 90)
-    s.note(165, 30, "RP2354A: three PIO step trains, encoder SPI, driver UART. 12 MHz crystal, core supply 1.1 V from its own regulator. J9: Tag-Connect SWD.", 1.6)
+    s.note(165, 30, "RP2354A: three PIO step trains, encoder SPI, driver UART. 12 MHz crystal, core supply 1.1 V from its own regulator. J6: Tag-Connect SWD.", 1.6)
     pins = {"IOVDD": "+3V3", "DVDD": "+1V1", "XIN": "RP_XIN", "XOUT": "RP_XOUT", "SWCLK": "RP_SWCLK", "SWDIO": "RP_SWDIO", "RUN": "RP_RUN",
             "ADC_AVDD": "+3V3A", "VREG_AVDD": "RP_AVDD", "VREG_PGND": "GND", "VREG_LX": "RP_LX", "VREG_VIN": "+3V3", "VREG_FB": "+1V1",
             "USB_DM": "RP_USB_DM", "USB_DP": "RP_USB_DP", "USB_OTP_VDD": "+3V3", "QSPI_IOVDD": "+3V3", "QSPI_SD3": NC, "QSPI_SCLK": NC,
@@ -384,7 +385,7 @@ def build():
     # ------------------------------------------------------------------------------------------ 6 drivers
     s = d.sheet("drivers", "Stepper drivers and cartridge plugs")
     s.note(20, 16, "Three TMC2209-LA on one UART (addresses 0, 1, 2). Sense resistors 0.15 ohm: 1.35 A RMS full scale. VREF strap gives 0.34 A if a driver is "
-                   "enabled before set-up.\nCartridge plugs J10-J12, JST-GH 15-way: 1-2 A1, 3-4 A2, 5 GND, 6 CS, 7 SCK, 8 MOSI, 9 MISO, 10 NTC, 11 3V3, 12-13 B1, 14-15 B2.", 1.6)
+                   "enabled before set-up.\nCartridge plugs J7 (azimuth), J8 (altitude), J9 (roll), JST-GH 15-way: 1-2 A1, 3-4 A2, 5 GND, 6 CS, 7 SCK, 8 MOSI, 9 MISO, 10 NTC, 11 3V3, 12-13 B1, 14-15 B2.", 1.6)
     for i, (ax, addr) in enumerate(AXES):
         x0 = 30 + i * 135
         ic(s, "Driver_Motor:TMC2209-LA", "U", "TMC2209",
@@ -393,8 +394,8 @@ def build():
             "INDEX": NC, "CLK": "GND", "~{PD}/UART": "TMC_UART", "VCC_IO": "+3V3", "STEP": f"STEP_{ax}", "VREF": f"{ax}_VREF", "DIR": f"DIR_{ax}",
             "STDBY": "GND", "OA2": f"{ax}_A2", "VS": "VMOT", "BRA": f"{ax}_BRA", "OA1": f"{ax}_A1", "NC": NC, "OB1": f"{ax}_B1", "BRB": f"{ax}_BRB"},
            x0 + 45, 70)
-        fp, f = cat.fields("P", "GH15H")
-        s.part("Connector_Generic_MountingPin:Conn_01x15_MountingPin", ref("J"), cat.PART["GH15H"][1], fp,
+        fp, f = cat.fields("P", "GH15V")
+        s.part("Connector_Generic_MountingPin:Conn_01x15_MountingPin", ref("J"), cat.PART["GH15V"][1], fp,
                {1: f"{ax}_A1", 2: f"{ax}_A1", 3: f"{ax}_A2", 4: f"{ax}_A2", 5: "GND", 6: f"{ax}_CS", 7: f"{ax}_SCK", 8: f"{ax}_MOSI", 9: "ENC_MISO",
                 10: f"NTC_{ax}", 11: f"{ax}_3V3", 12: f"{ax}_B1", 13: f"{ax}_B1", 14: f"{ax}_B2", 15: f"{ax}_B2", "MP": "GND"}, x=x0 + 20, y=150, **f)
         ic(s, "Power_Protection:SRV05-4", "U", "SRV05",
@@ -447,7 +448,8 @@ def build():
     c(s, "1u", "+3V3", "GND")
     c(s, "10u", "MAG_CAP", "GND")
     c(s, "100n", "+3V3", "GND")
-    two(s, "Device:C_Polarized", "C", "SUPERCAP", "RTC_VBAK", "GND", value="0.1F 5.5V")
+    fp, f = cat.fields("P", "RTCBAT")
+    s.part("Device:Battery_Cell", ref("BT"), "MS621FE", fp, {"+": "RTC_VBAK", "-": "GND"}, **f)
     two(s, "Device:FerriteBead", "FB", "FB", "+3V3", "+3V3G")
     c(s, "10u", "+3V3G", "GND")
     c(s, "100n", "+3V3G", "GND")
@@ -456,7 +458,7 @@ def build():
     r(s, "10R", "GNSS_VRF", "GNSS_BIAS")
     c(s, "10n", "GNSS_BIAS", "GND")
 
-    s.note(20, 122, "OLED 1.3 in SH1106 module on a 4-pin header (J14). R fitted for modules marked VCC-GND-SCL-SDA; swap to the two unfitted ones for GND-VCC.", 1.6)
+    s.note(20, 122, "OLED 1.3 in SH1106 module on a 4-pin header (J11). R fitted for modules marked VCC-GND-SCL-SDA; swap to the two unfitted ones for GND-VCC.", 1.6)
     s.part("Connector_Generic:Conn_01x04", ref("J"), "OLED 1.3in SH1106", "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical",
            {1: "OLED_P1", 2: "OLED_P2", 3: "I2C_SCL", 4: "I2C_SDA"}, x=35, y=140, bom=False)
     s.lane(70, 132, cols=4)
@@ -477,7 +479,7 @@ def build():
         r(s, "1k", f"LED_{col}", f"LED_{col}_A")
         two(s, "Device:LED", "D", key, "GND", f"LED_{col}_A", value=val)
 
-    s.note(200, 122, "Shutter port J15 (to the 2.5 mm jack on the bezel): tip = shutter, ring = focus, sleeve = camera ground. Isolated from the head by U21-U22.", 1.6)
+    s.note(200, 122, "Shutter port J12 (to the 2.5 mm jack on the bezel): tip = shutter, ring = focus, sleeve = camera ground. Isolated from the head by U25-U26.", 1.6)
     ic(s, "Isolator:TLP291", "U", "TLP291", {1: "OPT_F_A", 2: "GND", 3: "SH_SLEEVE", 4: "SH_RING"}, 225, 142)
     ic(s, "Isolator:TLP291", "U", "TLP291", {1: "OPT_S_A", 2: "GND", 3: "SH_SLEEVE", 4: "SH_TIP"}, 275, 142)
     fp, f = cat.fields("P", "GH3H")
@@ -497,3 +499,85 @@ def build():
     for net in ("+3V3G", "RTC_VBAK"):
         s.flag(net)
     return d
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Layout. Coordinates: seen from the front (the bezel side), X right, Y up, origin at the board centre.
+# The Phase 3 CAD uses (Y - 15, Z - 86) with +Y to the left in this view, so x = -(Y - 15), y = Z - 86.
+# F = front face (OLED, buttons, USB-C, LEDs), B = inner face (everything else, up to 12 mm tall).
+# ----------------------------------------------------------------------------------------------------------------------
+FIXED = {
+    # front face, positions set by the bezel openings
+    "J11": (-3.81, 27.9, 90, "F"), "SW1": (3, -18, 0, "F"), "SW2": (14, -18, 0, "F"), "SW3": (25, -18, 0, "F"), "SW4": (36, -18, 0, "F"),
+    "J3": (-25, -15.35, 0, "F"), "J4": (-38, -15.35, 0, "F"), "D11": (-37.5, 19.5, 0, "F"), "D12": (-37.5, 21.0, 0, "F"),
+    "D13": (-37.5, 18.0, 0, "F"), "H1": (-46, 26, 0, "F"), "H2": (46, 26, 0, "F"), "H3": (-46, -26, 0, "F"), "H4": (46, -26, 0, "F"),
+    # inner face: cartridge plugs and drivers
+    "J7": (29.5, 25.5, 0, "B"), "J8": (29.5, 18.4, 0, "B"), "J9": (29.5, 11.3, 0, "B"),
+    "U15": (10.5, 25.3, 270, "B"), "U17": (10.5, 15.9, 270, "B"), "U19": (10.5, 6.5, 270, "B"),
+    # processors
+    "U13": (-6.0, -17.2, 180, "B"), "U14": (17.0, -6.5, 0, "B"),
+    # battery input and motor rail
+    "J1": (38.3, -25.5, 0, "B"), "Q1": (29.8, -25.5, 0, "B"), "Q6": (30.0, -19.0, 0, "B"), "U12": (33.5, -13.0, 0, "B"),
+    "L5": (41.5, -17.0, 0, "B"), "C77": (45.0, -6.5, 90, "B"), "C78": (45.0, 3.3, 90, "B"),
+    # port A and charger
+    "U3": (-25.0, -6.0, 0, "B"), "U2": (-27.0, 6.5, 0, "B"), "L1": (-19.5, 7.0, 0, "B"), "C19": (-30.5, 15.5, 0, "B"), "U4": (-33.5, -1.0, 0, "B"),
+    # port B
+    "U6": (-41.0, -5.5, 0, "B"), "U7": (-30.0, 24.0, 0, "B"), "L2": (-38.3, 24.6, 0, "B"), "U8": (-45.0, 2.0, 90, "B"),
+    # 5 V and 3.3 V rails
+    "U11": (-17.5, 20.3, 0, "B"), "L4": (-12.5, 26.2, 0, "B"), "C49": (-23.0, 26.2, 0, "B"), "U10": (-7.5, 12.5, 0, "B"), "L3": (-2.0, 12.5, 0, "B"),
+    # sensors
+    "U24": (2.2, 2.0, 0, "B"), "U21": (-9.0, 0.0, 0, "B"), "U22": (-2.5, 20.5, 0, "B"), "U23": (-13.5, -0.5, 0, "B"),
+    "J2": (13.4, -20.5, 180, "B"), "J12": (-45.5, -20.0, 90, "B"), "J5": (22.0, -21.5, 0, "B"), "J6": (22.0, -27.0, 0, "B"),
+}
+JACK = (-41.0, 11.0, 4.5)     # cut-out for the panel-mount 2.5 mm jack that sits in the bezel
+
+
+def layout(pcb):
+    import math
+    pcb.outline_rect(100.0, 60.0, r=1.0)
+    pcb.outline_circle(JACK[2], JACK[0], JACK[1])
+    pcb.bounds = (-49.4, -29.4, 49.4, 29.4)
+    pcb.block("*", (JACK[0] - JACK[2] - 0.6, JACK[1] - JACK[2] - 0.6, JACK[0] + JACK[2] + 0.6, JACK[1] + JACK[2] + 0.6))
+    for ref, (x, y, rot, side) in FIXED.items():
+        pcb.place(ref, x, y, rot=rot, side=side, ref_text=False)
+    import pcbnew
+    for pad in pcb.fps["U3"].Pads():          # the package's own gap between the wide pads 20 and 23 is 0.12 mm
+        if pad.GetNumber() in ("20", "23"):
+            pad.SetLocalClearance(pcbnew.FromMM(0.1))
+    # sense resistors between each driver and its plug, right at the BRA / BRB pins
+    for (ax, _a), drv in zip(AXES, ("U15", "U17", "U19")):
+        x, y = FIXED[drv][0], FIXED[drv][1]
+        for net, dy in ((f"{ax}_BRA", 2.35), (f"{ax}_BRB", -2.35)):
+            rr = [r_ for (r_, _p), n_ in pcb.netmap.items() if n_ == net and r_.startswith("R")][0]
+            pcb.place(rr, x + 5.25, y + dy, rot=90, side="B", ref_text=False)
+    # ESP32 antenna: nothing under the last 6 mm of the module and 15 mm either side (its footprint carries the keep-out zone)
+    pcb.block("*", (-30.0, -30.0, 18.0, -23.9))
+    order = [p["ref"] for p in pcb.model["parts"] if p["ref"] not in FIXED and p["ref"] not in pcb.fps]
+    # parts that tie a pin of a placed IC to something local go first, test points last
+    order.sort(key=lambda r: (r.startswith("TP"), not r.startswith(("L", "Q", "Y", "U", "D", "FB", "BT", "J"))))
+    failed = pcb.autoplace(order)
+    if failed:
+        print("AUTOPLACE FAILED:", " ".join(failed))
+
+    # net classes: the autorouter draws these nets at the stated width; the planes below carry the bulk of the current
+    pcb.netclass("Power", 0.6, ["VBAT", "VBAT_IN", "VSYS", "VM_IN", "VMOT", "VBUS_A", "VBUS_B", "VBUS_CHG", "VPB", "VPB_RAW", "PB_MID", "+5V",
+                                "CHG_SW1", "CHG_SW2", "CHG_PMID", "PB_SW1", "PB_SW2", "BST_SW", "SW_5V", "SW_3V3"])
+    pcb.netclass("Phase", 0.5, [f"{ax}_{p_}" for ax, _a in AXES for p_ in ("A1", "A2", "B1", "B2", "BRA", "BRB")])
+    pcb.netclass("Supply", 0.3, ["+3V3", "+3V3A", "+3V3G", "+1V1", "PDA_LDO3V3", "PDB_LDO3V3", "CHG_REGN", "PB_VCC", "BST_VCC", "RP_LX"]
+                 + [f"{ax}_{p_}" for ax, _a in AXES for p_ in ("3V3", "5V")])
+    pcb.sync_classes()
+    # inner layers: In1 solid ground; In2 system rail under the power half, 3.3 V under the logic, motor rail under the drivers
+    full = pcb.rect(-49.5, -29.5, 49.5, 29.5)
+    pcb.zone("GND", "In1", full, clearance=0.2, solid=True)
+    pcb.zone("+3V3", "In2", full, clearance=0.2, solid=True, priority=0)
+    pcb.zone("VSYS", "In2", [(-49.5, -29.5), (-12.0, -29.5), (-12.0, -4.0), (-18.0, 3.0), (-18.0, 29.5), (-49.5, 29.5)], clearance=0.2, solid=True, priority=2)
+    pcb.zone("VSYS", "In2", pcb.rect(20.0, -29.5, 49.5, -9.0), clearance=0.2, solid=True, priority=2)
+    pcb.zone("VMOT", "In2", pcb.rect(5.0, -8.0, 49.5, 29.5), clearance=0.2, solid=True, priority=3)
+    return pcb
+
+
+def finish(pcb):
+    """After the autorouter: ground pours on both outer faces."""
+    full = pcb.rect(-49.5, -29.5, 49.5, 29.5)
+    pcb.zone("GND", "F", full, clearance=0.2)
+    pcb.zone("GND", "B", full, clearance=0.2)

@@ -1463,7 +1463,7 @@
 			(embedded_fonts no)
 		)
 	)
-	(text "Port B, source only: TPS25752A (I2C target address 0x21; ADCIN1 = 0, ADCIN2 = 0). 5 V / 3 A comes from the 5 V rail through the chip;\n9 V / 3 A comes from the TPS55288 (I2C 0x74) through Q4-Q5. Data pins go to pads for camera control in v2 (D6)."
+	(text "Port B, source only: TPS25752A (I2C target address 0x21; ADCIN1 = 0, ADCIN2 = 0). 5 V / 3 A comes from the 5 V rail through the chip;\n9 V / 3 A comes from the TPS55288 (I2C 0x74) through Q2-Q3. Data pins go to pads for camera control in v2 (D6)."
 		(exclude_from_sim no)
 		(at 20 20 0)
 		(effects (font (size 1.6 1.6)) (justify left bottom))

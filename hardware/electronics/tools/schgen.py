@@ -54,6 +54,7 @@ class Sheet:
         self.d, self.key, self.title, self.paper = design, key, title, paper
         self.parts, self.notes, self.flags = [], [], []
         self._lane = None
+        self._owner = None
 
     # ---- placement helpers
     def note(self, x, y, text, size=2.0):
@@ -69,7 +70,7 @@ class Sheet:
         ln["i"] += 1
         return ln["x"] + c * ln["dx"], ln["y"] + r * ln["dy"]
 
-    def part(self, lib_id, ref, value, footprint, pins, x=None, y=None, rot=0, dnp=False, bom=True, **fields):
+    def part(self, lib_id, ref, value, footprint, pins, x=None, y=None, rot=0, dnp=False, bom=True, owner=None, **fields):
         if x is None:
             x, y = self._next()
         x, y = round(x / GRID) * GRID, round(y / GRID) * GRID
@@ -97,6 +98,9 @@ class Sheet:
             raise KeyError(f"{ref} ({lib_id}): pins not assigned: " + ", ".join(f"{m}:{names[m]}" for m in missing))
         p = Part(ref, lib_id, value, footprint, resolved, {k.upper() if k in ("lcsc", "mpn") else k: v for k, v in fields.items()},
                  self, x, y, rot, dnp, bom and bool(pins))
+        if len(nums) > 2 and not ref.startswith(("TP", "Q", "D", "Y", "J", "SW")):
+            self._owner = ref
+        p.owner = owner or self._owner
         if ref in self.d.refs:
             raise ValueError("duplicate reference " + ref)
         self.d.refs[ref] = p
@@ -157,7 +161,7 @@ class Design:
 
     def save_model(self, path):
         m = dict(name=self.name, title=self.title, rev=self.rev, parts=[
-            dict(ref=p.ref, value=p.value, footprint=p.footprint, lib_id=p.lib_id, dnp=p.dnp, bom=p.bom, fields=p.fields, sheet=p.sheet.key,
+            dict(ref=p.ref, value=p.value, footprint=p.footprint, lib_id=p.lib_id, dnp=p.dnp, bom=p.bom, owner=p.owner, fields=p.fields, sheet=p.sheet.key,
                  pins={k: (None if v == NC else v) for k, v in p.pins.items()}) for p in self.refs.values()])
         with open(path, "w") as f:
             json.dump(m, f, indent=1)

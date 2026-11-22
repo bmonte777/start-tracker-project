@@ -22,7 +22,7 @@ RULES = {
     2: dict(min_clearance=0.15, min_track_width=0.15, min_via_diameter=0.6, min_via_annular_width=0.13, min_through_hole_diameter=0.3,
             min_hole_to_hole=0.5, min_copper_edge_clearance=0.3, min_hole_clearance=0.25, min_connection=0.15,
             min_silk_clearance=0.0, min_text_height=0.8, min_text_thickness=0.1, solder_mask_to_copper_clearance=0.0),
-    4: dict(min_clearance=0.127, min_track_width=0.127, min_via_diameter=0.5, min_via_annular_width=0.1, min_through_hole_diameter=0.25,
+    4: dict(min_clearance=0.1, min_track_width=0.127, min_via_diameter=0.45, min_via_annular_width=0.1, min_through_hole_diameter=0.2,
             min_hole_to_hole=0.5, min_copper_edge_clearance=0.3, min_hole_clearance=0.25, min_connection=0.127,
             min_silk_clearance=0.0, min_text_height=0.8, min_text_thickness=0.1, solder_mask_to_copper_clearance=0.0),
 }
@@ -62,11 +62,21 @@ class PCB:
         self.netmap, self.comps = read_netlist(os.path.join(folder, "out", name + ".net"))
         self.nets = {}
         self.fps = {}
+        self.occ = {"F": [], "B": []}          # occupied rectangles per side (courtyards), board coordinates
+        self.padpos = {}                       # net -> [(ref, pad, (x, y), side)]
+        self.side = {}
+        self._tmpl = {}
+        self._load = {}
+        self.bounds = None
+        self.fanout = {}
+        for (r_, p_), n_ in self.netmap.items():
+            self.fanout[n_] = self.fanout.get(n_, 0) + 1
         ds = self.board.GetDesignSettings()
         ds.m_MinClearance = MM(self.rules["min_clearance"])
         ds.m_TrackMinWidth = MM(self.rules["min_track_width"])
         ds.m_ViasMinSize = MM(self.rules["min_via_diameter"])
         ds.m_MinThroughDrill = MM(self.rules["min_through_hole_diameter"])
+        ds.m_ViasMinAnnularWidth = MM(self.rules["min_via_annular_width"])
         ds.m_CopperEdgeClearance = MM(self.rules["min_copper_edge_clearance"])
         ds.m_HoleToHoleMin = MM(self.rules["min_hole_to_hole"])
         ds.m_HoleClearance = MM(self.rules["min_hole_clearance"])
@@ -80,6 +90,26 @@ class PCB:
             ds.SetGridOrigin(self.P(0, 0))
         except Exception:
             pass
+
+    def netclass(self, name, track, patterns, clearance=None, via=None):
+        """A net class with its own track width; patterns are exact net names or wildcards (KiCad syntax)."""
+        ds = self.board.GetDesignSettings()
+        ns = ds.m_NetSettings
+        nc = pcbnew.NETCLASS(name)
+        nc.SetTrackWidth(MM(track))
+        nc.SetClearance(MM(clearance or self.clearance))
+        v = via or self.default_via
+        nc.SetViaDiameter(MM(v[0]))
+        nc.SetViaDrill(MM(v[1]))
+        ns.SetNetclass(name, nc)
+        for pat in patterns:
+            ns.SetNetclassPatternAssignment(pat, name)
+        self._classes = getattr(self, "_classes", []) + [dict(name=name, track_width=track, clearance=clearance or self.clearance,
+                                                              via_diameter=v[0], via_drill=v[1], patterns=list(patterns))]
+
+    def sync_classes(self):
+        self.board.GetDesignSettings().m_NetSettings.RecomputeEffectiveNetclasses()
+        self.board.SynchronizeNetsAndNetClasses(True)
 
     # ---- geometry
     def P(self, x, y):
@@ -190,7 +220,125 @@ class PCB:
         r.SetVisible(bool(ref_text))
         fp.Value().SetVisible(False)
         self.fps[ref] = fp
+        self.side[ref] = side
+        cy = fp.GetCourtyard(pcbnew.B_CrtYd if side == "B" else pcbnew.F_CrtYd).BBox()
+        a, b = self.xy(pcbnew.VECTOR2I(cy.GetLeft(), cy.GetBottom())), self.xy(pcbnew.VECTOR2I(cy.GetRight(), cy.GetTop()))
+        rect = (min(a[0], b[0]), min(a[1], b[1]), max(a[0], b[0]), max(a[1], b[1]))
+        if rect[2] - rect[0] > 0.01:
+            self.occ[side].append(rect)
+        tht = [p_ for p_ in fp.Pads() if p_.GetAttribute() in (pcbnew.PAD_ATTRIB_PTH, pcbnew.PAD_ATTRIB_NPTH)]
+        for p_ in tht:
+            px, py = self.xy(p_.GetPosition())
+            hw = pcbnew.ToMM(max(p_.GetSize().x, p_.GetSize().y)) / 2 + 0.45
+            for sd in ("F", "B"):
+                self.occ[sd].append((px - hw, py - hw, px + hw, py + hw))
+        for p_ in fp.Pads():
+            if p_.GetNetname():
+                self.padpos.setdefault(p_.GetNetname(), []).append((ref, p_.GetNumber(), self.xy(p_.GetPosition()), side))
         return fp
+
+    # ---- automatic placement of the small parts next to the pin they serve
+    def block(self, side, rect):
+        for sd in (("F", "B") if side == "*" else (side,)):
+            self.occ[sd].append(rect)
+
+    def _template(self, ref):
+        c = self.comps[ref]
+        key = c["footprint"]
+        if key not in self._tmpl:
+            lib, fpname = key.split(":", 1)
+            libdir = os.path.join(self.folder, "..", "lib", "ST.pretty") if lib == "ST" else os.path.join(KICAD_FP, lib + ".pretty")
+            fp = pcbnew.FootprintLoad(libdir, fpname)
+            cy = fp.GetCourtyard(pcbnew.F_CrtYd).BBox()
+            mm = pcbnew.ToMM
+            self._tmpl[key] = dict(
+                pads={}, cy=(mm(cy.GetLeft()), -mm(cy.GetBottom()), mm(cy.GetRight()), -mm(cy.GetTop())),
+                small=(mm(cy.GetWidth()) <= 2.2 and mm(cy.GetHeight()) <= 1.2) or "R_1206" in fpname)
+            for p_ in fp.Pads():
+                self._tmpl[key]["pads"].setdefault(p_.GetNumber(), (mm(p_.GetPosition().x), -mm(p_.GetPosition().y)))
+        return self._tmpl[key]
+
+    @staticmethod
+    def _xf(pt, side, rot):
+        x, y = pt
+        if side == "B":
+            x = -x
+        for _ in range((rot // 90) % 4):
+            x, y = -y, x
+        return x, y
+
+    def _free(self, side, rect, margin=0.12):
+        x0, y0, x1, y1 = rect
+        bx0, by0, bx1, by1 = self.bounds
+        if x0 < bx0 or y0 < by0 or x1 > bx1 or y1 > by1:
+            return False
+        for (a0, b0, a1, b1) in self.occ[side]:
+            if x0 < a1 + margin and x1 > a0 - margin and y0 < b1 + margin and y1 > b0 - margin:
+                return False
+        return True
+
+    def _target(self, ref, owner):
+        """Pin of this part to pull toward an already placed pad: the most local net first, the owner's pins preferred."""
+        best = None
+        for (r_, pin), net in self.netmap.items():
+            if r_ != ref:
+                continue
+            pads = [q for q in self.padpos.get(net, []) if q[0] != ref]
+            if not pads:
+                continue
+            own = [q for q in pads if q[0] == owner]
+            cand = own or pads
+            cand.sort(key=lambda q: self._load.get((q[0], q[1], q[2]), 0))
+            q = cand[0]
+            rank = (0 if own else 1, 1 if net == "GND" else 0, self.fanout.get(net, 99))
+            if best is None or rank < best[0]:
+                best = (rank, pin, q)
+        return best
+
+    def autoplace(self, refs, near=7.0, far=40.0, both_sides=True, step=0.4):
+        import math
+        failed = []
+        for ref in refs:
+            if ref in self.fps:
+                continue
+            m = [p for p in self.model["parts"] if p["ref"] == ref][0]
+            t = self._template(ref)
+            tgt = self._target(ref, m.get("owner"))
+            if tgt is None:
+                failed.append(ref)
+                continue
+            _rank, pin, (aref, apad, (tx, ty), aside) = tgt
+            x0, y0, x1, y1 = t["cy"]
+            done = False
+            tries = [(aside, near)]
+            if both_sides and t["small"]:
+                tries.append(("F" if aside == "B" else "B", near))
+            tries.append((aside, far))
+            for side, rmax in tries:
+                r = 0.0
+                while r <= rmax and not done:
+                    npts = max(1, int(2 * math.pi * r / step))
+                    for k in range(npts):
+                        ang = 2 * math.pi * k / npts
+                        cx0, cy0 = tx + r * math.cos(ang), ty + r * math.sin(ang)
+                        for rot in (0, 90, 180, 270):
+                            px, py = self._xf(t["pads"][pin], side, rot)
+                            cx, cy = round((cx0 - px) / 0.05) * 0.05, round((cy0 - py) / 0.05) * 0.05
+                            c1, c2 = self._xf((x0, y0), side, rot), self._xf((x1, y1), side, rot)
+                            rect = (cx + min(c1[0], c2[0]), cy + min(c1[1], c2[1]), cx + max(c1[0], c2[0]), cy + max(c1[1], c2[1]))
+                            if self._free(side, rect):
+                                self.place(ref, cx, cy, rot=rot, side=side, ref_text=False)
+                                self._load[(aref, apad, (tx, ty))] = self._load.get((aref, apad, (tx, ty)), 0) + 1
+                                done = True
+                                break
+                        if done:
+                            break
+                    r += step
+                if done:
+                    break
+            if not done:
+                failed.append(ref)
+        return failed
 
     def ref_at(self, ref, x, y, rot=0, size=0.8):
         r = self.fps[ref].Reference()
@@ -242,6 +390,9 @@ class PCB:
         v.SetNet(self.net(net))
         self.board.Add(v)
         return v
+
+    def rect(self, x0, y0, x1, y1):
+        return [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
 
     def zone(self, net, layer, pts=None, clearance=0.25, min_w=0.2, solid=False, priority=0):
         z = pcbnew.ZONE(self.board)
@@ -310,6 +461,17 @@ class PCB:
             classes.append({})
         classes[0].update({"name": "Default", "clearance": self.clearance, "track_width": self.default_track,
                            "via_diameter": self.default_via[0], "via_drill": self.default_via[1]})
+        have = {c.get("name") for c in classes}
+        pats = ns.setdefault("netclass_patterns", [])
+        for c in getattr(self, "_classes", []):
+            entry = {k: v for k, v in c.items() if k != "patterns"}
+            if c["name"] in have:
+                [x for x in classes if x.get("name") == c["name"]][0].update(entry)
+            else:
+                classes.append(dict(classes[0], **entry))
+            for pat in c["patterns"]:
+                if not any(q.get("pattern") == pat for q in pats):
+                    pats.append({"netclass": c["name"], "pattern": pat})
         with open(pro, "w") as f:
             json.dump(d, f, indent=2)
 

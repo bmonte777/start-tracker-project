@@ -852,7 +852,7 @@
 			(embedded_fonts no)
 		)
 	)
-	(text "Three TMC2209-LA on one UART (addresses 0, 1, 2). Sense resistors 0.15 ohm: 1.35 A RMS full scale. VREF strap gives 0.34 A if a driver is enabled before set-up.\nCartridge plugs J10-J12, JST-GH 15-way: 1-2 A1, 3-4 A2, 5 GND, 6 CS, 7 SCK, 8 MOSI, 9 MISO, 10 NTC, 11 3V3, 12-13 B1, 14-15 B2."
+	(text "Three TMC2209-LA on one UART (addresses 0, 1, 2). Sense resistors 0.15 ohm: 1.35 A RMS full scale. VREF strap gives 0.34 A if a driver is enabled before set-up.\nCartridge plugs J7 (azimuth), J8 (altitude), J9 (roll), JST-GH 15-way: 1-2 A1, 3-4 A2, 5 GND, 6 CS, 7 SCK, 8 MOSI, 9 MISO, 10 NTC, 11 3V3, 12-13 B1, 14-15 B2."
 		(exclude_from_sim no)
 		(at 20 16 0)
 		(effects (font (size 1.6 1.6)) (justify left bottom))
@@ -4762,11 +4762,11 @@
 		(dnp no)
 		(uuid "870c9397-5162-5f21-9058-26d4fd2e408e")
 		(property "Reference" "J7" (at 49.53 129.54 0) (effects (font (size 1.27 1.27))))
-		(property "Value" "SM15B-GHS-TB(LF)(SN)"
+		(property "Value" "BM15B-GHS-TBT(LF)(SN)"
 			(at 50.8 170.18 0)
 			(effects (font (size 1.27 1.27)) (justify left))
 		)
-		(property "Footprint" "Connector_JST:JST_GH_SM15B-GHS-TB_1x15-1MP_P1.25mm_Horizontal"
+		(property "Footprint" "Connector_JST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical"
 			(at 49.53 149.86 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -4775,11 +4775,11 @@
 			(at 49.53 149.86 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "MPN" "SM15B-GHS-TB(LF)(SN)"
+		(property "MPN" "BM15B-GHS-TBT(LF)(SN)"
 			(at 49.53 149.86 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "LCSC" "C265027" (at 49.53 149.86 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "LCSC" "C5305069" (at 49.53 149.86 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "2817d8ee-9603-5114-810b-1f36742a4d31"))
 		(pin "2" (uuid "2581f02b-7149-501f-b39b-d9525074c5c1"))
 		(pin "3" (uuid "708a3b11-02c0-59d4-8f68-4b1dc5c04718"))
@@ -5590,11 +5590,11 @@
 		(dnp no)
 		(uuid "9f110e5e-0210-5b7e-9139-8b2f34c77dd1")
 		(property "Reference" "J8" (at 185.42 129.54 0) (effects (font (size 1.27 1.27))))
-		(property "Value" "SM15B-GHS-TB(LF)(SN)"
+		(property "Value" "BM15B-GHS-TBT(LF)(SN)"
 			(at 186.69 170.18 0)
 			(effects (font (size 1.27 1.27)) (justify left))
 		)
-		(property "Footprint" "Connector_JST:JST_GH_SM15B-GHS-TB_1x15-1MP_P1.25mm_Horizontal"
+		(property "Footprint" "Connector_JST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical"
 			(at 185.42 149.86 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -5603,11 +5603,11 @@
 			(at 185.42 149.86 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "MPN" "SM15B-GHS-TB(LF)(SN)"
+		(property "MPN" "BM15B-GHS-TBT(LF)(SN)"
 			(at 185.42 149.86 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "LCSC" "C265027" (at 185.42 149.86 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "LCSC" "C5305069" (at 185.42 149.86 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "5bc43734-ac85-508e-b492-2598e883a53c"))
 		(pin "2" (uuid "742271df-6614-57a3-ab30-36c6a6be9ae5"))
 		(pin "3" (uuid "927d8ada-006f-51d2-8fab-701fc8c04240"))
@@ -6409,11 +6409,11 @@
 		(dnp no)
 		(uuid "5858fd07-10f9-5217-810b-013a3c12375d")
 		(property "Reference" "J9" (at 320.04 129.54 0) (effects (font (size 1.27 1.27))))
-		(property "Value" "SM15B-GHS-TB(LF)(SN)"
+		(property "Value" "BM15B-GHS-TBT(LF)(SN)"
 			(at 321.31 170.18 0)
 			(effects (font (size 1.27 1.27)) (justify left))
 		)
-		(property "Footprint" "Connector_JST:JST_GH_SM15B-GHS-TB_1x15-1MP_P1.25mm_Horizontal"
+		(property "Footprint" "Connector_JST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical"
 			(at 320.04 149.86 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -6422,11 +6422,11 @@
 			(at 320.04 149.86 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "MPN" "SM15B-GHS-TB(LF)(SN)"
+		(property "MPN" "BM15B-GHS-TBT(LF)(SN)"
 			(at 320.04 149.86 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "LCSC" "C265027" (at 320.04 149.86 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "LCSC" "C5305069" (at 320.04 149.86 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "df319e99-c429-54b8-be19-43deccea9e58"))
 		(pin "2" (uuid "a1cc0f14-4825-5053-9c0f-ef52f24b6019"))
 		(pin "3" (uuid "72ac4f39-f45a-526b-a7bd-073eb3287f81"))

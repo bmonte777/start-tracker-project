@@ -5,19 +5,17 @@
  "parts": [
   {
    "ref": "J1",
-   "value": "XT30PW-M",
-   "footprint": "Connector_AMASS:AMASS_XT30PW-M_1x02_P2.50mm_Horizontal",
+   "value": "BAT+ BAT-",
+   "footprint": "ST:WirePads_1x02_P5.0mm_3.5x5mm",
    "lib_id": "Connector_Generic:Conn_01x02",
    "dnp": false,
-   "bom": true,
-   "fields": {
-    "MPN": "XT30PW-M",
-    "LCSC": "C431092"
-   },
+   "bom": false,
+   "owner": null,
+   "fields": {},
    "sheet": "power",
    "pins": {
-    "1": "GND",
-    "2": "VBAT_IN"
+    "1": "VBAT_IN",
+    "2": "GND"
    }
   },
   {
@@ -27,6 +25,7 @@
    "lib_id": "ST:PMOS_DFN33",
    "dnp": false,
    "bom": true,
+   "owner": null,
    "fields": {
     "MPN": "AON7403",
     "LCSC": "C5310961"
@@ -51,6 +50,7 @@
    "lib_id": "Connector_Generic_MountingPin:Conn_01x04_MountingPin",
    "dnp": false,
    "bom": true,
+   "owner": null,
    "fields": {
     "MPN": "SM04B-GHS-TB(LF)(SN)",
     "LCSC": "C189895"
@@ -71,6 +71,7 @@
    "lib_id": "Power_Protection:SRV05-4",
    "dnp": false,
    "bom": true,
+   "owner": "U1",
    "fields": {
     "MPN": "SRV05-4.TCT",
     "LCSC": "C2687126"
@@ -92,6 +93,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U1",
    "fields": {
     "MPN": "0402WGF1003TCE",
     "LCSC": "C25741"
@@ -109,6 +111,7 @@
    "lib_id": "Device:D_Zener",
    "dnp": false,
    "bom": true,
+   "owner": "U1",
    "fields": {
     "MPN": "BZT52C12S",
     "LCSC": "C173437"
@@ -126,6 +129,7 @@
    "lib_id": "Device:D_TVS",
    "dnp": false,
    "bom": true,
+   "owner": "U1",
    "fields": {
     "MPN": "SMBJ12A",
     "LCSC": "C114001"
@@ -143,6 +147,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U1",
    "fields": {
     "MPN": "0402WGF1000TCE",
     "LCSC": "C25076"
@@ -160,6 +165,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U1",
    "fields": {
     "MPN": "0402WGF1000TCE",
     "LCSC": "C25076"
@@ -177,6 +183,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U1",
    "fields": {
     "MPN": "0402WGF1001TCE",
     "LCSC": "C11702"
@@ -194,6 +201,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U1",
    "fields": {
     "MPN": "0402WGF4701TCE",
     "LCSC": "C25900"
@@ -211,6 +219,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U1",
    "fields": {
     "MPN": "0402WGF4701TCE",
     "LCSC": "C25900"
@@ -228,6 +237,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U1",
    "fields": {
     "MPN": "0402WGF1003TCE",
     "LCSC": "C25741"
@@ -245,6 +255,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U1",
    "fields": {
     "MPN": "0402WGF3302TCE",
     "LCSC": "C25779"
@@ -262,6 +273,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U1",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -279,6 +291,7 @@
    "lib_id": "Battery_Management:BQ25798",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "BQ25792RQMR",
     "LCSC": "C2862876"
@@ -323,6 +336,7 @@
    "lib_id": "Device:L",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "MWSC0630H2R2MT"
    },
@@ -339,6 +353,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "CL05B473KB5NNNC"
    },
@@ -355,6 +370,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "CL05B473KB5NNNC"
    },
@@ -371,6 +387,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "CL10A475KO8NNNC",
     "LCSC": "C19666"
@@ -388,6 +405,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "CL05B102KB5NNNC",
     "LCSC": "C1523"
@@ -405,6 +423,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "CL31A106KBHNNNE",
     "LCSC": "C13585"
@@ -422,6 +441,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "CL31A106KBHNNNE",
     "LCSC": "C13585"
@@ -439,6 +459,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "CL05B104KB54PNC",
     "LCSC": "C307331"
@@ -456,6 +477,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "CL31A106KBHNNNE",
     "LCSC": "C13585"
@@ -473,6 +495,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "CL31A106KBHNNNE",
     "LCSC": "C13585"
@@ -490,6 +513,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "CL31A106KBHNNNE",
     "LCSC": "C13585"
@@ -507,6 +531,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "CL05B104KB54PNC",
     "LCSC": "C307331"
@@ -524,6 +549,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -541,6 +567,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -558,6 +585,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -575,6 +603,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "CL05B104KB54PNC",
     "LCSC": "C307331"
@@ -592,6 +621,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -609,6 +639,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -626,6 +657,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "0402WGF8201TCE",
     "LCSC": "C25924"
@@ -643,6 +675,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "RC0402FR-075K23L",
     "LCSC": "C137981"
@@ -660,6 +693,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "RC0402FR-0730K1L",
     "LCSC": "C137927"
@@ -677,6 +711,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "0402WGF1002TCE",
     "LCSC": "C25744"
@@ -694,6 +729,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "0402WGF1002TCE",
     "LCSC": "C25744"
@@ -711,6 +747,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "RC0402FR-0726K7L",
     "LCSC": "C137912"
@@ -728,6 +765,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "0402WGF1000TCE",
     "LCSC": "C25076"
@@ -745,6 +783,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "0402WGF1002TCE",
     "LCSC": "C25744"
@@ -762,6 +801,7 @@
    "lib_id": "Device:C_Polarized",
    "dnp": false,
    "bom": true,
+   "owner": "U2",
    "fields": {
     "MPN": "47 uF 25 V polymer"
    },
@@ -778,6 +818,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U2",
    "fields": {},
    "sheet": "power",
    "pins": {
@@ -791,6 +832,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U2",
    "fields": {},
    "sheet": "power",
    "pins": {
@@ -804,6 +846,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U2",
    "fields": {},
    "sheet": "power",
    "pins": {
@@ -817,6 +860,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U2",
    "fields": {},
    "sheet": "power",
    "pins": {
@@ -830,6 +874,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U2",
    "fields": {},
    "sheet": "power",
    "pins": {
@@ -843,6 +888,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U2",
    "fields": {},
    "sheet": "power",
    "pins": {
@@ -856,6 +902,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U2",
    "fields": {},
    "sheet": "power",
    "pins": {
@@ -869,6 +916,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U2",
    "fields": {},
    "sheet": "power",
    "pins": {
@@ -882,6 +930,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U2",
    "fields": {},
    "sheet": "power",
    "pins": {
@@ -895,6 +944,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U2",
    "fields": {},
    "sheet": "power",
    "pins": {
@@ -908,6 +958,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U2",
    "fields": {},
    "sheet": "power",
    "pins": {
@@ -921,6 +972,7 @@
    "lib_id": "Connector:USB_C_Receptacle_USB2.0_16P",
    "dnp": false,
    "bom": true,
+   "owner": null,
    "fields": {
     "MPN": "GT-USB-7051A",
     "LCSC": "C2843970"
@@ -953,6 +1005,7 @@
    "lib_id": "ST:TPS25751D",
    "dnp": false,
    "bom": true,
+   "owner": "U3",
    "fields": {
     "MPN": "TPS25751DREFR"
    },
@@ -982,18 +1035,12 @@
     "31": "GND",
     "39": "GND",
     "32": "VBUS_A",
-    "33": "VBUS_A",
     "23": "VBUS_A",
-    "24": "VBUS_A",
-    "25": "VBUS_A",
     "20": "VBUS_CHG",
-    "21": "VBUS_CHG",
-    "22": "VBUS_CHG",
     "15": "PDA_DRAIN",
     "30": "PDA_DRAIN",
     "40": "PDA_DRAIN",
     "34": "+5V",
-    "35": "+5V",
     "28": "A_CC1",
     "29": "A_CC2",
     "26": null,
@@ -1007,6 +1054,7 @@
    "lib_id": "Memory_EEPROM:24LC512",
    "dnp": false,
    "bom": true,
+   "owner": "U4",
    "fields": {
     "MPN": "CAT24C512WI-GT3",
     "LCSC": "C79986"
@@ -1030,6 +1078,7 @@
    "lib_id": "Power_Protection:SRV05-4",
    "dnp": false,
    "bom": true,
+   "owner": "U5",
    "fields": {
     "MPN": "SRV05-4.TCT",
     "LCSC": "C2687126"
@@ -1051,6 +1100,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U5",
    "fields": {
     "MPN": "CL10A106KP8NNNC",
     "LCSC": "C19702"
@@ -1068,6 +1118,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U5",
    "fields": {
     "MPN": "CL10A106KP8NNNC",
     "LCSC": "C19702"
@@ -1085,6 +1136,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U5",
    "fields": {
     "MPN": "CL10A106KP8NNNC",
     "LCSC": "C19702"
@@ -1102,6 +1154,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U5",
    "fields": {
     "MPN": "CL31A106KBHNNNE",
     "LCSC": "C13585"
@@ -1119,6 +1172,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U5",
    "fields": {
     "MPN": "CL05B104KB54PNC",
     "LCSC": "C307331"
@@ -1136,6 +1190,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U5",
    "fields": {
     "MPN": "CL10A106KP8NNNC",
     "LCSC": "C19702"
@@ -1153,6 +1208,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U5",
    "fields": {
     "MPN": "CL05B221KB5NNNC",
     "LCSC": "C1530"
@@ -1170,6 +1226,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U5",
    "fields": {
     "MPN": "CL05B221KB5NNNC",
     "LCSC": "C1530"
@@ -1187,6 +1244,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U5",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -1204,6 +1262,7 @@
    "lib_id": "Device:D_TVS",
    "dnp": false,
    "bom": true,
+   "owner": "U5",
    "fields": {
     "MPN": "SMBJ24A",
     "LCSC": "C353373"
@@ -1221,6 +1280,7 @@
    "lib_id": "Device:D_TVS",
    "dnp": false,
    "bom": true,
+   "owner": "U5",
    "fields": {
     "MPN": "PESD24VS1UB"
    },
@@ -1237,6 +1297,7 @@
    "lib_id": "Device:D_TVS",
    "dnp": false,
    "bom": true,
+   "owner": "U5",
    "fields": {
     "MPN": "PESD24VS1UB"
    },
@@ -1253,6 +1314,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U5",
    "fields": {
     "MPN": "0402WGF0000TCE",
     "LCSC": "C17168"
@@ -1270,6 +1332,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U5",
    "fields": {
     "MPN": "0402WGF0000TCE",
     "LCSC": "C17168"
@@ -1287,6 +1350,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U5",
    "fields": {
     "MPN": "0402WGF1002TCE",
     "LCSC": "C25744"
@@ -1304,6 +1368,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U5",
    "fields": {
     "MPN": "0402WGF3301TCE",
     "LCSC": "C25890"
@@ -1321,6 +1386,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U5",
    "fields": {
     "MPN": "0402WGF3301TCE",
     "LCSC": "C25890"
@@ -1338,6 +1404,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U5",
    "fields": {
     "MPN": "0402WGF1002TCE",
     "LCSC": "C25744"
@@ -1355,6 +1422,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U5",
    "fields": {},
    "sheet": "usb_a",
    "pins": {
@@ -1368,6 +1436,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U5",
    "fields": {},
    "sheet": "usb_a",
    "pins": {
@@ -1381,6 +1450,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U5",
    "fields": {},
    "sheet": "usb_a",
    "pins": {
@@ -1394,6 +1464,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U5",
    "fields": {},
    "sheet": "usb_a",
    "pins": {
@@ -1407,6 +1478,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U5",
    "fields": {},
    "sheet": "usb_a",
    "pins": {
@@ -1420,6 +1492,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U5",
    "fields": {},
    "sheet": "usb_a",
    "pins": {
@@ -1433,6 +1506,7 @@
    "lib_id": "Connector:USB_C_Receptacle_USB2.0_16P",
    "dnp": false,
    "bom": true,
+   "owner": null,
    "fields": {
     "MPN": "GT-USB-7051A",
     "LCSC": "C2843970"
@@ -1465,6 +1539,7 @@
    "lib_id": "ST:TPS25752A",
    "dnp": false,
    "bom": true,
+   "owner": "U6",
    "fields": {
     "MPN": "TPS25752ARSMR"
    },
@@ -1512,6 +1587,7 @@
    "lib_id": "ST:NMOS_DFN33",
    "dnp": false,
    "bom": true,
+   "owner": "U6",
    "fields": {
     "MPN": "AON7400A",
     "LCSC": "C85734"
@@ -1536,6 +1612,7 @@
    "lib_id": "ST:NMOS_DFN33",
    "dnp": false,
    "bom": true,
+   "owner": "U6",
    "fields": {
     "MPN": "AON7400A",
     "LCSC": "C85734"
@@ -1560,6 +1637,7 @@
    "lib_id": "ST:TPS55288",
    "dnp": false,
    "bom": true,
+   "owner": "U7",
    "fields": {
     "MPN": "TPS55288RPMR"
    },
@@ -1600,6 +1678,7 @@
    "lib_id": "ST:NMOS_DFN33",
    "dnp": false,
    "bom": true,
+   "owner": "U7",
    "fields": {
     "MPN": "AON7400A",
     "LCSC": "C85734"
@@ -1624,6 +1703,7 @@
    "lib_id": "ST:NMOS_DFN33",
    "dnp": false,
    "bom": true,
+   "owner": "U7",
    "fields": {
     "MPN": "AON7400A",
     "LCSC": "C85734"
@@ -1648,6 +1728,7 @@
    "lib_id": "Memory_EEPROM:24LC512",
    "dnp": false,
    "bom": true,
+   "owner": "U8",
    "fields": {
     "MPN": "CAT24C512WI-GT3",
     "LCSC": "C79986"
@@ -1671,6 +1752,7 @@
    "lib_id": "Power_Protection:SRV05-4",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "SRV05-4.TCT",
     "LCSC": "C2687126"
@@ -1692,6 +1774,7 @@
    "lib_id": "Device:L",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "MWSC0630H4R7MT",
     "LCSC": "C2991788"
@@ -1709,6 +1792,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "0.010 ohm 1 % 1 W current sense",
     "LCSC": "C2903542"
@@ -1726,6 +1810,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -1743,6 +1828,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -1760,6 +1846,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL10A475KO8NNNC",
     "LCSC": "C19666"
@@ -1777,6 +1864,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL05B103KB5NNNC",
     "LCSC": "C15195"
@@ -1794,6 +1882,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "0402WGF4992TCE",
     "LCSC": "C25897"
@@ -1811,6 +1900,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "RC0402FR-076K19L",
     "LCSC": "C137999"
@@ -1828,6 +1918,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "RC0402FR-0744K2L",
     "LCSC": "C137961"
@@ -1845,6 +1936,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "0402WGF2002TCE",
     "LCSC": "C25765"
@@ -1862,6 +1954,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL05B103KB5NNNC",
     "LCSC": "C15195"
@@ -1879,6 +1972,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL05C101JB5NNNC",
     "LCSC": "C1546"
@@ -1896,6 +1990,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -1913,6 +2008,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -1930,6 +2026,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -1947,6 +2044,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL05B104KB54PNC",
     "LCSC": "C307331"
@@ -1964,6 +2062,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -1981,6 +2080,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -1998,6 +2098,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -2015,6 +2116,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL05B104KB54PNC",
     "LCSC": "C307331"
@@ -2032,6 +2134,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -2049,6 +2152,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "0402WGF1003TCE",
     "LCSC": "C25741"
@@ -2066,6 +2170,7 @@
    "lib_id": "Device:R",
    "dnp": true,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "0402WGF0000TCE",
     "LCSC": "C17168"
@@ -2083,6 +2188,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "0402WGF1002TCE",
     "LCSC": "C25744"
@@ -2100,6 +2206,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "0402WGF3301TCE",
     "LCSC": "C25890"
@@ -2117,6 +2224,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "0402WGF3301TCE",
     "LCSC": "C25890"
@@ -2134,6 +2242,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "0402WGF0000TCE",
     "LCSC": "C17168"
@@ -2151,6 +2260,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "0402WGF0000TCE",
     "LCSC": "C17168"
@@ -2168,6 +2278,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "0402WGF1003TCE",
     "LCSC": "C25741"
@@ -2185,6 +2296,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "0402WGF1003TCE",
     "LCSC": "C25741"
@@ -2202,6 +2314,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL10A106KP8NNNC",
     "LCSC": "C19702"
@@ -2219,6 +2332,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL10A106KP8NNNC",
     "LCSC": "C19702"
@@ -2236,6 +2350,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -2253,6 +2368,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL10A106KP8NNNC",
     "LCSC": "C19702"
@@ -2270,6 +2386,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL10A106KP8NNNC",
     "LCSC": "C19702"
@@ -2287,6 +2404,7 @@
    "lib_id": "Device:C_Polarized",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "100 uF 10 V polymer"
    },
@@ -2303,6 +2421,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL31A106KBHNNNE",
     "LCSC": "C13585"
@@ -2320,6 +2439,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL05B104KB54PNC",
     "LCSC": "C307331"
@@ -2337,6 +2457,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL05B221KB5NNNC",
     "LCSC": "C1530"
@@ -2354,6 +2475,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "CL05B221KB5NNNC",
     "LCSC": "C1530"
@@ -2371,6 +2493,7 @@
    "lib_id": "Device:D_TVS",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "SMBJ24A",
     "LCSC": "C353373"
@@ -2388,6 +2511,7 @@
    "lib_id": "Device:D_TVS",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "PESD24VS1UB"
    },
@@ -2404,6 +2528,7 @@
    "lib_id": "Device:D_TVS",
    "dnp": false,
    "bom": true,
+   "owner": "U9",
    "fields": {
     "MPN": "PESD24VS1UB"
    },
@@ -2420,6 +2545,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U9",
    "fields": {},
    "sheet": "usb_b",
    "pins": {
@@ -2433,6 +2559,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U9",
    "fields": {},
    "sheet": "usb_b",
    "pins": {
@@ -2446,6 +2573,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U9",
    "fields": {},
    "sheet": "usb_b",
    "pins": {
@@ -2459,6 +2587,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U9",
    "fields": {},
    "sheet": "usb_b",
    "pins": {
@@ -2472,6 +2601,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U9",
    "fields": {},
    "sheet": "usb_b",
    "pins": {
@@ -2485,6 +2615,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U9",
    "fields": {},
    "sheet": "usb_b",
    "pins": {
@@ -2498,6 +2629,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U9",
    "fields": {},
    "sheet": "usb_b",
    "pins": {
@@ -2511,6 +2643,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U9",
    "fields": {},
    "sheet": "usb_b",
    "pins": {
@@ -2524,6 +2657,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U9",
    "fields": {},
    "sheet": "usb_b",
    "pins": {
@@ -2537,6 +2671,7 @@
    "lib_id": "Regulator_Switching:TPS62932",
    "dnp": false,
    "bom": true,
+   "owner": "U10",
    "fields": {
     "MPN": "TPS62932DRLR",
     "LCSC": "C3032935"
@@ -2560,6 +2695,7 @@
    "lib_id": "Device:L",
    "dnp": false,
    "bom": true,
+   "owner": "U10",
    "fields": {
     "MPN": "SWPA5040S6R8MT",
     "LCSC": "C38117"
@@ -2577,6 +2713,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U10",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -2594,6 +2731,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U10",
    "fields": {
     "MPN": "CL05B223KB5NNNC",
     "LCSC": "C1532"
@@ -2611,6 +2749,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U10",
    "fields": {
     "MPN": "RC0402FR-0731K6L",
     "LCSC": "C137931"
@@ -2628,6 +2767,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U10",
    "fields": {
     "MPN": "0402WGF1002TCE",
     "LCSC": "C25744"
@@ -2645,6 +2785,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U10",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -2662,6 +2803,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U10",
    "fields": {
     "MPN": "CL05B104KB54PNC",
     "LCSC": "C307331"
@@ -2679,6 +2821,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U10",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -2696,6 +2839,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U10",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -2713,6 +2857,7 @@
    "lib_id": "Regulator_Switching:TPS563201",
    "dnp": false,
    "bom": true,
+   "owner": "U11",
    "fields": {
     "MPN": "TPS563201DDCR",
     "LCSC": "C116592"
@@ -2734,6 +2879,7 @@
    "lib_id": "Device:L",
    "dnp": false,
    "bom": true,
+   "owner": "U11",
    "fields": {
     "MPN": "MWSC0630H4R7MT",
     "LCSC": "C2991788"
@@ -2751,6 +2897,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U11",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -2768,6 +2915,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U11",
    "fields": {
     "MPN": "0402WGF1003TCE",
     "LCSC": "C25741"
@@ -2785,6 +2933,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U11",
    "fields": {
     "MPN": "RC0402FR-0754K9L",
     "LCSC": "C137985"
@@ -2802,6 +2951,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U11",
    "fields": {
     "MPN": "0402WGF1002TCE",
     "LCSC": "C25744"
@@ -2819,6 +2969,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U11",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -2836,6 +2987,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U11",
    "fields": {
     "MPN": "CL05B104KB54PNC",
     "LCSC": "C307331"
@@ -2853,6 +3005,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U11",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -2870,6 +3023,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U11",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -2887,6 +3041,7 @@
    "lib_id": "ST:PMOS_DFN33",
    "dnp": false,
    "bom": true,
+   "owner": "U11",
    "fields": {
     "MPN": "AON7403",
     "LCSC": "C5310961"
@@ -2911,6 +3066,7 @@
    "lib_id": "ST:NMOS_SOT23",
    "dnp": false,
    "bom": true,
+   "owner": "U11",
    "fields": {
     "MPN": "2N7002",
     "LCSC": "C8545"
@@ -2929,6 +3085,7 @@
    "lib_id": "ST:TPS61288",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "TPS61288RQQR",
     "LCSC": "C5219223"
@@ -2955,6 +3112,7 @@
    "lib_id": "ST:NMOS_SOT23",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "2N7002",
     "LCSC": "C8545"
@@ -2973,6 +3131,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "0402WGF1003TCE",
     "LCSC": "C25741"
@@ -2990,6 +3149,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "0402WGF1002TCE",
     "LCSC": "C25744"
@@ -3007,6 +3167,7 @@
    "lib_id": "Device:D_Zener",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "BZT52C12S",
     "LCSC": "C173437"
@@ -3024,6 +3185,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "CL05B104KB54PNC",
     "LCSC": "C307331"
@@ -3041,6 +3203,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "0402WGF1003TCE",
     "LCSC": "C25741"
@@ -3058,6 +3221,7 @@
    "lib_id": "Device:L",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "MWSC0630H4R7MT",
     "LCSC": "C2991788"
@@ -3075,6 +3239,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "CL05B104KB54PNC",
     "LCSC": "C307331"
@@ -3092,6 +3257,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "CL10A225KO8NNNC",
     "LCSC": "C23630"
@@ -3109,6 +3275,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "RC0402FR-0784K5L",
     "LCSC": "C138038"
@@ -3126,6 +3293,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "CL05B153KB5NNNC",
     "LCSC": "C1541"
@@ -3143,6 +3311,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "CL05C390JB5NNNC",
     "LCSC": "C1560"
@@ -3160,6 +3329,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "RC0402FR-07365KL",
     "LCSC": "C137945"
@@ -3177,6 +3347,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "CL05C270JB5NNNC",
     "LCSC": "C1557"
@@ -3194,6 +3365,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "RC0402FR-0723K2L",
     "LCSC": "C137900"
@@ -3211,6 +3383,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "RC0402FR-0736K5L",
     "LCSC": "C137943"
@@ -3228,6 +3401,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "0402WGF1003TCE",
     "LCSC": "C25741"
@@ -3245,6 +3419,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "0402WGF1003TCE",
     "LCSC": "C25741"
@@ -3262,6 +3437,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -3279,6 +3455,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -3296,6 +3473,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -3313,6 +3491,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -3330,6 +3509,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -3347,6 +3527,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "CL05B104KB54PNC",
     "LCSC": "C307331"
@@ -3364,6 +3545,7 @@
    "lib_id": "Device:C_Polarized",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "100 uF 25 V polymer hybrid"
    },
@@ -3380,6 +3562,7 @@
    "lib_id": "Device:C_Polarized",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "100 uF 25 V polymer hybrid"
    },
@@ -3396,6 +3579,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "0402WGF1003TCE",
     "LCSC": "C25741"
@@ -3413,6 +3597,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "0402WGF1502TCE",
     "LCSC": "C25756"
@@ -3430,6 +3615,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U12",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -3447,6 +3633,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U12",
    "fields": {},
    "sheet": "rails",
    "pins": {
@@ -3460,6 +3647,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U12",
    "fields": {},
    "sheet": "rails",
    "pins": {
@@ -3473,6 +3661,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U12",
    "fields": {},
    "sheet": "rails",
    "pins": {
@@ -3486,6 +3675,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U12",
    "fields": {},
    "sheet": "rails",
    "pins": {
@@ -3499,6 +3689,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U12",
    "fields": {},
    "sheet": "rails",
    "pins": {
@@ -3512,6 +3703,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U12",
    "fields": {},
    "sheet": "rails",
    "pins": {
@@ -3521,10 +3713,11 @@
   {
    "ref": "U13",
    "value": "ESP32-S3-WROOM-1-N16R8",
-   "footprint": "RF_Module:ESP32-S3-WROOM-1",
+   "footprint": "ST:ESP32-S3-WROOM-1_BodyCourtyard",
    "lib_id": "RF_Module:ESP32-S3-WROOM-1",
    "dnp": false,
    "bom": true,
+   "owner": "U13",
    "fields": {
     "MPN": "ESP32-S3-WROOM-1-N16R8",
     "LCSC": "C2913202"
@@ -3581,6 +3774,7 @@
    "lib_id": "MCU_RaspberryPi:RP2354A",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "RP2354A",
     "LCSC": "C41378174"
@@ -3657,6 +3851,7 @@
    "lib_id": "Device:Crystal_GND24",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "X322512MSB4SI",
     "LCSC": "C9002"
@@ -3676,6 +3871,7 @@
    "lib_id": "Connector_Generic:Conn_02x03_Odd_Even",
    "dnp": false,
    "bom": false,
+   "owner": "U14",
    "fields": {},
    "sheet": "mcu",
    "pins": {
@@ -3694,6 +3890,7 @@
    "lib_id": "Connector_Generic:Conn_02x03_Odd_Even",
    "dnp": false,
    "bom": false,
+   "owner": "U14",
    "fields": {},
    "sheet": "mcu",
    "pins": {
@@ -3712,6 +3909,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -3729,6 +3927,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -3746,6 +3945,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "0402WGF1002TCE",
     "LCSC": "C25744"
@@ -3763,6 +3963,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "CL05A105KA5NQNC",
     "LCSC": "C52923"
@@ -3780,6 +3981,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "0402WGF1002TCE",
     "LCSC": "C25744"
@@ -3797,6 +3999,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "0402WGF2201TCE",
     "LCSC": "C25879"
@@ -3814,6 +4017,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "0402WGF2201TCE",
     "LCSC": "C25879"
@@ -3831,6 +4035,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "0402WGF1002TCE",
     "LCSC": "C25744"
@@ -3848,6 +4053,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "0402WGF1002TCE",
     "LCSC": "C25744"
@@ -3865,6 +4071,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "0402WGF1000TCE",
     "LCSC": "C25076"
@@ -3882,6 +4089,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "0402WGF1000TCE",
     "LCSC": "C25076"
@@ -3899,6 +4107,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "0402WGF1002TCE",
     "LCSC": "C25744"
@@ -3916,6 +4125,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "0402WGF1001TCE",
     "LCSC": "C11702"
@@ -3933,6 +4143,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "CL05C270JB5NNNC",
     "LCSC": "C1557"
@@ -3950,6 +4161,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "CL05C270JB5NNNC",
     "LCSC": "C1557"
@@ -3967,6 +4179,7 @@
    "lib_id": "Device:L",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "AOTA-B201610S3R3-101-T"
    },
@@ -3983,6 +4196,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "CL10A475KO8NNNC",
     "LCSC": "C19666"
@@ -4000,6 +4214,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "0402WGF330JTCE",
     "LCSC": "C25105"
@@ -4017,6 +4232,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "CL10A475KO8NNNC",
     "LCSC": "C19666"
@@ -4034,6 +4250,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "CL10A475KO8NNNC",
     "LCSC": "C19666"
@@ -4051,6 +4268,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "CL10A475KO8NNNC",
     "LCSC": "C19666"
@@ -4068,6 +4286,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -4085,6 +4304,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -4102,6 +4322,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -4119,6 +4340,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -4136,6 +4358,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -4153,6 +4376,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -4170,6 +4394,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -4187,6 +4412,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -4204,6 +4430,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -4221,6 +4448,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -4238,6 +4466,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -4255,6 +4484,7 @@
    "lib_id": "Device:FerriteBead",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "BLM18PG221SN1D",
     "LCSC": "C14709"
@@ -4272,6 +4502,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "CL05A105KA5NQNC",
     "LCSC": "C52923"
@@ -4289,6 +4520,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -4306,6 +4538,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "0402WGF1001TCE",
     "LCSC": "C11702"
@@ -4323,6 +4556,7 @@
    "lib_id": "Device:LED",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "19-217/GHC-YR1S2/3T",
     "LCSC": "C72043"
@@ -4340,6 +4574,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "0402WGF1001TCE",
     "LCSC": "C11702"
@@ -4357,6 +4592,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "0402WGF1002TCE",
     "LCSC": "C25744"
@@ -4374,6 +4610,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U14",
    "fields": {
     "MPN": "0402WGF1001TCE",
     "LCSC": "C11702"
@@ -4391,6 +4628,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U14",
    "fields": {},
    "sheet": "mcu",
    "pins": {
@@ -4404,6 +4642,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U14",
    "fields": {},
    "sheet": "mcu",
    "pins": {
@@ -4417,6 +4656,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U14",
    "fields": {},
    "sheet": "mcu",
    "pins": {
@@ -4430,6 +4670,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U14",
    "fields": {},
    "sheet": "mcu",
    "pins": {
@@ -4443,6 +4684,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U14",
    "fields": {},
    "sheet": "mcu",
    "pins": {
@@ -4456,6 +4698,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U14",
    "fields": {},
    "sheet": "mcu",
    "pins": {
@@ -4469,6 +4712,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U14",
    "fields": {},
    "sheet": "mcu",
    "pins": {
@@ -4482,6 +4726,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U14",
    "fields": {},
    "sheet": "mcu",
    "pins": {
@@ -4495,6 +4740,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U14",
    "fields": {},
    "sheet": "mcu",
    "pins": {
@@ -4508,6 +4754,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U14",
    "fields": {},
    "sheet": "mcu",
    "pins": {
@@ -4521,6 +4768,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U14",
    "fields": {},
    "sheet": "mcu",
    "pins": {
@@ -4534,6 +4782,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U14",
    "fields": {},
    "sheet": "mcu",
    "pins": {
@@ -4547,6 +4796,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U14",
    "fields": {},
    "sheet": "mcu",
    "pins": {
@@ -4560,6 +4810,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U14",
    "fields": {},
    "sheet": "mcu",
    "pins": {
@@ -4573,6 +4824,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U14",
    "fields": {},
    "sheet": "mcu",
    "pins": {
@@ -4586,6 +4838,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U14",
    "fields": {},
    "sheet": "mcu",
    "pins": {
@@ -4599,6 +4852,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U14",
    "fields": {},
    "sheet": "mcu",
    "pins": {
@@ -4612,6 +4866,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U14",
    "fields": {},
    "sheet": "mcu",
    "pins": {
@@ -4625,6 +4880,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U14",
    "fields": {},
    "sheet": "mcu",
    "pins": {
@@ -4638,6 +4894,7 @@
    "lib_id": "Driver_Motor:TMC2209-LA",
    "dnp": false,
    "bom": true,
+   "owner": "U15",
    "fields": {
     "MPN": "TMC2209-LA-T",
     "LCSC": "C465949"
@@ -4677,14 +4934,15 @@
   },
   {
    "ref": "J7",
-   "value": "SM15B-GHS-TB(LF)(SN)",
-   "footprint": "Connector_JST:JST_GH_SM15B-GHS-TB_1x15-1MP_P1.25mm_Horizontal",
+   "value": "BM15B-GHS-TBT(LF)(SN)",
+   "footprint": "Connector_JST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical",
    "lib_id": "Connector_Generic_MountingPin:Conn_01x15_MountingPin",
    "dnp": false,
    "bom": true,
+   "owner": "U15",
    "fields": {
-    "MPN": "SM15B-GHS-TB(LF)(SN)",
-    "LCSC": "C265027"
+    "MPN": "BM15B-GHS-TBT(LF)(SN)",
+    "LCSC": "C5305069"
    },
    "sheet": "drivers",
    "pins": {
@@ -4713,6 +4971,7 @@
    "lib_id": "Power_Protection:SRV05-4",
    "dnp": false,
    "bom": true,
+   "owner": "U16",
    "fields": {
     "MPN": "SRV05-4.TCT",
     "LCSC": "C2687126"
@@ -4734,6 +4993,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U16",
    "fields": {
     "MPN": "0.15 ohm 1 % 0.5 W current sense",
     "LCSC": "C2933043"
@@ -4751,6 +5011,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U16",
    "fields": {
     "MPN": "0.15 ohm 1 % 0.5 W current sense",
     "LCSC": "C2933043"
@@ -4768,6 +5029,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U16",
    "fields": {
     "MPN": "CL05B223KB5NNNC",
     "LCSC": "C1532"
@@ -4785,6 +5047,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U16",
    "fields": {
     "MPN": "CL05B104KB54PNC",
     "LCSC": "C307331"
@@ -4802,6 +5065,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U16",
    "fields": {
     "MPN": "CL10A225KO8NNNC",
     "LCSC": "C23630"
@@ -4819,6 +5083,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U16",
    "fields": {
     "MPN": "0402WGF3302TCE",
     "LCSC": "C25779"
@@ -4836,6 +5101,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U16",
    "fields": {
     "MPN": "0402WGF4701TCE",
     "LCSC": "C25900"
@@ -4853,6 +5119,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U16",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -4870,6 +5137,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U16",
    "fields": {
     "MPN": "CL05B104KB54PNC",
     "LCSC": "C307331"
@@ -4887,6 +5155,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U16",
    "fields": {
     "MPN": "CL05B104KB54PNC",
     "LCSC": "C307331"
@@ -4904,6 +5173,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U16",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -4921,6 +5191,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U16",
    "fields": {
     "MPN": "0402WGF330JTCE",
     "LCSC": "C25105"
@@ -4938,6 +5209,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U16",
    "fields": {
     "MPN": "0402WGF330JTCE",
     "LCSC": "C25105"
@@ -4955,6 +5227,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U16",
    "fields": {
     "MPN": "0402WGF330JTCE",
     "LCSC": "C25105"
@@ -4972,6 +5245,7 @@
    "lib_id": "Device:FerriteBead",
    "dnp": false,
    "bom": true,
+   "owner": "U16",
    "fields": {
     "MPN": "BLM18PG221SN1D",
     "LCSC": "C14709"
@@ -4989,6 +5263,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U16",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -5006,6 +5281,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U16",
    "fields": {
     "MPN": "0402WGF1002TCE",
     "LCSC": "C25744"
@@ -5023,6 +5299,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U16",
    "fields": {
     "MPN": "0402WGF1001TCE",
     "LCSC": "C11702"
@@ -5040,6 +5317,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U16",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -5057,6 +5335,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U16",
    "fields": {},
    "sheet": "drivers",
    "pins": {
@@ -5070,6 +5349,7 @@
    "lib_id": "Driver_Motor:TMC2209-LA",
    "dnp": false,
    "bom": true,
+   "owner": "U17",
    "fields": {
     "MPN": "TMC2209-LA-T",
     "LCSC": "C465949"
@@ -5109,14 +5389,15 @@
   },
   {
    "ref": "J8",
-   "value": "SM15B-GHS-TB(LF)(SN)",
-   "footprint": "Connector_JST:JST_GH_SM15B-GHS-TB_1x15-1MP_P1.25mm_Horizontal",
+   "value": "BM15B-GHS-TBT(LF)(SN)",
+   "footprint": "Connector_JST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical",
    "lib_id": "Connector_Generic_MountingPin:Conn_01x15_MountingPin",
    "dnp": false,
    "bom": true,
+   "owner": "U17",
    "fields": {
-    "MPN": "SM15B-GHS-TB(LF)(SN)",
-    "LCSC": "C265027"
+    "MPN": "BM15B-GHS-TBT(LF)(SN)",
+    "LCSC": "C5305069"
    },
    "sheet": "drivers",
    "pins": {
@@ -5145,6 +5426,7 @@
    "lib_id": "Power_Protection:SRV05-4",
    "dnp": false,
    "bom": true,
+   "owner": "U18",
    "fields": {
     "MPN": "SRV05-4.TCT",
     "LCSC": "C2687126"
@@ -5166,6 +5448,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U18",
    "fields": {
     "MPN": "0.15 ohm 1 % 0.5 W current sense",
     "LCSC": "C2933043"
@@ -5183,6 +5466,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U18",
    "fields": {
     "MPN": "0.15 ohm 1 % 0.5 W current sense",
     "LCSC": "C2933043"
@@ -5200,6 +5484,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U18",
    "fields": {
     "MPN": "CL05B223KB5NNNC",
     "LCSC": "C1532"
@@ -5217,6 +5502,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U18",
    "fields": {
     "MPN": "CL05B104KB54PNC",
     "LCSC": "C307331"
@@ -5234,6 +5520,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U18",
    "fields": {
     "MPN": "CL10A225KO8NNNC",
     "LCSC": "C23630"
@@ -5251,6 +5538,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U18",
    "fields": {
     "MPN": "0402WGF3302TCE",
     "LCSC": "C25779"
@@ -5268,6 +5556,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U18",
    "fields": {
     "MPN": "0402WGF4701TCE",
     "LCSC": "C25900"
@@ -5285,6 +5574,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U18",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -5302,6 +5592,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U18",
    "fields": {
     "MPN": "CL05B104KB54PNC",
     "LCSC": "C307331"
@@ -5319,6 +5610,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U18",
    "fields": {
     "MPN": "CL05B104KB54PNC",
     "LCSC": "C307331"
@@ -5336,6 +5628,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U18",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -5353,6 +5646,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U18",
    "fields": {
     "MPN": "0402WGF330JTCE",
     "LCSC": "C25105"
@@ -5370,6 +5664,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U18",
    "fields": {
     "MPN": "0402WGF330JTCE",
     "LCSC": "C25105"
@@ -5387,6 +5682,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U18",
    "fields": {
     "MPN": "0402WGF330JTCE",
     "LCSC": "C25105"
@@ -5404,6 +5700,7 @@
    "lib_id": "Device:FerriteBead",
    "dnp": false,
    "bom": true,
+   "owner": "U18",
    "fields": {
     "MPN": "BLM18PG221SN1D",
     "LCSC": "C14709"
@@ -5421,6 +5718,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U18",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -5438,6 +5736,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U18",
    "fields": {
     "MPN": "0402WGF1002TCE",
     "LCSC": "C25744"
@@ -5455,6 +5754,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U18",
    "fields": {
     "MPN": "0402WGF1001TCE",
     "LCSC": "C11702"
@@ -5472,6 +5772,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U18",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -5489,6 +5790,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U18",
    "fields": {},
    "sheet": "drivers",
    "pins": {
@@ -5502,6 +5804,7 @@
    "lib_id": "Driver_Motor:TMC2209-LA",
    "dnp": false,
    "bom": true,
+   "owner": "U19",
    "fields": {
     "MPN": "TMC2209-LA-T",
     "LCSC": "C465949"
@@ -5541,14 +5844,15 @@
   },
   {
    "ref": "J9",
-   "value": "SM15B-GHS-TB(LF)(SN)",
-   "footprint": "Connector_JST:JST_GH_SM15B-GHS-TB_1x15-1MP_P1.25mm_Horizontal",
+   "value": "BM15B-GHS-TBT(LF)(SN)",
+   "footprint": "Connector_JST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical",
    "lib_id": "Connector_Generic_MountingPin:Conn_01x15_MountingPin",
    "dnp": false,
    "bom": true,
+   "owner": "U19",
    "fields": {
-    "MPN": "SM15B-GHS-TB(LF)(SN)",
-    "LCSC": "C265027"
+    "MPN": "BM15B-GHS-TBT(LF)(SN)",
+    "LCSC": "C5305069"
    },
    "sheet": "drivers",
    "pins": {
@@ -5577,6 +5881,7 @@
    "lib_id": "Power_Protection:SRV05-4",
    "dnp": false,
    "bom": true,
+   "owner": "U20",
    "fields": {
     "MPN": "SRV05-4.TCT",
     "LCSC": "C2687126"
@@ -5598,6 +5903,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U20",
    "fields": {
     "MPN": "0.15 ohm 1 % 0.5 W current sense",
     "LCSC": "C2933043"
@@ -5615,6 +5921,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U20",
    "fields": {
     "MPN": "0.15 ohm 1 % 0.5 W current sense",
     "LCSC": "C2933043"
@@ -5632,6 +5939,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U20",
    "fields": {
     "MPN": "CL05B223KB5NNNC",
     "LCSC": "C1532"
@@ -5649,6 +5957,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U20",
    "fields": {
     "MPN": "CL05B104KB54PNC",
     "LCSC": "C307331"
@@ -5666,6 +5975,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U20",
    "fields": {
     "MPN": "CL10A225KO8NNNC",
     "LCSC": "C23630"
@@ -5683,6 +5993,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U20",
    "fields": {
     "MPN": "0402WGF3302TCE",
     "LCSC": "C25779"
@@ -5700,6 +6011,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U20",
    "fields": {
     "MPN": "0402WGF4701TCE",
     "LCSC": "C25900"
@@ -5717,6 +6029,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U20",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -5734,6 +6047,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U20",
    "fields": {
     "MPN": "CL05B104KB54PNC",
     "LCSC": "C307331"
@@ -5751,6 +6065,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U20",
    "fields": {
     "MPN": "CL05B104KB54PNC",
     "LCSC": "C307331"
@@ -5768,6 +6083,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U20",
    "fields": {
     "MPN": "CL21A226MAQNNNE",
     "LCSC": "C45783"
@@ -5785,6 +6101,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U20",
    "fields": {
     "MPN": "0402WGF330JTCE",
     "LCSC": "C25105"
@@ -5802,6 +6119,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U20",
    "fields": {
     "MPN": "0402WGF330JTCE",
     "LCSC": "C25105"
@@ -5819,6 +6137,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U20",
    "fields": {
     "MPN": "0402WGF330JTCE",
     "LCSC": "C25105"
@@ -5836,6 +6155,7 @@
    "lib_id": "Device:FerriteBead",
    "dnp": false,
    "bom": true,
+   "owner": "U20",
    "fields": {
     "MPN": "BLM18PG221SN1D",
     "LCSC": "C14709"
@@ -5853,6 +6173,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U20",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -5870,6 +6191,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U20",
    "fields": {
     "MPN": "0402WGF1002TCE",
     "LCSC": "C25744"
@@ -5887,6 +6209,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U20",
    "fields": {
     "MPN": "0402WGF1001TCE",
     "LCSC": "C11702"
@@ -5904,6 +6227,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U20",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -5921,6 +6245,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U20",
    "fields": {},
    "sheet": "drivers",
    "pins": {
@@ -5934,6 +6259,7 @@
    "lib_id": "ST:LSM6DSV",
    "dnp": false,
    "bom": true,
+   "owner": "U21",
    "fields": {
     "MPN": "LSM6DSVTR"
    },
@@ -5962,6 +6288,7 @@
    "lib_id": "ST:MMC5983MA",
    "dnp": false,
    "bom": true,
+   "owner": "U22",
    "fields": {
     "MPN": "MMC5983MA",
     "LCSC": "C404329"
@@ -5993,6 +6320,7 @@
    "lib_id": "Timer_RTC:RV-3028-C7",
    "dnp": false,
    "bom": true,
+   "owner": "U23",
    "fields": {
     "MPN": "RV-3028-C7 32.768kHz 1ppm TA QC"
    },
@@ -6015,6 +6343,7 @@
    "lib_id": "RF_GPS:MAX-M10S",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "MAX-M10S-00B"
    },
@@ -6047,6 +6376,7 @@
    "lib_id": "Connector:Conn_Coaxial",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "U.FL-R-SMT-1(80)",
     "LCSC": "C88374"
@@ -6064,6 +6394,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -6081,6 +6412,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -6098,6 +6430,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "CL05A105KA5NQNC",
     "LCSC": "C52923"
@@ -6115,6 +6448,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "CL10A106KP8NNNC",
     "LCSC": "C19702"
@@ -6132,6 +6466,7 @@
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -6143,14 +6478,15 @@
    }
   },
   {
-   "ref": "C134",
-   "value": "0.1F 5.5V",
-   "footprint": "Capacitor_THT:CP_Radial_D8.0mm_P5.00mm",
-   "lib_id": "Device:C_Polarized",
+   "ref": "BT1",
+   "value": "MS621FE",
+   "footprint": "Battery:BatteryHolder_Seiko_MS621F",
+   "lib_id": "Device:Battery_Cell",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
-    "MPN": "0.1 F 5.5 V supercapacitor"
+    "MPN": "MS621FE-FL11E"
    },
    "sheet": "ui",
    "pins": {
@@ -6165,6 +6501,7 @@
    "lib_id": "Device:FerriteBead",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "BLM18PG221SN1D",
     "LCSC": "C14709"
@@ -6176,12 +6513,13 @@
    }
   },
   {
-   "ref": "C135",
+   "ref": "C134",
    "value": "10u",
    "footprint": "Capacitor_SMD:C_0603_1608Metric",
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "CL10A106KP8NNNC",
     "LCSC": "C19702"
@@ -6193,12 +6531,13 @@
    }
   },
   {
-   "ref": "C136",
+   "ref": "C135",
    "value": "100n",
    "footprint": "Capacitor_SMD:C_0402_1005Metric",
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -6210,12 +6549,13 @@
    }
   },
   {
-   "ref": "C137",
+   "ref": "C136",
    "value": "47p",
    "footprint": "Capacitor_SMD:C_0402_1005Metric",
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "CL05C470JB5NNNC",
     "LCSC": "C1567"
@@ -6233,6 +6573,7 @@
    "lib_id": "Device:L",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "LQG15HS47NJ02D",
     "LCSC": "C77052"
@@ -6250,6 +6591,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "0402WGF100JTCE",
     "LCSC": "C25077"
@@ -6261,12 +6603,13 @@
    }
   },
   {
-   "ref": "C138",
+   "ref": "C137",
    "value": "10n",
    "footprint": "Capacitor_SMD:C_0402_1005Metric",
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "CL05B103KB5NNNC",
     "LCSC": "C15195"
@@ -6284,6 +6627,7 @@
    "lib_id": "Connector_Generic:Conn_01x04",
    "dnp": false,
    "bom": false,
+   "owner": "U24",
    "fields": {},
    "sheet": "ui",
    "pins": {
@@ -6300,6 +6644,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "0402WGF0000TCE",
     "LCSC": "C17168"
@@ -6317,6 +6662,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "0402WGF0000TCE",
     "LCSC": "C17168"
@@ -6334,6 +6680,7 @@
    "lib_id": "Device:R",
    "dnp": true,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "0402WGF0000TCE",
     "LCSC": "C17168"
@@ -6351,6 +6698,7 @@
    "lib_id": "Device:R",
    "dnp": true,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "0402WGF0000TCE",
     "LCSC": "C17168"
@@ -6368,6 +6716,7 @@
    "lib_id": "Switch:SW_Push",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "TS-1187A-B-A-B",
     "LCSC": "C318884"
@@ -6385,6 +6734,7 @@
    "lib_id": "Switch:SW_Push",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "TS-1187A-B-A-B",
     "LCSC": "C318884"
@@ -6402,6 +6752,7 @@
    "lib_id": "Switch:SW_Push",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "TS-1187A-B-A-B",
     "LCSC": "C318884"
@@ -6419,6 +6770,7 @@
    "lib_id": "Switch:SW_Push",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "TS-1187A-B-A-B",
     "LCSC": "C318884"
@@ -6436,6 +6788,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "0402WGF1002TCE",
     "LCSC": "C25744"
@@ -6447,12 +6800,13 @@
    }
   },
   {
-   "ref": "C139",
+   "ref": "C138",
    "value": "100n",
    "footprint": "Capacitor_SMD:C_0402_1005Metric",
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -6470,6 +6824,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "0402WGF1002TCE",
     "LCSC": "C25744"
@@ -6481,12 +6836,13 @@
    }
   },
   {
-   "ref": "C140",
+   "ref": "C139",
    "value": "100n",
    "footprint": "Capacitor_SMD:C_0402_1005Metric",
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -6504,6 +6860,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "0402WGF1002TCE",
     "LCSC": "C25744"
@@ -6515,12 +6872,13 @@
    }
   },
   {
-   "ref": "C141",
+   "ref": "C140",
    "value": "100n",
    "footprint": "Capacitor_SMD:C_0402_1005Metric",
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -6538,6 +6896,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "0402WGF1002TCE",
     "LCSC": "C25744"
@@ -6549,12 +6908,13 @@
    }
   },
   {
-   "ref": "C142",
+   "ref": "C141",
    "value": "100n",
    "footprint": "Capacitor_SMD:C_0402_1005Metric",
    "lib_id": "Device:C",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "CL05B104KO5NNNC",
     "LCSC": "C1525"
@@ -6572,6 +6932,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "0402WGF1001TCE",
     "LCSC": "C11702"
@@ -6589,6 +6950,7 @@
    "lib_id": "Device:LED",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "KT-0603R",
     "LCSC": "C2286"
@@ -6606,6 +6968,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "0402WGF1001TCE",
     "LCSC": "C11702"
@@ -6623,6 +6986,7 @@
    "lib_id": "Device:LED",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "19-217/GHC-YR1S2/3T",
     "LCSC": "C72043"
@@ -6640,6 +7004,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "0402WGF1001TCE",
     "LCSC": "C11702"
@@ -6657,6 +7022,7 @@
    "lib_id": "Device:LED",
    "dnp": false,
    "bom": true,
+   "owner": "U24",
    "fields": {
     "MPN": "19-217/BHC-ZL1M2RY/3T",
     "LCSC": "C72041"
@@ -6674,6 +7040,7 @@
    "lib_id": "Isolator:TLP291",
    "dnp": false,
    "bom": true,
+   "owner": "U25",
    "fields": {
     "MPN": "TLP291(GB-TP,SE",
     "LCSC": "C55144"
@@ -6693,6 +7060,7 @@
    "lib_id": "Isolator:TLP291",
    "dnp": false,
    "bom": true,
+   "owner": "U26",
    "fields": {
     "MPN": "TLP291(GB-TP,SE",
     "LCSC": "C55144"
@@ -6712,6 +7080,7 @@
    "lib_id": "Connector_Generic_MountingPin:Conn_01x03_MountingPin",
    "dnp": false,
    "bom": true,
+   "owner": "U26",
    "fields": {
     "MPN": "SM03B-GHS-TB(LF)(SN)",
     "LCSC": "C189894"
@@ -6731,6 +7100,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U26",
    "fields": {
     "MPN": "0402WGF3300TCE",
     "LCSC": "C25104"
@@ -6748,6 +7118,7 @@
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
+   "owner": "U26",
    "fields": {
     "MPN": "0402WGF3300TCE",
     "LCSC": "C25104"
@@ -6765,6 +7136,7 @@
    "lib_id": "Device:D_TVS",
    "dnp": false,
    "bom": true,
+   "owner": "U26",
    "fields": {
     "MPN": "ESD5Z5.0T1G",
     "LCSC": "C84655"
@@ -6782,6 +7154,7 @@
    "lib_id": "Device:D_TVS",
    "dnp": false,
    "bom": true,
+   "owner": "U26",
    "fields": {
     "MPN": "ESD5Z5.0T1G",
     "LCSC": "C84655"
@@ -6799,6 +7172,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U26",
    "fields": {},
    "sheet": "ui",
    "pins": {
@@ -6812,6 +7186,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U26",
    "fields": {},
    "sheet": "ui",
    "pins": {
@@ -6825,6 +7200,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U26",
    "fields": {},
    "sheet": "ui",
    "pins": {
@@ -6838,6 +7214,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U26",
    "fields": {},
    "sheet": "ui",
    "pins": {
@@ -6851,6 +7228,7 @@
    "lib_id": "Connector:TestPoint",
    "dnp": false,
    "bom": false,
+   "owner": "U26",
    "fields": {},
    "sheet": "ui",
    "pins": {
@@ -6864,6 +7242,7 @@
    "lib_id": "Mechanical:MountingHole",
    "dnp": false,
    "bom": false,
+   "owner": "U26",
    "fields": {},
    "sheet": "ui",
    "pins": {}
@@ -6875,6 +7254,7 @@
    "lib_id": "Mechanical:MountingHole",
    "dnp": false,
    "bom": false,
+   "owner": "U26",
    "fields": {},
    "sheet": "ui",
    "pins": {}
@@ -6886,6 +7266,7 @@
    "lib_id": "Mechanical:MountingHole",
    "dnp": false,
    "bom": false,
+   "owner": "U26",
    "fields": {},
    "sheet": "ui",
    "pins": {}
@@ -6897,6 +7278,7 @@
    "lib_id": "Mechanical:MountingHole",
    "dnp": false,
    "bom": false,
+   "owner": "U26",
    "fields": {},
    "sheet": "ui",
    "pins": {}
