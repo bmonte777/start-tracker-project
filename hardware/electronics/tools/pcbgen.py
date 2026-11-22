@@ -242,6 +242,24 @@ class PCB:
         for sd in (("F", "B") if side == "*" else (side,)):
             self.occ[sd].append(rect)
 
+    def escape_ring(self, ref, width=1.3):
+        """Keep other parts out of a band round the pin rows of a fine-pitch chip, on both faces, so that every pin
+        can leave its pad and reach a via. Under the body, on the other face, parts are still allowed."""
+        pads = [p_ for p_ in self.fps[ref].Pads() if p_.GetAttribute() == pcbnew.PAD_ATTRIB_SMD]
+        xs, ys = [], []
+        for p_ in pads:
+            bb = p_.GetBoundingBox()
+            a, b = self.xy(bb.GetOrigin()), self.xy(bb.GetEnd())
+            xs += [a[0], b[0]]
+            ys += [a[1], b[1]]
+        x0, x1, y0, y1 = min(xs), max(xs), min(ys), max(ys)
+        w = width
+        own = self.side[ref]
+        for rect in ((x0 - w, y0 - w, x0, y1 + w), (x1, y0 - w, x1 + w, y1 + w), (x0, y0 - w, x1, y0), (x0, y1, x1, y1 + w)):
+            self.block(own, rect)
+        # the other face stays empty under the chip and the band: that is where its vias come through
+        self.block("B" if own == "F" else "F", (x0 - w, y0 - w, x1 + w, y1 + w))
+
     def _template(self, ref):
         c = self.comps[ref]
         key = c["footprint"]
@@ -267,7 +285,7 @@ class PCB:
             x, y = -y, x
         return x, y
 
-    def _free(self, side, rect, margin=0.12):
+    def _free(self, side, rect, margin=0.27):
         x0, y0, x1, y1 = rect
         bx0, by0, bx1, by1 = self.bounds
         if x0 < bx0 or y0 < by0 or x1 > bx1 or y1 > by1:
@@ -310,17 +328,18 @@ class PCB:
             _rank, pin, (aref, apad, (tx, ty), aside) = tgt
             x0, y0, x1, y1 = t["cy"]
             done = False
-            tries = [(aside, near)]
-            if both_sides and t["small"]:
-                tries.append(("F" if aside == "B" else "B", near))
-            tries.append((aside, far))
-            for side, rmax in tries:
-                r = 0.0
-                while r <= rmax and not done:
-                    npts = max(1, int(2 * math.pi * r / step))
+            other = "F" if aside == "B" else "B"
+            flip = both_sides and (t["small"] or (x1 - x0) * (y0 - y1 if y0 > y1 else y1 - y0) <= 12.5)
+            r = 0.0
+            # rings of growing radius round the pin; the other face is tried 1.2 mm later than the pin's own face
+            while r <= far and not done:
+                for side, rr in ((aside, r), (other, r - 1.2)):
+                    if side == other and (not flip or rr < 0):
+                        continue
+                    npts = max(1, int(2 * math.pi * rr / step))
                     for k in range(npts):
                         ang = 2 * math.pi * k / npts
-                        cx0, cy0 = tx + r * math.cos(ang), ty + r * math.sin(ang)
+                        cx0, cy0 = tx + rr * math.cos(ang), ty + rr * math.sin(ang)
                         for rot in (0, 90, 180, 270):
                             px, py = self._xf(t["pads"][pin], side, rot)
                             cx, cy = round((cx0 - px) / 0.05) * 0.05, round((cy0 - py) / 0.05) * 0.05
@@ -333,9 +352,9 @@ class PCB:
                                 break
                         if done:
                             break
-                    r += step
-                if done:
-                    break
+                    if done:
+                        break
+                r += step
             if not done:
                 failed.append(ref)
         return failed
@@ -590,6 +609,93 @@ class PCB:
                     pats.append({"netclass": c["name"], "pattern": pat})
         with open(pro, "w") as f:
             json.dump(d, f, indent=2)
+
+    # ---- hand-over to the grid router (tools/grouter.py) and back
+    def dump(self, path, **extra):
+        """Everything the router needs, in board coordinates: pads, the copper already on the board, keep-outs."""
+        pads = []
+        for ref, fp in self.fps.items():
+            for p in fp.Pads():
+                x, y = self.xy(p.GetPosition())
+                bb = p.GetBoundingBox()
+                a, b = self.xy(bb.GetOrigin()), self.xy(bb.GetEnd())
+                th = p.GetAttribute() in (pcbnew.PAD_ATTRIB_PTH, pcbnew.PAD_ATTRIB_NPTH)
+                if not th and not (p.IsOnLayer(pcbnew.F_Cu) or p.IsOnLayer(pcbnew.B_Cu)):
+                    continue                  # paste-only apertures inside a thermal pad carry no copper
+                try:
+                    shp = p.GetShape(pcbnew.F_Cu if p.IsOnLayer(pcbnew.F_Cu) else pcbnew.B_Cu)
+                except TypeError:
+                    shp = p.GetShape()
+                sz = p.GetSize(pcbnew.F_Cu if p.IsOnLayer(pcbnew.F_Cu) else pcbnew.B_Cu) if th or True else None
+                shape = "c" if shp == pcbnew.PAD_SHAPE_CIRCLE else ("o" if shp == pcbnew.PAD_SHAPE_OVAL else "r")
+                try:
+                    rr = p.GetRoundRectCornerRadius(pcbnew.F_Cu if p.IsOnLayer(pcbnew.F_Cu) else pcbnew.B_Cu) if shp == pcbnew.PAD_SHAPE_ROUNDRECT else 0
+                except TypeError:
+                    rr = p.GetRoundRectCornerRadius() if shp == pcbnew.PAD_SHAPE_ROUNDRECT else 0
+                pads.append(dict(ref=ref, num=p.GetNumber(), net=p.GetNetname(), x=round(x, 4), y=round(y, 4),
+                                 r=[round(min(a[0], b[0]), 4), round(min(a[1], b[1]), 4), round(max(a[0], b[0]), 4), round(max(a[1], b[1]), 4)],
+                                 side="*" if th else ("F" if p.IsOnLayer(pcbnew.F_Cu) else "B"), npth=p.GetAttribute() == pcbnew.PAD_ATTRIB_NPTH,
+                                 drill=pcbnew.ToMM(max(p.GetDrillSize().x, p.GetDrillSize().y)), shape=shape, rr=round(pcbnew.ToMM(rr), 3)))
+        vias, tracks = [], []
+        for t in self.board.GetTracks():
+            if t.Type() == pcbnew.PCB_VIA_T:
+                x, y = self.xy(t.GetPosition())
+                vias.append(dict(net=t.GetNetname(), x=round(x, 4), y=round(y, 4)))
+            else:
+                a, b = self.xy(t.GetStart()), self.xy(t.GetEnd())
+                tracks.append(dict(net=t.GetNetname(), a=[round(a[0], 4), round(a[1], 4)], b=[round(b[0], 4), round(b[1], 4)],
+                                   w=pcbnew.ToMM(t.GetWidth()), layer=t.GetLayerName()))
+        keep = []
+        zones = list(self.board.Zones()) + [z for fp in self.fps.values() for z in fp.Zones()]
+        for z in zones:
+            if not z.GetIsRuleArea() or not (z.GetDoNotAllowTracks() or z.GetDoNotAllowVias()):
+                continue
+            bb = z.GetBoundingBox()
+            a, b = self.xy(bb.GetOrigin()), self.xy(bb.GetEnd())
+            ls = [n for n, l in LAYER.items() if z.IsOnLayer(l)]
+            keep.append(dict(r=[min(a[0], b[0]), min(a[1], b[1]), max(a[0], b[0]), max(a[1], b[1])], layers=ls))
+        d = dict(bounds=[self.bounds[0] - 0.6, self.bounds[1] - 0.6, self.bounds[2] + 0.6, self.bounds[3] + 0.6], pads=pads, vias=vias,
+                 tracks=tracks, keepouts=keep + list(extra.pop("keepouts", [])))
+        d.update(extra)
+        with open(path, "w") as f:
+            json.dump(d, f)
+
+    def apply_routes(self, path):
+        r = json.load(open(path))
+        for net, layer, w, x0, y0, x1, y1 in r["tracks"]:
+            self.track(net, [(x0, y0), (x1, y1)], w, layer)
+        for net, x, y in r["vias"]:
+            self.via(net, (x, y))
+        return len(r["tracks"]), len(r["vias"]), r.get("open", {})
+
+    @staticmethod
+    def thick(pts, w):
+        """Outline of a polyline drawn w wide (mitred corners), for a copper area that follows a path."""
+        import math
+        h = w / 2
+        left, right = [], []
+        n = len(pts)
+        for i, (x, y) in enumerate(pts):
+            dirs = []
+            if i > 0:
+                dx, dy = x - pts[i - 1][0], y - pts[i - 1][1]
+                L = math.hypot(dx, dy)
+                dirs.append((dx / L, dy / L))
+            if i < n - 1:
+                dx, dy = pts[i + 1][0] - x, pts[i + 1][1] - y
+                L = math.hypot(dx, dy)
+                dirs.append((dx / L, dy / L))
+            if len(dirs) == 1:
+                ux, uy = dirs[0]
+                nx, ny, k = -uy, ux, 1.0
+            else:
+                nx, ny = -(dirs[0][1] + dirs[1][1]), dirs[0][0] + dirs[1][0]
+                L = math.hypot(nx, ny)
+                nx, ny = nx / L, ny / L
+                k = 1.0 / max(0.5, nx * -dirs[0][1] + ny * dirs[0][0])
+            left.append((round(x + nx * h * k, 3), round(y + ny * h * k, 3)))
+            right.append((round(x - nx * h * k, 3), round(y - ny * h * k, 3)))
+        return left + right[::-1]
 
     def export_dsn(self, path):
         return pcbnew.ExportSpecctraDSN(self.board, path)

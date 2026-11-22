@@ -11,18 +11,18 @@ This document covers the electronics of the head: the calculations behind every 
 | Calculations | Done | `docs/calc/phase4_calcs.py`, `phase4_calcs.md` |
 | ST-520 cartridge board: schematic, layout, fab files | Done. ERC and DRC clean, fits the Phase 3 carrier | `hardware/electronics/cartridge-board/`, `fab/st-520/` |
 | ST-501 mainboard: schematic | Done. 391 parts, 229 nets, ERC clean, netlist cross-checked | `hardware/electronics/mainboard/` |
-| ST-501 mainboard: layout | **Not finished.** All 391 parts are placed, ground is connected, placement is DRC-clean; 499 signal and power connections are still unrouted. No fabrication files | section 5.2 |
-| ST-602 battery board | **Not started** beyond the circuit definition; two inputs are missing | section 5.3 |
-| Fit check | Done for ST-520 and for the ST-501 placement | section 6 |
+| ST-501 mainboard: layout | **Not finished.** Placement redone; routing about five-sixths done. KiCad's check on 22 November: 164 of about 950 connections open in 84 nets (79 of them on power and critical nets that the last routing step took up again, 85 on slow signals), 12 clearance errors of a few hundredths of a millimetre, no shorts. No fabrication files | section 5.2 |
+| ST-602 battery board | **Not started** beyond the circuit definition. The two missing inputs were looked up: the LED wiring is found, the fuse's body drawing is found but not its pad drawing, and the fuse type has to change (section 5.3) | section 5.3 |
+| Fit check | Done for ST-520. **To be rerun for ST-501**: its parts moved in this revision | section 6 |
 | Wiring harnesses | Done: 6 drawings, pin tables, purchase list | `hardware/electronics/harness/` |
 | Per-board BOMs | Done for ST-520 and ST-501 (93 lines, 321 parts) | each board folder |
 | Master parts list, cost model | CSV and `bom_data.py` updated and cost model rerun; **the Sheet is not updated yet** | section 9 |
 | Firmware hand-off, bring-up plan | Done | sections 10 and 11 |
-| Board viewer | Done for ST-520; ST-501 shown as placement, marked in progress | artifact + `hardware/electronics/doc/board-viewer.html` |
+| Board viewer | Done for ST-520; **ST-501 still shows the old placement** | artifact + `hardware/electronics/doc/board-viewer.html` |
 | GitHub Actions workflow | Written, started by hand only; not yet run on GitHub | `.github/workflows/phase4-electronics.yml` |
 | Phase 5 prompt | Held back until the mainboard is routed and the battery board exists | — |
 
-**What you can do today:** answer the six open questions (Q28, Q31–Q35), and order the cartridge board (ST-520) if you want boards in hand early — its encoder chip was out of stock on the check date. **What is not ready:** the mainboard cannot be ordered yet (its tracks are not routed), the battery board is not designed, and the Sheet still shows the Phase 3 prices. Phase 4 is therefore not complete, and the Phase 5 prompt is held back. `hardware/electronics/PROGRESS.md` says exactly where to pick up.
+**What you can do today:** answer the six open questions (Q28, Q31–Q35), and order the cartridge board (ST-520) if you want boards in hand early — its encoder chip was out of stock on the check date. **What is not ready:** the mainboard cannot be ordered yet (its routing is about five-sixths done and does not pass the design-rule check), the battery board is not designed, and the Sheet, the Docs version of this document, the board viewer and the mainboard fit check still show the state before this revision. Phase 4 is therefore not complete, and the Phase 5 prompt is held back. `hardware/electronics/PROGRESS.md` says exactly where to pick up.
 
 Board viewer (interactive BOM, Day / Night): <https://claude.ai/artifact/TntQCR18hPMWE3V6fTQ68L> · Docs version of this document: <https://claude.ai/artifact/9Y2pyZBkJu5i3eWqNy6xAx> · Parts list Sheet: <https://claude.ai/artifact/9T9Gpvm2vWPRYqJtPChJa8> · KiCad projects: `hardware/electronics/`.
 
@@ -150,16 +150,39 @@ Round, 30 mm, two layers, 1.6 mm. Two M3 holes on a 23 mm circle. The MT6835 sit
 | TP55 | `GNSS_RST` | TP56 | `GNSS_SAFE` | TP57 | `GNSS_TXD` |
 | TP58 | `GNSS_RXD` | TP59 | `RTC_VBAK` |
 
-**Layout.** **The mainboard is placed but not routed, so it cannot be ordered yet.**
+**Layout.** **The mainboard is placed and partly routed. It does not pass the design-rule check yet, so it cannot be ordered.**
 
-What is done and checked: the outline, the four holes and the 9 mm jack cut-out; every part placed, with the front-face parts at the Phase 3 bezel positions; the three drivers beside their cartridge plugs with the sense resistors at the driver pins; the boost, charger and port B converters each grouped round their inductor; In1 as a solid ground plane with a via beside 249 ground pads (21 chip pads connect through the outer-layer pours instead); copper areas defined for every power and motor-phase net; In2 split into system-rail, motor-rail and 3.3 V areas. DRC on this state: no clearance, courtyard or hole errors; the only errors are the 499 connections not yet routed.
+*Why the earlier plan failed.* The board as first placed could not be routed by any router. Small parts stood closer together than a track with its clearances needs (0.42–0.44 mm between pads; a 0.15 mm track needs 0.44 mm), so most pins were walled in. About 80 capacitors and resistors sat 5–45 mm from the chip they serve: the port B converter's parts were beside its EEPROM, the driver capacitors beside the plugs. Ground vias stood directly in front of chip pins. The ESP32 antenna area was free of copper on the outer faces only. Freerouting 2.1.0 also spends most of each pass on the ground net; with ground left out a pass takes under two minutes instead of 26, but it still left 483 connections open after three passes.
 
-What went wrong: the plan was to route the critical nets by hand in the layout script and leave the slow signals to Freerouting, as on the cartridge board. On this board the autorouter did not converge in the time available: its best run still had 534 open connections after a 26-minute first pass (that figure includes ground pins it does not count as connected to the plane), and it does not save a partial result when stopped. Three settings problems were found and fixed on the way (overlapping plane definitions, class widths too wide for 0.4 mm-pitch pins, the ground layer not marked as a plane), so the next attempt starts from a better place.
+*What was changed.*
 
-What is left: route the power stages, USB pairs, motor phases, sense lines, encoder SPI and the GNSS feed by hand (in KiCad or in the script), then let the autorouter finish the slow signals with a longer run, and review the result in 3D. The placement renders below show the current state.
+- **Placement** (`mainboard/design.py`, `owners()` and `HOT`): every small part goes beside the pin of the chip it belongs to; each converter's switching-loop capacitors are placed first, then boot, bias and output capacitors, then the rest. A free band of 1.2–2.3 mm stays round every fine-pitch chip and nothing sits on the other face under it, so every pin can reach a via. Neighbouring parts keep a gap one track wide. The placement is now repeatable from run to run.
+- **Port B** is laid out as TI's reference: the two external FETs on the gate-drive side of the TPS55288 with the input capacitors across them, the inductor between the SW1 and SW2 pins.
+- **Antenna**: no copper on any of the four layers in the ESP32 antenna area.
+- **Power layer (In2)**: 3.3 V everywhere, the system rail under the power half with a corridor along the lower edge to the motor switch, the motor rail under the drivers, the cartridge plugs and the boost converter.
+- **Battery rail**: the pack input is at the lower right and the charger at the left, so the battery rail crosses the board. It runs on the front face as one copper area 4.6 mm wide and about 94 mm long, south of the two processors: about 10 mΩ, 0.36 W at the pack's 6 A limit. **This is a weak point of the floor plan**: moving the pack pads next to the charger would remove it, but the inner face has no free 9 × 6 mm area left; see the questions below.
+- **Router** (`tools/grouter.py`): Freerouting is no longer used for this board. A grid router written for the project works through `design.py:route_plan()` in a fixed order: a via to its plane beside every ground and supply pad, the battery bus, then the switch nodes and power stages (up to 1.0 mm tracks), boot and gate-drive nets, motor phases and sense resistors (0.5 mm), the USB pairs, crystal and feedback nets, the encoder bus, and last the slow signals. The routes are stored in `mainboard/st-501.routes.json` and laid onto the board by `tools/layout.py`.
 
-![ST-501 placement, inner face](img/04-st-501-placement-inner.png)
-![ST-501 placement, front face](img/04-st-501-placement-front.png)
+*Where it stands (KiCad DRC, all severities, 22 November).* 3,826 track segments and 996 vias are on the board. Each group of nets was complete when its own step ended (planes, battery bus, power stages, boot and gate drive, phases, crystal and feedback all at zero open), but the last step, the slow signals, took some of those tracks up again to get through and could not always put them back. **Open as KiCad counts them: 164 connections in 84 nets, out of about 950.**
+
+| Group | Open connections | Nets |
+|---|---|---|
+| Planes and battery rail | 14 | +3V3, GND, VBAT, VMOT |
+| Power stages | 14 | +5V, CHG_SW2, VBUS_A, VBUS_B, VBUS_CHG, VPB |
+| Boot, gate drive and bias | 18 | +1V1, +3V3A, ALT_CPI, ALT_VCP, AZ_CPO, CHG_REGN, MSW_G, PB_DR1L, PB_GVBUS, ROLL_5V |
+| Motor phases | 4 | AZ_B1, ROLL_A2, ROLL_B1, ROLL_B2 |
+| USB pairs | 7 | A_DN, A_DP, B_DP |
+| GNSS feed | 1 | GNSS_ANT |
+| Crystal and feedback | 9 | ALT_VREF, CHG_BATP, CHG_ILIM, CHG_PROG, CHG_TS, PB_DITH, RP_XIN |
+| Encoder bus | 12 | ALT_CS, CS_AZ_M, CS_ROLL_M, ENC_MISO, ENC_MOSI_M, ENC_SCK_M |
+| Slow signals (I²C, driver UART, step and direction, SWD, buttons, monitors …) | 85 | 43 nets |
+
+**Errors: 4 track clearances of 0.097–0.100 mm against 0.127 mm, 8 hole clearances of 0.2493 mm against 0.25 mm, 2 button ground pads with one thermal spoke instead of two.** No shorts. 47 dangling track ends and vias are left over from connections that were taken up.
+
+*What is left on this board.* Close the open connections (the router needs a proper escape pattern for the 0.4 mm-pitch chips and must stop taking up finished critical nets in its last step; or the connections are finished by hand in KiCad), clear the errors, look at the 3D render, then the fabrication files, the fit check and the viewer. The USB pairs are full-speed only (12 Mbit/s) and are routed as two tracks side by side, not as an impedance-controlled pair. The GNSS feed is 0.35 mm wide on the inner face over the ground plane (about 50 Ω on JLCPCB's standard four-layer build), a few millimetres long.
+
+![ST-501 layout in progress, inner face](img/04-st-501-layout-inner.png)
+![ST-501 layout in progress, front face](img/04-st-501-layout-front.png)
 
 ### 5.3 ST-602 battery board
 
@@ -167,7 +190,12 @@ What is left: route the power stages, USB pairs, motor phases, sense lines, enco
 
 Circuit as defined: BQ40Z50-R2 gauge and protector for 2 cells in series (2S2P pack), 1 mΩ sense resistor, charge and discharge N-FETs back to back, BQ294700 second-level over-voltage protector driving a three-terminal fuse, SMBus through 100 Ω and an ESD array to the blade connector, pads for B+, mid-point, B−, PACK+ and PACK−, charge-state LEDs behind the pack's light pipe with its button. Outline 32 × 40 mm, two layers.
 
-Two inputs are missing before the schematic can be drawn responsibly: (1) which LED lights for which charge level on the gauge's three LED pins — this is only in a figure of TI's reference schematic that could not be read here; (2) the footprint drawing of the three-terminal fuse (LCSC had 5 pieces of ITV4030L1415NR, C3672030). The screw-free fixing of the board at the pack end is designed together with the board and is also open.
+The two inputs that were missing:
+
+1. **LED wiring — found.** The three LED pins drive up to five LEDs wired between pairs of pins (charlieplexed), as on TI's evaluation module: LED 1 anode LEDCNTLA, cathode LEDCNTLB; LED 2 anode B, cathode A; LED 3 anode B, cathode C; LED 4 anode C, cathode B; LED 5 anode C, cathode A. A TI engineer confirmed this wiring on TI's E2E forum; the gauge can be set for 3, 4 or 5 LEDs, and the charge level at which each one lights is a setting in the gauge (TI's technical reference SLUUBK0), not fixed by the wiring. Still to read from the reference manual before the schematic is drawn: which three of the five positions a 3-LED display uses.
+2. **Fuse — partly found, and the part must change.** Littelfuse's drawing gives the body: 4.0 × 3.0 mm, 0.9 mm high, terminal dimensions A1 0.58, A2 0.50, A3 2.20, B1 0.80, B2 1.44, B3 1.03 mm. The recommended pad drawing and the terminal numbering are in figures that could not be read here. The part chosen earlier, ITV4030L1415, is the 4-cell version: its heater works from 10.5–19.6 V, so on a 2-cell pack (6.0–8.4 V) it would not blow. The 2-cell version of the same series (ITV4030L0815) is the one to use; its number, stock and heater voltage range still have to be confirmed against JLCPCB's library and the datasheet table.
+
+**What I need from you if the next chat cannot read the figures either:** the datasheet PDF of the ITV4030 15 A series (from littelfuse.com) attached to the chat. The screw-free fixing of the board at the pack end is designed together with the board and is also open.
 
 ## 6. Fit check
 
@@ -477,7 +505,9 @@ Fit the boards and harnesses following the Phase 3 assembly sequence, then repea
 
 ## 12. Risks and notes
 
-- **Mainboard routing is the open job.** The autorouter did not converge on this board (section 5.2). Expect the power stages, USB, phases and SPI to need hand routing; the cartridge board shows the method works at small scale.
+- **Mainboard routing is the open job.** Section 5.2 has the numbers. The power stages, planes and critical nets are routed; the slow signals round the fine-pitch chips are not all closed, and the board does not pass the design-rule check.
+- **Battery rail across the board.** About 10 mΩ of copper between the pack pads and the charger (section 5.2). It works, but it wastes about 0.36 W at 6 A; moving the pack pads beside the charger would be the clean fix.
+- **Battery-board fuse.** The fuse type listed so far is the 4-cell version and would not blow on this 2-cell pack (section 5.3).
 - **TPS55288 compensation** (20 k, 10 nF, 100 pF) is taken from the datasheet's typical design, not calculated for this output capacitor set. Check port B's load step on the oscilloscope in Stage C.
 - **MT6835 supply.** Out of stock at LCSC on the check date; the cartridge board cannot be completed without it. Alternatives with the same package and pinout do not exist, so order early.
 - **TMC2209 stock** at LCSC was 21 pieces; five sets need 15.
@@ -492,3 +522,5 @@ Fit the boards and harnesses following the Phase 3 assembly sequence, then repea
 - MagnTek MT6835 datasheet (pinout, SPI mode, air gap 1.0–3.0 mm)
 - LCSC number cross-checks against public KiCad and atopile projects on GitHub (same manufacturer part and LCSC number together)
 - Freerouting 2.1.0 <https://github.com/freerouting/freerouting>; KiCad 9.0.8 <https://www.kicad.org/>
+- BQ40Z50 LED wiring as on TI's evaluation module, confirmed by TI on the E2E forum: <https://e2e.ti.com/support/power-management-group/power-management/f/power-management-forum/807905/bq40z50-rsoc-led-configuration>; evaluation-module guide SLUUAV7 <https://www.ti.com/lit/pdf/sluuav7>
+- Littelfuse ITV4030 product specification (body dimensions) <https://www.littelfuse.com/products/fuses-overcurrent-protection/battery-protector/itv-three-terminal-fuses/itv4030-15a>

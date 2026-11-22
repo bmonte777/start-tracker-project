@@ -1,5 +1,9 @@
 """Build one board's layout from design.py, autoroute the slow nets, fill zones, save and run DRC.
-usage: python3 layout.py <board-folder> [--no-route]
+usage: python3 layout.py <board-folder> [--no-route | --dump]
+
+Boards whose design.py has a route_plan() are routed by tools/grouter.py: `layout.py <board> --dump` writes the
+hand-over file, `grouter.py <board>` writes <name>.routes.json, and a plain `layout.py <board>` lays those routes on the
+board. Boards without a plan (the cartridge board) go through Freerouting for their slow signals.
 
 The DRC report lists every message KiCad produces; nothing is filtered here."""
 import json
@@ -32,7 +36,7 @@ def drc(folder, name):
     return n
 
 
-def main(folder, route=True):
+def main(folder, route=True, dump_only=False):
     lib = os.path.join(HERE, "..", "lib", "ST.pretty")
     os.makedirs(lib, exist_ok=True)
     for nm, text in stfp.FPS:
@@ -49,7 +53,18 @@ def main(folder, route=True):
     missing = [r for r in pcb.comps if r not in pcb.fps]
     if missing:
         sys.exit("not placed: " + " ".join(sorted(missing)))
-    if route and pcb.unrouted():
+    pre = os.path.join(folder, "out", d.name + ".pre.json")
+    routes = os.path.join(folder, d.name + ".routes.json")
+    if hasattr(mod, "route_plan"):
+        # boards routed by tools/grouter.py: write the hand-over file, then lay the committed routes onto the board
+        pcb.dump(pre, **mod.route_plan(pcb))
+        if dump_only:
+            print("wrote", pre)
+            return {}
+        if route and os.path.exists(routes):
+            nt, nv, still_open = pcb.apply_routes(routes)
+            print(f"routes: {nt} track segments, {nv} vias" + (f"; the router left open: {still_open}" if still_open else ""))
+    elif route and pcb.unrouted():
         print("unrouted before autoroute:", pcb.unrouted())
         print(pcb.autoroute(passes=int(os.environ.get("ROUTE_PASSES", getattr(mod, "ROUTE_PASSES", 20)))))
         print("stubs removed:", pcb.trim_stubs(getattr(mod, "POUR_NETS", ("GND",))))
@@ -63,4 +78,4 @@ def main(folder, route=True):
 
 
 if __name__ == "__main__":
-    main(os.path.abspath(sys.argv[1]), "--no-route" not in sys.argv)
+    main(os.path.abspath(sys.argv[1]), "--no-route" not in sys.argv, "--dump" in sys.argv)

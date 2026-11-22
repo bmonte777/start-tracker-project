@@ -520,11 +520,14 @@ FIXED = {
     "J1": (38.3, -25.5, 0, "B"), "Q1": (29.8, -25.5, 0, "B"), "Q6": (30.0, -19.0, 0, "B"), "U12": (33.5, -13.0, 0, "B"),
     "L5": (41.5, -17.0, 0, "B"), "C77": (45.0, -6.5, 90, "B"), "C78": (45.0, 3.3, 90, "B"),
     # port A and charger
-    "U3": (-25.0, -6.0, 0, "B"), "U2": (-27.0, 6.5, 0, "B"), "L1": (-19.5, 7.0, 0, "B"), "C19": (-30.5, 15.5, 0, "B"), "U4": (-33.5, -1.0, 0, "B"),
+    "U3": (-25.0, -6.0, 0, "B"), "U2": (-27.0, 6.5, 0, "B"), "L1": (-19.5, 7.0, 0, "B"), "C19": (-39.5, 20.3, 0, "B"), "U4": (-33.5, -1.0, 0, "B"),
     # port B
-    "U6": (-41.0, -5.5, 0, "B"), "U7": (-30.0, 24.0, 0, "B"), "L2": (-38.3, 24.6, 0, "B"), "U8": (-45.0, 2.0, 90, "B"),
+    # port B, laid out as TI's reference: the two external FETs on the gate-drive side of the chip with their drains
+    # (Q4) and sources (Q5) toward the input capacitors, the inductor above the chip between the SW1 and SW2 pins
+    "U6": (-41.0, -5.5, 0, "B"), "U7": (-30.0, 17.5, 0, "B"), "L2": (-30.5, 25.2, 0, "B"), "U8": (-45.0, 2.0, 90, "B"),
+    "Q4": (-23.3, 25.0, 180, "B"), "Q5": (-23.3, 20.8, 0, "B"), "Q2": (-46.4, -4.2, 0, "B"), "Q3": (-46.4, -8.5, 0, "B"),
     # 5 V and 3.3 V rails
-    "U11": (-17.5, 20.3, 0, "B"), "L4": (-12.5, 26.2, 0, "B"), "C49": (-23.0, 26.2, 0, "B"), "U10": (-7.5, 12.5, 0, "B"), "L3": (-2.0, 12.5, 0, "B"),
+    "U11": (-15.5, 19.6, 0, "B"), "L4": (-12.5, 26.2, 0, "B"), "C49": (-18.0, 14.3, 0, "B"), "U10": (-7.5, 12.5, 0, "B"), "L3": (-2.0, 12.5, 0, "B"),
     # sensors
     "U24": (0.4, 1.7, 0, "B"), "U21": (-9.0, 0.0, 0, "B"), "U22": (-2.5, 20.5, 0, "B"), "U23": (-13.5, -0.5, 0, "B"),
     "J2": (13.4, -20.5, 180, "B"), "J12": (-45.5, -20.0, 90, "B"), "J5": (22.0, -21.5, 0, "B"), "J6": (22.0, -27.0, 0, "B"),
@@ -551,10 +554,24 @@ def layout(pcb):
             rr = [r_ for (r_, _p), n_ in pcb.netmap.items() if n_ == net and r_.startswith("R")][0]
             pcb.place(rr, x + 5.25, y + dy, rot=90, side="B", ref_text=False)
     # ESP32 antenna: nothing under the last 6 mm of the module and 15 mm either side (its footprint carries the keep-out zone)
-    pcb.block("*", (-30.0, -30.0, 18.0, -23.9))
+    pcb.block("*", ANT)
+    for (ax, ay), (bx, by) in zip(VBAT_BUS, VBAT_BUS[1:]):          # no parts on the front face where the battery bus runs
+        h = VBAT_BUS_W / 2 + 0.3
+        pcb.block("F", (min(ax, bx) - h, min(ay, by) - h, max(ax, bx) + h, max(ay, by) + h))
+    pcb.keepout(["F", "B", "In1", "In2"], pcb.rect(*ANT), tracks=True, vias=True, copper=True)
+    # room for every pin of the fine-pitch chips to get out: a band round each of them stays free of other parts
+    for ref, w in (("U2", 1.8), ("U3", 1.8), ("U6", 1.8), ("U7", 1.5), ("U12", 1.5), ("U14", 2.3), ("U15", 1.5), ("U17", 1.5), ("U19", 1.5),
+                   ("U13", 1.3), ("U24", 1.2), ("U21", 1.0), ("U22", 1.0), ("U10", 0.7), ("U11", 0.7), ("U4", 0.7)):
+        pcb.escape_ring(ref, w)
+    own, rank = owners(pcb)
+    for p in pcb.model["parts"]:
+        if p["ref"] in own:
+            p["owner"] = own[p["ref"]]
     order = [p["ref"] for p in pcb.model["parts"] if p["ref"] not in FIXED and p["ref"] not in pcb.fps]
-    # parts that tie a pin of a placed IC to something local go first, test points last
-    order.sort(key=lambda r: (r.startswith("TP"), not r.startswith(("L", "Q", "Y", "U", "D", "FB", "BT", "J"))))
+    # each part goes beside the pin of the chip it serves; the parts in a converter's switching loop and the ones on a
+    # chip's own small nets (boot, charge pump, regulator output, feedback) are placed before the rail capacitors and
+    # pull-ups, test points last
+    order.sort(key=lambda r: rank[r])
     failed = pcb.autoplace(order)
     if failed:
         print("AUTOPLACE FAILED:", " ".join(failed))
@@ -568,40 +585,224 @@ def layout(pcb):
     pcb.sync_classes()
     # In1 is solid ground from the start, so the autorouter drops a via to it at every ground pin
     pcb.plane_layer("In1")
-    # ground: a via to the In1 plane beside every ground pad, before anything else is routed
-    made, failed = pcb.plane_vias("GND", keep=[(-30.0, -30.0, 18.0, -23.9), (JACK[0] - JACK[2] - 0.5, JACK[1] - JACK[2] - 0.5,
-                                                                         JACK[0] + JACK[2] + 0.5, JACK[1] + JACK[2] + 0.5)])
-    print(f"ground fan-out: {made} vias; no place found for {len(failed)} pads: {' '.join(failed)}")
+    # ground: the router puts a via to the In1 plane beside every ground pad (tools/grouter.py, first step of the plan)
     pcb.zone("GND", "In1", pcb.rect(-49.5, -29.5, 49.5, 29.5), clearance=0.2, solid=True)
     return pcb
+
+
+# Which chip a small part belongs to, where the schematic order does not say it.
+OWNER = {
+    # port B buck-boost: input capacitors at the external half bridge, output capacitors and sense resistor at the chip
+    "C35": "Q4", "C36": "Q4", "C37": "Q4", "C38": "Q4", "C13": "U2", "C14": "U2", "C15": "U2", "C16": "U2",
+    # battery input: TVS and gate parts at the reverse-polarity FET
+    "D1": "Q1", "D2": "Q1", "D3": "J3", "D6": "J4",
+    "Q7": "Q6", "Q8": "U12", "L7": "J10", "C137": "J10",
+}
+# Placed first, chip by chip and net by net: the capacitors of each converter's switching loop, then its boot, bias and
+# output capacitors. Within a net the 100 nF goes nearest the pin.
+HOT = [("U2", ["CHG_PMID", "CHG_BT1", "CHG_BT2", "CHG_REGN", "VBUS_CHG", "VSYS", "VBAT"]),
+       ("Q4", ["VSYS"]), ("U7", ["PB_BOOT1", "PB_BOOT2", "PB_VCC", "VPB_RAW", "VPB"]),
+       ("U12", ["VMOT", "BST_BT", "BST_VCC", "VM_IN"]),
+       ("U10", ["VSYS", "BST_3V3", "+3V3"]), ("U11", ["VSYS", "BST_5V", "+5V"]),
+       ("U15", ["AZ_CPO", "AZ_VCP", "AZ_5V", "VMOT", "+3V3"]), ("U17", ["ALT_CPO", "ALT_VCP", "ALT_5V", "VMOT", "+3V3"]),
+       ("U19", ["ROLL_CPO", "ROLL_VCP", "ROLL_5V", "VMOT", "+3V3"]),
+       ("U14", ["+1V1", "RP_AVDD", "+3V3A", "RP_XIN", "RP_XOUT_X", "+3V3"]), ("U13", ["+3V3", "ESP_EN"]),
+       ("U3", ["PDA_LDO3V3", "PDA_LDO1V5", "+5V", "VBUS_A", "+3V3"]), ("U6", ["PDB_LDO3V3", "PDB_LDO1V5", "+5V", "VBUS_B", "+3V3"]),
+       ("Q1", ["VBAT_IN", "VBAT"]), ("Q6", ["VM_IN", "VSYS"])]
+
+
+def owners(pcb):
+    """ref -> the fixed part it is placed beside, and a placement rank for every part that is not fixed."""
+    fan = pcb.fanout
+    netpads = {}
+    for (r_, pin), n_ in pcb.netmap.items():
+        netpads.setdefault(n_, set()).add(r_)
+    anchors = [r_ for r_ in FIXED if not r_.startswith("H")]
+
+    parts = pcb.model["parts"]
+    sheet = {p["ref"]: p["sheet"] for p in parts}
+    # the transistors, inductors and crystal are placed first and then count as fixed parts for everything else
+    anchors += [p["ref"] for p in parts if p["ref"] not in FIXED and p["ref"][0] in "QLY" and "0402" not in p["footprint"]]
+
+    def weight(r_, sh=None):
+        return (sheet.get(r_) != sh, {"U": 0, "Q": 1, "L": 2, "Y": 2, "J": 3}.get(r_[0], 4))
+    own = {}
+    small = [p for p in parts if p["ref"] not in FIXED]
+    for p in small:                               # 1. a net that is local to one fixed part
+        if p["ref"] in anchors:
+            continue
+        nets = sorted({n_ for n_ in p["pins"].values() if n_ and n_ != "GND"}, key=lambda n_: (fan.get(n_, 99), n_))
+        for n_ in nets:
+            if fan.get(n_, 99) > 8:
+                break
+            cand = sorted((a for a in anchors if a in netpads.get(n_, ())), key=lambda a: (weight(a, p["sheet"]), a))
+            if cand:
+                own[p["ref"]] = cand[0]
+                break
+    for _ in range(4):                            # 2. through another small part on a local net
+        for p in small:
+            if p["ref"] in own:
+                continue
+            for n_ in sorted({n_ for n_ in p["pins"].values() if n_ and n_ != "GND"}, key=lambda n_: (fan.get(n_, 99), n_)):
+                if fan.get(n_, 99) > 8:
+                    break
+                nb = [r_ for r_ in netpads.get(n_, ()) if r_ in own]
+                if nb:
+                    own[p["ref"]] = own[sorted(nb)[0]]
+                    break
+    last = {}
+    for p in parts:                               # 3. rail capacitors and pull-ups: the chip whose parts they follow
+        if p["ref"] in FIXED:
+            if p["ref"][0] == "U" and p["sheet"] not in last:
+                last[p["sheet"]] = p["ref"]
+            continue
+        if p["ref"] in own:
+            if not p["ref"].startswith("TP") and own[p["ref"]][0] in "UQ":
+                last[p["sheet"]] = own[p["ref"]]
+        elif p["sheet"] in last:
+            own[p["ref"]] = last[p["sheet"]]
+    own.update(OWNER)
+
+    hot = {o: (i, nets_) for i, (o, nets_) in enumerate(HOT)}
+
+    def rank(p):
+        ref = p["ref"]
+        nets = [n_ for n_ in p["pins"].values() if n_ and n_ != "GND"]
+        f = min([fan.get(n_, 99) for n_ in nets] or [99])
+        local = sum(1 for n_ in nets if fan.get(n_, 99) <= 4)
+        o = own.get(ref)
+        if ref[0] == "C" and o in hot and any(n_ in hot[o][1] for n_ in nets):
+            k = min(hot[o][1].index(n_) for n_ in nets if n_ in hot[o][1])
+            return (0, hot[o][0], k, 0 if p["value"].startswith("100n") else 1)
+        if ref.startswith("TP"):
+            return (9, 0, 0, 0)
+        if ref in anchors:
+            return (-1, f, 0, 0)
+        if ref[0] == "D" or ref.startswith(("FB", "BT", "J", "SW")):
+            return (1, f, 0, 0)
+        if ref[0] == "C" and local >= 2:
+            return (2, f, 0, 0)                             # boot and charge-pump capacitors
+        if ref[0] == "C" and f <= 4:
+            return (3, f, 0, 0)                             # a chip's own regulator or reference capacitor
+        if ref[0] == "C":
+            return (4, 0 if "100n" in p["value"] else 1, 0, 0)
+        return (5, f, 0, 0)
+    return own, {p["ref"]: rank(p) for p in small}
 
 
 POWER_NETS = ["VBAT", "VBAT_IN", "VSYS", "VM_IN", "VMOT", "VBUS_A", "VBUS_B", "VBUS_CHG", "VPB", "VPB_RAW", "PB_MID", "+5V",
               "CHG_SW1", "CHG_SW2", "CHG_PMID", "PB_SW1", "PB_SW2", "BST_SW", "SW_5V", "SW_3V3"]
 PHASE_NETS = [f"{ax}_{p_}" for ax, _a in AXES for p_ in ("A1", "A2", "B1", "B2", "BRA", "BRB")]
 POUR_NETS = ("GND",)
+ANT = (-30.0, -30.0, 18.0, -23.9)        # ESP32 antenna: no copper on any layer
+
+# In2 (inner layer 2) is the power layer. 3.3 V everywhere, with the system rail under the power half and along a
+# corridor to the motor switch, and the motor rail under the drivers, the cartridge plugs and the boost converter.
+FULL = [(-49.5, -29.5), (49.5, -29.5), (49.5, 29.5), (-49.5, 29.5)]
+IN2 = [
+    ("+3V3", FULL, 0),
+    ("VSYS", [(-49.5, -29.5), (-30.6, -29.5), (-30.6, -23.4), (-12.0, -23.4), (-12.0, -19.6), (-16.5, -19.6), (-16.5, -4.0), (-18.0, 3.0),
+              (-18.0, 9.3), (-5.0, 9.3), (-5.0, 23.5), (-18.0, 23.5), (-18.0, 29.5), (-49.5, 29.5)], 1),
+    ("VSYS", [(-12.5, -23.4), (34.0, -23.4), (34.0, -16.6), (27.0, -16.6), (27.0, -19.6), (-12.5, -19.6)], 2),
+    ("VMOT", [(11.8, 3.0), (11.8, 29.5), (49.5, 29.5), (49.5, -16.0), (25.5, -16.0), (25.5, 3.0)], 3),
+]
+# The battery rail crosses the board on the front face as one wide copper area (the pack input is at the lower right,
+# the charger at the left): out of the reverse-polarity FET, up between buttons 3 and 4, west above the buttons and
+# under the ESP32 module, then north-west past port A to the charger's BAT pins. Kept south of the processors so that
+# their signals to the drivers, sensors and display do not have to cross it.
+VBAT_BUS = [(32.9, -25.6), (30.5, -23.0), (30.5, -15.0), (29.0, -13.6), (3.5, -13.6), (1.5, -11.0), (-16.0, -11.0), (-18.6, -8.4),
+            (-18.6, 1.0), (-20.2, 2.6), (-33.0, 2.6), (-33.0, 8.6)]
+VBAT_BUS_W = 4.6
+
+
+def in2_polys(net):
+    return [poly for n_, poly, _p in IN2 if n_ == net]
+
+
+def clusters(pts, gap=8.0):
+    """Groups of points in which every point is within gap of another one of its group."""
+    import math
+    left = list(pts)
+    out = []
+    while left:
+        grp = [left.pop()]
+        grew = True
+        while grew:
+            grew = False
+            for q in list(left):
+                if any(math.hypot(q[0] - g_[0], q[1] - g_[1]) <= gap for g_ in grp):
+                    grp.append(q)
+                    left.remove(q)
+                    grew = True
+        out.append(grp)
+    return out
+
+
+def pour_areas(pcb):
+    """Copper areas on the outer faces: one round every group of pads of a power or motor-phase net that lie together."""
+    out = []
+    for net in POWER_NETS + PHASE_NETS:
+        for side in ("B", "F"):
+            pts = [xy for (r_, _p, xy, sd) in pcb.padpos.get(net, []) if sd == side and not r_.startswith("TP")]
+            for grp in clusters(pts):
+                if len(grp) >= 2:
+                    out.append(dict(net=net, side=side, poly=pcb.hull(grp, 0.9)))
+    return out
+
+
+def route_plan(pcb):
+    """What tools/grouter.py routes, in which order and how wide. The order is the layout intent:
+    planes and the battery bus first, then the power stages, phases, USB, antenna feed and encoder bus, then the rest."""
+    bus = pcb.thick(VBAT_BUS, VBAT_BUS_W)
+    areas = pour_areas(pcb)
+    regions = [dict(net=a["net"], side=a["side"], poly=a["poly"]) for a in areas]
+    regions.append(dict(net="VBAT", side="F", poly=bus, hard=True))
+    plane3v3 = ["+3V3"]
+    steps = [
+        dict(op="fanout", length=0.35),
+        dict(op="plane", net="GND", polys=[FULL], w=0.25, ep=True, maxlen=4.0),
+        dict(op="plane", net="VMOT", polys=in2_polys("VMOT"), w=0.3, n_big=3, big_area=1.0,
+             n={"U15": 2, "U17": 2, "U19": 2, "U12": 3}),
+        dict(op="plane", net="VSYS", polys=in2_polys("VSYS"), w=0.3, n_big=3, big_area=1.0, n={"Q6": 2, "Q4": 2, "U2": 3}),
+        dict(op="plane", net="VBAT", polys=[bus], w=0.3, n_big=3, big_area=1.0, surface="F", n={"Q1": 2, "U2": 3}, maxlen=3.0),
+        dict(op="stitch", net="VBAT", polys=[bus], areas=[a["poly"] for a in areas if a["net"] == "VBAT" and a["side"] == "B"], max=10),
+        dict(op="stitch", net="VSYS", polys=in2_polys("VSYS"),
+             areas=[a["poly"] for a in areas if a["net"] == "VSYS" and a["side"] == "B"], max=6),
+        dict(op="stitch", net="VMOT", polys=in2_polys("VMOT"),
+             areas=[a["poly"] for a in areas if a["net"] == "VMOT" and a["side"] == "B"], max=6),
+        dict(op="plane", net="+3V3", polys=[FULL], exclude=in2_polys("VSYS") + in2_polys("VMOT"), w=0.25),
+        dict(op="route", name="GNSS antenna feed", nets=["GNSS_ANT", "GNSS_RF"], widths=[0.35, 0.2], hard=True, layer_cost={"F": 100}),
+        dict(op="route", name="switch nodes and power stages", hard=True, region_cost=1,
+             nets=["CHG_SW1", "CHG_SW2", "PB_SW1", "PB_SW2", "BST_SW", "SW_3V3", "SW_5V", "CHG_PMID", "VBUS_CHG", "VM_IN", "VBAT_IN",
+                   "VPB_RAW", "VPB", "PB_MID", "VBUS_A", "VBUS_B", "+5V"], widths=[1.0, 0.5, 0.3, 0.2, 0.15], order="given"),
+        dict(op="route", name="boot, gate drive and bias", hard=True,
+             nets=["CHG_BT?", "PB_BOOT?", "BST_BT", "BST_5V", "BST_3V3", "PB_DR1?", "PB_GV*", "CHG_REGN", "PB_VCC", "BST_VCC", "MSW_G", "Q1_G",
+                   "*_CPO", "*_CPI", "*_VCP", "*_5V", "RP_LX", "+1V1", "RP_AVDD", "+3V3A", "+3V3G"], widths=[0.3, 0.2, 0.15]),
+        dict(op="route", name="motor phases and sense", nets=["*_A1", "*_A2", "*_B1", "*_B2", "*_BRA", "*_BRB"], hard=True,
+             widths=[0.5, 0.3, 0.2]),
+        dict(op="route", name="USB pairs", nets=["A_DP", "A_DN", "B_DP", "B_DN"], widths=[0.2, 0.15], hard=True, order="given"),
+        dict(op="route", name="crystal and feedback", hard=True,
+             nets=["RP_XIN", "RP_XOUT", "RP_XOUT_X", "FB_3V3", "FB_5V", "BST_FB", "BST_COMP*", "PB_COMP*", "VMSEL_D", "PB_FSW", "PB_ILIM",
+                   "PB_MODE", "PB_DITH", "CHG_ILIM", "CHG_PROG", "CHG_TS", "SS_3V3", "*_VREF", "CHG_BATP", "CHG_SDRV"], widths=[0.15]),
+        dict(op="route", name="encoder SPI", nets=["ENC_MISO", "ENC_SCK_M", "ENC_MOSI_M", "CS_*_M", "*_SCK", "*_MOSI", "*_CS"], widths=[0.15]),
+        dict(op="rest", name="all other signals", widths=[0.15]),
+    ]
+    return dict(plan=dict(layers=["F", "B"], widths=[0.15, 0.2, 0.3, 0.35, 0.5, 1.0], steps=steps,
+                          class_widths={"*_3V3": [0.3, 0.2, 0.15], "PDA_LDO*": [0.2, 0.15], "PDB_LDO*": [0.2, 0.15]}),
+                regions=regions, cutouts=[list(JACK)],
+                keepouts=[dict(r=list(ANT), layers=["F", "B", "In1", "In2"])])
 
 
 def finish(pcb):
-    """After the autorouter: copper areas over every power net, the inner power plane, ground on both outer faces."""
-    import math
+    """After routing: copper areas over every power net, the inner power layer, the battery bus, ground on both outer faces."""
     full = pcb.rect(-49.5, -29.5, 49.5, 29.5)
     for ref in pcb.fps:                       # IC ground pads and thermal pads join the pours solidly
         if ref.startswith(("U", "Q", "J", "L", "R", "C")):
             pcb.solid(ref)
-    # 1. each power net gets a filled area on the component side that spans all of its pads (KiCad keeps the clearance
-    #    to everything else, so an area can only add copper to its own net)
-    for net in POWER_NETS + PHASE_NETS:
-        for side in ("B", "F"):
-            pts = [xy for (r_, _p, xy, sd) in pcb.padpos.get(net, []) if sd == side and not r_.startswith("TP")]
-            span = max(max(q[0] for q in pts) - min(q[0] for q in pts), max(q[1] for q in pts) - min(q[1] for q in pts)) if pts else 0
-            if len(pts) >= 2 and span <= 30.0:      # rails that cross the board (VSYS, VMOT, +3V3) use the In2 plane instead
-                pcb.zone(net, side, pcb.hull(pts, 0.9), clearance=0.2, solid=True, priority=5)
-    # 2. In2: system rail under the power half, motor rail under the drivers, 3.3 V under the logic
-    pcb.zone("+3V3", "In2", full, clearance=0.2, solid=True, priority=0)
-    pcb.zone("VSYS", "In2", [(-49.5, -29.5), (-12.0, -29.5), (-12.0, -4.0), (-18.0, 3.0), (-18.0, 29.5), (-49.5, 29.5)], clearance=0.2,
-             solid=True, priority=2)
-    pcb.zone("VSYS", "In2", pcb.rect(20.0, -29.5, 49.5, -9.0), clearance=0.2, solid=True, priority=2)
-    pcb.zone("VMOT", "In2", pcb.rect(5.0, -8.0, 49.5, 29.5), clearance=0.2, solid=True, priority=3)
+    for a in pour_areas(pcb):
+        pcb.zone(a["net"], a["side"], a["poly"], clearance=0.2, solid=True, priority=5)
+    pcb.zone("VBAT", "F", pcb.thick(VBAT_BUS, VBAT_BUS_W), clearance=0.2, solid=True, priority=4)
+    for net, poly, prio in IN2:
+        pcb.zone(net, "In2", poly, clearance=0.2, solid=True, priority=prio)
     pcb.zone("GND", "F", full, clearance=0.2)
     pcb.zone("GND", "B", full, clearance=0.2)
