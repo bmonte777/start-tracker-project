@@ -91,6 +91,13 @@ The reasoning and numbers are in `docs/04-electronics.md` and `docs/calc/phase4_
 
 D27 is confirmed: the TPS25751 datasheet lists the BQ25792 among the chargers its firmware drives.
 
+## 22 Nov 2026 — Phase 4 follow-up decisions
+
+| # | Topic | Decision |
+|---|---|---|
+| D48 | Encoder chip-to-magnet gap (Q29) | The encoder board stays where Phase 3 put it; carriers ST-212 and ST-216 are not changed. The gap is 0.81–0.82 mm with the real chip package, under the MT6835 datasheet's 1.0 mm minimum, so the encoder error is measured on the P0 bench (bring-up Stage D) before anything is changed. Approved: "Continue as it is" |
+| D49 | USB-C sockets on the prototypes (Q30) | Upright GT-USB-7051A (LCSC C2843970), not sealed, about 1.5 mm proud of the bezel face. A sealed socket is looked at later if needed. Approved: "leave it unsealed for the prototype" |
+
 ### Phase 4 — pending approval (not decisions yet)
 
 The Phase 4 design carries on with the recommended option for each of these. Nothing that changes a printed or machined part has been changed.
@@ -98,8 +105,6 @@ The Phase 4 design carries on with the recommended option for each of these. Not
 | # | Question | Recommended, used in the design |
 |---|---|---|
 | Q28 | Clock backup | Seiko MS621FE rechargeable cell (about three months) instead of the 0.1 F capacitor (about two days) |
-| Q29 | Encoder chip-to-magnet gap is 0.8 mm with the real package; the MT6835 datasheet asks for 1.0–3.0 mm | Raise the encoder board 0.5 mm: carriers ST-212 and ST-216 get 0.5 mm taller posts (two printed parts change) |
-| Q30 | USB-C sockets | Upright GT-USB-7051A for the prototypes (in stock, not sealed, 1.5 mm proud of the bezel); a sealed socket when the bezel is revised |
 | Q31 | Buttons | TS-1187A (1.5 mm tall); the four printed button caps grow by 2 mm |
 | Q32 | GNSS antenna | Active patch on a coax lead (U.FL socket on the board), flat under the top cover |
 | Q33 | Shutter socket | Panel-mount 2.5 mm jack in the bezel, through a 9 mm cut-out in the mainboard, wired to plug J12 |

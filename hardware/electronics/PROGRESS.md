@@ -26,7 +26,8 @@ Last update: 22 Nov 2026, 16:30 UTC. Branch `phase-4-electronics`, pull request 
    Circuit definition is in `docs/04-electronics.md` section 5.3. Folder `battery-board/` does not exist yet.
 3. **Sheet** https://claude.ai/artifact/9T9Gpvm2vWPRYqJtPChJa8: copy the changed lines from `hardware/bom/master-parts-list.csv`
    (ST-501, 509, 512, 513, 517, 518, 519, 520, 530). Needs the Claude Docs connector's `topic.sheets` guide first.
-4. Bruno's answers to Q28–Q35 (decisions log, "pending approval"). Q29 changes printed parts ST-212 / ST-216: do nothing in CAD before he approves.
+4. Q29 and Q30 are answered (D48: gap stays 0.8 mm, measure on the bench; D49: unsealed USB-C on prototypes). Q28, Q31–Q35 still await Bruno; carry on with the recommended options.
+   Add to bring-up Stage D: an encoder noise / error check against the MT6835 datasheet at the 0.8 mm gap.
 5. Fill the remaining sections of the Docs doc if any are still pending: https://claude.ai/artifact/9Y2pyZBkJu5i3eWqNy6xAx
 6. Run the workflow once on GitHub (Actions → Phase 4 electronics build) and fix what it reports.
 7. When 1–4 are done: final check of every value against its source, then write `claude/phase-5-prompt.md`.

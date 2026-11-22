@@ -2,7 +2,7 @@
 
 Star Tracker Project · revision A · 22 November 2026 · branch `phase-4-electronics`
 
-This document covers the electronics of the head: the calculations behind every value, the three boards, the wiring, what to order, what the firmware needs to know and how to bring the first boards up on the bench. Decisions D1–D41 are taken as fixed; D42–D47 were approved during this phase.
+This document covers the electronics of the head: the calculations behind every value, the three boards, the wiring, what to order, what the firmware needs to know and how to bring the first boards up on the bench. Decisions D1–D41 are taken as fixed; D42–D49 were approved during this phase.
 
 ## 1. Where things stand
 
@@ -22,7 +22,7 @@ This document covers the electronics of the head: the calculations behind every 
 | GitHub Actions workflow | Written, started by hand only; not yet run on GitHub | `.github/workflows/phase4-electronics.yml` |
 | Phase 5 prompt | Held back until the mainboard is routed and the battery board exists | — |
 
-**What you can do today:** answer Q28–Q35, and order the cartridge board (ST-520) if you want boards in hand early — its design does not change with Q29, but its encoder chip was out of stock on the check date. **What is not ready:** the mainboard cannot be ordered yet (its tracks are not routed), the battery board is not designed, and the Sheet still shows the Phase 3 prices. Phase 4 is therefore not complete, and the Phase 5 prompt is held back. `hardware/electronics/PROGRESS.md` says exactly where to pick up.
+**What you can do today:** answer the six open questions (Q28, Q31–Q35), and order the cartridge board (ST-520) if you want boards in hand early — its encoder chip was out of stock on the check date. **What is not ready:** the mainboard cannot be ordered yet (its tracks are not routed), the battery board is not designed, and the Sheet still shows the Phase 3 prices. Phase 4 is therefore not complete, and the Phase 5 prompt is held back. `hardware/electronics/PROGRESS.md` says exactly where to pick up.
 
 Board viewer (interactive BOM, Day / Night): <https://claude.ai/artifact/TntQCR18hPMWE3V6fTQ68L> · Docs version of this document: <https://claude.ai/artifact/9Y2pyZBkJu5i3eWqNy6xAx> · Parts list Sheet: <https://claude.ai/artifact/9T9Gpvm2vWPRYqJtPChJa8> · KiCad projects: `hardware/electronics/`.
 
@@ -40,6 +40,8 @@ Everything in the tables below that depends on a board is read from the board fi
 | D45 | A P-FET soft-start switch sits in front of the boost converter (`MOTOR_PWR_EN`); a second P-FET at the pack input blocks reverse polarity |
 | D46 | Motor temperature is read by a 10 k B3950 bead thermistor glued to each motor and soldered to pads on the cartridge board |
 | D47 | Cartridge plug pinout (JST-GH 15-way): 1–2 A1, 3–4 A2, 5 GND, 6 CS, 7 SCK, 8 MOSI, 9 MISO, 10 NTC, 11 +3V3, 12–13 B1, 14–15 B2 |
+| D48 | The encoder board stays at its Phase 3 height: chip-to-magnet gap 0.81 mm against the datasheet's 1.0 mm minimum; the encoder error is measured on the P0 bench before any part is changed. No printed part changes |
+| D49 | Prototype USB-C sockets are the upright, unsealed GT-USB-7051A, about 1.5 mm proud of the bezel; a sealed type is looked at later if needed |
 
 ### 2.2 Open items carried in, now closed
 
@@ -56,8 +58,6 @@ Everything in the tables below that depends on a board is read from the board fi
 | No. | Question | Recommendation (used in the design) | If you say no |
 |---|---|---|---|
 | Q28 | Clock backup: the 0.1 F capacitor from the parts list keeps the clock for about two days. | Seiko MS621FE rechargeable coin cell, 5.5 mAh: about three months of backup, same footprint class, charged by the RV-3028's own trickle charger | Fit a 0.1 F capacitor on the same pads by hand |
-| Q29 | Encoder gap: with the real chip package (TSSOP-16, 1.2 mm tall) the gap between chip and magnet is 0.81 mm; the MT6835 datasheet asks for 1.0–3.0 mm. | Raise the encoder board by 0.5 mm (carriers ST-212 and ST-216: 0.5 mm taller posts), gap becomes 1.3 mm. **This changes two printed parts, so nothing has been changed yet** | Keep 0.8 mm and measure the encoder's error on the P0 bench first |
-| Q30 | USB-C sockets: the board carries upright sockets (GT-USB-7051A, 10.5 mm tall), in stock at JLCPCB but not sealed; they stand about 1.5 mm proud of the bezel face. | Use them for the prototypes; choose a sealed upright socket for production when the bezel is revised | Change the bezel openings now for a sealed socket (needs a part choice and a CAD change) |
 | Q31 | Buttons: the in-stock sealed-membrane switch (TS-1187A) is 1.5 mm tall; the CAD model assumed 3.5 mm. | Keep the switch; lengthen the four printed button caps by 2 mm | Hand-fit taller switches |
 | Q32 | GNSS antenna: an active patch on a short coax lead (U.FL socket on the board) instead of a patch soldered to the board. | Keep the lead: the antenna can sit flat under the top cover, away from the converters, and the board stays inside its 12 mm height limit | A 25 mm patch on the board face: 8 mm tall next to the pack, and a weaker sky view |
 | Q33 | Shutter socket: a panel-mount 2.5 mm jack held by its nut in the bezel, wired to a 3-pin plug on the board, passing through a 9 mm cut-out in the board. | Keep it: no load on the board when a cable is pulled | A board-mounted jack (needs the bezel hole moved to the board edge) |
@@ -180,9 +180,9 @@ The boards are exported from KiCad as STEP models with their components and load
 | ST-520 Encoder board (roll) | none | ST-216 Cartridge cover (roll) 0.09 mm; ST-215 Encoder tube (roll) 0.82 mm; ST-209 Encoder magnet (roll) 0.82 mm | 0.82 |
 | ST-501 Mainboard | ST-310 Azimuth body (0.21 mm³); ST-315 Front bezel (4.04 mm³) | ST-326 OLED window 38 x 22 x 1 PC 0.58 mm; ST-316 Button cap 4 3.5 mm; ST-316 Button cap 1 3.66 mm | — |
 
-Reading the table: the cartridge boards rest on their carriers (0.09 mm is the copper thickness missing from the bare-board model) and nothing else is nearer than the magnet. **The chip-to-magnet gap is 0.81–0.82 mm, under the MT6835's 1.0 mm minimum: question Q29.**
+Reading the table: the cartridge boards rest on their carriers (0.09 mm is the copper thickness missing from the bare-board model) and nothing else is nearer than the magnet. **The chip-to-magnet gap is 0.81–0.82 mm, under the MT6835's 1.0 mm minimum. By decision D48 it stays as it is and is measured on the P0 bench.**
 
-Mainboard (placement model): the only overlap is the display's 4-pin header, drawn in the 3D model as a full-length stock header 10.1 mm tall; the bezel's inner face is 6 mm from the board. On the real board the display module is soldered by its own pins, trimmed to length, so this is a model artefact — but it also shows the display must sit low: check the module's height against the 0.58 mm left under the window when the first display arrives. The button caps end 3.5–3.7 mm from the board face and the chosen switch is 1.5 mm tall, which is the 2 mm of Q31. No overlap is reported at the USB-C sockets (they stand about 1.5 mm proud of the bezel's outer face, Q30) or at the buttons; whether every part carries a 3D model in the export has not been checked one by one, so this check is repeated when the layout is final. The GNSS antenna is no longer on the board (Q32), so the GNSS window check moves to the antenna's position under the top cover in the CAD, still to be drawn.
+Mainboard (placement model): the only overlap is the display's 4-pin header, drawn in the 3D model as a full-length stock header 10.1 mm tall; the bezel's inner face is 6 mm from the board. On the real board the display module is soldered by its own pins, trimmed to length, so this is a model artefact — but it also shows the display must sit low: check the module's height against the 0.58 mm left under the window when the first display arrives. The button caps end 3.5–3.7 mm from the board face and the chosen switch is 1.5 mm tall, which is the 2 mm of Q31. No overlap is reported at the USB-C sockets (they stand about 1.5 mm proud of the bezel's outer face, D49) or at the buttons; whether every part carries a 3D model in the export has not been checked one by one, so this check is repeated when the layout is final. The GNSS antenna is no longer on the board (Q32), so the GNSS window check moves to the antenna's position under the top cover in the CAD, still to be drawn.
 
 ## 7. Wiring harnesses
 
@@ -469,6 +469,7 @@ Work through the stages in order; do not skip ahead after a failed check. Bench 
 5. Slew test: rail to 16 V, ramp to 8°/s equivalent motor speed, back to 0, ten times. No lost steps (encoder agrees with step count), `DIAG` stays low.
 6. Encoder field check: with the motor holding at full current and then at zero, compare the encoder reading. A difference above 10 arc-seconds means the motor's stray field reaches the chip; note it for Phase 5 (it can be calibrated out).
 7. Repeat steps 1–5 on J8 and J9 with the same cartridge: all three channels are identical.
+8. Encoder at the 0.8 mm gap (D48): with the shaft still, log 1,000 readings and note the spread; then turn one slow full revolution and check the angle rises smoothly with no jumps or flat spots, and read the chip's status bits for a field-strength warning. A warning, jumps, or a spread well above the datasheet's noise figure means the board has to go up 0.5 mm after all.
 
 ### Stage E — complete head (P1)
 
@@ -481,7 +482,7 @@ Fit the boards and harnesses following the Phase 3 assembly sequence, then repea
 - **MT6835 supply.** Out of stock at LCSC on the check date; the cartridge board cannot be completed without it. Alternatives with the same package and pinout do not exist, so order early.
 - **TMC2209 stock** at LCSC was 21 pieces; five sets need 15.
 - **Stray field** from the motor on the encoder is expected to be a few arc-seconds; Stage D step 6 measures it.
-- **Chip-to-magnet gap** is below the datasheet minimum until Q29 is decided.
+- **Chip-to-magnet gap** stays at 0.8 mm, below the datasheet minimum, by decision D48. Stage D of the bring-up plan now carries the check: if the encoder's noise or error is worse than its datasheet figures, raising the board 0.5 mm (carriers ST-212 and ST-216) is the fix.
 
 ## 13. Sources
 
