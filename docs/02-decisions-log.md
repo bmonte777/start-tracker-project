@@ -110,3 +110,5 @@ The Phase 4 design carries on with the recommended option for each of these. Not
 | Q33 | Shutter socket | Panel-mount 2.5 mm jack in the bezel, through a 9 mm cut-out in the mainboard, wired to plug J12 |
 | Q34 | Status light | Three single-colour 0603 LEDs behind the light pipe instead of one RGB package |
 | Q35 | Battery lead | Soldered to two pads on the mainboard, with an in-line XT30 |
+| Q36 | Battery rail on the mainboard | Pack pads stay at the lower right; the rail crosses the board as a 94 mm copper strip on the front face (about 10 mΩ). On a six-layer board (Q37) it moves to an inner layer. Not taken: pack pads beside the charger, which changes harnesses ST-531-PWR and ST-532 |
+| Q37 | How to finish the mainboard layout (98 connections open after three router runs, 22 Nov) | Six layers with vias in the pads of the fine-pitch chips; outline, parts and placement stay. Not taken yet: finishing by hand in KiCad, or four layers with the RP2354A's pins reassigned. **No further routing is done until this is answered** |
