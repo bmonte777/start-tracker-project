@@ -1,0 +1,27 @@
+Part,What to buy,Qty per head,Buy from,Link
+ST-202,Laifual LHT-17-100-U-III hollow harmonic unit,2,Laifual (quote) / Alibaba listing,https://www.alibaba.com/product-detail/Laifual-LHT-series-harmonic-drive-gearbox_1600058558735.html
+ST-201,Laifual LHT-14-100-U-III hollow harmonic unit,1,Laifual (quote) / Alibaba listing,https://www.alibaba.com/product-detail/Laifual-LHT-series-harmonic-drive-gearbox_1600058558735.html
+ST-203,StepperOnline 17HE15-1504S (38 mm),2,StepperOnline,https://www.omc-stepperonline.com/e-series-nema-17-bipolar-42ncm-59-49oz-in-1-5a-42x42x38mm-4-wires-w-1m-cable-connector-17he15-1504s
+ST-214,StepperOnline 17HS19-2004S1 (48 mm),1,StepperOnline,https://omc-stepperonline.com/nema-17-bipolar-59ncm-84oz-in-2a-42x48mm-4-wires-w-1m-cable-and-connector.html
+ST-204,"GT2 pulley 20T, 9 mm, bore 5, M4 set screws (link is the seller's 6.35 bore page: pick the 5 mm bore)",3,123-3D / Misumi,https://www.123-3d.co.uk/123-3D-GT2-timing-belt-pulley-20-teeth-9mm-belt-bore-6-35m-GT2-20T-W9-B6-35-i4690.html
+ST-205,"GT2 pulley 60T, 9 mm, re-bored to the reducer stub (20 / 25 mm)",3,RS (Optibelt 60T bore up to 20) / JLCMC,https://uk.rs-online.com/web/p/belt-pulleys/2365741
+ST-206,"2GT closed belt 200 mm, 9 mm wide",3,Gates via Motion / generic,https://www.motion.com/products/sku/05694825
+ST-209,Magnet 6 x 2.5 mm diametric N35SH,3,LCSC / magnet supplier,
+ST-213 / 218 / 219,"V-rings VA-75, VA-80, VA-65 (NBR)",3,Simply Bearings / RS (SKF),https://simplybearings.co.uk/shop/p83314/VA25-NITRILE-Rubber-V-Ring-For-Shafts-24-27mm/product_info.html
+ST-304,"Hinge pin 8 h6 x 80, ends tapped M3",1,"Misumi (shaft, one end / both ends tapped)",
+ST-306 / 308 / 309,"Thumb screws M5 x 25 (2), M5 x 16 (2), M3 x 25 knurled (1), stainless",5,Accu,https://accu-components.com/
+ST-307,"3/8in-16 stainless thread bushing, OD 12 x 8",1,camera hardware supplier,
+ST-314,"Arca clamp 60 mm, screw knob (Sunwayfoto DDC-60)",1,B&H / local dealer,https://tanotis.com/products/sunwayfoto-ddc-60-screw-knob-clamp-60mm
+ST-326,"Clear PC sheet 1 mm, cut 38 x 22",1,any plastics shop,
+ST-329,O-ring 80 x 2 NBR 70,1,generic,
+ST-330,3/8in-16 x 12 coin-slot camera screw,1,camera hardware supplier,
+ST-601,Molicel INR-21700-P50B,4,NKON (EU),https://www.nkon.nl/novat/rechargeable/molicel-inr21700-p50b-5000mah-50a.html
+ST-710..741,"Stainless A2 screws, ISO 4762 / ISO 7380, 19 sizes (see parts list, 194 pcs)",194,Accu / bolts.co.uk,https://bolts.co.uk/m3-x-10mm-socket-cap-screw-din-912-a2-stainless-steel-pack-of-200-p-SCMCA203010
+ST-750..752,"Washers M3 / M3 large / M5, stainless",16,Accu,https://accu-components.com/
+ST-760,Ruthex heat-set inserts M3 (pack of 100),75,3DJake,https://www.3djake.com/ruthex/threaded-insert-m3-100-pieces
+ST-761,Ruthex heat-set inserts M4 (pack of 50),12,3DJake (Ruthex range),https://www.3djake.com/ruthex
+ST-762,Ruthex heat-set inserts M5,6,3DJake,
+Filament,Bambu PAHT-CF 1 kg (plates 1-2 use 975 g; buy 2 for purge and a reprint),2,Bambu EU store,https://eu.store.bambulab.com/en-fi/products/paht-cf
+Filament,Bambu ASA 1 kg,1,Bambu EU store,https://eu.store.bambulab.com/en-lu/products/asa-filament
+Filament,"TPU 95A 0.5 kg, PETG clear (small spool)",1,Bambu EU store,
+ST-5xx,"Electronics: see Phase 4 (boards, ICs, connectors, harness)",1,JLCPCB / LCSC,
