@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Star Tracker P1 3D Viewer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Layout: full-height 3D stage, parts list on the left, controls docked at the top of the stage. */
+  --bg: #eef0ec;
+  --panel: #ffffff;
+  --ink: #1b2024;
+  --muted: #5d6870;
+  --line: #d7dbd6;
+  --accent: #1f4f9a;
+  --select: #e8792b;
+  --stage: #f7f8f5;
+  --font-body: "IBM Plex Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", "Consolas", "Menlo", monospace;
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --bg: #0b0f15;
+  --panel: #121821;
+  --ink: #d9e0e8;
+  --muted: #8a97a6;
+  --line: #243040;
+  --accent: #7fa6ff;
+  --select: #ff9a4d;
+  --stage: #0e141c;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 14px; }
+.app { display: grid; grid-template-columns: 330px 1fr; height: 100%; }
+aside { background: var(--panel); border-right: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0; }
+header { padding: 16px 16px 10px; border-bottom: 1px solid var(--line); display: grid; gap: 6px; }
+h1 { font-size: 17px; margin: 0; font-weight: 600; text-wrap: balance; }
+.sub { color: var(--muted); font-size: 12px; }
+.search { padding: 10px 16px; border-bottom: 1px solid var(--line); }
+.search input { width: 100%; padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--stage); color: var(--ink); font: inherit; }
+.list { overflow-y: auto; flex: 1; padding: 6px 0 12px; }
+.group { padding: 10px 16px 4px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.row { display: grid; grid-template-columns: 58px 1fr auto; gap: 8px; align-items: center; padding: 5px 16px; cursor: pointer; border-left: 3px solid transparent; }
+.row:hover { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.row.sel { border-left-color: var(--select); background: color-mix(in srgb, var(--select) 14%, transparent); }
+.row:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.pid { font-family: var(--font-mono); font-size: 12px; color: var(--accent); }
+.nm { font-size: 13px; line-height: 1.25; }
+.qty { font-family: var(--font-mono); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+main { position: relative; min-width: 0; background: var(--stage); }
+canvas { display: block; width: 100%; height: 100%; }
+.controls { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center;
+  background: color-mix(in srgb, var(--panel) 92%, transparent); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; }
+.ctl { display: grid; gap: 2px; min-width: 150px; }
+.ctl label { font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; gap: 8px; }
+.ctl output { font-family: var(--font-mono); color: var(--ink); font-variant-numeric: tabular-nums; }
+input[type=range] { width: 100%; accent-color: var(--accent); }
+.btns { display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto; }
+button { font: inherit; font-size: 12px; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
+button[aria-pressed="true"] { background: var(--accent); color: var(--panel); border-color: var(--accent); }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.info { position: absolute; left: 12px; bottom: 12px; max-width: 420px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; display: grid; gap: 4px; }
+.info h2 { margin: 0; font-size: 14px; font-weight: 600; }
+.info dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; font-size: 12px; }
+.info dt { color: var(--muted); }
+.info dd { margin: 0; font-variant-numeric: tabular-nums; }
+.legend { position: absolute; right: 12px; bottom: 12px; font-size: 11px; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; }
+.loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font-size: 13px; pointer-events: none; }
+@media (max-width: 760px) { .app { grid-template-columns: 1fr; grid-template-rows: 46% 54%; } aside { order: 2; border-right: 0; border-top: 1px solid var(--line); } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <header>
+      <h1>Star Tracker P1 &ndash; 3D viewer</h1>
+      <div class="sub">Rev __REV__ &middot; __DATE__ &middot; drag to orbit, right-drag to pan, wheel to zoom. Click a part here or in 3D.</div>
+    </header>
+    <div class="search"><input id="q" type="search" placeholder="Find a part (ID or name)" aria-label="Find a part"></div>
+    <div class="list" id="list" role="listbox" aria-label="Parts"></div>
+  </aside>
+  <main>
+    <canvas id="c" aria-label="3D model of the star tracker head"></canvas>
+    <div class="loading" id="loading">Unpacking the model&hellip;</div>
+    <div class="controls">
+      <div class="ctl"><label for="ex">Explode <output id="exo">0 %</output></label><input id="ex" type="range" min="0" max="100" value="0"></div>
+      <div class="ctl"><label for="az">Azimuth <output id="azo">0&deg;</output></label><input id="az" type="range" min="-180" max="180" value="0"></div>
+      <div class="ctl"><label for="wd">Wedge tilt <output id="wdo">0&deg;</output></label><input id="wd" type="range" min="0" max="75" value="0"></div>
+      <div class="ctl"><label for="al">Altitude <output id="alo">0&deg;</output></label><input id="al" type="range" min="-15" max="100" value="0"></div>
+      <div class="ctl"><label for="rl">Roll <output id="rlo">0&deg;</output></label><input id="rl" type="range" min="-145" max="10" value="0"></div>
+      <div class="btns">
+        <button id="rig" aria-pressed="true">Payload</button>
+        <button id="edges" aria-pressed="true">Edges</button>
+        <button id="fit">Fit view</button>
+        <button id="clear">Clear selection</button>
+        <button id="theme" aria-pressed="false">Night</button>
+      </div>
+    </div>
+    <div class="info" id="info"><h2>Nothing selected</h2><div class="sub">Pick a part to see its ID, material, process and mass.</div></div>
+    <div class="legend">Ranges: altitude bumpers &minus;15&deg; / +100&deg;; roll +10&deg; to &minus;145&deg; with the 200&ndash;600 on its foot.</div>
+  </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const MODEL = "__MODEL_DATA__";
+const PARTS = __PARTS__;
+const K = __PARAMS__;
+const STEP_NAMES = {1:"Step 1 - base and wedge", 2:"Step 2 - cartridges (bench)", 3:"Step 3 - azimuth cartridge and body", 4:"Step 4 - wedge upper plate", 5:"Step 5 - hinge", 6:"Step 6 - tower and altitude cartridge", 7:"Step 7 - arm and roll cartridge", 8:"Step 8 - shelf and clamp", 9:"Step 9 - electronics and covers", 10:"Step 10 - battery", 99:"Reference payload"};
+
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(30, 1, 5, 20000);
+camera.up.set(0, 0, 1);
+const controls = new THREE.OrbitControls(camera, canvas);
+controls.enableDamping = true;
+scene.add(new THREE.HemisphereLight(0xffffff, 0x8890a0, 0.75));
+const sun = new THREE.DirectionalLight(0xffffff, 0.75); sun.position.set(400, -600, 900); scene.add(sun);
+const fill = new THREE.DirectionalLight(0xffffff, 0.30); fill.position.set(-600, 300, 200); scene.add(fill);
+
+// stage hierarchy: ground -> wedge -> az -> alt -> roll
+function pivot(parent, px, py, pz) { const p = new THREE.Group(); p.position.set(px, py, pz); const inner = new THREE.Group(); inner.position.set(-px, -py, -pz); p.add(inner); parent.add(p); return {p, inner}; }
+const root = new THREE.Group(); scene.add(root);
+const G = {ground: new THREE.Group()}; root.add(G.ground);
+const W = pivot(root, K.hinge_x, 0, K.hinge_z); G.wedge = W.inner; G.az = new THREE.Group(); W.inner.add(G.az);
+const AL = pivot(G.az, 0, 0, K.z_alt); G.alt = AL.inner;
+const RL = pivot(G.alt, K.x_roll, 0, K.z_roll); G.roll = RL.inner; G.rig = RL.inner;
+
+const meshes = [];
+let edgesOn = true, selected = null;
+const edgeMat = new THREE.LineBasicMaterial({color: 0x15191d, transparent: true, opacity: 0.55});
+
+async function load() {
+  const bin = Uint8Array.from(atob(MODEL), c => c.charCodeAt(0));
+  const ds = new Blob([bin]).stream().pipeThrough(new DecompressionStream('gzip'));
+  const recs = JSON.parse(await new Response(ds).text());
+  for (const r of recs) {
+    const pb = Uint8Array.from(atob(r.p), c => c.charCodeAt(0));
+    const ib = Uint8Array.from(atob(r.i), c => c.charCodeAt(0));
+    const q = new Int16Array(pb.buffer); const pos = new Float32Array(q.length); for (let k = 0; k < q.length; k++) pos[k] = q[k] * 0.05;
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    g.setIndex(new THREE.BufferAttribute(new Uint32Array(ib.buffer), 1));
+    g.computeVertexNormals();
+    const col = new THREE.Color(r.color[0], r.color[1], r.color[2]);
+    const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({color: col, flatShading: true, metalness: 0.15, roughness: 0.62, transparent: true, opacity: 1}));
+    const e = new THREE.LineSegments(new THREE.EdgesGeometry(g, 28), edgeMat);
+    m.add(e);
+    m.userData = Object.assign({}, r, {base: col.clone(), edges: e}); delete m.userData.p; delete m.userData.i;
+    (G[r.stage] || G.az).add(m);
+    meshes.push(m);
+  }
+  buildList(); fit(); applySliders();
+  document.getElementById('loading').remove();
+}
+
+function buildList(filter = '') {
+  const list = document.getElementById('list'); list.innerHTML = '';
+  const byStep = {};
+  meshes.forEach((m, i) => { (byStep[m.userData.step] ||= []).push(i); });
+  const f = filter.trim().toLowerCase();
+  Object.keys(byStep).map(Number).sort((a, b) => a - b).forEach(st => {
+    const rows = byStep[st].filter(i => !f || (meshes[i].userData.name + ' ' + meshes[i].userData.pid).toLowerCase().includes(f));
+    if (!rows.length) return;
+    const h = document.createElement('div'); h.className = 'group'; h.textContent = STEP_NAMES[st] || ('Step ' + st); list.appendChild(h);
+    rows.forEach(i => {
+      const u = meshes[i].userData, info = PARTS[u.pid] || {};
+      const d = document.createElement('div'); d.className = 'row'; d.tabIndex = 0; d.setAttribute('role', 'option'); d.dataset.i = i;
+      d.innerHTML = `<span class="pid">${u.pid}</span><span class="nm">${u.name}</span><span class="qty">${info.qty ? 'x' + info.qty : ''}</span>`;
+      d.onclick = () => select(i, true);
+      d.onkeydown = ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); select(i, true); } };
+      list.appendChild(d);
+    });
+  });
+  markRows();
+}
+
+function markRows() { document.querySelectorAll('.row').forEach(r => r.classList.toggle('sel', selected !== null && meshes[+r.dataset.i].userData.pid === meshes[selected].userData.pid)); }
+
+function select(i, zoom) {
+  selected = i;
+  const pid = i === null ? null : meshes[i].userData.pid;
+  meshes.forEach((m, k) => {
+    const on = pid === null || m.userData.pid === pid;
+    m.material.color.copy(pid !== null && m.userData.pid === pid ? new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--select').trim()) : m.userData.base);
+    m.material.opacity = on ? 1 : 0.12; m.material.depthWrite = on;
+    m.userData.edges.visible = edgesOn && on;
+  });
+  markRows();
+  const box = document.getElementById('info');
+  if (i === null) { box.innerHTML = '<h2>Nothing selected</h2><div class="sub">Pick a part to see its ID, material, process and mass.</div>'; return; }
+  const u = meshes[i].userData, p = PARTS[u.pid] || {};
+  box.innerHTML = `<h2>${u.pid} &middot; ${p.name || u.name}</h2><dl>
+    <dt>Process</dt><dd>${p.kind || '-'}</dd><dt>Material</dt><dd>${p.material || '-'}</dd>
+    <dt>Qty per head</dt><dd>${p.qty ?? '-'}</dd><dt>Mass each</dt><dd>${p.mass_g != null ? p.mass_g + ' g' : '-'}</dd>
+    <dt>Files</dt><dd>${p.files || '-'}</dd></dl>`;
+  if (zoom) fitTo(meshes.filter(m => m.userData.pid === u.pid));
+}
+
+function fitTo(list) {
+  const b = new THREE.Box3(); list.forEach(m => b.expandByObject(m));
+  if (b.isEmpty()) return;
+  const c = b.getCenter(new THREE.Vector3()), s = b.getSize(new THREE.Vector3()).length();
+  const dir = camera.position.clone().sub(controls.target).normalize();
+  controls.target.copy(c); camera.position.copy(c.clone().add(dir.multiplyScalar(Math.max(s, 60) * 1.9)));
+  controls.update();
+}
+function fit() { camera.position.set(520, -720, 520); controls.target.set(0, 0, 160); fitTo(meshes.filter(m => m.visible)); }
+
+function applySliders() {
+  const ex = +document.getElementById('ex').value / 100;
+  meshes.forEach(m => m.position.set(m.userData.explode[0] * ex, m.userData.explode[1] * ex, m.userData.explode[2] * ex));
+  G.az.rotation.set(0, 0, THREE.MathUtils.degToRad(+document.getElementById('az').value));
+  document.getElementById('azo').textContent = document.getElementById('az').value + '\u00b0';
+  W.p.rotation.set(0, -THREE.MathUtils.degToRad(+document.getElementById('wd').value), 0);
+  AL.p.rotation.set(THREE.MathUtils.degToRad(+document.getElementById('al').value), 0, 0);
+  RL.p.rotation.set(0, -THREE.MathUtils.degToRad(+document.getElementById('rl').value), 0);
+  document.getElementById('exo').textContent = Math.round(ex * 100) + ' %';
+  document.getElementById('wdo').textContent = document.getElementById('wd').value + '° (lat ' + (90 - +document.getElementById('wd').value) + '°)';
+  document.getElementById('alo').textContent = document.getElementById('al').value + '°';
+  document.getElementById('rlo').textContent = document.getElementById('rl').value + '°';
+}
+['ex', 'az', 'wd', 'al', 'rl'].forEach(id => document.getElementById(id).addEventListener('input', applySliders));
+document.getElementById('q').addEventListener('input', e => buildList(e.target.value));
+document.getElementById('fit').onclick = fit;
+document.getElementById('clear').onclick = () => select(null);
+document.getElementById('edges').onclick = e => { edgesOn = !edgesOn; e.target.setAttribute('aria-pressed', edgesOn); select(selected); };
+document.getElementById('rig').onclick = e => { const on = e.target.getAttribute('aria-pressed') !== 'true'; e.target.setAttribute('aria-pressed', on); meshes.forEach(m => { if (m.userData.stage === 'rig') m.visible = on; }); };
+function setTheme(dark) {
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  document.getElementById('theme').setAttribute('aria-pressed', dark);
+  document.getElementById('theme').textContent = dark ? 'Day' : 'Night';
+  scene.background = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--stage').trim());
+  edgeMat.color.set(dark ? 0x05070a : 0x15191d);
+  try { localStorage.setItem('st-viewer-theme', dark ? 'dark' : 'light'); } catch (e) {}
+  if (selected !== null) select(selected);
+}
+document.getElementById('theme').onclick = () => setTheme(document.documentElement.getAttribute('data-theme') !== 'dark');
+let saved = null; try { saved = localStorage.getItem('st-viewer-theme'); } catch (e) {}
+setTheme(saved ? saved === 'dark' : (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches));
+
+const ray = new THREE.Raycaster(), mouse = new THREE.Vector2(); let down = null;
+canvas.addEventListener('pointerdown', e => { down = [e.clientX, e.clientY]; });
+canvas.addEventListener('pointerup', e => {
+  if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 4) return;
+  const r = canvas.getBoundingClientRect(); mouse.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(mouse, camera);
+  const hit = ray.intersectObjects(meshes.filter(m => m.visible && m.material.opacity > 0.5), false)[0];
+  if (hit) { const i = meshes.indexOf(hit.object); select(i, false); const row = document.querySelector(`.row[data-i="${i}"]`); if (row) row.scrollIntoView({block: 'nearest'}); }
+});
+function resize() { const w = canvas.clientWidth, h = canvas.clientHeight; renderer.setSize(w, h, false); camera.aspect = w / Math.max(h, 1); camera.updateProjectionMatrix(); }
+window.addEventListener('resize', resize);
+(function loop() { resize(); controls.update(); renderer.render(scene, camera); requestAnimationFrame(loop); })();
+load().catch(err => { document.getElementById('loading').textContent = 'The model could not be unpacked in this browser: ' + err.message; });
+</script>
+</body>
+</html>
