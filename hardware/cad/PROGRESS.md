@@ -25,7 +25,7 @@ Branch `phase-3-mechanical-design`. Rev C, 22 Nov 2026. Read this first if you p
 - Rev C: D39 removable wedge (ST-303 head base plate with its own 3/8"-16 bushing; ST-331 wedge top plate, ST-332 coin
   screw, ST-333 dowels; `Item.wedge` flags wedge parts; `HEAD_ON_TRIPOD_DZ`). D40 payload envelopes `params.RIGS` P1–P5
   replace the single reference lens; `assembly.rig_y0/rig_info`, `checks.payloads()`; dovetail bars sit rear-flush with the clamp.
-- D40 confirmed by Bruno. Open: further weight options (doc, Mass section).
+- D40 confirmed by Bruno. D41: no further weight cutting. Nothing open.
 
 ## Key results (rev C)
 
