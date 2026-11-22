@@ -51,7 +51,7 @@ def build_base():
         s -= cyl(P.TAP["M5"] / 2, 20, x, y, -1)
     feat("tap", "M5", (45.3, 21.1, P.Z_BASE_TOP), "-Z", None, "2x at R50, +/-25 deg; azimuth lock screws", 2)
     # lightening ring pocket from below
-    s -= extrude(Circle(35.0) - Circle(13.0), 5.0)
+    s -= extrude(Circle(35.0) - Circle(13.0), 6.0)                       # 2 mm skin (D35)
     s -= Pos(50, 0) * extrude(RectangleRounded(16, 26, 4), 5.0)
     feat("pocket", "R13-R35", (0, 0, 0), "Z", 5.0, "lightening, from below; plus 16 x 26 under the tab")
     return s
@@ -83,7 +83,7 @@ def build_wedge_lower():
         s -= cyl(P.TAP["M5"] / 2, 10, CLAMP_PT[0], sy * (yw + 14), CLAMP_PT[1], "-Y" if sy > 0 else "Y")
     feat("tap", "M5", (CLAMP_PT[0], yw + 13, CLAMP_PT[1]), "-Y", None, "2x clamp knob ST-308 (M5 x 16 thumb screw) presses the arc", 2)
     s -= cyl(P.TAP["M3"] / 2, 12, CLAMP_PT[0] + 5, yw + 9.5, 46.01, "-Z")
-    feat("tap", "M3", (CLAMP_PT[0] + 5, yw + 9.5, 46), "-Z", 12, "+Y tower only: tangent screw for fine adjust (Q20)")
+    feat("tap", "M3", (CLAMP_PT[0] + 5, yw + 9.5, 46), "-Z", 12, "+Y tower only: tangent screw for fine adjust (D38)")
     for (x, y) in [(-30, 34), (-30, -34), (40, 0)]:                        # rest pads for the upper plate
         s += cyl(6.0, P.Z_UPPER_BOT - z1, x, y, z1)
     feat("pad", "12 x 4", (40, 0, z1), "Z", P.Z_UPPER_BOT - z1, "3x rest pads at (-30,+/-34) (40,0); grind flat together", 3)
@@ -100,9 +100,19 @@ def build_wedge_lower():
     for sy in (-1, 1):
         s -= cyl(P.TAP["M5"] / 2, 20, 58, sy * 24.5, (z0 + z1) / 2, "-Y" if sy > 0 else "Y")
     feat("tap", "M5", (58, 24, 13), "-Y", 19, "2x push screws ST-306 from +/-Y into the fine-adjust slot", 2)
-    for (x, y) in [(-25, 25), (-25, -25), (24, 26), (24, -26)]:            # pockets from below
-        s -= Pos(x, y, z0 - 0.01) * extrude(RectangleRounded(32, 30, 5), 7.0)
-    feat("pocket", "32 x 30", (24, 26, z0), "Z", 7.0, "4x lightening pockets from below, 3 mm skin", 4)
+    # W3 (D35): ribbed pockets from below, 2 mm top skin, 5 mm cross ribs, 4 mm rim; material kept round
+    # the pivot, the rest pads and the azimuth lock slots
+    reg = RectangleRounded(96, 84, 4)
+    reg -= Rectangle(200, 5) + Rectangle(5, 200)
+    reg -= Circle(13.0)
+    for (x, y) in [(-30, 34), (-30, -34), (40, 0)]:
+        reg -= Pos(x, y) * Circle(8.0)
+    for sy in (-1, 1):
+        for k in range(-8, 9, 2):
+            a = math.radians(sy * 25 + k)
+            reg -= Pos(50 * math.cos(a), 50 * math.sin(a)) * Circle(P.CLEAR["M5"] / 2 + 2.5)
+    s -= Pos(0, 0, z0 - 0.01) * extrude(reg, (z1 - z0) - 2.0)
+    feat("pocket", "ribbed", (24, 26, z0), "Z", (z1 - z0) - 2.0, "4 ribbed lightening pockets from below, 2 mm skin, 5 mm ribs (W3)", 4)
 
     return s
 
@@ -139,9 +149,14 @@ def build_wedge_upper():
         for x in (-46.0, -34.0):
             s -= cyl(P.TAP["M5"] / 2, 11, x, sy * (P.WEDGE_W / 2 + 0.01), 26.0, "-Y" if sy > 0 else "Y")
     feat("tap", "M5", (-46, P.WEDGE_W / 2, 26.0), "-Y", 10, "4x side faces at X -46 / -34, Z 26; latitude arcs", 4)
-    for (x, y) in [(31, 28), (31, -28), (-27, 28), (-27, -28)]:
-        s -= Pos(x, y, z0 - 0.01) * extrude(RectangleRounded(26, 30, 5), 5.5)
-    feat("pocket", "26 x 30", (31, 28, z0), "Z", 5.5, "4x lightening pockets from below, 2.5 mm skin", 4)
+    # W3 (D35): ribbed pockets from below, 2 mm skin, kept clear of the reducer screw ring and arc taps
+    reg = Pos(-4, 0) * RectangleRounded(88, 84, 4)
+    reg -= Rectangle(200, 5) + Rectangle(5, 200)
+    reg -= Circle(33.0)
+    for sy in (-1, 1):
+        reg -= Pos(-40, sy * 40) * Rectangle(22, 16)
+    s -= Pos(0, 0, z0 - 0.01) * extrude(reg, (z1 - z0) - 2.0)
+    feat("pocket", "ribbed", (31, 28, z0), "Z", (z1 - z0) - 2.0, "4 ribbed lightening pockets from below, 2 mm skin, 5 mm ribs (W3)", 4)
     return s
 
 
@@ -343,11 +358,12 @@ def build_arm():
 def build_shelf():
     xr, zr = P.X_ROLL, P.Z_ROLL
     y0, t = P.ROLL_OUT_Y, 10.0
-    leg_f = _hull([Pos(xr, zr) * Circle(30), Pos(xr, zr + 25) * Rectangle(60, 10)])
+    st = P.SHELF_TOP
+    leg_f = _hull([Pos(xr, zr) * Circle(30), Pos(xr, zr + st - 5) * Rectangle(60, 10)])
     s = plate_xz(leg_f, y0 + t, t)                                             # Y -22..-12
-    s += box(xr - 30, xr + 30, y0, 40, zr + 22, zr + 30)                      # horizontal leg, 8 thick
+    s += box(xr - 30, xr + 30, y0, 40, zr + st - 8, zr + st)                  # horizontal leg, 8 thick
     for sx in (-1, 1):                                                         # ribs
-        rib = Polygon((y0 + t, zr - 2), (y0 + t, zr + 22), (32, zr + 22), align=None)
+        rib = Polygon((y0 + t, zr - 2), (y0 + t, zr + st - 8), (32, zr + st - 8), align=None)
         pl = Plane(origin=(xr + sx * 24 - 3, 0, 0), x_dir=(0, 1, 0), z_dir=(1, 0, 0))
         s += extrude(pl * rib, 6, dir=(1, 0, 0))
     s += cyl(32.5, -2.5, xr, y0, zr, "Y") - cyl(27.5, -6, xr, y0 + 1, zr, "Y")
@@ -366,12 +382,19 @@ def build_shelf():
         s -= cyl(P.CLEAR["M3"] / 2, t + 1, xr + u, y0 - 0.5, zr + v, "Y")
         s -= cyl(P.CBORE["M3"][0] / 2, P.CBORE["M3"][1] + 0.1, xr + u, y0 + t + 0.01, zr + v, "-Y")
     feat("cbore", "3.4 / 6.0x3.3", (xr, y0 + t, zr + 7), "-Y", None, "2x on PCD 14; encoder tube M3x6 ISO 4762", 2)
-    s -= cyl(5.1, 20, xr, P.CLAMP_CY, zr + 19, "Z")
-    s -= cyl(9.5, 4.5, xr, P.CLAMP_CY, zr + 19, "Z")
-    feat("cbore", "10.2 / 19x4.5", (xr, P.CLAMP_CY, zr + 20), "Z", None, "clamp 3/8\"-16 x 12 coin-slot screw (Q18)")
+    s -= cyl(5.1, 20, xr, P.CLAMP_CY, zr + st - 11, "Z")
+    s -= cyl(9.5, 4.5, xr, P.CLAMP_CY, zr + st - 11, "Z")
+    feat("cbore", "10.2 / 19x4.5", (xr, P.CLAMP_CY, zr + st - 10), "Z", None, "clamp 3/8\"-16 x 12 coin-slot screw (D36)")
     for dy in (-15, 15):
-        s -= cyl(P.CLEAR["M4"] / 2, 20, xr, P.CLAMP_CY + dy, zr + 19, "Z")
-    feat("thru", "4.5", (xr, P.CLAMP_CY + 15, zr + 30), "-Z", None, "2x at +/-15 for clamps with M4 holes", 2)
+        s -= cyl(P.CLEAR["M4"] / 2, 20, xr, P.CLAMP_CY + dy, zr + st - 11, "Z")
+    feat("thru", "4.5", (xr, P.CLAMP_CY + 15, zr + st), "-Z", None, "2x at +/-15 for clamps with M4 holes", 2)
+    # D35: pocket under the horizontal leg, between the ribs, 4 mm skin under the clamp
+    pk = Pos(xr, (y0 + t + 40) / 2) * RectangleRounded(36, 40 - (y0 + t) - 6, 3)
+    pk -= Pos(xr, P.CLAMP_CY) * Circle(12.0)
+    for dy in (-15, 15):
+        pk -= Pos(xr, P.CLAMP_CY + dy) * Circle(5.0)
+    s -= Pos(0, 0, zr + st - 8 - 0.01) * extrude(pk, 4.0)
+    feat("pocket", "36 wide", (xr, 20, zr + st - 8), "Z", 4.0, "lightening pocket under the leg, between the ribs")
     return s
 
 
@@ -391,15 +414,15 @@ STRUCT_PARTS = [
     register(PartDef("ST-305", "Wedge latitude arc", "machined", "6061", 2, build_arc,
                      finish=P.MAT["6061"]["finish"], tol="ISO 2768-m", group="3xx", color=(0.70, 0.71, 0.73),
                      notes=["Same part on both sides.", "Engrave latitude scale 15-90 deg every 5 deg along the slot, 0.2 deep."])),
-    register(PartDef("ST-310", "Azimuth body (main housing)", "printed", "PAHT-CF", 1, build_body,
-                     finish="As printed", tol="Printed: +/-0.3", print_rot=(0, 0, 0), group="3xx",
+    register(PartDef("ST-310", "Azimuth body (main housing)", "printed", "PA12-MJF", 1, build_body,
+                     finish="MJF PA12, bead-blasted, dyed black", tol="MJF: +/-0.3 or 0.3 %", print_rot=(0, 0, 0), group="3xx",
                      color=(0.30, 0.31, 0.34),
-                     notes=["Print floor down; tree supports only under the end-wall opening and door opening.",
+                     notes=["Order from JLC3DP (MJF PA12, D29); 2.0 mm walls (W1, D35).",
                             "Fit 8 M3 (cover), 6 M3 (bezel), 2 M3 (connector), 4 M5 (tower), 2 M5 (counterweight) inserts."])),
-    register(PartDef("ST-311", "Tower (altitude housing)", "printed", "PAHT-CF", 1, build_tower,
-                     finish="As printed; sand the V-ring pad flat", tol="Printed: +/-0.3", print_rot=(180, 0, 0),
+    register(PartDef("ST-311", "Tower (altitude housing)", "printed", "PA12-MJF", 1, build_tower,
+                     finish="MJF PA12, bead-blasted, dyed black; V-ring pad Ra 1.6", tol="MJF: +/-0.3 or 0.3 %", print_rot=(180, 0, 0),
                      group="3xx", color=(0.30, 0.31, 0.34),
-                     notes=["Print top down (open bottom up): no supports inside.",
+                     notes=["Order from JLC3DP (MJF PA12, D29); 2.0 mm walls (W1, D35).",
                             "Sand the V-ring pad flat on 400 grit on glass."])),
     register(PartDef("ST-312", "Altitude arm", "machined", "6061", 1, build_arm, finish=P.MAT["6061"]["finish"],
                      tol="ISO 2768-m; pilot 45 H7; roll pad face square to the hub face within 0.03",

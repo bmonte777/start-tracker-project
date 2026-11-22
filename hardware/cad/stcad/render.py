@@ -7,7 +7,23 @@ from PIL import Image, ImageDraw, ImageFont
 
 
 def tess(shape, tol=0.15, ang=0.3):
-    verts, tris = shape.tessellate(tol, ang)
+    # OCCT can leave a tiny face untriangulated at a coarse tolerance: retry finer, then face by face
+    for k in range(3):
+        try:
+            verts, tris = shape.tessellate(tol / (2 ** k), ang)
+            break
+        except AttributeError:
+            continue
+    else:
+        verts, tris = [], []
+        for f in shape.faces():
+            try:
+                fv, ft = f.tessellate(tol / 4, ang)
+            except AttributeError:
+                continue
+            n0 = len(verts)
+            verts += fv
+            tris += [(a + n0, b + n0, c + n0) for (a, b, c) in ft]
     v = np.array([(p.X, p.Y, p.Z) for p in verts], dtype=np.float64)
     t = np.array(tris, dtype=np.int64).reshape(-1, 3)
     return v, t

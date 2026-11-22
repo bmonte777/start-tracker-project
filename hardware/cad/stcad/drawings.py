@@ -330,7 +330,11 @@ def _panel(ax, pd, d0):
     y -= 4.2
     notes = list(pd.notes)
     m = P.MAT.get(pd.material, {})
-    if pd.kind == "printed":
+    if pd.kind == "printed" and pd.material == "PA12-MJF":
+        notes = ["MJF PA12 from JLC3DP (D29), natural grey, bead-blasted then dyed black. Minimum wall 2.0 mm.",
+                 "No print orientation needed (powder bed). Bores marked 'ream': ordered 0.2 under, ream to size.",
+                 "Heat-set inserts: Ruthex, soldering iron at 230 C."] + notes
+    elif pd.kind == "printed":
         notes = [f"Print in {m.get('label', pd.material)}: {m.get('walls')} walls, {int(m.get('infill', 0) * 100)} % {m.get('pattern')}, "
                  f"layer {m.get('layer')} mm, {m.get('temps')}. Dry {m.get('dry')}.",
                  f"Print orientation: STL is supplied already turned (rotation {pd.print_rot} deg about X, Y, Z).",

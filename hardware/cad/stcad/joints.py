@@ -18,10 +18,10 @@ JOINTS = [
     (4, "Latitude arcs ST-305 to wedge upper plate ST-303", "ISO 7380", "M5", 12, 4, "alu", 4.5, "243", ""),
     (5, "Hinge pin ST-304 retaining screws", "ISO 7380", "M3", 6, 2, "alu", 1.0, "243", "with large washer ST-751 each end"),
     (5, "Latitude clamp knobs ST-308", "thumb", "M5", 16, 2, "alu", 0, "-", "finger tight"),
-    (5, "Latitude tangent screw ST-309 (Q20)", "thumb", "M3", 25, 1, "alu", 0, "-", ""),
+    (5, "Latitude tangent screw ST-309 (D38)", "thumb", "M3", 25, 1, "alu", 0, "-", ""),
     # ---- azimuth cartridge (and the same for altitude and roll)
-    (2, "Reducer size 17 to cartridge housing ST-211 (x2 axes)", "ISO 4762", "M3", 50, 24, "insert", 0.6, "-", "12 per reducer, criss-cross"),
-    (2, "Reducer size 14 to cartridge housing ST-210", "ISO 4762", "M3", 45, 8, "insert", 0.6, "-", "criss-cross"),
+    (2, "Reducer size 17 to cartridge housing ST-211 (x2 axes)", "ISO 4762", "M3", 50, 24, "insert", 0.6, "-", "12 per reducer, criss-cross; 7075 aluminium screws, 0.6 N\u00b7m max"),
+    (2, "Reducer size 14 to cartridge housing ST-210", "ISO 4762", "M3", 45, 8, "insert", 0.6, "-", "criss-cross; 7075 aluminium screws, 0.6 N\u00b7m max"),
     (2, "60T pulley ST-205 to reducer input stub (x3)", "ISO 4762", "M3", 12, 12, "reducer", 1.5, "243", "pattern to confirm on the Laifual drawing"),
     (2, "Motor to motor plate ST-207 (x3)", "ISO 4762", "M3", 8, 12, "motor", 1.0, "243", ""),
     (2, "Motor plate to housing walls (x3)", "ISO 7380", "M3", 8, 12, "insert", 0.6, "-", "with washer ST-750; tighten after tensioning"),
@@ -45,7 +45,7 @@ JOINTS = [
     (7, "Roll enclosure ST-217 to arm pad (gasket ST-328, O-ring ST-329)", "ISO 4762", "M3", 16, 3, "insert", 0.5, "-", "from the pad front"),
     (8, "Roll shelf ST-313 to roll reducer output", "ISO 4762", "M3", 12, 12, "reducer", 2.0, "243", "criss-cross"),
     (8, "Roll encoder tube ST-215 to shelf", "ISO 4762", "M3", 6, 2, "alu", 1.0, "243", ""),
-    (8, "Arca clamp ST-314 to shelf (Q18)", "coin", "3/8", 12, 1, "clamp", 0, "243", "coin-slot screw ST-330"),
+    (8, "Arca clamp ST-314 to shelf (D36)", "coin", "3/8", 12, 1, "clamp", 0, "243", "coin-slot screw ST-330"),
     # ---- electronics, covers, battery
     (9, "Mainboard ST-501 to bezel bosses", "ISO 7380", "M3", 6, 4, "plastic", 0.3, "-", ""),
     (9, "Bezel ST-315 to body (gasket ST-327)", "ISO 7380", "M3", 10, 6, "insert", 0.5, "-", ""),
@@ -58,7 +58,18 @@ JOINTS = [
 WASHERS = [("ISO 7089", "M3", 12, "motor plate clamp"), ("ISO 7093", "M3", 2, "hinge pin ends"), ("ISO 7089", "M5", 2, "azimuth lock")]
 
 
+# D35: the reducer-to-housing screws only clamp the reducer into PAHT-CF inserts at 0.6 N.m, so they are
+# 7075-T6 aluminium (density 2.81 instead of 7.9): about 50 g lighter per head
+ALU7075 = {("ISO 4762", "M3", 50), ("ISO 4762", "M3", 45)}
+
+
 def screw_mass_g(size, length, std):
+    if (std, size, length) in ALU7075:
+        return _steel_screw_g(size, length, std) * 2.81 / 7.9
+    return _steel_screw_g(size, length, std)
+
+
+def _steel_screw_g(size, length, std):
     d = {"M3": 3.0, "M4": 4.0, "M5": 5.0}.get(size, 0)
     if not d:
         return 14.0 if size == "3/8" else 4.0      # 3/8"-16 x 16 coin-slot clamp screw

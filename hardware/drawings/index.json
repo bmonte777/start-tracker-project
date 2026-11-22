@@ -13,7 +13,7 @@
   "ST-208",
   "Encoder reference tube, size 17 (azimuth, altitude)",
   "turned",
-  "Stainless steel 304",
+  "Aluminium 6061-T6",
   2,
   "1:1"
  ],
@@ -49,7 +49,7 @@
   "ST-215",
   "Encoder reference tube, size 14 (roll)",
   "turned",
-  "Stainless steel 304",
+  "Aluminium 6061-T6",
   1,
   "1:1"
  ],
@@ -112,7 +112,7 @@
   "ST-310",
   "Azimuth body (main housing)",
   "printed",
-  "PAHT-CF (Bambu)",
+  "MJF PA12 (JLC3DP)",
   1,
   "1:2"
  ],
@@ -121,7 +121,7 @@
   "ST-311",
   "Tower (altitude housing)",
   "printed",
-  "PAHT-CF (Bambu)",
+  "MJF PA12 (JLC3DP)",
   1,
   "1:2.5"
  ],

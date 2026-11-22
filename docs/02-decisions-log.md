@@ -60,15 +60,10 @@ The restated weight target was confirmed in the same reply and is recorded in D2
 | # | Topic | Decision |
 |---|---|---|
 | D33 | Motor rail voltage (Q16, changes D27) | Motor rail raised from 12 V to 16 V, still from the TPS61288 boost converter (rated to 18 V). Lifts the 7 kg cold-slew margin at 8°/s from about 1.2 to about 1.6, so the 6°/s cold limit of D26 may be dropped. No mechanical part changes. The rerun of `phase2_calcs.py`, the power budget and the D26 review belong to Phase 4. Approved by Bruno: "yes, it can be 16V" |
+| D34 | Roll axis offset (Q17, D31 study) | Roll axis 23 mm further from the azimuth axis (X 135.5 instead of 112.5). Roll travel +10° toward the tower to −145° away with the 200–600 on its foot; worst-case azimuth torque 19.45 N·m, 2.0× under the 39 N·m limit. Approved: "Yes, move it 23 mm" |
+| D35 | Weight changes for P1 (Q21, changes D28) | Make W1–W5 to bring P1 to about 6.8 kg (mount without payload): body and tower walls 2.0 mm (W1) and printed in MJF PA12 by JLC3DP (W2); ribbed pockets under ST-302 and ST-303 (W3); 6061 encoder tubes (W4); Sunwayfoto DDC-60i clamp, 71 g (W5). Also 7075 aluminium screws for the reducer-to-housing joints and deeper pockets in ST-301 and ST-313. The cartridge housings stay PAHT-CF for torsional stiffness. Approved: "Make the changes to reach 6.8 kg". Payload rating stays 7 kg (D4); further weight options are open with Bruno |
+| D36 | Arca clamp fixing (Q18, exception to D13) | One 3/8"-16 × 12 coin-slot screw (ST-330) fixes any standard clamp. Approved: "go with your recommendations" |
+| D37 | Roll shelf cantilever (Q19) | 30 mm from the roll output face to the clamp centre instead of 75 mm. Approved: "go with your recommendations" |
+| D38 | Wedge layout (Q20, refines D21) | Raised hinge with the latitude arcs hanging below it, two M5 clamp knobs, M3 tangent screw at R31 mm giving about 55′ per turn instead of 34′. Approved: "go with your recommendations" |
 
-### Pending approval (Phase 3, carried in the model with the recommended option)
-
-| # | Topic | Recommendation now in the CAD |
-|---|---|---|
-| Q17 | Roll travel toward the tower (D31 study) | Option A: roll axis 23 mm further from the azimuth axis (X 135.5). Travel +10° to −145° with the 200–600 on its foot; worst-case azimuth torque 19.45 N·m (2.0× under 39 N·m). Option B (raised roll axis) gives about +38° but drops the 7 kg power-off margin below 1 |
-| Q18 | Arca clamp fixing (exception to D13) | One 3/8"-16 × 12 coin-slot screw (ST-330), driven by a coin |
-| Q19 | Roll shelf cantilever | 30 mm instead of 75 mm |
-| Q20 | Wedge layout (refines D21) | Raised hinge with latitude arcs hanging below it, two M5 clamp knobs, M3 tangent screw at R31 mm giving about 55′ per turn instead of D21's 34′ |
-| Q21 | Weight target (changes D28) | Restate P1 as ≤ 7.2 kg (CAD: 7.21 kg); keep production ≤ 5.1 kg for the Phase 8 pass |
-
-Also asked: Bruno to measure the FE 200-600 foot height (lens axis to Arca base); 85 mm assumed.
+Still open: Bruno to measure the FE 200-600 foot height (lens axis to Arca base); 85 mm assumed.

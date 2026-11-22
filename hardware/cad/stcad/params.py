@@ -10,20 +10,19 @@ axis is parallel to +X and the payload hangs on the +X side of the tower. At alt
 points along +Y.
 
 Values marked SPEC come from docs/02-engineering-spec.md rev C, section 2.3. Values marked
-PENDING follow a recommendation that waits for Bruno's approval (see docs/03-mechanical-design.md,
-questions Q17-Q20). Values marked DS come from a datasheet (sources in the design doc).
+Items tagged D34-D38 are Phase 3 decisions approved by Bruno (docs/02-decisions-log.md). Values marked DS come from a datasheet (sources in the design doc).
 """
 import math
 import os
 
-REV = "A"
-DATE = "2026-11-21"
+REV = "B"
+DATE = "2026-11-22"
 
 # ---------------------------------------------------------------------------------------------
-# Layout (spec section 2.3) - PENDING items are the D31 study recommendation
+# Layout (spec section 2.3); roll offset from the D31 study (D34)
 # ---------------------------------------------------------------------------------------------
 PAYLOAD_OFFSET_BASE = 112.5          # SPEC: payload plane to azimuth axis
-D31_EXTRA_OFFSET = float(os.environ.get("ST_D31_EXTRA", 23.0))   # PENDING Q17: D31 study, option A
+D31_EXTRA_OFFSET = float(os.environ.get("ST_D31_EXTRA", 23.0))   # D34 (Q17 approved): D31 study, option A
 X_ROLL = PAYLOAD_OFFSET_BASE + D31_EXTRA_OFFSET   # roll axis / lens axis X position = 135.5
 FOOT_H = 85.0                        # SPEC: lens axis to underside of the 200-600 foot (to be measured)
 R_CLAMP_SEAT = 45.0                  # SPEC: roll axis to clamp seat (top of clamp jaws)
@@ -40,8 +39,8 @@ Z_UPPER_BOT = 22.0                   # wedge upper plate ST-303 rests on 2 mm pa
 Z_UPPER_PLATE_TOP = 30.0             # plate 8 thick, centre boss rises to Z_AZ_OUT
 Z_AZ_OUT = 45.0                      # azimuth reducer output face (SPEC: 45)
 WEDGE_HINGE_X = -62.0                # hinge axis (parallel to Y), on the battery side, outside the drip skirt
-WEDGE_HINGE_Z = 37.0                 # raised so the latitude arcs hang below it (PENDING Q20)
-WEDGE_ARC_R = 31.0                   # clamp radius on the arcs (PENDING Q20; D21 asked 34'/turn at R81)
+WEDGE_HINGE_Z = 37.0                 # raised so the latitude arcs hang below it (D38)
+WEDGE_ARC_R = 31.0                   # clamp radius on the arcs (D38; D21 asked 34'/turn)
 WEDGE_ARC_RIN, WEDGE_ARC_ROUT = 22.0, 36.0
 WEDGE_CLAMP_ANG = 10.0               # clamp point, deg above the hinge line toward +X
 WEDGE_TILT_MAX = 75.0                # D21
@@ -53,7 +52,7 @@ BASE_D = 96.0
 BODY_GAP = 1.5                       # labyrinth gap above ST-303 boss
 Z_BODY_BOT = Z_AZ_OUT + BODY_GAP     # 46.5
 Z_BODY_TOP = 125.0                   # tower sits here (body taller than spec: D32 motor + 60 mm board)
-BODY_WALL = 2.5                      # 6 perimeters x 0.42 mm = 2.52 mm
+BODY_WALL = 2.0                      # W1 (D35): MJF PA12, 2.0 mm walls
 BODY_X_MIN = -152.0                  # far end (bezel)
 BODY_FRONT_R = 64.0                  # payload-side radius (spec <= 50 at the original offset; see study)
 BODY_Y_MIN = -58.0
@@ -63,7 +62,7 @@ TOWER_X_MAX = 42.5                   # SPEC: tower half-width 42.5 on the payloa
 TOWER_Y_MIN = -52.0
 TOWER_Y_MAX = 85.0
 TOWER_TOP = Z_ALT + 53.0             # cartridge ring top Z_ALT+47, 3 mm skin, 3 mm air
-TOWER_WALL = 2.5
+TOWER_WALL = 2.0                     # W1 (D35)
 GASKET_T = 1.0                       # flat TPU gaskets under tower, cover, bezel, door
 
 # Altitude arm ST-312 (6061) - L-bracket: hub plate (YZ) + roll pad plate (XZ)
@@ -71,7 +70,7 @@ ALT_OUT_X = 46.0                     # altitude reducer output face (faces +X)
 ARM_T = 8.0                          # plate thickness
 ARM_HUB_R = 42.0                     # covers the VA-80 V-ring seat ring
 ARM_PAD_R = 60.0                     # pad outline radius about the roll axis
-SHELF_CANT = 30.0                    # PENDING Q19: roll output face to clamp centre (spec 75)
+SHELF_CANT = 30.0                    # D37: roll output face to clamp centre (spec 75)
 ROLL_OUT_Y = -22.0                   # roll reducer output face (faces +Y)
 ROLL_CART_ROT = 20.0                 # roll motor direction: from straight down, turned toward the tower (camera vs body sweep)
 LENS_MOUNT_Y_BAL = None
@@ -151,8 +150,9 @@ ENC_BOARD_HOLE_PCD = 23.0
 MAINBOARD = dict(W=100.0, H=60.0, T=1.6, hole_inset=4.0, comp_h=12.0)
 BATT_BOARD = dict(W=32.0, H=40.0, T=1.6)
 
-# Arca clamp ST-314 (Sunwayfoto DDC-60 class): 60 long x 53 wide x 15 high, 120 g
-CLAMP = dict(L=60.0, W=53.0, H=15.0, mass=0.120, knob_d=14.0, knob_l=14.0)
+# Arca clamp ST-314, W5 (D35): Sunwayfoto DDC-60i, jaw 60, 81 wide over the knob, 13 high, 70.9 g (B&H)
+CLAMP = dict(L=60.0, W=62.0, H=13.0, mass=0.071, knob_d=14.0, knob_l=19.0)
+SHELF_TOP = R_CLAMP_SEAT - CLAMP["H"]   # shelf top above the roll axis, keeps D20 (clamp seat 45 mm)
 
 # Battery (D8): 2S2P Molicel P50B 21700
 CELL_D, CELL_L, CELL_M = 21.7, 70.4, 0.070
@@ -171,13 +171,15 @@ LENS_MOUNT_Y = -84.0                         # camera mount plane for altitude b
 # Ranges (spec 1.2 and 2.1)
 ALT_MIN, ALT_MAX = -10.0, 95.0
 ALT_BUMP_MIN, ALT_BUMP_MAX = -15.0, 100.0
-ROLL_TOWARD_TOWER_MAX = 10.0                 # PENDING Q17 (study result)
+ROLL_TOWARD_TOWER_MAX = 10.0                 # D34 (study result)
 ROLL_AWAY_MAX = -150.0
 
 # Materials: density g/cm3, and print settings from spec 8.2
 MAT = {
     "6061": dict(rho=2.70, label="Aluminium 6061-T6", finish="Bead-blasted, clear anodised 10 um"),
     "304": dict(rho=7.93, label="Stainless steel 304", finish="As turned, Ra 1.6"),
+    "PA12-MJF": dict(rho=1.01, label="MJF PA12 (JLC3DP)", walls=99, infill=1.00, layer=0.08, temps="-",
+                     dry="-", pattern="solid", finish="Bead-blasted, dyed black"),
     "PAHT-CF": dict(rho=1.18, label="PAHT-CF (Bambu)", walls=6, infill=0.50, layer=0.18,
                     temps="290 / 100 / 60 C", dry="80 C, 8-12 h; print from the dryer", pattern="gyroid"),
     "ASA": dict(rho=1.07, label="ASA", walls=4, infill=0.25, layer=0.20, temps="260 / 100 / 60 C",

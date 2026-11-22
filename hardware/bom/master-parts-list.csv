@@ -12,14 +12,14 @@ ST-204,"GT2 pulley 20T, 9 mm belt, bore 5 mm, 2 x M4 set screws (2 mm key), TIR 
 ST-205,"GT2 pulley 60T, 9 mm belt, hollow bore, TIR <= 0.03",3,aluminium 6061,aluminium 6061,buy,Misumi / Gates / JLCMC (bored to reducer input),5.46,2.73,1.82,16.38,8.19,5.46,est,bolts to the reducer input stub with 4 x M3; pattern to confirm on the Laifual drawing
 ST-206,"Timing belt 2GT, 200 mm closed loop (100 teeth), 9 mm wide",3,neoprene + glass fibre,same,buy,Gates 2MGT-200-9,10.01,4.55,3.19,30.03,13.65,9.57,est,Gates 160-2MGT-06 quoted USD 10.96
 ST-207,Motor plate with belt-tension block,3,aluminium 6061 CNC,aluminium 6061 CNC,make,JLCCNC,23.66,8.19,4.55,70.98,24.57,13.65,est (JLCCNC class),same part on all three axes
-ST-208,"Encoder reference tube, size 17 (azimuth, altitude)",2,stainless 304 turned,stainless 304 turned,make,JLCCNC,13.65,2.73,1.36,27.30,5.46,2.72,est (JLCCNC class),34 g; 6061 would save 22 g each (weight option W4)
+ST-208,"Encoder reference tube, size 17 (azimuth, altitude)",2,aluminium 6061 turned,aluminium 6061 turned,make,JLCCNC,10.92,2.73,1.36,21.84,5.46,2.72,est (JLCCNC class),"6061 instead of 304 (W4, D35): 12 g instead of 34 g"
 ST-209,"Encoder magnet, dia 6 x 2.5, diametric, N35SH",3,NdFeB,NdFeB,buy,LCSC / magnet supplier,1.36,0.46,0.27,4.08,1.38,0.81,est,
 ST-210,"Cartridge housing, size 14 (roll)",1,PAHT-CF printed,aluminium 6061 CNC,make,own printer / JLC3DP MJF / JLCCNC,5.37,22.75,20.02,5.37,22.75,20.02,filament,101 g printed
 ST-211,"Cartridge housing, size 17 (azimuth, altitude)",2,PAHT-CF printed,aluminium 6061 CNC,make,own printer / JLC3DP MJF / JLCCNC,6.10,30.03,25.48,12.20,60.06,50.96,filament,115 g printed
 ST-212,"Cartridge rear cover / encoder-board carrier, size 17",2,ASA printed,PA66-GF30 moulded,make,own printer / moulder,0.16,6.37,1.09,0.32,12.74,2.18,filament,7 g printed
 ST-213,"V-ring VA-75, NBR (azimuth, on ST-303)",1,NBR,NBR,buy,SKF / Trelleborg,2.50,1.10,0.70,2.50,1.10,0.70,est,"Simply Bearings VA25 EUR 1.95 single, 0.48 at 100+: scaled for size"
 ST-214,"Stepper motor NEMA 17, 1.8 deg, 59 N.cm, 2.0 A, 48 mm (azimuth)",1,-,-,buy,StepperOnline 17HS19-2004S1,8.75,7.31,6.37,8.75,7.31,6.37,quoted,D32; 1k price est; check lead order against ST-203
-ST-215,"Encoder reference tube, size 14 (roll)",1,stainless 304 turned,stainless 304 turned,make,JLCCNC,12.74,2.73,1.36,12.74,2.73,1.36,est (JLCCNC class),
+ST-215,"Encoder reference tube, size 14 (roll)",1,aluminium 6061 turned,aluminium 6061 turned,make,JLCCNC,10.01,2.73,1.36,10.01,2.73,1.36,est (JLCCNC class),
 ST-216,"Cartridge rear cover / encoder-board carrier, size 14",1,ASA printed,PA66-GF30 moulded,make,own printer (H2S),0.16,0.40,0.10,0.16,0.40,0.10,filament,7 g printed
 ST-217,Roll cartridge enclosure,1,ASA printed,PC/ABS moulded,make,own printer (H2S),2.59,6.47,1.55,2.59,6.47,1.55,filament,IPX4: the roll cartridge sits outside the body; 111 g printed
 ST-218,"V-ring VA-80, NBR (altitude, on the arm hub)",1,NBR,NBR,buy,SKF / Simply Bearings,2.60,1.15,0.75,2.60,1.15,0.75,est,
@@ -28,32 +28,32 @@ ST-301,Base plate with 3/8in-16 socket,1,aluminium 6061 CNC,"aluminium 6061 CNC,
 ST-302,Wedge lower plate with azimuth fine adjust,1,aluminium 6061 CNC,aluminium 6061 CNC,make,JLCCNC,72.80,16.38,10.01,72.80,16.38,10.01,est (JLCCNC class),
 ST-303,Wedge upper plate (azimuth reducer mount),1,aluminium 6061 CNC,aluminium 6061 CNC,make,JLCCNC,70.98,18.20,10.92,70.98,18.20,10.92,est (JLCCNC class),
 ST-304,"Wedge hinge pin, dia 8 h6 x 80, ends tapped M3",1,stainless ground,stainless ground,buy,Misumi,3.64,1.82,1.09,3.64,1.82,1.09,est,retained by 2 x M3x6 ISO 7380 + ST-751
-ST-305,Wedge latitude arc with clamp,2,aluminium 6061 CNC,aluminium 6061 CNC,make,JLCCNC,25.48,9.10,5.46,50.96,18.20,10.92,est (JLCCNC class),fixed to ST-303; clamp knobs on ST-302 press it (Q20)
+ST-305,Wedge latitude arc with clamp,2,aluminium 6061 CNC,aluminium 6061 CNC,make,JLCCNC,25.48,9.10,5.46,50.96,18.20,10.92,est (JLCCNC class),fixed to ST-303; clamp knobs on ST-302 press it (D38)
 ST-306,"Azimuth fine-adjust thumb screw M5 x 25, stainless",2,stainless + alu knob,stainless + alu knob,buy,Misumi,1.60,0.70,0.40,3.20,1.40,0.80,est,push the base boss from both sides
 ST-307,3/8in-16 stainless thread bushing,1,stainless,stainless,buy,camera hardware supplier,2.73,1.36,0.91,2.73,1.36,0.91,est,
 ST-308,"Latitude clamp knob, thumb screw M5 x 16, stainless",2,stainless,stainless,buy,Misumi / Accu,1.40,0.60,0.35,2.80,1.20,0.70,est,
-ST-309,"Latitude tangent screw, knurled thumb screw M3 x 25",1,stainless,stainless,buy,Misumi / Accu,1.00,0.50,0.30,1.00,0.50,0.30,est,"fine adjust, Q20"
-ST-310,Azimuth body (main housing),1,PAHT-CF printed,aluminium 6061 CNC,make,own printer / JLC3DP MJF / JLCCNC,13.60,45.50,40.95,13.60,45.50,40.95,filament,255 g printed
-ST-311,Tower (altitude housing),1,PAHT-CF printed,aluminium 6061 CNC,make,own printer / JLC3DP MJF / JLCCNC,13.98,42.77,36.40,13.98,42.77,36.40,filament,263 g printed
+ST-309,"Latitude tangent screw, knurled thumb screw M3 x 25",1,stainless,stainless,buy,Misumi / Accu,1.00,0.50,0.30,1.00,0.50,0.30,est,"fine adjust, D38"
+ST-310,Azimuth body (main housing),1,MJF PA12 (JLC3DP),aluminium 6061 CNC,make,"JLC3DP (MJF PA12), D29",46.09,45.50,40.95,46.09,45.50,40.95,"est (JLC3DP MJF, USD 0.275 / g, spec 8)","W1 + W2 (D35): MJF PA12, 2.0 mm walls; 184 g printed"
+ST-311,Tower (altitude housing),1,MJF PA12 (JLC3DP),aluminium 6061 CNC,make,"JLC3DP (MJF PA12), D29",45.95,42.77,36.40,45.95,42.77,36.40,"est (JLC3DP MJF, USD 0.275 / g, spec 8)","W1 + W2 (D35): MJF PA12, 2.0 mm walls; 184 g printed"
 ST-312,Altitude arm,1,aluminium 6061 CNC,aluminium 6061 CNC,make,JLCCNC,107.38,20.02,11.83,107.38,20.02,11.83,est (JLCCNC class),metal from prototype P1
 ST-313,Roll shelf (L-arm) with clamp seat,1,aluminium 6061 CNC,aluminium 6061 CNC,make,JLCCNC,60.06,18.20,10.92,60.06,18.20,10.92,est (JLCCNC class),metal from prototype P1
-ST-314,"Arca-Swiss clamp, 60 mm, screw type",1,aluminium,aluminium (own design later),buy,Leofoto / Sunwayfoto class,22.75,10.92,7.28,22.75,10.92,7.28,est,"Sunwayfoto DDC-60 class: 60 x 53 x 15, 120 g; DDC-60i is 71 g (weight option W5)"
+ST-314,"Arca-Swiss clamp, 60 mm, screw knob (Sunwayfoto DDC-60i)",1,aluminium,aluminium (own design later),buy,Leofoto / Sunwayfoto class,31.85,10.92,7.28,31.85,10.92,7.28,quoted (eBay USD 35; NZD 64 at photogear),"W5 (D35): 70.9 g, 60 x 81 x 13, 3/8in-16 mount (B&H)"
 ST-315,Front bezel with OLED window,1,ASA printed,PC/ABS moulded,make,own printer / moulder,0.57,8.19,1.36,0.57,8.19,1.36,filament,24 g printed
 ST-316,Button cap,4,TPU 95A printed,silicone moulded,make,own printer / moulder,0.02,0.55,0.14,0.08,2.20,0.56,filament,0.5 g printed
-ST-317,Battery bay tray,1,ASA printed,PA66-GF30 moulded,make,own printer / moulder,0.41,9.10,1.36,0.41,9.10,1.36,filament,17 g printed
+ST-317,Battery bay tray,1,ASA printed,PA66-GF30 moulded,make,own printer / moulder,0.40,9.10,1.36,0.40,9.10,1.36,filament,17 g printed
 ST-318,Battery door with latch,1,ASA printed,PA66-GF30 moulded,make,own printer / moulder,0.34,8.19,1.64,0.34,8.19,1.64,filament,15 g printed
 ST-319,Top cover with GNSS window,1,ASA printed,PC/ABS moulded,make,own printer / moulder,0.61,7.28,1.27,0.61,7.28,1.27,filament,QR label recess; 26 g printed
 ST-320,Cable guide / strain relief,3,TPU 95A printed,TPU moulded,make,own printer / moulder,0.06,1.09,0.27,0.18,3.27,0.81,filament,2 g printed
 ST-321,"Bubble level, dia 12",1,-,-,buy,generic,1.82,0.91,0.55,1.82,0.91,0.55,est,glued in the recess on the top cover
 ST-322,End-stop bumper,2,TPU 95A printed,TPU moulded,make,own printer / moulder,0.01,0.55,0.18,0.02,1.10,0.36,filament,altitude stops at -15 / +100 deg; 0.2 g printed
-ST-323,"Gasket, body to tower",1,TPU printed,silicone moulded,make,own printer (H2S),0.06,0.15,0.04,0.06,0.15,0.04,filament,2 g printed
+ST-323,"Gasket, body to tower",1,TPU printed,silicone moulded,make,own printer (H2S),0.05,0.12,0.03,0.05,0.12,0.03,filament,2 g printed
 ST-324,"Gasket, top cover",1,TPU printed,silicone moulded,make,own printer (H2S),0.06,0.15,0.04,0.06,0.15,0.04,filament,2 g printed
 ST-325,"Gasket, battery door",1,TPU printed,silicone moulded,make,own printer (H2S),0.03,0.07,0.02,0.03,0.07,0.02,filament,1 g printed
 ST-326,"OLED window, clear PC 38 x 22 x 1 mm",1,polycarbonate,polycarbonate,buy,laser-cut sheet,1.50,0.30,0.10,1.50,0.30,0.10,est,glued with clear silicone
 ST-327,"Gasket, bezel",1,TPU printed,silicone moulded,make,own printer (H2S),0.06,0.15,0.04,0.06,0.15,0.04,filament,2 g printed
 ST-328,"Gasket, roll enclosure",1,TPU printed,silicone moulded,make,own printer (H2S),0.08,0.20,0.05,0.08,0.20,0.05,filament,3 g printed
 ST-329,"O-ring 80 x 2, NBR 70 (roll enclosure on the cartridge sleeve)",1,NBR,NBR,buy,generic,0.60,0.15,0.08,0.60,0.15,0.08,est,
-ST-330,"Clamp screw 3/8in-16 x 12, coin slot, stainless",1,stainless,stainless,buy,camera hardware supplier,1.50,0.60,0.30,1.50,0.60,0.30,est,"D13 exception, Q18"
+ST-330,"Clamp screw 3/8in-16 x 12, coin slot, stainless",1,stainless,stainless,buy,camera hardware supplier,1.50,0.60,0.30,1.50,0.60,0.30,est,"D13 exception, D36"
 ST-501,"Mainboard: PCB, passives, inductors, EEPROM, ESD, assembly",1,FR-4 4-layer,FR-4 4-layer,make,JLCPCB,82.81,20.02,12.65,82.81,20.02,12.65,est,"outline 100 x 60 x 1.6, 4 x M3 holes 4 mm from the corners, mounted on the bezel (Phase 3)"
 ST-502,Wi-Fi/BLE module ESP32-S3-WROOM-1-N16R8,1,-,-,buy,Espressif via LCSC,4.74,3.72,3.55,4.74,3.72,3.55,quoted,
 ST-503,"Motion MCU RP2354A (RP2350A + 2 MB flash, A4 stepping)",1,-,-,buy,Raspberry Pi,1.27,1.09,1.00,1.27,1.09,1.00,est,RP2350A quoted USD 1.10 / 0.90 / 0.80
@@ -105,8 +105,8 @@ ST-713,"Screw ISO 4762 M3 x 12, stainless A2",27,stainless A2,stainless A4,buy,A
 ST-714,"Screw ISO 4762 M3 x 16, stainless A2",3,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.08,0.04,0.02,0.24,0.12,0.06,est (pack),"Roll enclosure ST-217 to arm pad (gasket ST-328, O-ring ST-329)"
 ST-715,"Screw ISO 4762 M3 x 20, stainless A2",16,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.09,0.04,0.03,1.44,0.64,0.48,est (pack),Azimuth reducer output flange to wedge upper plate ST-303
 ST-716,"Screw ISO 4762 M3 x 30, stainless A2",10,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.12,0.05,0.03,1.20,0.50,0.30,est (pack),Carrier ST-212/216 posts to housing flange (x3); Pack shell halves ST-605/612 (gasket ST-610)
-ST-717,"Screw ISO 4762 M3 x 45, stainless A2",8,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.15,0.07,0.04,1.20,0.56,0.32,est (pack),Reducer size 14 to cartridge housing ST-210
-ST-718,"Screw ISO 4762 M3 x 50, stainless A2",24,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.17,0.07,0.04,4.08,1.68,0.96,est (pack),Reducer size 17 to cartridge housing ST-211 (x2 axes)
+ST-717,"Screw ISO 4762 M3 x 45, aluminium 7075-T6",8,aluminium 7075-T6,aluminium 7075-T6,buy,Fastener Express / RC hardware,0.90,0.45,0.25,7.20,3.60,2.00,"est (7075 M3 x 27, 50 pcs USD 36.95, Fastener Express)",Reducer size 14 to cartridge housing ST-210; D35 weight saving
+ST-718,"Screw ISO 4762 M3 x 50, aluminium 7075-T6",24,aluminium 7075-T6,aluminium 7075-T6,buy,Fastener Express / RC hardware,0.90,0.45,0.25,21.60,10.80,6.00,"est (7075 M3 x 27, 50 pcs USD 36.95, Fastener Express)",Reducer size 17 to cartridge housing ST-211 (x2 axes); D35 weight saving
 ST-720,"Screw ISO 7380 M3 x 5, stainless A2",2,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.08,0.04,0.02,0.16,0.08,0.04,est (pack),Altitude encoder tube to arm hub
 ST-721,"Screw ISO 7380 M3 x 6, stainless A2",14,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.08,0.04,0.02,1.12,0.56,0.28,est (pack),Bumpers ST-322 to tower; Encoder board ST-520 to carrier (x3); Hinge pin ST-304 retaining screws; Mainboard ST-501 to bezel bosses
 ST-722,"Screw ISO 7380 M3 x 8, stainless A2",16,stainless A2,stainless A4,buy,Accu / bolts.co.uk / Bossard,0.08,0.04,0.02,1.28,0.64,0.32,est (pack),Battery tray ST-317 to door ST-318; Head-side blade connector ST-609 to bracket; Motor plate to housing walls (x3)

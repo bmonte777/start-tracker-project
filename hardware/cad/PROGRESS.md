@@ -17,22 +17,21 @@ Branch `phase-3-mechanical-design`. Rev A, 21–22 Nov 2026. Read this first if 
 | 9. Renders, step pictures, 3D viewer | Done; viewer published | `stcad/render.py`, `stcad/scenes.py`, `viewer_template.html`, `../viewer/` |
 | 10. Phase 3 doc | Done | `../../docs/03-mechanical-design.md`, Docs "Phase 3 — Mechanical Design" |
 
-## Pending decisions (carried with the recommended option)
+## Decisions taken in Phase 3 (rev B, 22 Nov 2026)
 
-- **Q17** roll offset +23 mm (`D31_EXTRA_OFFSET`, env `ST_D31_EXTRA`).
-- **Q18** 3/8"-16 coin-slot clamp screw (D13 exception).
-- **Q19** shelf cantilever 30 mm (`SHELF_CANT`).
-- **Q20** raised-hinge wedge, arcs below, M3 tangent screw ≈ 55′/turn.
-- **Q21** P1 weight target 7.2 kg (CAD 7.21 kg).
-- Lens foot height to be measured by Bruno (85 mm assumed, `LENS`/`FOOT_*` in params).
+- D33 16 V motor rail. D34 roll offset +23 mm (`D31_EXTRA_OFFSET`). D35 weight changes (MJF body/tower with 2.0 mm walls,
+  wedge pockets, 6061 encoder tubes, DDC-60i clamp with `SHELF_TOP`, 7075 reducer screws `joints.ALU7075`, base/shelf pockets).
+  D36 coin-slot clamp screw. D37 shelf cantilever 30 mm. D38 raised-hinge wedge.
+- Open: lens foot height (85 mm assumed); whether to go lighter than 6.8 kg (options in the doc).
 
-## Key results (X_ROLL 135.5)
+## Key results (rev B)
 
 - No interference at home or at wedge tilt 0/30/60/75°.
 - Camera swing +85°: 14.5 mm. Arm running gap to tower 1.0 mm. Roll +10° / −145°.
-- 48 mm azimuth motor: 1.6 mm to the altitude cartridge housing.
-- Mass 7.21 kg incl. 0.36 kg fasteners and inserts; altitude CG 2.8 mm below the axis.
-- Materials €1,764.67 / 1,289.49 / 958.17; COGS €1,976 / 1,433 / 1,041; landed at 1,000 €1,086.
+- 48 mm azimuth motor: 1.6 mm to the altitude cartridge housing, 3.2 mm to body and tower.
+- Mass 6.80 kg (rev A 7.21); altitude CG 1.9 mm below the axis.
+- Materials €1,853.54 / 1,301.62 / 964.88; COGS €2,076 / 1,445 / 1,048; landed at 1,000 €1,093.
+- CNC USD 547; MJF USD 101; 6 print plates, 727 g, 44.4 h.
 
 ## How the build works
 

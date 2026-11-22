@@ -45,9 +45,11 @@ def filament_eur(pid):
     return round(part_mass(pd) * 1.15 * FIL[pd.material], 2)
 
 
+MJF_USD_PER_G = 0.275      # JLC3DP MJF PA12, as cited in the Phase 2 spec section 8
+
 # JLCCNC one-off estimates in USD, anodising included (Phase 2 kept for 100 / 1,000)
 CNC_USD = {"ST-301": 36, "ST-302": 80, "ST-303": 78, "ST-305": 28, "ST-207": 26, "ST-312": 118, "ST-313": 66,
-           "ST-208": 15, "ST-215": 14}
+           "ST-208": 12, "ST-215": 11}
 
 def screw_price(std, size, L):
     base = 12.72 / 200 * GBP          # EUR per M3 x 10 A2 ISO 4762
@@ -78,9 +80,14 @@ def build_parts():
     def printed(pid, **ch):
         r = old.get(pid)
         pd = REGISTRY[pid]
-        p1 = filament_eur(pid)
+        mjf = pd.material == "PA12-MJF"
+        p1 = round(part_mass(pd) * 1000 * MJF_USD_PER_G * USD, 2) if mjf else filament_eur(pid)
         pr = (p1, r[7][1], r[7][2]) if r else (p1, round(p1 * 2.5, 2), round(p1 * 0.6, 2))
-        args = dict(pr=pr, src="filament", note="; ".join(x for x in (ch.pop("note", ""), (f"{part_mass(pd) * 1000:.0f} g printed" if part_mass(pd) >= 0.001 else f"{part_mass(pd) * 1000:.1f} g printed")) if x))
+        if mjf:
+            ch.setdefault("mp", "MJF PA12 (JLC3DP)")
+            ch.setdefault("sup", "JLC3DP (MJF PA12), D29")
+            ch.setdefault("note", "W1 + W2 (D35): MJF PA12, 2.0 mm walls")
+        args = dict(pr=pr, src="est (JLC3DP MJF, USD 0.275 / g, spec 8)" if mjf else "filament", note="; ".join(x for x in (ch.pop("note", ""), (f"{part_mass(pd) * 1000:.0f} g printed" if part_mass(pd) >= 0.001 else f"{part_mass(pd) * 1000:.1f} g printed")) if x))
         args.update(ch)
         if r:
             keep(pid, **args)
@@ -109,8 +116,8 @@ def build_parts():
     keep("ST-205", note="bolts to the reducer input stub with 4 x M3; pattern to confirm on the Laifual drawing")
     keep("ST-206")
     machined("ST-207", name="Motor plate with belt-tension block", note="same part on all three axes")
-    machined("ST-208", name="Encoder reference tube, size 17 (azimuth, altitude)", qty=2,
-             note="34 g; 6061 would save 22 g each (weight option W4)")
+    machined("ST-208", name="Encoder reference tube, size 17 (azimuth, altitude)", qty=2, mp="aluminium 6061 turned",
+             mq="aluminium 6061 turned", note="6061 instead of 304 (W4, D35): 12 g instead of 34 g")
     keep("ST-209")
     printed("ST-210")
     printed("ST-211")
@@ -118,7 +125,7 @@ def build_parts():
     keep("ST-213", name="V-ring VA-75, NBR (azimuth, on ST-303)", qty=1, pr=E(2.50, 1.10, 0.70), src="est",
          note="Simply Bearings VA25 EUR 1.95 single, 0.48 at 100+: scaled for size")
     keep("ST-214")
-    out.append(("ST-215", "Encoder reference tube, size 14 (roll)", 1, "stainless 304 turned", "stainless 304 turned",
+    out.append(("ST-215", "Encoder reference tube, size 14 (roll)", 1, "aluminium 6061 turned", "aluminium 6061 turned",
                 "make", "JLCCNC", (round(CNC_USD["ST-215"] * USD, 2), 2.73, 1.36), "est (JLCCNC class)", ""))
     printed("ST-216", name="Cartridge rear cover / encoder-board carrier, size 14", qty=1, mq="PA66-GF30 moulded")
     printed("ST-217", name="Roll cartridge enclosure", qty=1, mq="PC/ABS moulded", note="IPX4: the roll cartridge sits outside the body")
@@ -131,19 +138,20 @@ def build_parts():
     machined("ST-302")
     machined("ST-303")
     keep("ST-304", name="Wedge hinge pin, dia 8 h6 x 80, ends tapped M3", note="retained by 2 x M3x6 ISO 7380 + ST-751")
-    machined("ST-305", note="fixed to ST-303; clamp knobs on ST-302 press it (Q20)")
+    machined("ST-305", note="fixed to ST-303; clamp knobs on ST-302 press it (D38)")
     keep("ST-306", name="Azimuth fine-adjust thumb screw M5 x 25, stainless", qty=2, pr=E(1.6, 0.7, 0.4), src="est",
          note="push the base boss from both sides")
     keep("ST-307")
     new("ST-308", "Latitude clamp knob, thumb screw M5 x 16, stainless", 2, "stainless", "stainless", "buy",
         "Misumi / Accu", E(1.4, 0.6, 0.35), "est", "")
     new("ST-309", "Latitude tangent screw, knurled thumb screw M3 x 25", 1, "stainless", "stainless", "buy",
-        "Misumi / Accu", E(1.0, 0.5, 0.3), "est", "fine adjust, Q20")
+        "Misumi / Accu", E(1.0, 0.5, 0.3), "est", "fine adjust, D38")
     printed("ST-310")
     printed("ST-311")
     machined("ST-312")
     machined("ST-313")
-    keep("ST-314", note="Sunwayfoto DDC-60 class: 60 x 53 x 15, 120 g; DDC-60i is 71 g (weight option W5)")
+    keep("ST-314", name="Arca-Swiss clamp, 60 mm, screw knob (Sunwayfoto DDC-60i)", pr=(round(35.0 * USD, 2), 10.92, 7.28),
+         src="quoted (eBay USD 35; NZD 64 at photogear)", note="W5 (D35): 70.9 g, 60 x 81 x 13, 3/8in-16 mount (B&H)")
     printed("ST-315")
     printed("ST-316")
     printed("ST-317")
@@ -162,7 +170,7 @@ def build_parts():
     new("ST-329", "O-ring 80 x 2, NBR 70 (roll enclosure on the cartridge sleeve)", 1, "NBR", "NBR", "buy", "generic",
         E(0.6, 0.15, 0.08), "est", "")
     new("ST-330", "Clamp screw 3/8in-16 x 12, coin slot, stainless", 1, "stainless", "stainless", "buy",
-        "camera hardware supplier", E(1.5, 0.6, 0.3), "est", "D13 exception, Q18")
+        "camera hardware supplier", E(1.5, 0.6, 0.3), "est", "D13 exception, D36")
     # ---- 5xx unchanged (Phase 4 details them)
     for pid in [r[0] for r in p2.PARTS if r[0].startswith("ST-5")]:
         if pid == "ST-501":
@@ -203,6 +211,11 @@ def build_parts():
         used[(std, size)] = i + 1
         pid = f"ST-{base + i}"
         joints = "; ".join(sorted(set(agg[(std, size, L)]["joints"])))
+        if (std, size, L) in J.ALU7075:
+            out.append((pid, f"Screw {std} {size} x {L}, aluminium 7075-T6", agg[(std, size, L)]["qty"], "aluminium 7075-T6",
+                        "aluminium 7075-T6", "buy", "Fastener Express / RC hardware", E(0.90, 0.45, 0.25),
+                        "est (7075 M3 x 27, 50 pcs USD 36.95, Fastener Express)", joints + "; D35 weight saving"))
+            continue
         out.append((pid, f"Screw {std} {size} x {L}, stainless A2", agg[(std, size, L)]["qty"], "stainless A2", "stainless A4",
                     "buy", "Accu / bolts.co.uk / Bossard", screw_price(std, size, L),
                     "quoted (pack)" if (std, size, L) == ("ISO 4762", "M3", 10) else "est (pack)", joints))

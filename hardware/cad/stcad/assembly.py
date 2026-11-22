@@ -176,7 +176,7 @@ def items():
     I("Roll shelf", "ST-313", "roll", ident, None, color=g["ST-313"].color, explode=(120, 90, 260))
     I("V-ring VA-65 (roll)", "ST-219", "roll", Pos(P.X_ROLL, P.ROLL_OUT_Y, P.Z_ROLL) * Rot(90, 0, 0),
       lambda: B.vring(65.0, 5.0, 2.5), mass=0.003, color=(0.08, 0.08, 0.08), explode=(120, 60, 260))
-    I("Arca clamp 60 mm", "ST-314", "roll", Pos(P.X_ROLL, P.CLAMP_CY, P.Z_ROLL + 30), B.clamp60, mass=P.CLAMP["mass"],
+    I("Arca clamp 60 mm", "ST-314", "roll", Pos(P.X_ROLL, P.CLAMP_CY, P.Z_ROLL + P.SHELF_TOP), B.clamp60, mass=P.CLAMP["mass"],
       color=(0.20, 0.20, 0.22), explode=(120, 90, 320))
     return it
 

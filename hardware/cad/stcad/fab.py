@@ -113,6 +113,19 @@ def write_fab(root, drawings_dir):
         for pl in pls:
             w.writerow([pl["n"], pl["mat"], " ".join(pl["parts"]), round(pl["hmax"], 0), pl["filament_g"], pl["hours"]])
         w.writerow(["", "TOTAL", f"{len(pls)} plates", "", sum(p["filament_g"] for p in pls), round(sum(p["hours"] for p in pls), 1)])
+    # MJF parts ordered from JLC3DP (D29, D35)
+    from .bom import MJF_USD_PER_G
+    mjf_rows = []
+    for pd in REGISTRY.values():
+        if pd.kind == "printed" and pd.material == "PA12-MJF":
+            g = part_mass(pd) * 1000
+            shutil.copy(os.path.join(root, "step", f"{pd.pid}.step"), os.path.join(fab, "cnc", f"{pd.pid}-MJF.step"))
+            mjf_rows.append([pd.pid, pd.name, pd.qty, round(g, 0), round(g * MJF_USD_PER_G, 0), round(g * MJF_USD_PER_G * USD, 0)])
+    with open(os.path.join(fab, "mjf-order-estimate.csv"), "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["Part", "Name", "Qty per head", "Mass g", "Est. USD (0.275 / g)", "Est. EUR"])
+        w.writerows(mjf_rows)
+        w.writerow(["", "TOTAL", "", sum(r[3] for r in mjf_rows), sum(r[4] for r in mjf_rows), sum(r[5] for r in mjf_rows)])
     return cnc_rows, tot_usd, pls
 
 
@@ -129,17 +142,19 @@ SHOP = [  # (ID, what to buy, qty per head, buy from, link)
     ("ST-304", "Hinge pin 8 h6 x 80, ends tapped M3", 1, "Misumi (shaft, one end / both ends tapped)", ""),
     ("ST-306 / 308 / 309", "Thumb screws M5 x 25 (2), M5 x 16 (2), M3 x 25 knurled (1), stainless", 5, "Accu", "https://accu-components.com/"),
     ("ST-307", "3/8in-16 stainless thread bushing, OD 12 x 8", 1, "camera hardware supplier", ""),
-    ("ST-314", "Arca clamp 60 mm, screw knob (Sunwayfoto DDC-60)", 1, "B&H / local dealer", "https://tanotis.com/products/sunwayfoto-ddc-60-screw-knob-clamp-60mm"),
+    ("ST-314", "Arca clamp 60 mm, screw knob (Sunwayfoto DDC-60i, 71 g)", 1, "B&H / local dealer", "https://www.bhphotovideo.com/c/product/906573-REG/Sunwayfoto_DDC_60i_Screw_Knob_Clamp.html"),
+    ("ST-310 / 311", "Azimuth body and tower, MJF PA12 dyed black: upload the two STEP files", 1, "JLC3DP", "https://jlc3dp.com/"),
     ("ST-326", "Clear PC sheet 1 mm, cut 38 x 22", 1, "any plastics shop", ""),
     ("ST-329", "O-ring 80 x 2 NBR 70", 1, "generic", ""),
     ("ST-330", "3/8in-16 x 12 coin-slot camera screw", 1, "camera hardware supplier", ""),
     ("ST-601", "Molicel INR-21700-P50B", 4, "NKON (EU)", "https://www.nkon.nl/novat/rechargeable/molicel-inr21700-p50b-5000mah-50a.html"),
-    ("ST-710..741", "Stainless A2 screws, ISO 4762 / ISO 7380, 19 sizes (see parts list, 194 pcs)", 194, "Accu / bolts.co.uk", "https://bolts.co.uk/m3-x-10mm-socket-cap-screw-din-912-a2-stainless-steel-pack-of-200-p-SCMCA203010"),
+    ("ST-717 / 718", "Aluminium 7075-T6 screws ISO 4762 M3 x 45 (8) and M3 x 50 (24), for the reducers", 32, "Fastener Express / RC hardware", "https://www.fastener-express.com/M3x.5x27mmSocketHeadCapScrews-BlackAluminumQty.aspx"),
+    ("ST-710..741", "Stainless A2 screws, ISO 4762 / ISO 7380, 17 sizes (see parts list, 162 pcs)", 162, "Accu / bolts.co.uk", "https://bolts.co.uk/m3-x-10mm-socket-cap-screw-din-912-a2-stainless-steel-pack-of-200-p-SCMCA203010"),
     ("ST-750..752", "Washers M3 / M3 large / M5, stainless", 16, "Accu", "https://accu-components.com/"),
     ("ST-760", "Ruthex heat-set inserts M3 (pack of 100)", 75, "3DJake", "https://www.3djake.com/ruthex/threaded-insert-m3-100-pieces"),
     ("ST-761", "Ruthex heat-set inserts M4 (pack of 50)", 12, "3DJake (Ruthex range)", "https://www.3djake.com/ruthex"),
     ("ST-762", "Ruthex heat-set inserts M5", 6, "3DJake", ""),
-    ("Filament", "Bambu PAHT-CF 1 kg (plates 1-2 use 975 g; buy 2 for purge and a reprint)", 2, "Bambu EU store", "https://eu.store.bambulab.com/en-fi/products/paht-cf"),
+    ("Filament", "Bambu PAHT-CF 1 kg (the three cartridge housings use about 380 g)", 1, "Bambu EU store", "https://eu.store.bambulab.com/en-fi/products/paht-cf"),
     ("Filament", "Bambu ASA 1 kg", 1, "Bambu EU store", "https://eu.store.bambulab.com/en-lu/products/asa-filament"),
     ("Filament", "TPU 95A 0.5 kg, PETG clear (small spool)", 1, "Bambu EU store", ""),
     ("ST-5xx", "Electronics: see Phase 4 (boards, ICs, connectors, harness)", 1, "JLCPCB / LCSC", ""),

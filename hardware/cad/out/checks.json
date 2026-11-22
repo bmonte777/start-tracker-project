@@ -12,15 +12,15 @@
    },
    {
     "part": "Azimuth body",
-    "min_mm": 2.7
+    "min_mm": 3.2
    },
    {
     "part": "Gasket body-tower",
-    "min_mm": 2.7
+    "min_mm": 3.2
    },
    {
     "part": "Tower",
-    "min_mm": 2.7
+    "min_mm": 3.2
    },
    {
     "part": "Motor plate (altitude)",
@@ -55,7 +55,7 @@
   ],
   "motor_top_z": 170.0,
   "body_top_z": 125.0,
-  "tower_inner_top_z": 275.5
+  "tower_inner_top_z": 276.0
  },
  "camera_swing": [
   {
@@ -228,11 +228,11 @@
   }
  ],
  "mass": {
-  "total_kg": 7.207,
+  "total_kg": 6.8,
   "cog_mm": [
-   21.9,
-   -6.4,
-   128.0
+   22.2,
+   -7.0,
+   128.2
   ],
   "groups": {
    "Reducers": 2.71,
@@ -240,10 +240,10 @@
    "Pulleys and belts": 0.123,
    "Battery pack": 0.381,
    "Electronics and harness": 0.127,
-   "Housings and covers (printed)": 1.071,
-   "Aluminium parts and clamp": 1.36,
-   "Encoder tubes, magnets": 0.102,
-   "Fasteners, inserts, seals": 0.383
+   "Housings and covers (printed)": 0.921,
+   "Aluminium parts and clamp": 1.225,
+   "Encoder tubes, magnets": 0.036,
+   "Fasteners, inserts, seals": 0.328
   },
   "spec_groups": {
    "Reducers": 2.7,
@@ -294,7 +294,7 @@
    },
    "ST-208": {
     "name": "Encoder tube",
-    "kg": 0.0679,
+    "kg": 0.0231,
     "qty": 2
    },
    "ST-209": {
@@ -329,7 +329,7 @@
    },
    "ST-215": {
     "name": "Encoder tube",
-    "kg": 0.0325,
+    "kg": 0.0111,
     "qty": 1
    },
    "ST-216": {
@@ -354,17 +354,17 @@
    },
    "ST-301": {
     "name": "Base plate",
-    "kg": 0.1053,
+    "kg": 0.0963,
     "qty": 1
    },
    "ST-302": {
     "name": "Wedge lower plate",
-    "kg": 0.3038,
+    "kg": 0.2451,
     "qty": 1
    },
    "ST-303": {
     "name": "Wedge upper plate",
-    "kg": 0.2747,
+    "kg": 0.2629,
     "qty": 1
    },
    "ST-304": {
@@ -384,12 +384,12 @@
    },
    "ST-310": {
     "name": "Azimuth body",
-    "kg": 0.2554,
+    "kg": 0.1842,
     "qty": 1
    },
    "ST-311": {
     "name": "Tower",
-    "kg": 0.2626,
+    "kg": 0.1836,
     "qty": 1
    },
    "ST-312": {
@@ -399,12 +399,12 @@
    },
    "ST-313": {
     "name": "Roll shelf",
-    "kg": 0.1589,
+    "kg": 0.1519,
     "qty": 1
    },
    "ST-314": {
     "name": "Arca clamp 60 mm",
-    "kg": 0.12,
+    "kg": 0.071,
     "qty": 1
    },
    "ST-315": {
@@ -419,7 +419,7 @@
    },
    "ST-317": {
     "name": "Battery tray",
-    "kg": 0.0174,
+    "kg": 0.0173,
     "qty": 1
    },
    "ST-318": {
@@ -444,7 +444,7 @@
    },
    "ST-323": {
     "name": "Gasket body-tower",
-    "kg": 0.0021,
+    "kg": 0.0018,
     "qty": 1
    },
    "ST-324": {
@@ -539,33 +539,33 @@
    }
   },
   "alt_group": {
-   "kg": 4.731,
+   "kg": 4.631,
    "cg": [
-    131.3,
-    -1.8,
-    222.2
+    131.8,
+    -1.7,
+    223.1
    ],
-   "dz_from_alt_axis": -2.8,
-   "dy_from_alt_axis": -1.8
+   "dz_from_alt_axis": -1.9,
+   "dy_from_alt_axis": -1.7
   },
   "roll_stage_plus_rig": {
-   "kg": 3.153,
+   "kg": 3.075,
    "cg": [
-    138.0,
-    26.5,
-    263.4
+    138.1,
+    27.3,
+    265.8
    ],
-   "offset_from_roll_axis": 118.4
+   "offset_from_roll_axis": 120.9
   },
   "roll_stage_hardware": {
-   "kg": 1.599,
+   "kg": 1.522,
    "cg": [
-    130.9,
-    -55.7,
-    135.8
+    130.7,
+    -58.2,
+    134.2
    ]
   }
  },
- "seconds": 431.7,
+ "seconds": 542.8,
  "x_roll": 135.5
 }
