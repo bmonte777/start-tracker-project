@@ -50,7 +50,7 @@ add("TPS25752A",
      (18, "GPIO3", B), (31, "GPIO6", B), (30, "GPIO7", B), (13, "GPIO11", B), (11, "GND", PI), (12, "GND", P), (14, "GND", P), (33, "EP", P)],
     [(26, "VBUS", P), (27, "VBUS", P), (28, "PP5V", PI), (29, "PP5V", P), (19, "VSYS", I), (20, "GATE_VSYS", O), (21, "GATE_VBUS", O),
      (24, "CC1", B), (25, "CC2", B), (22, "GPIO4/USB_P", B), (23, "GPIO5/USB_N", B)],
-    "Package_DFN_QFN:QFN-32-1EP_4x4mm_P0.4mm_EP2.8x2.8mm", "https://www.ti.com/lit/gpn/tps25752a",
+    "Package_DFN_QFN:VQFN-32-1EP_4x4mm_P0.4mm_EP2.8x2.8mm", "https://www.ti.com/lit/gpn/tps25752a",
     "USB Type-C PD 3.2 source-only controller, 5 V path inside, gate drive for an external high-voltage path, VQFN-32 4 x 4 mm")
 
 add("BQ40Z50",
@@ -59,7 +59,7 @@ add("BQ40Z50",
     [(31, "CHG", O), (30, "PCHG", O), (28, "DSG", O), (25, "FUSE", O), (19, "SMBC", B), (18, "SMBD", B), (16, "PRES/SHUTDN", I), (15, "BTP_INT", O),
      (17, "DISP", I), (20, "LEDCNTLA", B), (21, "LEDCNTLB", B), (22, "LEDCNTLC", B), (7, "NC", "no_connect"), (14, "NC", "no_connect"),
      (29, "NC", "no_connect")],
-    "Package_DFN_QFN:QFN-32-1EP_4x4mm_P0.4mm_EP2.8x2.8mm", "https://www.ti.com/lit/gpn/bq40z50-r2",
+    "Package_DFN_QFN:VQFN-32-1EP_4x4mm_P0.4mm_EP2.8x2.8mm", "https://www.ti.com/lit/gpn/bq40z50-r2",
     "1-4 series Li-ion gauge, protector and balancer, SMBus, VQFN-32 4 x 4 mm")
 
 add("MMC5983MA",
@@ -68,6 +68,12 @@ add("MMC5983MA",
      (7, "NC", "no_connect"), (8, "NC", "no_connect"), (12, "NC", "no_connect"), (14, "NC", "no_connect")],
     "Package_LGA:LGA-16_3x3mm_P0.5mm", "https://www.memsic.com/Public/Uploads/uploadfile/files/20220119/MMC5983MADatasheetRevA.pdf",
     "3-axis AMR magnetometer, I2C / SPI, LGA-16 3 x 3 mm")
+
+add("LSM6DSV",
+    [(8, "VDD", PI), (5, "VDDIO", PI), (12, "CS", I), (1, "SDO/SA0", I), (2, "SDX", P), (3, "SCX", P), (6, "GND", PI), (7, "GND", P)],
+    [(13, "SCL", I), (14, "SDA", B), (4, "INT1", O), (9, "INT2", O), (10, "NC", "no_connect"), (11, "NC", "no_connect")],
+    "Package_LGA:LGA-14_3x2.5mm_P0.5mm_LayoutBorder3x4y", "https://www.st.com/resource/en/datasheet/lsm6dsv.pdf",
+    "6-axis IMU, I2C / SPI / I3C, LGA-14 2.5 x 3 mm")
 
 for nm, descr in (("NMOS_DFN33", "N-channel MOSFET, DFN 3x3-8 (S 1-3, G 4, D 5-8 and pad)"), ("PMOS_DFN33", "P-channel MOSFET, DFN 3x3-8 (S 1-3, G 4, D 5-8 and pad)")):
     add(nm, [(4, "G", I)], [(5, "D", P), (6, "D", P), (7, "D", P), (8, "D", P), (9, "D", P), (1, "S", P), (2, "S", P), (3, "S", P)],
