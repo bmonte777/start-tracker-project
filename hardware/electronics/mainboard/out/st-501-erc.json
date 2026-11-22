@@ -1,0 +1,54 @@
+{
+    "$schema": "https://schemas.kicad.org/erc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-11-22T23:03:17+0000",
+    "included_severities": [
+        "error",
+        "warning",
+        "exclusion"
+    ],
+    "kicad_version": "9.0.8",
+    "sheets": [
+        {
+            "path": "/",
+            "uuid_path": "/ec7c0848-7c11-5458-a70f-fdd3b16d5dd6",
+            "violations": []
+        },
+        {
+            "path": "/Battery input, charger and system rail/",
+            "uuid_path": "/ec7c0848-7c11-5458-a70f-fdd3b16d5dd6/1d9d6581-b7ec-53a9-a790-fe26bc7a8f77",
+            "violations": []
+        },
+        {
+            "path": "/USB-C port A: power in or out, USB data/",
+            "uuid_path": "/ec7c0848-7c11-5458-a70f-fdd3b16d5dd6/a12ab2cc-efb0-5077-95df-e400d7f6bb6d",
+            "violations": []
+        },
+        {
+            "path": "/USB-C port B: 27 W to the camera/",
+            "uuid_path": "/ec7c0848-7c11-5458-a70f-fdd3b16d5dd6/ede04caf-15a8-5ef0-a84b-730dbe6b0aab",
+            "violations": []
+        },
+        {
+            "path": "/3.3 V, 5 V and the motor rail/",
+            "uuid_path": "/ec7c0848-7c11-5458-a70f-fdd3b16d5dd6/3258007e-5467-5f50-b054-ddd63417e951",
+            "violations": []
+        },
+        {
+            "path": "/ESP32-S3 (connectivity) and RP2354A (motion)/",
+            "uuid_path": "/ec7c0848-7c11-5458-a70f-fdd3b16d5dd6/f55834e4-a362-5f57-985a-c6eddbb5cac2",
+            "violations": []
+        },
+        {
+            "path": "/Stepper drivers and cartridge plugs/",
+            "uuid_path": "/ec7c0848-7c11-5458-a70f-fdd3b16d5dd6/a078cb04-ce42-5e1a-8c2d-9bc04bc03c55",
+            "violations": []
+        },
+        {
+            "path": "/Sensors, GNSS, display, buttons, LED, shutter/",
+            "uuid_path": "/ec7c0848-7c11-5458-a70f-fdd3b16d5dd6/dc4ebc74-e5e9-52b5-a806-7b26cc9e93d9",
+            "violations": []
+        }
+    ],
+    "source": "st-501.kicad_sch"
+}
