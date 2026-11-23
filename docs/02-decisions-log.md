@@ -105,21 +105,28 @@ D27 is confirmed: the TPS25751 datasheet lists the BQ25792 among the chargers it
 | D50 | Battery rail on the mainboard (Q36) | The pack pads stay at the lower right, so no harness and no printed part changes. The rail crosses the board as one copper area 4.6 mm wide and about 94 mm long (about 10 mΩ: 0.36 W and 60 mV at the pack's 6 A limit); on the six-layer board of D51 it lies on inner layer 3 and both outer faces are free |
 | D51 | Mainboard build (Q37) | Six layers instead of four, with filled and capped vias (via-in-pad), which JLCPCB makes at no extra charge from six layers up. Stack: front face signal, power, two signal layers, ground, inner face signal. The vias to the planes sit in the pads of the small parts; outline, parts and placement do not change. Reason: on four layers 98 of about 950 connections could not be closed in three router runs |
 
+## 23 Nov 2026 — Phase 4 open questions (approved: "Q28-Q41 - proceed with recommendations")
+
+| # | Topic | Decision |
+|---|---|---|
+| D52 | Clock backup (Q28) | Seiko MS621FE rechargeable cell (about three months) instead of the 0.1 F capacitor (about two days) |
+| D53 | Buttons (Q31) | TS-1187A (1.5 mm tall); the four printed button caps grow by 2 mm |
+| D54 | GNSS antenna (Q32) | Active patch on a coax lead (U.FL socket on the board), flat under the top cover |
+| D55 | Shutter socket (Q33) | Panel-mount 2.5 mm jack in the bezel, through a 9 mm cut-out in the mainboard, wired to plug J12 |
+| D56 | Status light (Q34) | Three single-colour 0603 LEDs behind the light pipe instead of one RGB package |
+| D57 | Battery lead (Q35) | Soldered to two pads on the mainboard, with an in-line XT30 |
+| D58 | Battery board fixing in the pack (Q38; printed parts ST-605 and ST-612) | A rib 7 mm wide with a 1.7 mm groove on the floor of the lower shell and one under the roof of the upper shell; the board's bottom and top edges sit 2 mm deep in them, no screws. To give the ribs a printable wall on the cell side (1.45 mm), the board stands 1.6 mm behind the cell holder instead of 0.6 mm. In the CAD since 23 Nov |
+| D59 | Pack light pipe and button (Q39; printed part ST-611) | The pipe ends 2.0 mm before the board, with a flat boss over the button 0.3 mm from its top (switch 1.5 mm tall), and slides 0.3 mm in its window to press it. A flange behind the wall keeps it in; a TPU lip 0.5 mm thick, printed onto the flange, closes the window. In the CAD since 23 Nov |
+| D60 | Wire passages in the pack (Q40; printed part ST-606) | A notch 6 × 3 mm at mid-height on the left and right edge of both cell holders: PACK+ on one side; PACK−, the three bus wires, the middle tap and the thermistor leads on the other. In the CAD since 23 Nov |
+| D61 | Inner copper of the mainboard (Q41) | 1 oz inner layers instead of JLCPCB's standard 0.5 oz: the battery rail on inner layer 3 then has about 10 mΩ instead of 20 mΩ (0.36 W instead of 0.72 W at the pack's 6 A limit). A small surcharge on the bare boards |
+
 ### Phase 4 — pending approval (not decisions yet)
 
-The Phase 4 design carries on with the recommended option for each of these. Nothing that changes a printed or machined part has been changed.
+The Phase 4 design carries on with the recommended option for each of these. Nothing that changes a printed or machined part is involved.
 
 | # | Question | Recommended, used in the design |
 |---|---|---|
-| Q28 | Clock backup | Seiko MS621FE rechargeable cell (about three months) instead of the 0.1 F capacitor (about two days) |
-| Q31 | Buttons | TS-1187A (1.5 mm tall); the four printed button caps grow by 2 mm |
-| Q32 | GNSS antenna | Active patch on a coax lead (U.FL socket on the board), flat under the top cover |
-| Q33 | Shutter socket | Panel-mount 2.5 mm jack in the bezel, through a 9 mm cut-out in the mainboard, wired to plug J12 |
-| Q34 | Status light | Three single-colour 0603 LEDs behind the light pipe instead of one RGB package |
-| Q35 | Battery lead | Soldered to two pads on the mainboard, with an in-line XT30 |
-| Q38 | Battery board fixing in the pack (changes printed parts ST-605 and ST-612) | A rib 7 mm wide with a 1.7 mm groove on the floor of the lower shell and one under the roof of the upper shell; the board's bottom and top edges sit in them. The board ST-602 keeps those edges free. Not changed in the CAD yet |
-| Q39 | Pack light pipe and button (changes printed part ST-611) | The pipe ends 2.0 mm before the board, with a flat boss over the button, and slides 0.3 mm in its window to press it; a thin TPU lip on its flange keeps the window closed. Not changed in the CAD yet |
-| Q40 | Wire passages in the pack (changes printed part ST-606) | A notch 6 × 3 mm at mid-height on the left and right edge of both cell holders: PACK+ on one side; PACK−, the three bus wires, the middle tap and the thermistor leads on the other. Not changed in the CAD yet |
-| Q41 | Inner copper of the mainboard | Order 1 oz inner layers instead of JLCPCB's standard 0.5 oz: the battery rail on inner layer 3 then has about 10 mΩ instead of 20 mΩ (0.36 W instead of 0.72 W at the pack's 6 A limit). A small surcharge on the bare boards |
+| Q42 | Power-path width check on the mainboard: three places where the wide copper cannot begin within 0.8 mm of the pin | Accept them, each written into the check with its reason: (1) the VBUS pins of both USB-C sockets, 0.3 mm wide, between the shell pins and the CC and data pins: wide copper begins 1.7 mm from the row A pins, and the row B pins reach it through the row A pin opposite (each pin carries a quarter of the port current, 0.75 A at 3 A); (2) pad 25 of the port B converter TPS55288, which lies under the package and is reached only through pin 21 (0.25 mm wide, TI's own land pattern) |
+| Q43 | Which pins count as terminals of a power path | Take the sense and supply pins out: on the charger the terminals of the input path are its two VBUS pins (2 and 3), not the sense pin VAC2 (8); pin 7 of the boost converter TPS61288 (VIN, the chip's own supply of a few milliamps) is not a terminal of the motor-rail input |
 
-Also done since the last approval and reported here because they change the layout, not the circuit: small parts round the processor, the PD controllers and the drivers were moved to widen the free bands; slow-signal resistors and capacitors carry a via in their pad; the drivers' charge-pump and reference nets are routed with the slow signals.
+Reported here because they change the layout, not the circuit (23 Nov): the port A controller is turned by 180° so that its two power pins face east; the charger and its coil moved 3 mm east, with the coil above the chip; the port B output switch (Q2, Q3) stands at the west edge, 2.6 mm from the controller; the motor switch Q6 and the boost coil L5 moved next to each other east of the boost converter; the sense resistor R23 stands right below the port B converter; the shutter opto-coupler U26 is on the front face behind plug J12; the port B memory chip U8 moved to the upper left. The inner power layer carries, besides 3.3 V and the system and motor rails, one area each for the two USB VBUS rails, the charger input, the port B output and 5 V.

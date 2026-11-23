@@ -122,7 +122,7 @@ PK_ZM = PZ0 + 24.5                     # split plane (lower shell top)
 PK_CX, PK_CZ = (PX0 + PX1) / 2, PZ0 + P.PACK['H'] / 2
 PK_W = P.PACK["wall"]
 PK_BOSS = [(PX0 + 4.5, P.PACK_Y0 + 6), (PX1 - 4.5, P.PACK_Y0 + 6), (PX0 + 4.5, PK_Y1 - 6), (PX1 - 4.5, PK_Y1 - 6)]
-# Battery board ST-602 (decision D54, was Q38): it stands 1.6 mm behind the +Y cell holder, its bottom and top edges in
+# Battery board ST-602 (decision D58, was Q38): it stands 1.6 mm behind the +Y cell holder, its bottom and top edges in
 # the grooves of one rib on the floor of the lower shell and one under the roof of the upper shell. No screws.
 PK_YB = P.PACK_Y0 + PK_W + 12.0 + 3.0 + P.CELL_L + 3.0 + 1.6      # the board's inner face
 RIB_W, RIB_GROOVE, RIB_IN, RIB_WALL = 7.0, 1.7, 2.0, 1.45          # rib width, groove width, depth the board sits in, wall each side
@@ -186,7 +186,7 @@ def build_cell_holder():
         s -= cyl(10.95, 2.0, dx, 1.0, dz, "Y")
         s -= cyl(8.0, 5, dx, -1, dz, "Y")
     feat("pocket", "21.9", (11.1, 1, 11.1), "Y", 2.0, "4x cell pockets; 16 mm windows for the nickel strip", 4)
-    # wire passages (decision D56, was Q40): PACK+ on one side; PACK-, the three bus wires, the middle tap and the
+    # wire passages (decision D60, was Q40): PACK+ on one side; PACK-, the three bus wires, the middle tap and the
     # thermistor leads on the other
     for sx in (-1, 1):
         s -= box(min(sx * 19.5, sx * 22.6), max(sx * 19.5, sx * 22.6), -1, 4, -3, 3)
@@ -202,7 +202,7 @@ def build_pack_gasket():
     return s
 
 
-LP_LEN = PK_Y1 - (PK_YB + P.BATT_BOARD["T"]) - 2.0      # the pipe ends 2.0 mm before the board face (decision D55, was Q39)
+LP_LEN = PK_Y1 - (PK_YB + P.BATT_BOARD["T"]) - 2.0      # the pipe ends 2.0 mm before the board face (decision D59, was Q39)
 
 
 def build_light_pipe():
