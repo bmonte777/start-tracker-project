@@ -1,0 +1,5 @@
+menu "Star Tracker"
+config ST_BRINGUP
+    bool "Build the bring-up image (menu for Stages B-D) instead of the system firmware"
+    default n
+endmenu

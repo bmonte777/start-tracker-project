@@ -30,3 +30,10 @@ foreach(img motion bringup)
   pico_set_program_name(${t} "Star Tracker RP2354A ${img}")
   pico_add_extra_outputs(${t})          # .uf2, .bin, .hex, .elf
 endforeach()
+
+# RAM-only flash loader that the ESP32-S3 loads over SWD to (re)program this chip (Q49).
+add_executable(st_rp2354a_flashstub flashstub/flashstub.c)
+target_link_libraries(st_rp2354a_flashstub pico_stdlib hardware_flash)
+pico_set_binary_type(st_rp2354a_flashstub no_flash)
+pico_enable_stdio_uart(st_rp2354a_flashstub 0)
+pico_add_extra_outputs(st_rp2354a_flashstub)

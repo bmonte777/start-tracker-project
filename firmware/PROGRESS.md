@@ -12,8 +12,8 @@ Q44 toolchains · Q45 RP2354A core/PIO split · Q46 link protocol · Q47 closed 
 | Stage | State |
 |---|---|
 | 1 Architecture, decisions, pin header generator | done |
-| 2 Bring-up firmware | in progress |
-| 3 RP2354A motion | not started |
+| 2 Bring-up firmware | done: ESP32 menu (st_sys/bringup.cpp) + RP2354A tests (rp2354a/bringup/tests.c); both build, not run on hardware |
+| 3 RP2354A motion | motion core + hardware layer build; ESP32 SWD flasher written (untested) |
 | 4 ESP32-S3 system | not started |
 | 5 Protocols | not started |
 | 6 Simulator and tests | not started |
