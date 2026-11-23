@@ -12,12 +12,14 @@ Q44 toolchains · Q45 RP2354A core/PIO split · Q46 link protocol · Q47 closed 
 | Stage | State |
 |---|---|
 | 1 Architecture, decisions, pin header generator | done |
-| 2 Bring-up firmware | done: ESP32 menu (st_sys/bringup.cpp) + RP2354A tests (rp2354a/bringup/tests.c); both build, not run on hardware |
-| 3 RP2354A motion | motion core + hardware layer build; ESP32 SWD flasher written (untested) |
-| 4 ESP32-S3 system | not started |
-| 5 Protocols | not started |
-| 6 Simulator and tests | not started |
-| 7 Release (workflow, web flasher, gauge/PD config) | not started |
+| 2 Bring-up firmware | done, builds; not run on hardware |
+| 3 RP2354A motion | done, builds; motion core tested in the simulator |
+| 4 ESP32-S3 system | done, builds (1.33 MB); not run on hardware |
+| 5 Protocols | done: Alpaca, LX200, WebSocket, BLE; tested in-process and against the simulator (ConformU only in the workflow) |
+| 6 Simulator and tests | done: 29/29 unit+integration, 18/18 protocol |
+| 7 Release | done: workflow (not run yet: it must be on main to be started), web flasher, bundle, gauge CSV, check_all 40/40 |
+
+Open work for the next phase or a follow-up: encoder calibration routine (cal.*), PEC training (pec.*), jobs (job.*), TLE tracking, mDNS, ConformU findings, port B 15 W PDO switching, magnetometer heading. See docs/05-firmware.md section 10.
 
 ## Build environment notes (for the next chat)
 - Pico SDK 2.3.1, arm-none-eabi-gcc 13.2 (Ubuntu package `gcc-arm-none-eabi`).
