@@ -7,6 +7,7 @@
 #define ARCSEC        (1.0 / 3600.0)
 #define EVQ           16
 
+static void start_stop(motion_t *m, int i);
 static st_event_t evq[EVQ];
 static volatile uint8_t evq_w, evq_r;
 
@@ -169,7 +170,7 @@ void motion_feed_rail(motion_t *m, uint8_t rail_now, uint16_t vmot_mv)
         set_fault(m, ST_F_VMOT_LOW, 0xFF, vmot_mv);
         for (int i = 0; i < ST_AXES; i++)
             if (m->ax[i].mode == ST_AX_MOVING || m->ax[i].mode == ST_AX_TRACKING)
-                m->ax[i].mode = ST_AX_STOPPING;
+                start_stop(m, i);
     }
     if (vmot_mv > 18000)
         set_fault(m, ST_F_VMOT_HIGH, 0xFF, vmot_mv);
@@ -252,10 +253,19 @@ static void clamp_limits(motion_t *m, int i, double *x)
         *x = clampd(*x, lo, hi);
         if (!(m->ax[i].flags & (ST_AXF_AT_MIN | ST_AXF_AT_MAX)))
             push_event(ST_EV_LIMIT, (uint8_t)i, 1, 0);
-        m->ax[i].flags |= (*x <= lo) ? ST_AXF_AT_MIN : ST_AXF_AT_MAX;
-    } else {
-        m->ax[i].flags &= (uint16_t)~(ST_AXF_AT_MIN | ST_AXF_AT_MAX);
+        m->ax[i].flags |= (*x <= lo) ? ST_AXF_AT_MIN : ST_AXF_AT_MAX;   /* cleared by the next move or setpoint */
     }
+}
+
+/* Enter STOPPING: aim at the jerk-limited stopping point once; the planner then decelerates to it. */
+static void start_stop(motion_t *m, int i)
+{
+    axis_state_t *s = &m->ax[i];
+    const axis_cfg_t *c = &m->cfg[i];
+    double amax = deg_to_us(c, c->amax_dps2), jmax = deg_to_us(c, c->jmax_dps3), v = fabs(s->v);
+    s->target = s->p + (s->v >= 0 ? 1.0 : -1.0) * (v * v / (2.0 * amax) + v * amax / (2.0 * jmax));
+    s->vcap = fmax(v, 1.0);
+    s->mode = ST_AX_STOPPING;
 }
 
 void motion_tick(motion_t *m, uint64_t head_us)
@@ -268,7 +278,7 @@ void motion_tick(motion_t *m, uint64_t head_us)
         m->link_lost_at = head_us;
         set_fault(m, ST_F_LINK_LOST, 0xFF, 0);
         for (int i = 0; i < ST_AXES; i++)
-            if (m->ax[i].mode == ST_AX_MOVING) { m->ax[i].target = m->ax[i].p; m->ax[i].mode = ST_AX_STOPPING; }
+            if (m->ax[i].mode == ST_AX_MOVING) start_stop(m, i);
     } else if (!lost && m->link_lost) {
         m->link_lost = false;
         m->faults &= ~ST_F_LINK_LOST;
@@ -289,12 +299,6 @@ void motion_tick(motion_t *m, uint64_t head_us)
             break;
         case ST_AX_MOVING:
         case ST_AX_STOPPING: {
-            if (s->mode == ST_AX_STOPPING) {
-                /* stop as quickly as the limits allow: target = stopping point */
-                double amax = deg_to_us(c, c->amax_dps2);
-                double sd = s->v * fabs(s->v) / (2.0 * amax);
-                s->target = s->p + sd;
-            }
             clamp_limits(m, i, &s->target);
             if (plan_move(s, c)) {
                 if (s->mode == ST_AX_MOVING) push_event(ST_EV_MOVE_DONE, (uint8_t)i, 0, 0);
@@ -308,7 +312,7 @@ void motion_tick(motion_t *m, uint64_t head_us)
             uint64_t age_ms = (head_us - s->sp_t_us) / 1000u;
             if (age_ms > s->sp_valid_ms) m->faults |= ST_F_SETPOINT_STALE;
             if (m->link_lost && head_us - m->link_lost_at > (uint64_t)m->coast_s * 1000000u) {
-                s->mode = ST_AX_STOPPING;                 /* coasted 60 s without the ESP32 */
+                start_stop(m, i);                         /* coasted 60 s without the ESP32 */
                 break;
             }
             double tp, tr;
@@ -316,7 +320,7 @@ void motion_tick(motion_t *m, uint64_t head_us)
             if (s->sp_pec) tp += pec_offset(m, i, s->p);
             double unclamped = tp;
             clamp_limits(m, i, &tp);
-            if (tp != unclamped) { s->mode = ST_AX_STOPPING; break; }
+            if (tp != unclamped) { start_stop(m, i); break; }
             /* follow: feed-forward rate + proportional catch-up (tau 50 ms), limited by amax */
             double err = tp - s->p;
             double vcatch = deg_to_us(c, 0.5);
@@ -368,9 +372,10 @@ void motion_slow_loop(motion_t *m)
         } else if (s->temp_c < c->derate_c - 5.0f) {
             s->flags &= (uint16_t)~ST_AXF_DERATED;
         }
-        /* power budget: the slew current scales with sqrt(budget / 20.1 W peak), Phase 4 pack-current rule */
+        /* power budget: the slew current scales with sqrt(budget / 20.1 W peak) down to 0.77 x (Phase 4 pack-current rule);
+         * below that the ESP32 re-advertises port B at 15 W instead */
         float bud = m->budget_mw / 20100.0f;
-        float sc = bud >= 1.0f ? 1.0f : sqrtf(bud > 0.25f ? bud : 0.25f);
+        float sc = bud >= 1.0f ? 1.0f : sqrtf(bud > 0.6f ? bud : 0.6f);   /* floor 0.77 x current: cold torque margin 1.48 -> 1.15 */
         if (s->flags & ST_AXF_DERATED) sc = fminf(sc, 0.7f);
         s->i_scale = sc;
 
@@ -496,7 +501,7 @@ void motion_handle(motion_t *m, uint8_t type, const uint8_t *pl, size_t len, uin
                 s->vcap = deg_to_us(c, fmin(cap, c->vmax_dps));
                 s->sp_valid = false;
                 s->mode = ST_AX_MOVING;
-                s->flags &= (uint16_t)~ST_AXF_STALL;
+                s->flags &= (uint16_t)~(ST_AXF_STALL | ST_AXF_AT_MIN | ST_AXF_AT_MAX);
             }
         }
         break;
@@ -508,7 +513,7 @@ void motion_handle(motion_t *m, uint8_t type, const uint8_t *pl, size_t len, uin
                 axis_state_t *s = &m->ax[i];
                 s->sp_valid = false;
                 if (st->mode == 2) { s->mode = ST_AX_DISABLED; s->v = s->a = 0; }
-                else if (s->mode == ST_AX_MOVING || s->mode == ST_AX_TRACKING) s->mode = ST_AX_STOPPING;
+                else if (s->mode == ST_AX_MOVING || s->mode == ST_AX_TRACKING) start_stop(m, i);
                 if (st->mode == 1) m->cfg[i].amax_dps2 = m->cfg[i].amax_dps2;   /* quick = same limits; 4 deg/s^2 is already the hard limit */
             }
         }
