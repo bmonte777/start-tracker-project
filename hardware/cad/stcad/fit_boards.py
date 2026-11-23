@@ -10,7 +10,7 @@ Writes hardware/cad/out/fit_boards.json
 import json
 import os
 
-from build123d import Location, Plane, import_step
+from build123d import Box, Location, Plane, Pos, import_step
 
 from . import assembly as A
 from .checks import _bb, min_dist
@@ -33,6 +33,37 @@ STEP = {"ST-520": "st-520", "ST-501": "st-501", "ST-602": "st-602"}
 DRAFT = {"ST-501": "mainboard"}
 CAP = 4.0     # mm: neighbours further away than this are not reported
 
+# ST-501 carries the OLED module (ST-516) on J11, the module's own 4-pin header (not on the board's parts list). KiCad's
+# model of J11 is a loose male header with 6 mm pins standing up and 1.4 mm tails below the board; in the head the module
+# sits on the header's 2.5 mm plastic spacer and the tails are cut to 0.6 mm after soldering (assembly step). So J11 is
+# cut to that, and the module is added as two blocks: its board 35.4 x 33.5 x 1.2 mm with the header row 1.75 mm from its
+# top edge, and the glass 36 x 20 x 1.6 mm where the Phase 3 envelope puts it (Y 6 to 26). The two thicknesses are
+# assumed typical values: measure the bought module and change them here.
+J11_BOX = (-5.3, 26.4, -2.0, 5.3, 29.4, 11.0)          # KiCad frame: where the J11 model lies
+J11_KEEP = (-0.6, 1.6 + 2.5)                          # tails cut to 0.6 mm, spacer 2.5 mm
+OLED_PCB = (35.4, 33.5, 1.2, 27.9 + 1.75)             # width, height, thickness, top edge Y
+OLED_GLASS = (36.0, 20.0, 1.6, 16.0)                  # width, height, thickness, centre Y
+
+
+def _standins(pid, solids):
+    if pid != "ST-501":
+        return solids
+    out = []
+    for s in solids:
+        b = _bb(s)
+        if all(J11_BOX[k] <= b[k] and b[k + 3] <= J11_BOX[k + 3] for k in range(3)):
+            z0, z1 = J11_KEEP
+            cut = s.intersect(Pos(0, (J11_BOX[1] + J11_BOX[4]) / 2, (z0 + z1) / 2) * Box(J11_BOX[3] - J11_BOX[0], J11_BOX[4] - J11_BOX[1], z1 - z0))
+            out += list(cut.solids()) if cut else []
+        else:
+            out.append(s)
+    w, h, t, top = OLED_PCB
+    z = J11_KEEP[1]
+    out.append(Pos(0, top - h / 2, z + t / 2) * Box(w, h, t))
+    gw, gh, gt, gy = OLED_GLASS
+    out.append(Pos(0, gy, z + t + gt / 2) * Box(gw, gh, gt))
+    return out
+
 
 def board_solids(pid):
     path = os.path.join(FAB, STEP[pid], STEP[pid] + ".step")
@@ -40,7 +71,7 @@ def board_solids(pid):
         path = os.path.join(FAB, "..", DRAFT.get(pid, "-"), "out", STEP[pid] + ".step")
     if not os.path.exists(path):
         return None
-    return list(import_step(path).solids())
+    return _standins(pid, list(import_step(path).solids()))
 
 
 def check(pid, pose=None):

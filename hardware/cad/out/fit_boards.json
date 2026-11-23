@@ -88,7 +88,51 @@
  },
  {
   "board": "ST-501",
-  "missing": true
+  "instance": "Mainboard",
+  "parts_in_step": 367,
+  "bbox": [
+   -152.3,
+   -35.0,
+   56.0,
+   -137.6,
+   65.0,
+   116.0
+  ],
+  "overlaps": [],
+  "nearest": [
+   {
+    "part": "ST-315 Front bezel",
+    "distance": 0.09
+   },
+   {
+    "part": "ST-310 Azimuth body",
+    "distance": 0.39
+   },
+   {
+    "part": "ST-316 Button cap 1",
+    "distance": 1.88
+   },
+   {
+    "part": "ST-326 OLED window 38 x 22 x 1 PC",
+    "distance": 2.6
+   },
+   {
+    "part": "ST-316 Button cap 2",
+    "distance": 2.98
+   },
+   {
+    "part": "ST-316 Button cap 3",
+    "distance": 3.5
+   },
+   {
+    "part": "ST-327 Gasket bezel",
+    "distance": 3.59
+   },
+   {
+    "part": "ST-316 Button cap 4",
+    "distance": 3.66
+   }
+  ]
  },
  {
   "board": "ST-602",
