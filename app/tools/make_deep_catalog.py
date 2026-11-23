@@ -23,7 +23,8 @@ from pathlib import Path
 
 import numpy as np
 
-MIRRORS = ["https://cdsarc.cds.unistra.fr/ftp/I/259/", "https://cdsarc.u-strasbg.fr/ftp/I/259/"]
+MIRRORS = ["https://cdsarc.cds.unistra.fr/ftp/cats/I/259/", "https://vizier.cfa.harvard.edu/ftp/cats/1/259/",
+           "https://cdsarc.cds.unistra.fr/vizier/ftp/I/259/"]
 V_MIN, V_MAX = 8.0, 10.5
 MAGIC = 0x31525453
 REC = np.dtype([("ra", "<f4"), ("dec", "<f4"), ("mag", "<i2")])
