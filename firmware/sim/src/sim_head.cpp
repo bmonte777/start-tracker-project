@@ -118,6 +118,11 @@ void SimHead::tick_1ms()
     link_errors = rx_app_.crc_errors + rx_mot_.crc_errors;
 }
 
+void SimHead::raw_encoders()
+{
+    for (auto &a : axis) { a.enc_inl_as[0] = 250.0; a.enc_inl_as[1] = 60.0; }   // MT6835 out of the box (Q47)
+}
+
 void SimHead::advance(double seconds)
 {
     std::lock_guard<std::mutex> l(sim_mu);

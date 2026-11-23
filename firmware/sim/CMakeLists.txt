@@ -28,6 +28,7 @@ add_library(stcore STATIC
   ${FW}/esp32s3/components/st_proto/alpaca.cpp
   ${FW}/esp32s3/components/st_proto/lx200.cpp
   ${FW}/esp32s3/components/st_proto/wsapi.cpp
+  ${FW}/esp32s3/components/st_proto/services.cpp
   src/sim_head.cpp)
 target_include_directories(stcore PUBLIC ${FW}/common/include ${FW}/rp2354a/motion
   ${FW}/esp32s3/components/st_core/include ${FW}/esp32s3/components/st_proto/include src)

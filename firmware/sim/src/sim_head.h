@@ -45,6 +45,8 @@ public:
     std::mutex sim_mu;                  // held while advancing; protocol threads take the Head's own lock
     uint32_t link_frames_app = 0, link_frames_mot = 0, link_errors = 0;
     void seed(uint32_t s) { rng_.seed(s); }
+    void set_time_us(int64_t t) { t_us_ = t; }    // time.set from an app (Phase 6)
+    void raw_encoders();                         // encoders without their map (to exercise cal.encoder)
 private:
     void tick_1ms();
     void encoder_feed();

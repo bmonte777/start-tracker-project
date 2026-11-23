@@ -244,6 +244,7 @@ void app_run()
     Settings s;
     settings_load(s);
     head = new Head(port, [] { return (int64_t)head_us(); });
+    head->on_set_time = [](double s) { clock_set_unix((int64_t)(s * 1e6)); };   // time.set from the apps (Phase 6 fix)
     link_init([](uint8_t type, const uint8_t *p, size_t n) { if (head) head->on_motion(type, p, n); });
     clock_update();
     ota_boot_check();                                             // RP2354A present? pending update to verify?
