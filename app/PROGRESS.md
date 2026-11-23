@@ -5,7 +5,7 @@ So a new chat can carry on. Brief: `docs/prompts/phase-6-prompt.md`. Document: `
 ## State (23 Nov 2026)
 
 - **Branch** `phase-6-apps`, made from `phase-5-firmware` because PR 10 was not merged yet.
-- **Push access** to `bmonte777/start-tracker-project` was refused by the session's permission check at the start. Everything is committed locally in the workspace; push and open the pull request once Bruno has fixed GitHub access (github.com → Settings → Applications → Installed GitHub Apps → Claude → Configure → Repository access).
+- **GitHub:** push access was refused at the start, granted later; `phase-6-apps` is pushed (merged with the newer `phase-5-firmware`) and **PR 11** is open against `phase-5-firmware`. The "Firmware and apps" workflow can only be started by hand once PR 10 puts the workflow on `main`.
 - **Decisions** Q44–Q57 approved on 23 Nov ("Approve Q44–Q57"): D64–D71 (logged by the Phase 5 session) and D72–D77 in `docs/02-decisions-log.md` and the Project copy. New open questions Q58 (fault log, PEC tables, encoder maps in the `storage` partition) and Q59 (gauge values in `health.get`), both recommended yes.
 
 | Stage | State |
@@ -28,7 +28,7 @@ So a new chat can carry on. Brief: `docs/prompts/phase-6-prompt.md`. Document: `
 
 ## Still to do (Phase 6 continuation)
 
-1. Push `phase-6-apps`, open the PR, run the workflow once and fix compile errors in Android, Windows (ptpwpd, PyInstaller, Tauri) and ESP32.
+1. After PR 10 is merged, run the workflow on `phase-6-apps` and fix compile errors in Android, Windows (ptpwpd, PyInstaller, Tauri) and ESP32.
 2. D74: ASTAP download button and solver path on Windows; Tycho-2-based deeper catalogue for the Android solver (300–600 mm).
 3. Check the phone-size screenshots from the workflow and fix layout.
 4. Then write the Phase 7 prompt.

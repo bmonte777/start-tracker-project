@@ -2,7 +2,7 @@
 
 Star Tracker Project · Phase 6 · revision A · branch `phase-6-apps` (from `phase-5-firmware`; PR 10 was not merged when the phase started)
 
-**Status (23 November 2026):** the device client, the shared UI (13 screens in Day, Night and Red), API 1.1 on the head and in the simulator, the Android shell, the Windows shell and the workflow are written. **38 of 38** device-client and end-to-end tests pass against the simulator, plus **39 of 39** screen renders, **33 of 33** Windows-backend tests (reused camera code, plate solver, head client), **47 of 47** checks of the apps against the firmware source, and the firmware's own **29 of 29** and **18 of 18**. **Nothing has run on a real head.** The APK and the Windows installer have **not been built yet**: this workspace has no Android SDK and no Windows, so the first build happens in the workflow (section 7). **Push to GitHub was refused at the start** (section 9): all work is committed on the branch in the workspace and waits for access. Decisions D72–D77 were approved on 23 November ("Approve Q44–Q57").
+**Status (23 November 2026):** the device client, the shared UI (13 screens in Day, Night and Red), API 1.1 on the head and in the simulator, the Android shell, the Windows shell and the workflow are written. **38 of 38** device-client and end-to-end tests pass against the simulator, plus **39 of 39** screen renders, **33 of 33** Windows-backend tests (reused camera code, plate solver, head client), **47 of 47** checks of the apps against the firmware source, and the firmware's own **29 of 29** and **18 of 18**. **Nothing has run on a real head.** The APK and the Windows installer have **not been built yet**: this workspace has no Android SDK and no Windows, so the first build happens in the workflow (section 7). Push access was refused at the start and granted later the same day: the branch is pushed and **pull request 11** is open (base `phase-5-firmware`). Decisions D72–D77 were approved on 23 November ("Approve Q44–Q57").
 
 ## 1. Where things stand
 
@@ -170,8 +170,10 @@ What was tested and how: the simulator (the real motion core, Head model and ser
 ## 7. Build and install, point and click
 
 ### 7.1 Build everything
-1. On github.com open **bmonte777/start-tracker-project**, click **Actions**, pick **Firmware and apps** on the left.
-2. Click **Run workflow**, choose the branch **phase-6-apps** (or **main** once merged), click **Run workflow**.
+GitHub only lists a manual workflow once it is on `main`, so merge PR 10 first (it brings the firmware workflow to `main`).
+
+1. On github.com open **bmonte777/start-tracker-project**, click **Actions**, pick **Firmware and apps** (listed as **Firmware** until PR 11 is merged too) on the left.
+2. Click **Run workflow**, choose the branch **phase-6-apps** (or **main** once PR 11 is merged), click **Run workflow**. The run uses the workflow file of the branch you pick.
 3. When the run shows a green tick (about 30 minutes; the Windows job is the slowest), open it and download **star-tracker-release**. It holds `star-tracker-android.apk`, `star-tracker-windows-setup.exe`, the firmware images, `star-tracker-update.stfw`, `web-flasher.html` and both simulators. **app-test-reports** holds the test results and screenshots, including phone-size ones.
 
 ### 7.2 Android
@@ -195,7 +197,7 @@ What was tested and how: the simulator (the real motion core, Head model and ser
 | Item | State |
 |---|---|
 | Everything on a real head | Not run: Phase 7 |
-| GitHub | Push access refused at the start; work committed locally on `phase-6-apps`, not pushed, no pull request yet |
+| GitHub | Pushed; pull request 11 open against `phase-5-firmware`. The workflow has not run yet: it can only be started by hand once PR 10 has put it on `main` |
 | APK and Windows installer | Not built yet (no Android SDK, no Windows here). Android Java syntax-checked only; the workflow's first run will show compile errors, if any |
 | ESP32 additions (routes, CORS, NVS store, `update.status`, mDNS, BLE UUID) | Written, not compiled here |
 | Sony camera through the new `startHeadJob` | Written on both platforms; the ack loop is tested against the simulator in Python, not with a camera |
@@ -211,7 +213,6 @@ What was tested and how: the simulator (the real motion core, Head model and ser
 
 | # | Question | Recommendation |
 |---|---|---|
-| — | GitHub access for this session (not a design decision) | On github.com: **Settings → Applications → Installed GitHub Apps → Claude → Configure → Repository access**, tick *start-tracker-project*. Then I push `phase-6-apps` and open the pull request |
 | Q58 | Keep the fault log, PEC tables and encoder maps in the head's `storage` partition (LittleFS) instead of NVS / RAM | Yes, in the Phase 7 firmware pass: NVS is small for 3 maps + 3 tables and the fault log should survive a restart |
 | Q59 | Pass the gauge's cycle count, state of health and cell voltages to the apps (`health.get`) | Yes, with Q58; a few lines in the power task |
 
