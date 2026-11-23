@@ -102,7 +102,11 @@ static void power_task(void *)
     for (;;) {
         PackStatus p;
         PowerInputs in;
-        if (gauge_read(p)) { in.pack_ok = true; in.pack_v = p.mv / 1000.0; in.soc = p.soc; in.pack_temp_c = p.temp_c; }
+        if (gauge_read(p)) {
+            in.pack_ok = true; in.pack_v = p.mv / 1000.0; in.soc = p.soc; in.pack_temp_c = p.temp_c;
+            in.cycles = p.cycles; in.soh_pct = p.soh;                // D79: passed on to health.get
+            in.cell_v[0] = p.cell1_mv / 1000.0; in.cell_v[1] = p.cell2_mv / 1000.0;
+        }
         else { in.pack_v = vsys_volts(); }
         PdStatus a, b;
         pd_a.status(a);
@@ -245,6 +249,11 @@ void app_run()
     settings_load(s);
     head = new Head(port, [] { return (int64_t)head_us(); });
     head->on_set_time = [](double s) { clock_set_unix((int64_t)(s * 1e6)); };   // time.set from the apps (Phase 6 fix)
+    if (FileStore *fs = storage_start()) {                         // D78: fault log survives a restart
+        head->restore_fault_log(fs->load_faults());
+        head->on_fault_logged = [fs](const FaultEntry &e) { fs->append_fault(e); };
+        head->on_faults_cleared = [fs] { fs->clear_faults(); };
+    }
     link_init([](uint8_t type, const uint8_t *p, size_t n) { if (head) head->on_motion(type, p, n); });
     clock_update();
     ota_boot_check();                                             // RP2354A present? pending update to verify?

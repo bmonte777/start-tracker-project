@@ -632,6 +632,10 @@ HeadState Head::state()
     s.soc = pin_.soc;
     s.pack_temp_c = pin_.pack_temp_c;
     s.ext_power = pin_.charging;
+    s.pack_cycles = pin_.cycles;
+    s.pack_soh_pct = pin_.soh_pct;
+    s.cell_v[0] = pin_.cell_v[0];
+    s.cell_v[1] = pin_.cell_v[1];
     s.power = pd_;
     s.faults = faults_;
     s.model = model_;
@@ -655,6 +659,15 @@ void Head::add_fault(const std::string &msg)
     e.msg = msg;
     log_.push_back(e);
     if (log_.size() > FAULT_LOG_N) log_.erase(log_.begin());
+    if (on_fault_logged) on_fault_logged(e);
+}
+
+void Head::restore_fault_log(const std::vector<FaultEntry> &entries)
+{
+    std::lock_guard<std::recursive_mutex> l(mu_);
+    log_ = entries;
+    if (log_.size() > FAULT_LOG_N) log_.erase(log_.begin(), log_.end() - (long)FAULT_LOG_N);
+    for (auto &e : log_) if (e.seq > fault_seq_) fault_seq_ = e.seq;
 }
 
 std::vector<FaultEntry> Head::fault_log(uint32_t since)
@@ -670,6 +683,7 @@ void Head::clear_faults()
     std::lock_guard<std::recursive_mutex> l(mu_);
     faults_.clear();
     log_.clear();
+    if (on_faults_cleared) on_faults_cleared();
 }
 
 bool Head::send_motion(uint8_t type, const void *payload, size_t len)

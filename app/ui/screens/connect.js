@@ -21,7 +21,7 @@ export async function render(root) {
       <div class="btns"><button id="find" class="primary">Look again</button><button id="disc" hidden>Disconnect</button></div>
       <div class="hr"></div>
       <h3>Type an address</h3>
-      <div class="row"><input id="addr" type="text" placeholder="192.168.1.42 or localhost:8080" style="flex:1;min-width:200px"><button id="go">Connect</button></div>
+      <div class="row"><input id="addr" type="text" placeholder="192.168.1.42 or name:8080" style="flex:1;min-width:200px"><button id="go">Connect</button></div>
       <p class="small mt">The simulator answers on <span class="k">localhost:8080</span>. The head’s own Wi-Fi is <span class="k">StarTracker-XXXX</span> at <span class="k">192.168.4.1</span>; its password is on the head’s screen (network page).</p>
     </section>
     <section class="card">

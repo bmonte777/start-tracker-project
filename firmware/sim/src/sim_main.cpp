@@ -3,17 +3,20 @@
 //   LX200       tcp  localhost:4030                                 -> Stellarium, SkySafari
 //   Web + WS    http://localhost:8080   ws://localhost:8080/ws/v1   -> the apps (Phase 6), a test page
 // Options: --speed N (simulated seconds per real second), --lat --lon --elev, --eq (equatorial on the wedge),
-//          --payload 1..5, --raw-encoder (encoders without their map, for cal.encoder), --soc N (battery at start), --http-port, --alpaca-port, --lx-port, --seconds S (run S simulated seconds and exit).
+//          --payload 1..5, --raw-encoder (encoders without their map, for cal.encoder), --soc N (battery at start), --data DIR (keep PEC tables,
+//          encoder maps and the fault log in files there, as the head does in flash, D78), --http-port, --alpaca-port, --lx-port, --seconds S (run S simulated seconds and exit).
 #include <chrono>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
+#include <memory>
 #include <sstream>
 #include <thread>
 #include "net.h"
 #include "sim_head.h"
 #include "sha256.h"
+#include "st_filestore.h"
 #include "st_proto.h"
 
 int main(int argc, char **argv)
@@ -22,6 +25,7 @@ int main(int argc, char **argv)
     int http_port = 8080, alpaca_port = 32323, lx_port = 4030, payload = 3;
     bool eq = false, raw_enc = false;
     double soc0 = -1;
+    std::string data_dir;
     for (int i = 1; i < argc; i++) {
         std::string a = argv[i];
         auto next = [&] { return i + 1 < argc ? argv[++i] : (char *)"0"; };
@@ -32,6 +36,7 @@ int main(int argc, char **argv)
         else if (a == "--eq") eq = true;
         else if (a == "--raw-encoder") raw_enc = true;
         else if (a == "--soc") soc0 = atof(next());
+        else if (a == "--data") data_dir = next();
         else if (a == "--payload") payload = atoi(next());
         else if (a == "--http-port") http_port = atoi(next());
         else if (a == "--alpaca-port") alpaca_port = atoi(next());
@@ -57,6 +62,20 @@ int main(int argc, char **argv)
     ws.services().platform = "simulator";
     ws.services().boot_id = (uint32_t)(now * 1000) & 0x7FFFFFFF;
     sim.head().on_set_time = [&sim](double t) { sim.set_time_us((int64_t)(t * 1e6)); };
+    // D78: persistent tables and fault log, the same FileStore code the head runs on LittleFS
+    std::unique_ptr<st::FileStore> fstore;
+    if (!data_dir.empty()) {
+        fstore.reset(new st::FileStore(data_dir));
+        st::FileStore *fs = fstore.get();
+        sim.head().restore_fault_log(fs->load_faults());
+        sim.head().on_fault_logged = [fs](const st::FaultEntry &e) { fs->append_fault(e); };
+        sim.head().on_faults_cleared = [fs] { fs->clear_faults(); };
+        ws.services().store = [fs](const std::string &k, const std::vector<int16_t> &v) { return fs->put(k, v); };
+        ws.services().load = [fs](const std::string &k, std::vector<int16_t> &v) { return fs->get(k, v); };
+        ws.services().erase = [fs](const std::string &k) { return fs->remove(k); };
+        ws.services().faults_persistent = true;
+        ws.services().restore_saved();
+    }
     std::string last_update = "none";
     ws.services().update_status = [&last_update](cJSON *o) {
         cJSON_AddStringToObject(o, "running_slot", "ota_0 (simulated)");

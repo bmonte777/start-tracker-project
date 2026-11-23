@@ -51,6 +51,8 @@ enum class TargetKind { None, RaDecJ2000, RaDecApparent, Sun, Moon, Fixed };
 struct PowerInputs {
     bool pack_ok = false; double pack_v = 7.4; int soc = 100; double pack_temp_c = 20;
     double inside_temp_c = 25; double portb_w = 0; double porta_source_w = 0; bool charging = false;
+    // gauge health (D79); negative / zero = not read
+    int cycles = -1; int soh_pct = -1; double cell_v[2] = {0, 0};
 };
 struct PowerDecision {
     uint16_t motion_budget_mw = 36000; bool portb_15w = false; bool low_battery = false; uint16_t charge_ma = 4000; bool allow_porta_source = true;
@@ -83,13 +85,14 @@ struct HeadState {
     int64_t t_us = 0; int time_quality = 0;
     // power
     bool pack_ok = false; double pack_v = 0, pack_a = 0, pack_temp_c = 0; int soc = 0; bool ext_power = false;
+    int pack_cycles = -1, pack_soh_pct = -1; double cell_v[2] = {0, 0};   // D79: from the gauge, -1 / 0 = not read
     PowerDecision power;
     std::vector<std::string> faults;
     PointingModel model;
 };
 
 struct FaultEntry { uint32_t seq = 0; int64_t t_us = 0; int level = 1; std::string msg; };   // level 1 warning, 2 fault
-constexpr size_t FAULT_LOG_N = 64;                // RAM ring; a copy in flash is not written yet (docs/06-apps.md section 10)
+constexpr size_t FAULT_LOG_N = 64;                // ring of the newest entries; kept in flash through the hooks below (D78)
 
 class MotionPort {
 public:
@@ -140,6 +143,10 @@ public:
     std::vector<FaultEntry> fault_log(uint32_t since);
     uint32_t fault_seq() { std::lock_guard<std::recursive_mutex> l(mu_); return fault_seq_; }
     void clear_faults();
+    // D78: the platform keeps the log in flash. Called with the Head's lock held; keep them short.
+    std::function<void(const FaultEntry &)> on_fault_logged;
+    std::function<void()> on_faults_cleared;
+    void restore_fault_log(const std::vector<FaultEntry> &entries);   // at start, before anything is logged
     bool send_motion(uint8_t type, const void *payload, size_t len);
     void motion_cfg(uint16_t key, int axis, int64_t value);
     void roll_limits_at(double alt, double &lo, double &hi) { std::lock_guard<std::recursive_mutex> l(mu_); roll_limits(alt, lo, hi); }
