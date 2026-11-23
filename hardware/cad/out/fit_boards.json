@@ -88,48 +88,59 @@
  },
  {
   "board": "ST-501",
-  "instance": "Mainboard",
-  "parts_in_step": 365,
+  "missing": true
+ },
+ {
+  "board": "ST-602",
+  "instance": "Battery board",
+  "parts_in_step": 46,
   "bbox": [
-   -155.5,
-   -35.0,
-   56.0,
-   -137.6,
-   65.0,
-   116.0
+   -122.0,
+   73.4,
+   58.0,
+   -90.0,
+   76.5,
+   98.0
   ],
   "overlaps": [
    {
-    "part": "ST-310 Azimuth body",
+    "part": "ST-611 Pack light pipe",
     "distance": 0.0,
-    "overlap_mm3": 0.21
-   },
-   {
-    "part": "ST-315 Front bezel",
-    "distance": 0.0,
-    "overlap_mm3": 4.04
+    "overlap_mm3": 4.26
    }
   ],
   "nearest": [
    {
-    "part": "ST-326 OLED window 38 x 22 x 1 PC",
-    "distance": 0.58
+    "part": "ST-606 Cell holder +Y",
+    "distance": 0.6
    },
    {
-    "part": "ST-316 Button cap 4",
-    "distance": 3.5
+    "part": "ST-605 Pack shell lower",
+    "distance": 2.58
    },
    {
-    "part": "ST-316 Button cap 1",
-    "distance": 3.66
+    "part": "ST-610 Pack gasket",
+    "distance": 2.58
    },
    {
-    "part": "ST-316 Button cap 2",
-    "distance": 3.66
+    "part": "ST-612 Pack shell upper",
+    "distance": 2.58
    },
    {
-    "part": "ST-316 Button cap 3",
-    "distance": 3.66
+    "part": "ST-601 Cell P50B 1",
+    "distance": 3.6
+   },
+   {
+    "part": "ST-601 Cell P50B 2",
+    "distance": 3.6
+   },
+   {
+    "part": "ST-601 Cell P50B 3",
+    "distance": 3.6
+   },
+   {
+    "part": "ST-601 Cell P50B 4",
+    "distance": 3.6
    }
   ]
  }

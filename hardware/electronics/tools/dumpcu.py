@@ -1,8 +1,22 @@
-"""Dump the copper of chosen nets of a board (zone fills, tracks, vias, pads) per layer as JSON. Run inside KiCad's Python.
-usage: python3 dumpcu.py <board.kicad_pcb> <out.json> NET [NET ...]"""
-import json, sys, pcbnew
-b = pcbnew.LoadBoard(sys.argv[1])
-want = set(sys.argv[3:])
+"""Dump the copper of a board's power nets (zone fills, tracks, vias, pads) per layer as JSON, for tools/pathwidth.py.
+Run with KiCad's Python.   usage: python3 dumpcu.py <board-folder>
+The nets are the keys of POWER_PATHS in the board's design.py; the result is <board>/out/<name>.copper.json."""
+import importlib.util
+import json
+import os
+import sys
+
+import pcbnew
+
+folder = os.path.abspath(sys.argv[1])
+name = [f[:-10] for f in os.listdir(folder) if f.endswith(".kicad_pcb")][0]
+spec = importlib.util.spec_from_file_location("design", os.path.join(folder, "design.py"))
+mod = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(mod)
+want = set(mod.POWER_PATHS)
+b = pcbnew.LoadBoard(os.path.join(folder, name + ".kicad_pcb"))
+
+
 def xy(p): return [round(p.x / 1e6 - 100, 4), round(100 - p.y / 1e6, 4)]
 def chain(c): return [xy(c.CPoint(i)) for i in range(c.PointCount())]
 out = {n: dict(zones=[], tracks=[], vias=[], pads=[]) for n in want}
@@ -30,5 +44,6 @@ for fp in b.GetFootprints():
         layers = [l for l in ("F", "In1", "In2", "In3", "In4", "B") if p.IsOnLayer(b.GetLayerID(l + ".Cu"))]
         out[n]["pads"].append(dict(ref=fp.GetReference(), num=p.GetNumber(), layers=layers, r=[min(a[0], c[0]), min(a[1], c[1]), max(a[0], c[0]), max(a[1], c[1])],
                                    drill=pcbnew.ToMM(p.GetDrillSize().x)))
-json.dump(out, open(sys.argv[2], "w"))
-print("dumped", {n: (len(v["zones"]), len(v["tracks"]), len(v["vias"]), len(v["pads"])) for n, v in out.items()})
+os.makedirs(os.path.join(folder, "out"), exist_ok=True)
+json.dump(out, open(os.path.join(folder, "out", name + ".copper.json"), "w"))
+print(name, "copper of", len(out), "power nets written")

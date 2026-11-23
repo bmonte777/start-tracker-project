@@ -1,22 +1,74 @@
 # Phase 4 (electronics) — progress
 
-Last update: 23 Nov 2026, 01:30 UTC (third Phase 4 chat; this one can push). Branch `phase-4-electronics`, pull request #6 (draft). Phase 4 is **not complete**.
-The second Phase 4 chat could not push (the repo attached read-only); Bruno uploaded its files to the branch by hand on GitHub.
+Last update: 23 Nov 2026, 14:30 UTC (fifth Phase 4 chat). Branch `phase-4-electronics`, pull request #6 (draft). Phase 4 is **not complete**.
+Bruno does not use KiCad: nothing is left for him to finish by hand in it. Everything is done from `design.py`, the router and the routes files.
 
 ## Done
-- Calculations: `docs/calc/phase4_calcs.py` (+ `.md`, `.json`). D42–D49 approved and in the decisions log.
+- Calculations: `docs/calc/phase4_calcs.py` (+ `.md`, `.json`). D42–D51 approved and in the decisions log.
 - ST-520 cartridge board: schematic, layout, fab package (`fab/st-520/`), ERC and DRC clean, fits its carrier. Order-ready.
 - ST-501 mainboard schematic: 7 sheets, 391 parts, 229 nets, ERC clean, netlist cross-checked. BOM in `mainboard/st-501-bom.csv`.
-- Harness drawings, cost model, parts list CSV and `bom_data.py`, firmware hand-off, bring-up plan, workflow file.
+- **ST-602 battery board** (`battery-board/`, new on 23 Nov): schematic, layout, routes, fab package (`fab/st-602/`). ERC clean, DRC clean
+  (no errors, no warnings), power paths ≥ 1.0 mm, fit check done. Open points: see "ST-602" below.
+- Harness drawings, cost model, parts list CSV and `bom_data.py` (state of 22 Nov), firmware hand-off, bring-up plan, workflow file.
 - LCSC numbers in `tools/catalog.py` are all confirmed; blank means not confirmed. Never fill one in from memory.
 
-## ST-501 layout: where it stands (KiCad DRC, 23 Nov 01:30 UTC, `mainboard/out/st-501-drc.json`)
-- **Six layers now (D51), via-in-pad, battery rail on In3 (D50).** Stack: F sig / In1 power / In2 sig / In3 sig + VBAT bus / In4 GND / B sig.
-- 5,640 track segments, 1,177 vias. **18 connections open in 17 nets** (of about 950): +3V3 (J5.1), ALT_VREF, A_CC2, B_DP, CHG_TS,
-  LED_RP_A, LINK_SYNC, NTC_ALT_A ×2, PDA_ADC2, PDA_LDO3V3, PDA_SDAC, PDB_LD1, PDB_SDAC, STEP_ALT, STEP_ROLL, VMOT_MON, VPB.
-- **Errors: none.** Warnings: 4 same-net via pairs 0.4995 hole to hole, 2 connection_width in pours, silk overlaps at D11–D13.
-- List with positions and KiCad steps: `mainboard/doc/st-501-open-connections.md` / `.csv` (`tools/openlist.py mainboard`).
-- No fab files. Fit check, viewer, 3D render not redone.
+## ST-501 layout: where it stands (KiCad DRC, 23 Nov 14:00 UTC, `mainboard/out/st-501-drc.json`)
+- Six layers (D51), via-in-pad, battery rail on In3 (D50). Stack: F sig / In1 power / In2 sig / In3 sig + VBAT bus / In4 GND / B sig.
+- Routes = router cycle "10b" + closer + guided fixes (`mainboard/st-501.routes.json`, laid on `st-501.kicad_pcb`).
+  **2 connections open: `B_DP` (U6.22) and `B_CC2` (D8.1). Errors: none.** Warnings: 2 connection_width (VSYS area on In1), 9 via_dangling,
+  2 track_dangling, silk overlaps at D11–D13. List: `mainboard/doc/st-501-open-connections.md`.
+- **Power paths fail** (`python3 tools/pathwidth.py mainboard` after `kc "python3 tools/dumpcu.py mainboard"`): CHG_SW1 0.10, CHG_SW2 0.25,
+  CHG_PMID 0.80, VBUS_CHG 0.25, VBUS_A 0.25, PB_SW2 0.35, VPB_RAW 0.50, VPB 0.25, VBUS_B 0.25, VM_IN 0.25 (all wanted 1.0); +5V 0.25,
+  SW_3V3 0.30 (wanted 0.5). OK: VBAT_IN, PB_SW1, PB_MID, BST_SW, SW_5V. **This, not the 2 open connections, is what keeps the board from being ordered.**
+- No fab files. Fit check, viewer, 3D render not redone. `costs.py` still prices the bare mainboard as four layers.
+
+### What has to be done on ST-501 (the plan; nothing of it is started)
+Build the power section the way ST-602 was built (it worked at the first attempt there):
+1. In `mainboard/design.py` put the power parts in `FIXED` by hand, stage by stage, as in the reference layouts: charger U2 with L1 (both
+   coil pads within 3 mm of SW1/SW2), C2/C3, PMID and VBUS capacitors; port B converter U7 with Q4/Q5, L2, **R23 next to U7** (it is 35 mm away
+   now), C39–C43; port B switch Q2/Q3 **at least 2.2 mm from U6's pin row** (1.1 mm now: three signals need a via there and two fit, which is why
+   B_DP stays open); boost U12 with L5, C66 turned so its SW pad faces pin 9, C71/C72; U10/L3 and U11/L4; the VBUS paths J3–U3–U2 and Q3–J4.
+2. Add a table `AREAS` as in `battery-board/design.py` (net, face, outline, centre line, half width) for every net of `POWER_PATHS`, pass
+   them to the router as hard regions with a spine (no other net's track or via inside), make them zones in `finish()` and block them for the
+   autoplacer. Take those nets out of the "switch nodes and power stages" route step or leave only a thin tie track to the router.
+3. Parts on the other face inside an area's outline are fine; pads of other nets on the same face are not: keep the areas tight round their pads.
+4. One router run, closer, `layout.py`, then **both** checks: `check.py mainboard` and `pathwidth.py mainboard`. Then the remaining opens by
+   guided fixes (helpers of this chat: `/home/claude/work/fix.py`, `subsets.py`; they are not in the repo — the ideas are: take named slow
+   nets up, lay explicit pieces, close everything again, keep only if all close; and try subsets of up to three neighbouring slow nets).
+5. Then: 3D render, `fab.py mainboard`, `python -m stcad.fit_boards`, `viewer.py`.
+
+### Changes of the fifth chat (23 Nov), so nobody repeats or undoes them
+- `grouter.py`: region `spine` + `keep` (no foreign vias along the middle of an area: the VBAT bus was cut in two under U14 before);
+  escape ring ends half-way to a facing fine-pitch chip (U17.16 / U19.16 had no way out); end-of-row pins of the centre pad's net reach it
+  by a 45° leg; `escape(pad_vias=0.5)` reserves an in-pad via on slow-signal pads of R, C, D, J, TP, L, FB, Q; `plan["rules"]`
+  (clearance, via, drill) per board; via radius in the clearance model = max(pad, hole + clearance); hand-laid tracks and vias of
+  `design.py` (`pre["tracks"]`, `pre["vias"]`) count as connections (`net_groups_rect`).
+- `closer.py`: `laid()` (hand-laid copper in islands and prune), `one_more` with alternatives and depth, `plane_pads`, final `prune` + `tee`
+  (cuts a track where another ends on it, so KiCad sees a shared end point); prune keeps a via that joins two pads by itself (it removed
+  five such vias once and opened AZ_SCK, ALT_SCK, ROLL_SCK, SH_TIP, +3V3G: fixed). Env: `CLOSER_VICTIMS`, `CLOSER_DEPTH`, `CLOSER_ALTS`,
+  `CLOSER_ROUNDS`, `CLOSER_WHY`, `CLOSER_KEEP`.
+- `mainboard/design.py`: wider free bands (U3, U6 2.4; U14 3.2; U15, U17, U19 2.0), `VBAT_SPINE = 1.2`, `POWER_PATHS`. The block at
+  (−13.4, 7.0, −10.9, 9.7) is a leftover the placement depends on (comment in the file).
+- New tools: `tools/dumpcu.py <board>` (KiCad's Python) + `tools/pathwidth.py <board>` (numpy, scipy, matplotlib): power-path widths.
+- Outer-face ground pours break into islands; a pad in an island without a ground via is "connected" for the router but not for KiCad.
+  Found with a pcbnew script (islands of the GND zones without a via); fixed by tie tracks for SW1.2 and J10.2. Worth a step of its own.
+- KiCad does not count a via as joined to a chamfered pad when only their copper overlaps: add a short track to the pad centre (CHG_STAT at U2.1).
+
+## ST-602 battery board (23 Nov)
+- Built from `battery-board/design.py`: fixed places for all power parts and the gauge's own parts, `AREAS` (drawn copper for BP, BF, VCC,
+  PACKP, FUSE_H, GND, PACKN: hard regions with spines, zones), hand-laid pin tracks and the two sense lines (net ties NT1, NT2 on R1's pads;
+  SRP_K hops to B for 2 mm), the rest by `grouter.py` + `closer.py`. Rules: clearance 0.15, via 0.6/0.3.
+- Flow: `kc "python3 tools/layout.py battery-board --dump"` → `cd battery-board && python3 ../tools/grouter.py .` (5 s) →
+  `python3 tools/closer.py battery-board` → `kc "python3 tools/layout.py battery-board"` → `kc "python3 tools/fab.py battery-board"` →
+  `kc "python3 tools/dumpcu.py battery-board"` + `python3 tools/pathwidth.py battery-board`.
+- Confirmed part numbers added to `catalog.py`: BQ294700DSGR C414622, BAT54WS C2991936, 10 MΩ C26086, 1 mΩ 1206 C2904209. The fuse
+  ITV4030L0815NR has none (not at LCSC).
+- Not confirmed (said so in the document): LED positions lit in 4-LED mode (SLUUBK0 not read); TI's own fuse-drive resistor values.
+- Pack parts that would change (asked as Q38–Q40, not changed): grooved ribs in ST-605 / ST-612, light pipe ST-611 2 mm shorter with a
+  way to press the button, wire notches in the cell holders ST-606. `hardware/cad/stcad/fit_boards.py` has the ST-602 frame; the envelope
+  in `bought.py` still shows the LEDs at the board centre (they are 13 mm above it, at the light pipe).
+- Parts list: ST-602 / 603 / 604 lines in `hardware/bom/master-parts-list.csv`, `bom_data.py` and the Sheet are not updated
+  (the fuse line still names the 4-cell part); `costs.py` does not price ST-602 yet.
 
 ### Six-layer runs (23 Nov), in order
 1. Six layers, in-pad plane vias (`in_pad=True` on plane steps), escape after critical: 64 open.
@@ -84,30 +136,20 @@ Q36 → D50 (pack pads stay, rail on In3), Q37 → D51 (six layers, via-in-pad):
 Q28, Q31–Q35 are still pending (recommended options in use).
 
 ## Next, in this order
-1. **ST-501**: close the last 18 (Bruno by hand from the list, or router work), DRC clean, 3D render, `tools/fab.py mainboard`,
-   `python -m stcad.fit_boards` (hardware/cad), `tools/viewer.py`. If Bruno hand-finishes: take his saved `.kicad_pcb` as the board
-   (do not run `layout.py` over it), run `check.py`, then fab.
-2. **ST-602 battery board** (folder `battery-board/` does not exist yet). Inputs, all read now:
-   - LEDs: charlieplexed on LEDCNTLA/B/C as on TI's EVM: LED1 A→B, LED2 B→A, LED3 B→C, LED4 C→B, LED5 C→A (anode→cathode); 3, 4 or 5 LEDs by setting.
-     Still to read in SLUUBK0: which positions a 3-LED display uses.
-   - Fuse **ITV4030L0815** (2 cells, 15 A, VOP 5.0–9.0 V, heater 2.2–3.3 Ω, fuse 1.0–3.0 mΩ; the L1415 at C3672030 is the 4-cell part and wrong).
-     Read from the datasheet drawing (rev. 08/22/23, page 4, static.chipdip.ru/lib/556/DOC043556381.pdf): terminals 1 and 3 = fuse ends,
-     2 = heater (to the fuse mid-point). Body 4.0 × 3.0 × 0.9; terminal 2 on a short edge, 3 and 1 on the long edges.
-     Land pattern: A1 1.20, A2 1.55, A3 2.40, B1 1.20, B2 1.60, B3 1.55, B4 0.90, B5 1.55 → pad 2 1.20 × 1.60 at (−1.97, 0);
-     pad 3 2.40 × 1.55 at (0.18, +1.225); pad 1 2.40 × 1.55 at (0.18, −1.225), origin at the body centre.
-     LCSC number of the L0815: not looked up yet — confirm in JLCPCB's library or leave blank.
-   - Screw-free fixing at the pack end: not designed.
+1. **ST-501 power section** as planned above, then its 2 open connections, both checks clean, 3D render, fab, fit check, viewer.
+2. **ST-602**: apply Bruno's answers to Q38–Q40 in `hardware/cad` (printed parts; ask first if anything else must change), update the
+   envelope in `bought.py`, rerun `stcad.fit_boards`; price it in `costs.py`; correct the ST-602 / 603 / 604 lines.
 3. **Sheet** https://claude.ai/artifact/9T9Gpvm2vWPRYqJtPChJa8: copy the changed lines from `hardware/bom/master-parts-list.csv`
-   (ST-501, 509, 512, 513, 517, 518, 519, 520, 530, and ST-602 when priced). Not done.
+   (ST-501, 509, 512, 513, 517, 518, 519, 520, 530, ST-602 to 604). Not done.
 4. Block and power-tree diagrams and board renders into the Docs doc https://claude.ai/artifact/9Y2pyZBkJu5i3eWqNy6xAx and `docs/04-electronics.md`.
    Not done. The Docs doc still has the text of 22 Nov 16:30; `docs/04-electronics.md` and the Project copy `claude/05-electronics.md` are current.
-5. Workflow: changed on 22 Nov (no Freerouting, library tables copied, routes laid on the board only when `regenerate` = yes, fab files
-   only for a board whose checks are clean, list of open connections in the download, run fails if a check has errors). **Not yet run on
-   GitHub.** With the mainboard open it will end red at the last step: that is correct until ST-501 is finished.
+5. Workflow (`.github/workflows/phase4-electronics.yml`): now also the battery board and the power-path width step. **Not yet run on GitHub**
+   (pull request 7 must be merged first, then Actions → Phase 4 electronics build → Run workflow → branch `phase-4-electronics`). It ends
+   red while the mainboard's checks fail: that is correct.
 6. Final check of every value against its source; mark the pull request ready; then `claude/phase-5-prompt.md`.
-7. Q28, Q31–Q35 await Bruno; carry on with the recommended options.
+7. Open questions: Q28, Q31–Q35 (older), Q38–Q41 (23 Nov). Carry on with the recommended options, marked "pending approval".
 
-## Tool chain (as used on 22 Nov)
+## Tool chain (as used on 22 and 23 Nov)
 KiCad 9.0.8 from Ubuntu 26.04 packages in a chroot (`debootstrap resolute`, then `apt install kicad kicad-footprints kicad-symbols kicad-packages3d
 default-jre librsvg2-bin poppler-utils python3-pil`), global library tables copied from the template. Router: Python 3 with numpy, scipy, matplotlib, numba
 (host Python, outside the chroot; the chroot is entered only for `layout.py`, `check.py`, `fab.py`, `preview.py`). The chroot takes 4 minutes to build.
@@ -116,4 +158,5 @@ default-jre librsvg2-bin poppler-utils python3-pil`), global library tables copi
 `tools/build.py <board>` schematic + ERC · `tools/layout.py <board> [--no-route | --dump]` · `tools/grouter.py <board> [--plot]` ·
 `tools/closer.py <board>` · `tools/openlist.py <board>` · `tools/check.py <board>` ·
 `tools/fab.py <board> [--bom-only]` · `tools/docgen.py` · `tools/costs.py` · `tools/compose_doc.py` (reads `doc/status.json`) · `tools/viewer.py` ·
-`tools/preview.py <board>` · `harness/harness.py`.
+`tools/preview.py <board>` · `tools/dumpcu.py <board>` · `tools/pathwidth.py <board>` · `harness/harness.py`.
+`kc "<command>"` in these notes means: run the command inside the KiCad chroot, in the same folder.

@@ -5,8 +5,8 @@ A connection can pass the design-rule check and still be a hair-thin track; this
 of the laid-out board as JSON (tools/dumpcu.py, run with KiCad's Python) and the list of terminals in the board's
 design.py (POWER_PATHS: net -> (list of "REF.pin", width wanted in mm)).
 
-usage:  python3 dumpcu.py <board>.kicad_pcb out/<name>.copper.json NET ...      (inside KiCad's Python)
-        python3 pathwidth.py <board-folder>                                      (numpy, scipy, matplotlib)
+usage:  python3 dumpcu.py <board-folder>        (with KiCad's Python: writes <board>/out/<name>.copper.json)
+        python3 pathwidth.py <board-folder>     (numpy, scipy, matplotlib)
 Writes <board>/out/<name>-pathwidth.json and prints one line per net.
 """
 import importlib.util
@@ -21,6 +21,7 @@ from scipy import ndimage
 
 G = 0.025                                  # raster pitch, mm
 STEPS = [1.0, 0.8, 0.6, 0.5, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1]      # widths tried, widest first
+NECK = 0.8                                 # mm of narrower copper accepted at a pin that is itself narrower
 
 
 def raster(net, layers):
@@ -119,7 +120,9 @@ def joined(net, grids, geo, box, terms, width, use_vias=True):
             if p["ref"] == ref and p["num"] == num:
                 for l in p["layers"]:
                     if l in labels:
-                        e = n * G + 0.03                   # a narrow pin is reached when the wide copper comes up to it
+                        # a pin narrower than the width asked for is reached when the wide copper comes to within
+                        # NECK of it: the short neck at a fine-pitch pin is the pin's own width and cannot be wider
+                        e = n * G + 0.03 + (NECK if min(p["r"][2] - p["r"][0], p["r"][3] - p["r"][1]) < width else 0.0)
                         i0, i1, j0, j1 = box(l, (p["r"][0] - e, p["r"][1] - e, p["r"][2] + e, p["r"][3] + e))
                         got |= {find(a) for a in set(np.unique(labels[l][j0:j1 + 1, i0:i1 + 1])) - {0}}
         if not got:
@@ -159,4 +162,4 @@ def main(folder):
 
 
 if __name__ == "__main__":
-    main(os.path.abspath(sys.argv[1]))
+    sys.exit(0 if all(r["ok"] for r in main(os.path.abspath(sys.argv[1]))) else 1)

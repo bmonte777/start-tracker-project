@@ -11,18 +11,18 @@ This document covers the electronics of the head: the calculations behind every 
 | Calculations | Done | `docs/calc/phase4_calcs.py`, `phase4_calcs.md` |
 | ST-520 cartridge board: schematic, layout, fab files | Done. ERC and DRC clean, fits the Phase 3 carrier | `hardware/electronics/cartridge-board/`, `fab/st-520/` |
 | ST-501 mainboard: schematic | Done. 391 parts, 229 nets, ERC clean, netlist cross-checked | `hardware/electronics/mainboard/` |
-| ST-501 mainboard: layout | **Not finished, close.** Now a six-layer board with filled and capped vias (D51). KiCad's check on 23 November: 18 of about 950 connections open in 17 nets, no clearance errors, no shorts. The 18 are listed for finishing by hand (section 5.2). No fabrication files until they are closed | section 5.2 |
-| ST-602 battery board | **Not started** beyond the circuit definition. Both missing inputs are now read: the LED wiring and the fuse's pad drawing and terminal numbers; the fuse is the 2-cell ITV4030L0815 (section 5.3) | section 5.3 |
-| Fit check | Done for ST-520. **To be rerun for ST-501**: its parts moved in this revision | section 6 |
+| ST-501 mainboard: layout | **Not finished.** Six layers, filled and capped vias (D51). KiCad's check on 23 November, evening: 2 of about 950 connections open (both at the port B controller), no clearance errors, no shorts. **A new check of the copper width on the power paths fails on 11 of 17 paths** (0.10–0.50 mm found where 0.5–1.0 mm is wanted): the power stages have to be laid out again as wide copper before the board can be ordered. No fabrication files | section 5.2 |
+| ST-602 battery board | **Designed and routed; checks clean; fabrication files made.** 62 parts, 48 of them fitted by JLCPCB. ERC and DRC clean (no errors, no warnings), every pack-current path at least 1.0 mm wide. Still open: the fuse has no LCSC number and is bought separately; three pack parts need small changes that wait for approval (Q38–Q40); the parts list lines ST-602 to ST-604 are not updated | section 5.3, `hardware/electronics/battery-board/`, `fab/st-602/` |
+| Fit check | Done for ST-520 and ST-602. ST-602 clears the cell holder by 0.6 mm and the shells by 2.6 mm; its LEDs and button overlap the inner end of the light pipe ST-611 by 4.3 mm³ (Q39). **To be rerun for ST-501** when its layout is final | section 6 |
 | Wiring harnesses | Done: 6 drawings, pin tables, purchase list | `hardware/electronics/harness/` |
-| Per-board BOMs | Done for ST-520 and ST-501 (93 lines, 321 parts) | each board folder |
-| Master parts list, cost model | CSV and `bom_data.py` updated and cost model rerun; **the Sheet is not updated yet** | section 9 |
+| Per-board BOMs | Done for ST-520, ST-501 (93 lines, 321 parts) and ST-602 (19 lines, 48 parts) | each board folder |
+| Master parts list, cost model | CSV and `bom_data.py` carry the Phase 4 state of 22 November; **the lines ST-602 to ST-604 (battery board, with the corrected fuse) and the Sheet are not updated yet** | section 9 |
 | Firmware hand-off, bring-up plan | Done | sections 10 and 11 |
-| Board viewer | Done for ST-520; **ST-501 still shows the old placement** | artifact + `hardware/electronics/doc/board-viewer.html` |
-| GitHub Actions workflow | Changed for the new router (no autorouting on GitHub; the committed routes are laid on the board); started by hand only; not yet run on GitHub (it needs pull request 7 merged first) | `.github/workflows/phase4-electronics.yml` |
+| Board viewer | Done for ST-520; **ST-501 still shows the old placement and ST-602 is not in it** | artifact + `hardware/electronics/doc/board-viewer.html` |
+| GitHub Actions workflow | Now also builds the battery board and runs the power-path width check (the run fails while the mainboard's paths are thin); started by hand only; **not yet run on GitHub** (it needs pull request 7 merged first) | `.github/workflows/phase4-electronics.yml` |
 | Phase 5 prompt | Held back until the mainboard is routed and the battery board exists | — |
 
-**What you can do today:** answer the six open questions (Q28, Q31–Q35), and order the cartridge board (ST-520) if you want boards in hand early — its encoder chip was out of stock on the check date. **What is not ready:** the mainboard cannot be ordered yet (18 connections are still open), the battery board is not designed, and the Sheet, the Docs version of this document, the board viewer and the mainboard fit check still show an earlier state. Phase 4 is therefore not complete, and the Phase 5 prompt is held back. `hardware/electronics/PROGRESS.md` says exactly where to pick up.
+**What you can do today:** answer the six open questions (Q28, Q31–Q35), and order the cartridge board (ST-520) if you want boards in hand early — its encoder chip was out of stock on the check date. **What is not ready:** the mainboard cannot be ordered: 2 connections are still open and, more important, most of its power connections are far too thin (section 5.2). The battery board is finished as a board but waits for three small changes to pack parts (Q38–Q40). The Sheet, the Docs version of this document, the board viewer and the mainboard fit check still show an earlier state. Phase 4 is therefore not complete, and the Phase 5 prompt is held back. `hardware/electronics/PROGRESS.md` says exactly where to pick up.
 
 Board viewer (interactive BOM, Day / Night): <https://claude.ai/artifact/TntQCR18hPMWE3V6fTQ68L> · Docs version of this document: <https://claude.ai/artifact/9Y2pyZBkJu5i3eWqNy6xAx> · Parts list Sheet: <https://claude.ai/artifact/9T9Gpvm2vWPRYqJtPChJa8> · KiCad projects: `hardware/electronics/`.
 
@@ -181,36 +181,72 @@ A closing pass (`tools/closer.py`), which takes everything on the board as fixed
 - **A fault that caused every earlier clearance error was found**: where a track changed layer, its end on the new layer was not checked for room. Corrected; the board has had no clearance error since.
 - **Closing pass** (`tools/closer.py`): removes loose track pieces, joins what is apart on free cells, and then lets a connection take up to eight slow signals up if all of them close again.
 
-*Where it stands (KiCad DRC, all severities, 23 November).* 5,640 track segments (1,902 front, 3,057 inner face, 392 and 289 on the two inner signal layers) and 1,177 vias. **Open: 18 connections in 17 nets, out of about 950. Errors: none.** Warnings: four pairs of vias of the same net 0.4995 mm apart hole to hole (allowed for one net), two narrow copper necks in pours, the silkscreen overlaps of the status LEDs.
+*Later on 23 November (fifth chat).* Bruno does not use KiCad, so the remaining connections are closed by router work and by guided fixes in the routes file, not by hand in KiCad. What was found and changed:
 
-| Net | Open | Net | Open | Net | Open |
-|---|---|---|---|---|---|
-| `+3V3` (plug J5) | 1 | `NTC_ALT_A` | 2 | `PDB_SDAC` | 1 |
-| `ALT_VREF` | 1 | `PDA_ADC2` | 1 | `STEP_ALT` | 1 |
-| `A_CC2` | 1 | `PDA_LDO3V3` | 1 | `STEP_ROLL` | 1 |
-| `B_DP` | 1 | `PDA_SDAC` | 1 | `VMOT_MON` | 1 |
-| `CHG_TS` | 1 | `PDB_LD1` | 1 | `VPB` | 1 |
-| `LED_RP_A` | 1 | `LINK_SYNC` | 1 | | |
+- **The battery rail on inner layer 3 was cut in two** by a row of other nets' vias under the RP2354A; KiCad's check showed it as one open connection. The router now keeps the middle 2.4 mm of the rail free of other nets' vias (`spine` in `route_plan()`), which leaves at least 1.5 mm of unbroken copper along its whole length. After the new run the rail is one piece again.
+- **Two driver pins had no way out** (STEP of the altitude and roll drivers): the escape tracks of the driver above ran on into the pins of the driver below. A chip's escape ring now ends half-way to a facing chip; all 110 pins get out.
+- **The ground pin of the RP2354A's regulator** (pin 47, at the end of its row) now reaches the centre pad by a 45° leg; small parts were moved a little to widen the free bands round the processor, the PD controllers and the drivers; slow-signal resistors and capacitors get a via in their pad before the critical nets are routed.
+- **Boost converter:** the switch pins were not joined to the coil at all. They are now joined directly (0.35 mm at the pin, 1.0 mm from there, with the filled area round it).
+- Guided fixes closed the azimuth step line, a button's second ground pad, the antenna socket's ground pads, a 3.3 V test point and the charger's status pin. Two vias drilled almost on top of each other were removed.
 
-Every one of them is listed with both ends and their positions in [`hardware/electronics/mainboard/doc/st-501-open-connections.md`](../hardware/electronics/mainboard/doc/st-501-open-connections.md) (also as CSV), with click-by-click steps for KiCad. The router leaves these because each would have to cross five to fifteen finished signals near the RP2354A or a PD controller; by hand, with the freedom to move a neighbouring track aside, they are ordinary connections.
+*Where it stands (KiCad DRC, all severities, 23 November, evening).* **Open: 2 connections in 2 nets, out of about 950: `B_DP` and `B_CC2`, both at the port B controller U6. Errors: none.** Warnings: two narrow copper necks in the system-rail area on the power layer, nine vias and two track ends that KiCad calls loose, the silkscreen overlaps of the status LEDs. The two open connections sit in a 1.1 mm gap between U6 and the switch transistor Q2 where three signals need a via and only two fit; Q2 has to move about 1 mm, which is part of the work below. The list with both ends is in [`hardware/electronics/mainboard/doc/st-501-open-connections.md`](../hardware/electronics/mainboard/doc/st-501-open-connections.md).
 
-*What is left on this board.* Close the 18 connections (by hand in KiCad, or by more work on the router), look at the 3D render, then the fabrication files, the fit check and the viewer. When ordering, **Via Covering** must be set to *Epoxy Filled & Capped* (free on six layers), because vias sit in pads. The USB pairs are full-speed only (12 Mbit/s) and are routed as two tracks side by side, not as an impedance-controlled pair. The GNSS feed is 0.2 mm wide on the inner face over the ground plane, a few millimetres long; its width should be set from JLCPCB's impedance calculator for the six-layer stack before release.
+**The larger problem: the power connections are too thin.** A connection can pass KiCad's check and still be a hair-thin track. A new check (`tools/pathwidth.py`) measures, for every power net, the narrowest place on the widest way between the pins that carry the current, over tracks and filled areas together, allowing a neck of 0.8 mm at a fine-pitch pin. Result for the mainboard:
+
+| Net | What it carries | Wanted, mm | Found, mm |
+|---|---|---|---|
+| `CHG_SW1`, `CHG_SW2` | charger coil current, up to 5 A | 1.0 | **0.10**, **0.25** |
+| `CHG_PMID` | charger input capacitors | 1.0 | 0.80 |
+| `VBUS_CHG` | port A to the charger, 3 A | 1.0 | **0.25** |
+| `VBUS_A`, `VBUS_B` | the two USB-C sockets, 3 A | 1.0 | **0.25**, **0.25** |
+| `PB_SW2` | port B converter coil | 1.0 | **0.35** |
+| `VPB_RAW`, `VPB` | port B converter output, 3 A | 1.0 | 0.50, **0.25** |
+| `VM_IN` | boost converter input, up to 6 A | 1.0 | **0.25** |
+| `+5V` | 5 V rail to the PD controllers | 0.5 | 0.25 |
+| `SW_3V3` | 3.3 V converter coil | 0.5 | 0.30 |
+| `VBAT_IN`, `PB_SW1`, `PB_MID`, `BST_SW`, `SW_5V` | | 0.35–1.0 | as wanted |
+
+The cause is in the method, not in single tracks. The router lays one track per connection and falls back to a thinner one, down to 0.15 mm, when a wide one does not fit; the copper areas round each group of pads, which were meant to carry the current, are cut into pieces by other tracks. Some parts also stand too far from their chip: the port B current-sense resistor R23 is 35 mm from the converter U7, the far end of the charger coil 9 mm from its pin.
+
+*What is left on this board.* The battery board (section 5.3) was built the other way round, and that worked at the first attempt: the power parts are placed by hand, each power net is a drawn copper area that no other net may enter, and only the signals are left to the router. The mainboard's five power stages (charger, port B converter and switch, boost converter, 5 V and 3.3 V converters, the two USB-C supply paths) get the same treatment: about 25 drawn areas and 30 hand-placed parts, then one router run for the signals, the closing pass, and both checks. After that: 3D render, fabrication files, fit check, viewer. When ordering, **Via Covering** must be set to *Epoxy Filled & Capped* (free on six layers), because vias sit in pads. The USB pairs are full-speed only (12 Mbit/s) and are routed as two tracks side by side, not as an impedance-controlled pair. The GNSS feed is 0.2 mm wide on the inner face over the ground plane, a few millimetres long; its width should be set from JLCPCB's impedance calculator for the six-layer stack before release. The battery rail lies on an inner layer, which is half as thick as the outer ones at JLCPCB's standard build: ordering 1 oz inner copper is asked as Q41.
 
 ![ST-501 layout in progress, inner face](img/04-st-501-layout-inner.png)
 ![ST-501 layout in progress, front face](img/04-st-501-layout-front.png)
 
 ### 5.3 ST-602 battery board
 
-**Not designed yet; planned for the second board order.** It is not needed for the P0 bench round, which runs from a bench supply.
+**Designed, routed and checked on 23 November. Fabrication files are in `hardware/electronics/fab/st-602/`.** It is not needed for the P0 bench round, which runs from a bench supply, and goes into the second board order. Before it is ordered, three pack parts need the small changes of Q38–Q40 below, and the values should be read once more against the data sheets (the list of what was read is under "checked against").
 
-Circuit as defined: BQ40Z50-R2 gauge and protector for 2 cells in series (2S2P pack), 1 mΩ sense resistor, charge and discharge N-FETs back to back, BQ294700 second-level over-voltage protector driving a three-terminal fuse, SMBus through 100 Ω and an ESD array to the blade connector, pads for B+, mid-point, B−, PACK+ and PACK−, charge-state LEDs behind the pack's light pipe with its button. Outline 32 × 40 mm, two layers.
+![ST-602, outer face](img/04-st-602-top.png)
+![ST-602 copper, outer face](img/04-st-602-layout-front.png)
 
-The two inputs that were missing:
+**The board.** 32 × 40 mm, two layers, 1.6 mm. Every part is on the outer face; the inner face is a ground plane and lies 0.6 mm from the cell holder and the nickel strips (put a sheet of polyimide tape between them). Seen from outside the pack: the cell pair on the left ends in B+ at the board, the pair on the right in B−; the middle of the pack comes from the far end on a thin wire.
 
-1. **LED wiring — found.** The three LED pins drive up to five LEDs wired between pairs of pins (charlieplexed), as on TI's evaluation module: LED 1 anode LEDCNTLA, cathode LEDCNTLB; LED 2 anode B, cathode A; LED 3 anode B, cathode C; LED 4 anode C, cathode B; LED 5 anode C, cathode A. A TI engineer confirmed this wiring on TI's E2E forum; the gauge can be set for 3, 4 or 5 LEDs, and the charge level at which each one lights is a setting in the gauge (TI's technical reference SLUUBK0), not fixed by the wiring. Still to read from the reference manual before the schematic is drawn: which three of the five positions a 3-LED display uses.
-2. **Fuse — read from the datasheet drawing on 22 November.** The part is the 2-cell **ITV4030L0815** (15 A, heater working range 5.0–9.0 V, heater 2.2–3.3 Ω, fuse 1.0–3.0 mΩ, cuts up to 50 A at 36 V), not the 4-cell ITV4030L1415 listed before, whose heater needs 10.5–19.6 V and would not blow on this pack. Terminals 1 and 3 are the two ends of the fuse (the pack current goes through them); terminal 2 is the heater, joined inside to the middle of the fuse. Body 4.0 × 3.0 × 0.9 mm: terminal 2 on one short edge, terminals 3 and 1 on the two long edges. Recommended pads: one pad 1.20 × 1.60 mm for terminal 2, two pads 2.40 × 1.55 mm for terminals 3 and 1, 0.90 mm apart, their edge 0.35 mm from the first pad; 3.95 × 4.00 mm overall. As a footprint with the origin at the body centre: pad 2 at (−1.97, 0), pad 3 at (0.18, +1.225), pad 1 at (0.18, −1.225). Its LCSC number still has to be confirmed in JLCPCB's library before it goes in a parts list.
+| | |
+|---|---|
+| High side | B+ tab → three-terminal fuse F1 (ITV4030L0815) → charge FET Q1 → discharge FET Q2 → PACK+ lead. Both FETs AON7400A, driven by the gauge through 5.1 kΩ with 10 MΩ gate-to-source |
+| Low side | B− tab → sense resistor R1, 1 mΩ → PACK− lead. The two sense lines start on the inner edges of R1's pads through net ties, as nets of their own, and run side by side to their filter (100 Ω, 100 nF) |
+| Gauge U1 | BQ40Z50-R2 for two cells: VC2 is the top of the stack, VC3 and VC4 tied to it. Supply through a BAT54 diode and 100 Ω; 2.2 µF on PBI. No pre-charge FET (the charger BQ25792 does the pre-charge). PTC input off. One 10 kΩ thermistor bead (Semitec 103AT type, which the gauge's default table fits) taped to the cells, on two solder pads |
+| Second protector U2 | BQ294700: 4.35 V on either cell for 1–2 s (100 nF on CD) |
+| Fuse drive | Q3 (AON7400A) pulls the fuse's heater to B−. Its gate is driven by U2 through 10 kΩ or by the gauge's FUSE pin directly, with 100 kΩ to B−: at least 4.2 V on the gate in both cases down to a 6 V pack. Heater 2.2–3.3 Ω: 1.8–3.8 A |
+| Bus | SMBC, SMBD and PRES through 100 Ω each and an SRV05-4 array to three wire pads; the head pulls PRES to ground through 1 kΩ |
+| Display | Button SW1 (to DISP) and four green LEDs behind the light pipe ST-611, 13 mm above the board centre: LED 1 (lowest) at the left. The LEDs are wired between pairs of the three LED pins as on TI's evaluation module; 100 Ω in each pin line keeps the current between 4 mA (6 V pack) and 16 mA (8.4 V) |
+| Solder pads | B+ and B− 5.0 × 5.5 mm for the nickel tabs (folded round the bottom edge); PACK+ and PACK− 3.2 × 4.0 mm for 18 AWG leads; four pads 1.6 × 2.6 mm for the middle tap and the three bus wires; two for the thermistor |
+| Test points | fuse gate, ground, FET mid-point |
 
-The screw-free fixing of the board at the pack end is designed together with the board and is still open.
+**Checks.** ERC: no errors. KiCad DRC, all severities: no errors, no warnings, nothing unconnected. Power paths (`tools/pathwidth.py`): B+, fuse to FET, FET to FET, PACK+, B−, PACK− all at least 1.0 mm wide (drawn copper areas 1.6–3.6 mm), heater path 1.0 mm. Fit in the pack (`stcad.fit_boards`): 0.6 mm to the cell holder, 2.6 mm to the shells; **the LEDs and the button overlap the inner end of the light pipe by 4.3 mm³**, because the Phase 3 pipe reaches the board face.
+
+**Parts.** 19 lines, 48 parts fitted by JLCPCB, all with confirmed LCSC numbers except the fuse: the 2-cell ITV4030L0815 is not in LCSC's catalogue (only the 4-cell L1415 is). It is bought from DigiKey or Mouser (`ITV4030L0815NR`) and either sent to JLCPCB as a consigned part or soldered by hand with hot air; an iron on its pads can open it.
+
+**Checked against.** Pin table, two-cell wiring, gate-drive and FUSE-pin figures, LED pin currents: BQ40Z50-R2 data sheet SLUSCS4C. Reference values (100 Ω cell and sense resistors, 5.1 kΩ and 10 MΩ gate resistors, 10 kΩ on PACK, BAT54 and 100 Ω on BAT, 2.2 µF on PBI, 1 mΩ sense resistor): the same data sheet and the bill of materials of TI's evaluation module SLUUAV7C. BQ294700 pins, threshold, delay and input values: data sheet SLUSB15. Fuse pads and terminals: Littelfuse drawing, as read on 22 November. **Not confirmed:** which LED positions the gauge lights when set to four LEDs (the reference manual SLUUBK0 could not be read; the wiring follows TI's module, positions 1 to 4); TI's own values for the fuse-drive resistors (the module's schematic is a picture; the values here are calculated from the data-sheet figures); the gate of Q4 is tied to B− as in TI's "simple" circuit, which protects only below about −2 V at PACK+ (the keyed blade connector prevents a reversed charger anyway).
+
+**Three pack parts would have to change (asked as Q38–Q40; nothing is changed yet):**
+
+1. *Fixing without screws.* The board's bottom and top edges are free of parts over the middle 7 mm, for a grooved rib on the floor of the lower shell ST-605 and one under the roof of the upper shell ST-612.
+2. *Light pipe ST-611.* It must end 2 mm before the board and needs a way to press the button.
+3. *Cell holder ST-606.* The pack leads and the thin wires have to pass the two holders to reach the blade connector at the other end; the holders are solid plates in Phase 3.
+
+**Setting up the gauge** (TI bqStudio with an EV2400 adapter, on the blade connector): two cells in series; design capacity 10,000 mAh; chemistry for the Molicel P50B; four LEDs; charge and discharge over-current limits in the gauge's firmware settings at the pack's 6 A plus a margin (suggested: 6 A and 8 A; the fast hardware short-circuit limit is 0.1 V across the sense resistor, 100 A with 1 mΩ, so the firmware limits and the fuse do this job); pre-charge through the charge FET. A 1- or 2-cell pack must first be woken by a charger on PACK+, as the data sheet says.
 
 ## 6. Fit check
 
@@ -221,11 +257,14 @@ The boards are exported from KiCad as STEP models with their components and load
 | ST-520 Encoder board (azimuth) | none | ST-212 Cartridge cover (azimuth) 0.09 mm; ST-208 Encoder tube (azimuth) 0.82 mm; ST-209 Encoder magnet (azimuth) 0.82 mm | 0.82 |
 | ST-520 Encoder board (altitude) | none | ST-212 Cartridge cover (altitude) 0.09 mm; ST-208 Encoder tube (altitude) 0.81 mm; ST-209 Encoder magnet (altitude) 0.81 mm | 0.81 |
 | ST-520 Encoder board (roll) | none | ST-216 Cartridge cover (roll) 0.09 mm; ST-215 Encoder tube (roll) 0.82 mm; ST-209 Encoder magnet (roll) 0.82 mm | 0.82 |
-| ST-501 Mainboard | ST-310 Azimuth body (0.21 mm³); ST-315 Front bezel (4.04 mm³) | ST-326 OLED window 38 x 22 x 1 PC 0.58 mm; ST-316 Button cap 4 3.5 mm; ST-316 Button cap 1 3.66 mm | — |
+| ST-501 | — | not exported yet | — |
+| ST-602 Battery board | ST-611 Pack light pipe (4.26 mm³) | ST-606 Cell holder +Y 0.6 mm; ST-605 Pack shell lower 2.58 mm; ST-610 Pack gasket 2.58 mm | — |
 
 Reading the table: the cartridge boards rest on their carriers (0.09 mm is the copper thickness missing from the bare-board model) and nothing else is nearer than the magnet. **The chip-to-magnet gap is 0.81–0.82 mm, under the MT6835's 1.0 mm minimum. By decision D48 it stays as it is and is measured on the P0 bench.**
 
 Mainboard (placement model): the only overlap is the display's 4-pin header, drawn in the 3D model as a full-length stock header 10.1 mm tall; the bezel's inner face is 6 mm from the board. On the real board the display module is soldered by its own pins, trimmed to length, so this is a model artefact — but it also shows the display must sit low: check the module's height against the 0.58 mm left under the window when the first display arrives. The button caps end 3.5–3.7 mm from the board face and the chosen switch is 1.5 mm tall, which is the 2 mm of Q31. No overlap is reported at the USB-C sockets (they stand about 1.5 mm proud of the bezel's outer face, D49) or at the buttons; whether every part carries a 3D model in the export has not been checked one by one, so this check is repeated when the layout is final. The GNSS antenna is no longer on the board (Q32), so the GNSS window check moves to the antenna's position under the top cover in the CAD, still to be drawn.
+
+Battery board ST-602: 0.6 mm from the cell holder behind it (as designed in Phase 3) and 2.6 mm from the shells. The one overlap is with the light pipe ST-611, which in the Phase 3 model reaches the board face: the LEDs and the button stand 0.8–1.5 mm proud of it (Q39).
 
 ## 7. Wiring harnesses
 
@@ -539,3 +578,5 @@ Fit the boards and harnesses following the Phase 3 assembly sequence, then repea
 - Freerouting 2.1.0 <https://github.com/freerouting/freerouting>; KiCad 9.0.8 <https://www.kicad.org/>
 - BQ40Z50 LED wiring as on TI's evaluation module, confirmed by TI on the E2E forum: <https://e2e.ti.com/support/power-management-group/power-management/f/power-management-forum/807905/bq40z50-rsoc-led-configuration>; evaluation-module guide SLUUAV7 <https://www.ti.com/lit/pdf/sluuav7>
 - Littelfuse ITV4030 product specification (body dimensions) <https://www.littelfuse.com/products/fuses-overcurrent-protection/battery-protector/itv-three-terminal-fuses/itv4030-15a>
+- BQ40Z50EVM-561 user's guide SLUUAV7C, bill of materials (read 23 November 2026): <https://www.ti.com/lit/pdf/SLUUAV7>
+- LCSC and JLCPCB product pages read on 23 November 2026 for the battery board: BQ294700DSGR C414622, BAT54WS C2991936, 10 MΩ 0402 C26086, 1 mΩ 1206 C2904209
