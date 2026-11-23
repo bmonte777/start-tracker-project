@@ -269,7 +269,7 @@ The three cartridge harness lengths are measured along the cable route in the CA
 
 ### 8.1 What is in the fab folder
 
-`hardware/electronics/fab/<board>/` holds, for each finished board: `<board>-gerbers.zip` (Gerbers and drill files), `<board>-bom.csv` and `<board>-cpl.csv` (bill of materials and placement file in JLCPCB's column layout), `<board>.step` (3D model), `<board>-schematic.pdf`.
+`hardware/electronics/fab/<board>/` holds, for each finished board: `<board>-gerbers.zip` (Gerbers and drill files), `<board>-bom.csv` and `<board>-cpl.csv` (bill of materials and placement file in JLCPCB's column layout), `<board>.step` (3D model), `<board>-schematic.pdf`. All three boards have one: `st-501`, `st-520`, `st-602`.
 
 ### 8.2 Ordering assembled boards from JLCPCB, step by step
 
@@ -338,8 +338,7 @@ These are estimates built from JLCPCB's public fee structure (assembly set-up ab
 | Crimp tool for JST GH / PH (Engineer PA-09) and fine tweezers | Roll harness, motor plugs | any |
 | Soldering iron with a fine tip, hot-air station, flux, 0.3 mm solder | Hand-fitted parts, thermistor leads | any |
 | Diametric magnet 6 × 2.5 mm and a NEMA 17 motor | Cartridge board test before the cartridges exist | spare from the parts list |
-| KiCad 9 | Opening the board files | <https://www.kicad.org/download/> |
-| TI bqStudio and an EV2400 adapter | Setting up the battery gauge (battery board, second order) | <https://www.ti.com/tool/BQSTUDIO>, <https://www.ti.com/tool/EV2400> |
+| TI bqStudio and an EV2400 adapter | Setting up the battery gauge | <https://www.ti.com/tool/BQSTUDIO>, <https://www.ti.com/tool/EV2400> |
 
 ## 9. Parts list
 
@@ -515,7 +514,7 @@ Work through the stages in order; do not skip ahead after a failed check. Bench 
 
 1. Bench supply limit 3 A. From the RP2354A console: motor switch on, boost on. TP30 reads 10.0 V; with `VM_SEL` high, 16.0 V. Ripple on the oscilloscope under 100 mV peak-to-peak.
 2. Load `VMOT` with 10 Ω (1.6 A at 16 V) for one minute: the voltage holds within 0.2 V, the inductor L5 stays below 70 °C to the touch-thermometer.
-3. USB-C charger on port A with the PD tester in line: the tester shows 15 V or 20 V negotiated; TP4 `VBUS_CHG` follows. With the real pack (second order) the charge current ramps to the set value.
+3. USB-C charger on port A with the PD tester in line: the tester shows 15 V or 20 V negotiated; TP4 `VBUS_CHG` follows. With the real pack the charge current ramps to the set value.
 4. Port B: enable from the ESP32 console, PD tester + load: 5 V and 9 V each hold at 3 A for one minute.
 5. Buttons: each of the four reads low when pressed. LEDs: red, green, blue each light.
 6. Shutter port: with a multimeter on continuity across tip–sleeve of the jack, the meter beeps while the shutter output is on; the same for ring–sleeve and focus.
@@ -549,7 +548,7 @@ Fit the boards and harnesses following the Phase 3 assembly sequence, then repea
 
 ## 13. Sources
 
-- JLCPCB parts library, read through the public mirror jlcsearch.tscircuit.com on 22 November 2026 (part numbers, basic / extended status, stock, price breaks): <https://jlcsearch.tscircuit.com/>
+- JLCPCB parts library, read through the public mirror jlcsearch.tscircuit.com on 22 and 23 November 2026 (part numbers, basic / extended status, stock, price breaks): <https://jlcsearch.tscircuit.com/>
 - LCSC product pages for stock and price on 22 November 2026, e.g. TPS61288RQQR <https://www.lcsc.com/product-detail/C5219223.html>, MT6835GT <https://www.lcsc.com/product-detail/C2984637.html>, TMC2209-LA <https://www.lcsc.com/product-detail/C465949.html>, ESP32-S3-WROOM-1-N16R8 <https://www.lcsc.com/product-detail/C2913202.html>, RP2354A <https://www.lcsc.com/product-detail/C41378174.html>
 - Texas Instruments datasheets: TPS25751 <https://www.ti.com/lit/gpn/tps25751>, TPS25752 <https://www.ti.com/lit/gpn/tps25752>, BQ25792 <https://www.ti.com/lit/gpn/bq25792>, TPS61288 <https://www.ti.com/lit/gpn/tps61288>, TPS55288 <https://www.ti.com/lit/gpn/tps55288>, BQ40Z50-R2 <https://www.ti.com/lit/gpn/bq40z50-r2>, BQ2947 <https://www.ti.com/lit/gpn/bq2947>
 - MagnTek MT6835 datasheet (pinout, SPI mode, air gap 1.0–3.0 mm)
