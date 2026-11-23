@@ -120,14 +120,12 @@ D27 is confirmed: the TPS25751 datasheet lists the BQ25792 among the chargers it
 | D60 | Wire passages in the pack (Q40; printed part ST-606) | A notch 6 × 3 mm at mid-height on the left and right edge of both cell holders: PACK+ on one side; PACK−, the three bus wires, the middle tap and the thermistor leads on the other. In the CAD since 23 Nov |
 | D61 | Inner copper of the mainboard (Q41) | 1 oz inner layers instead of JLCPCB's standard 0.5 oz: the battery rail on inner layer 3 then has about 10 mΩ instead of 20 mΩ (0.36 W instead of 0.72 W at the pack's 6 A limit). A small surcharge on the bare boards |
 
-### Phase 4 — pending approval (not decisions yet)
+## 23 Nov 2026 — Phase 4 width-check decisions (approved: "Q42 and Q43 - Continue with your recommendation")
 
-The Phase 4 design carries on with the recommended option for each of these. Nothing that changes a printed or machined part is involved.
-
-| # | Question | Recommended, used in the design |
+| # | Topic | Decision |
 |---|---|---|
-| Q42 | Power-path width check on the mainboard: three places where the wide copper cannot begin within 0.8 mm of the pin | Accept them, each written into the check with its reason: (1) the VBUS pins of both USB-C sockets, 0.3 mm wide, between the shell pins and the CC and data pins: the check lets wide copper begin within 1.5 mm of the row A pins, and within 2.9 mm of the row B pins, which reach it through the row A pin opposite (each pin carries a quarter of the port current, 0.75 A at 3 A); (2) pad 25 of the port B converter TPS55288, which lies under the package and is reached only through pin 21 (TI's own land pattern): within 1.1 mm |
-| Q43 | Which pins count as terminals of a power path | Take the sense and supply pins out: on the charger the terminals of the input path are its two VBUS pins (2 and 3), not the sense pin VAC2 (8); pin 7 of the boost converter TPS61288 (VIN, the chip's own supply of a few milliamps) is not a terminal of the motor-rail input |
+| D62 | Narrow pins in the mainboard's power-path width check (Q42) | Three places are accepted as they are, each written into the check (`POWER_PATHS` in `mainboard/design.py`) with its own allowance instead of the standard 0.8 mm: the VBUS pins of both USB-C sockets (0.3 mm wide, between the shell pins and the CC and data pins), where wide copper may begin within 1.5 mm of the row A pins and within 2.9 mm of the row B pins, which reach it through the row A pin opposite (each pin carries a quarter of the port current, 0.75 A at 3 A); and pad 25 of the port B converter TPS55288, under the package and reached through pin 21 (TI's own land pattern), within 1.1 mm |
+| D63 | Ends of a power path (Q43) | Pins that only sense or supply the chip itself are not ends of a power path: the charger's input path ends at its two VBUS pins (2 and 3), not at the sense pin VAC2 (8); pin 7 of the boost converter TPS61288 (its own supply, a few milliamps) is not an end of the motor-rail input |
 
 Reported here because they change the layout, not the circuit (23 Nov): the port A controller is turned by 180° so that its two power pins face east; the charger and its coil moved 3 mm east, with the coil above the chip; the port B output switch (Q2, Q3) stands at the west edge, 2.6 mm from the controller; the motor switch Q6 and the boost coil L5 moved next to each other east of the boost converter; the sense resistor R23 stands right below the port B converter; the shutter opto-coupler U26 is on the front face behind plug J12; the port B memory chip U8 moved to the upper left. The inner power layer carries, besides 3.3 V and the system and motor rails, one area each for the two USB VBUS rails, the charger input, the port B output and 5 V.
 
