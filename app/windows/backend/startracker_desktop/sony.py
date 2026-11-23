@@ -13,12 +13,14 @@ from datetime import datetime
 
 import random
 
-from . import alerts, exposure, median, path as pathlapse, plate_solver, shot_log
+from . import alerts, astap, exposure, median, path as pathlapse, plate_solver, shot_log
 from . import holy_grail as hg
 from . import sony_props as sp
 from .paths import catalog_file, pictures_dir
 from .head_client import HeadClient
 from .sony_props import SonyProps
+
+ASTAP_FIRST_BELOW_DEG = 7.5        # frame width in degrees: about 275 mm and longer on full frame (D74)
 
 OP_OPEN_SESSION = 0x1002
 OP_CLOSE_SESSION = 0x1003
@@ -1345,10 +1347,17 @@ class SonyCamera:
         self.job_step = "Plate solve: matching the catalogue"
         cat = self._catalog()
         h, w = lum.shape
-        sol = plate_solver.solve(cat, stars, w, h, hint[0], hint[1], radius, plane_w, 0.25)
+        long_lens = plane_w <= ASTAP_FIRST_BELOW_DEG
+        sol = None
+        if long_lens and astap.ASTAP.available():         # D74: ASTAP first for 300-600 mm
+            sol = self._astap_solve(self.job_jpegs[-1], hint, plane_w, w, h, radius)
+        if sol is None:
+            sol = plate_solver.solve(cat, stars, w, h, hint[0], hint[1], radius, plane_w, 0.25)
         if sol is None and radius < 15:
             self.job_step = "Plate solve: searching wider"
             sol = plate_solver.solve(cat, stars, w, h, hint[0], hint[1], 15, plane_w, 0.3)
+        if sol is None and not long_lens and astap.ASTAP.available():
+            sol = self._astap_solve(self.job_jpegs[-1], hint, plane_w, w, h, max(radius, 15))
         if sol is None:
             self.log("Not solved. Check the lens focal length, that the Polaris is roughly aligned (within ~10°), "
                      "and that stars are sharp")
@@ -1364,6 +1373,22 @@ class SonyCamera:
             "fovH": sol.fovH, "matched": sol.matched, "stars": len(stars), "rms": sol.rmsArcsec,
             "offset": None if math.isnan(off_deg) else off_deg, "ms": sol.millis})
         return sol
+
+    def _astap_solve(self, jpeg, hint, plane_w, w, h, radius):
+        """ASTAP's command-line solver with D05 (Windows, long lenses). Returns a plate_solver.Solution or None."""
+        self.job_step = "Plate solve: ASTAP"
+        try:
+            r = astap.ASTAP.solve(jpeg, hint[0], hint[1], plane_w * h / w, radius)
+        except Exception as e:                        # noqa: BLE001
+            self.log("ASTAP did not run: %s" % e)
+            return None
+        if r is None:
+            self.log("ASTAP: not solved")
+            return None
+        self.log("ASTAP solved in %.1f s" % (r["millis"] / 1000))
+        # ASTAP reads the full-size JPEG, star detection a reduced copy: report the field from the lens, not pixels
+        return plate_solver.Solution(ra=r["ra"], dec=r["dec"], roll=r["roll"], scale=plane_w / w,
+                                     fovW=plane_w, fovH=plane_w * h / w, matched=0, rmsArcsec=0.0, millis=r["millis"])
 
     def _auto_align(self, polaris, s, plane_w, radius):
         """Solve and sync at three positions (here, then 60° either side in

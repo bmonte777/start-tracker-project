@@ -22,3 +22,5 @@ app/android/.gradle/
 app/android/app/build/
 app/android/local.properties
 .pytest_cache/
+stars11.bin
+tycho2/

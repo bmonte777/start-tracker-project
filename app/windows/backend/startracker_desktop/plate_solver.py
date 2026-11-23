@@ -43,10 +43,11 @@ class Catalog:
         self.mag = np.asarray(mag, dtype=np.float64)
         a, d = np.radians(self.ra), np.radians(self.dec)
         self.xyz = np.stack([np.cos(d) * np.cos(a), np.cos(d) * np.sin(a), np.sin(d)], axis=1)
+        self.mag_max = float(self.mag[-1]) if len(self.mag) else 8.0   # 8 for stars8.bin, 10.5 for stars11.bin
 
     @classmethod
     def read(cls, path):
-        """stars8.bin: "STR1", count, then (float ra, float dec, short mag*100) little-endian."""
+        """stars8.bin / stars11.bin: "STR1", count, then (float ra, float dec, short mag*100) little-endian."""
         with open(path, "rb") as f:
             data = f.read()
         magic, n = struct.unpack_from("<II", data, 0)
@@ -323,7 +324,7 @@ def solve(cat, stars, w, h, hint_ra, hint_dec, hint_radius, fov_w, fov_tolerance
     radius = min(85.0, hint_radius + fov_diag / 2)
     frame_area = w * h * scale0 * scale0
     region_area = math.pi * radius * radius
-    allc = cat.cone(hint_ra, hint_dec, radius, 8.0)
+    allc = cat.cone(hint_ra, hint_dec, radius, cat.mag_max)   # brightest first; 'want' below keeps the density right
     want = int(max(30, min(len(allc), 3.0 * n_img * region_area / frame_area)))
     region = allc[:min(len(allc), want)]
     deep = allc[:min(len(allc), int(want * 2.5))]

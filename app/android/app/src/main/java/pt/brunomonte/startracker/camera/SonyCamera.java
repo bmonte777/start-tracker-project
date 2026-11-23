@@ -1189,7 +1189,12 @@ public final class SonyCamera {
     private volatile String lastSolve = "";
 
     private synchronized PlateSolver.Catalog catalog() throws IOException {
-        if (starCatalog == null) starCatalog = PlateSolver.Catalog.read(ctx.getAssets().open("stars8.bin"));
+        if (starCatalog == null) {
+            // D74: the deeper catalogue (to V 10.5, for 300-600 mm) when the build included it, else stars8.bin
+            java.io.InputStream in;
+            try { in = ctx.getAssets().open("stars11.bin"); } catch (java.io.IOException e) { in = ctx.getAssets().open("stars8.bin"); }
+            starCatalog = PlateSolver.Catalog.read(in);
+        }
         return starCatalog;
     }
 
