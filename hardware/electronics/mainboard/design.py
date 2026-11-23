@@ -559,8 +559,12 @@ def layout(pcb):
         h = VBAT_BUS_W / 2 + 0.3
         pcb.block("F", (min(ax, bx) - h, min(ay, by) - h, max(ax, bx) + h, max(ay, by) + h))
     pcb.keepout(["F", "B", "In1", "In2", "In3", "In4"], pcb.rect(*ANT), tracks=True, vias=True, copper=True)
+    # a small area west of the drivers that stays free of parts on both faces. It was the no-copper area under the
+    # antenna socket J10 in an earlier placement; J10 has since moved (it is placed automatically, and the check finds
+    # no part in its no-copper area), but the placement the routing was tuned on depends on this block, so it stays.
+    pcb.block("*", (-13.4, 7.0, -10.9, 9.7))
     # room for every pin of the fine-pitch chips to get out: a band round each of them stays free of other parts
-    for ref, w in (("U2", 1.8), ("U3", 1.8), ("U6", 1.8), ("U7", 1.5), ("U12", 1.5), ("U14", 2.3), ("U15", 1.5), ("U17", 1.5), ("U19", 1.5),
+    for ref, w in (("U2", 1.8), ("U3", 2.4), ("U6", 2.4), ("U7", 1.5), ("U12", 1.5), ("U14", 3.2), ("U15", 2.0), ("U17", 2.0), ("U19", 2.0),
                    ("U13", 1.3), ("U24", 1.2), ("U21", 1.0), ("U22", 1.0), ("U10", 0.7), ("U11", 0.7), ("U4", 0.7)):
         pcb.escape_ring(ref, w)
     own, rank = owners(pcb)
@@ -716,6 +720,7 @@ VBAT_BUS = [(32.9, -25.6), (30.5, -23.0), (30.5, -15.0), (29.0, -13.6), (3.5, -1
             (-18.6, 1.0), (-20.2, 2.6), (-33.0, 2.6), (-33.0, 8.6)]
 VBAT_BUS_W = 4.6
 VBAT_LAYER = "In3"
+VBAT_SPINE = 1.2                          # mm each side of the centre line without foreign vias
 
 
 def in2_polys(net):
@@ -759,7 +764,9 @@ def route_plan(pcb):
     bus = pcb.thick(VBAT_BUS, VBAT_BUS_W)
     areas = pour_areas(pcb)
     regions = [dict(net=a["net"], side=a["side"], poly=a["poly"]) for a in areas]
-    regions.append(dict(net="VBAT", side=VBAT_LAYER, poly=bus, hard=True))
+    # the middle of the battery bus stays free of other nets' vias (tools/grouter.py: spine), which leaves it at least
+    # 1.5 mm of unbroken copper from the pack to the charger whatever is routed across it
+    regions.append(dict(net="VBAT", side=VBAT_LAYER, poly=bus, hard=True, spine=[list(q) for q in VBAT_BUS], keep=VBAT_SPINE))
     plane3v3 = ["+3V3"]
     steps = [
         dict(op="fanout", length=0.35),
@@ -777,7 +784,7 @@ def route_plan(pcb):
         # Every slow-signal pin of the fine-pitch chips gets its way out first (tools/grouter.py: escape): a fixed track to
         # a ring 3 mm from its chip, so that no power or critical track can lie across it. The critical nets that follow
         # stay on the outer faces where they can and pay three to six times as much for an inner layer.
-        dict(op="escape", name="escape of the fine-pitch chips", ring=3.0, layer_cost={"B": 3, "In2": 2, "In3": 2}),
+        dict(op="escape", name="escape of the fine-pitch chips", ring=3.0, layer_cost={"B": 3, "In2": 2, "In3": 2}, pad_vias=0.5),
         dict(op="route", name="GNSS antenna feed", nets=["GNSS_ANT", "GNSS_RF"], widths=[0.2], hard=True, layer_cost={"F": 100}),
         dict(op="route", name="switch nodes and power stages", layer_cost={"In2": 6, "In3": 6}, hard=True, region_cost=1,
              nets=["CHG_SW1", "CHG_SW2", "PB_SW1", "PB_SW2", "BST_SW", "SW_3V3", "SW_5V", "CHG_PMID", "VBUS_CHG", "VM_IN", "VBAT_IN",

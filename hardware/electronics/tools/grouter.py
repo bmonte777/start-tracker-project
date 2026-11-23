@@ -425,6 +425,14 @@ class Router:
             m = Path(poly).contains_points(np.column_stack([xs.ravel(), ys.ravel()])).reshape(xs.shape)
             sub = self.reg[self.layers.index(rg["side"]), j0:j1 + 1, i0:i1 + 1]
             sub[m] = -self.id(rg["net"]) if rg.get("hard") else self.id(rg["net"])
+            # a strip along the middle of the area ("spine", half width "keep") that no other net's via may stand in,
+            # so that a row of vias can never cut the area in two: the strip stays whole copper of at least
+            # 2 * (keep - via pad radius - zone clearance)
+            if rg.get("spine"):
+                l = self.layers.index(rg["side"])
+                for a, b in zip(rg["spine"], rg["spine"][1:]):
+                    for mp in (self.occ[self.VIA][l], self.hard[self.VIA][l]):
+                        r_seg(mp, a[0], a[1], b[0], b[1], rg["keep"], self.id(rg["net"]), self.ox, self.oy, G)
         self.t_build = time.time() - t0
 
     def _hole(self, s):
@@ -905,7 +913,7 @@ def fanout(R, plane_nets, length=0.35, min_pads=12, max_pitch_dim=0.32, w=None, 
         n += 1
     # plane pins of the same chips: a via straight out on the pin's own axis (never sideways in front of a neighbour),
     # at the first distance where it clears the neighbours' stubs; the next pin's via lands further out by itself
-    nv = 0
+    nv = nin = 0
     R.fanned = set()
     for ref, pads in by_ref.items():
         fine = [p for p in pads if min(p["r"][2] - p["r"][0], p["r"][3] - p["r"][1]) <= max_pitch_dim and p["side"] != "*"]
@@ -931,6 +939,33 @@ def fanout(R, plane_nets, length=0.35, min_pads=12, max_pitch_dim=0.32, w=None, 
             l = R.lidx(p["side"])[0]
             k = R.cls[w]
             i0, j0 = R.ix(px), R.iy(py)
+            # a pin of the same net as the chip's centre pad goes inward to that pad (which has its own vias): no via
+            # outside the chip, so the lanes of the neighbouring pins stay free
+            ep = [q for q in pads if q["net"] == net and q is not p and q["side"] == p["side"]
+                  and (q["r"][2] - q["r"][0]) * (q["r"][3] - q["r"][1]) >= 2.0 and q["r"][0] <= cx <= q["r"][2] and q["r"][1] <= cy <= q["r"][3]]
+            if ep:
+                e = ep[0]["r"]
+                dist = (abs(px - (e[2] if ux > 0 else e[0])) if ux else abs(py - (e[3] if uy > 0 else e[1]))) + 0.2
+                # a pin at the end of its row lies beside the centre pad, not over it: it goes straight in and then
+                # at 45 degrees to the pad's corner
+                if ux:
+                    side = min(max(py, e[1] + 0.15), e[3] - 0.15) - py
+                else:
+                    side = min(max(px, e[0] + 0.15), e[2] - 0.15) - px
+                n_side = int(round(abs(side) / G))
+                n_in = int(round(dist / G)) - n_side
+                sg = (side > 0) - (side < 0)
+                cells = [(i0 - ux * t, j0 - uy * t) for t in range(n_in + 1)]
+                ia, ja = cells[-1]
+                cells += [(ia - ux * t + (0 if ux else sg * t), ja - uy * t + (sg * t if ux else 0)) for t in range(1, n_side + 1)]
+                if n_in * G >= half + 0.15 and all(R.occ[k][l][j, i] in (0, nid) for (i, j) in cells):
+                    legs = [(R.layers[l], R.mm(i0, j0), R.mm(ia, ja))]
+                    if n_side:
+                        legs.append((R.layers[l], R.mm(ia, ja), R.mm(*cells[-1])))
+                    R.commit(net, legs, [], w, hard=True, unit=f"{net}|{p['ref']}.{p['num']}|fan", plane=True)
+                    R.fanned.add((p["ref"], p["num"], p["x"], p["y"]))
+                    nin += 1
+                    continue
             for d in [(0.55 if kth % 2 else 1.3) + 0.05 * t for t in range(0, 30)]:
                 i, j = R.ix(px + ux * (half + d)), R.iy(py + uy * (half + d))
                 if not (0 <= i < R.W and 0 <= j < R.H) or not reg[j, i] or R.hole[j, i] or R.novia[j, i]:
@@ -953,6 +988,7 @@ def fanout(R, plane_nets, length=0.35, min_pads=12, max_pitch_dim=0.32, w=None, 
                 R.fanned.add((p["ref"], p["num"], p["x"], p["y"]))
                 nv += 1
                 break
+    print(f"   fan-out: {nin} chip pins joined inward to their centre pad")
     return n, nv
 
 
@@ -1096,6 +1132,32 @@ def escape(R, step, plane_nets, done, npads, push=None, crit=(), log=print):
                 failed.append(f"{ref}.{p['num']} {p['net']}")
         total += made
         log(f"   escape {ref}: {made} of {len(todo)} pins")
+    if step.get("pad_vias"):
+        # Boards with filled and capped vias: every pad of a slow signal that can hold a via gets one now, before the
+        # power and critical nets are routed. Those nets may then run right past such a pad on its own face without
+        # closing it in; the vias nothing joins are removed again by the closing pass.
+        chips = {ref for ref, pads in by_ref.items()
+                 if len([p for p in pads if min(p["r"][2] - p["r"][0], p["r"][3] - p["r"][1]) <= step.get("max_pad", 0.32) and p["side"] != "*"])
+                 >= step.get("min_pads", 12)}
+        nv = 0
+        for p in R.pre["pads"]:
+            net = p["net"]
+            if not net or p["side"] == "*" or p["npth"] or net in plane_nets or net in done or net in crit or npads.get(net, 0) < 2:
+                continue
+            if p["ref"] in chips or not p["ref"].startswith(tuple(step.get("pad_via_refs", ("R", "C", "D", "J", "TP", "L", "FB", "Q")))):
+                continue
+            if min(p["r"][2] - p["r"][0], p["r"][3] - p["r"][1]) < step["pad_vias"]:
+                continue
+            i, j = R.ix(p["x"]), R.iy(p["y"])
+            nid = R.id(net)
+            if R.hole[j, i] or any(R.occ[R.VIA][l][j, i] not in (0, nid) for l in range(R.NL)) or \
+                    any(R.reg[l][j, i] < 0 and R.reg[l][j, i] != -nid for l in range(R.NL)):
+                continue
+            idxs = R.commit(net, [], [R.mm(i, j)], w, hard=True, unit=f"{net}|{p['ref']}.{p['num']}|stub")
+            for q in idxs:
+                R.shapes[q]["esc"] = (p["ref"], p["num"])
+            nv += 1
+        log(f"   escape: {nv} vias in the pads of slow-signal parts")
     return total, failed
 
 

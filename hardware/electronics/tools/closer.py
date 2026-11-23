@@ -128,6 +128,7 @@ def anchor(pre, rt):
     """A track that ends on the rim of a pad is joined to the pad's centre: KiCad only counts a track as connected when
     its end lies on the pad's copper, and the corner of a chamfered or rounded pad is not copper."""
     n = 0
+    have = {(t[0], t[1], round(t[3], 3), round(t[4], 3), round(t[5], 3), round(t[6], 3)) for t in rt["tracks"]}
     pads_of = {}
     for p in pre["pads"]:
         if p["net"] and not p["npth"] and p["side"] != "*":
@@ -140,8 +141,11 @@ def anchor(pre, rt):
                     continue
                 rim = min(x - r[0], r[2] - x, y - r[1], r[3] - y)
                 if rim < 0.06 and min(r[2] - r[0], r[3] - r[1]) >= 0.6 and p.get("shape") != "c":
-                    w = 0.15
-                    rt["tracks"].append([t[0], t[1], round(w, 3), x, y, p["x"], p["y"]])
+                    key = (t[0], t[1], round(x, 3), round(y, 3), round(p["x"], 3), round(p["y"], 3))
+                    if key in have or t[2] > 0.16 and False:
+                        continue
+                    have.add(key)
+                    rt["tracks"].append([t[0], t[1], 0.15, x, y, p["x"], p["y"]])
                     n += 1
     return n
 
@@ -216,54 +220,126 @@ def close_net(R, rt, pre, net, lc, hard=True):
     return added, len(cs) - 1
 
 
+def one_more(R, rt, pre, plan, net, hard, lc, depth, max_victims, why=None):
+    """Try to add one connection to net by taking slow signals up. Each net that is taken up is routed again on free cells
+    and, if that is not enough and depth allows, may itself take others up (never the nets already being worked on).
+    Returns (router, True) if the board is better afterwards, (router, False) with everything as before otherwise."""
+    pads = [p for p in pre["pads"] if p["net"] == net and not p["npth"]]
+    segs = [t for t in rt["tracks"] if t[0] == net]
+    vias = [v for v in rt["vias"] if v[0] == net]
+    groups = islands(R, net, pads, segs, vias)
+    if len(groups) < 2:
+        return R, False
+    nid = R.id(net)
+    cs = [cells_of(R, grp, pads, segs, vias) for grp in groups]
+    npads = {}
+    for p in pre["pads"]:
+        npads[p["net"]] = npads.get(p["net"], 0) + 1
+    banned = set()          # nets that turned out not to give way: the next search has to go round them
+    for _alt in range(int(os.environ.get("CLOSER_ALTS", "5"))):
+        Rb = make_router(pre, rt, plan, hard | banned) if banned else R
+        progress = False
+        for a in sorted(range(len(cs)), key=lambda i: len(cs[i]))[:2]:
+            tgt = set().union(*[c for i, c in enumerate(cs) if i != a])
+            path = Rb._search(nid, cs[a], tgt, (0, 0, R.W, R.H), R.widths[0], lc, soft=True, vcost=200, regmul=3, maxexp=7000000, softpen=500)
+            if not path:
+                if why is not None:
+                    why.append("no way, even through slow signals")
+                continue
+            sg, vs, _c = Rb._path_to_copper(nid, path, R.widths[0], True)
+            if not sg and not vs:
+                continue
+            victims = tuple(sorted(Rb.victims(sg, vs, R.widths[0], net, slack=0.002)))
+            if len(victims) > max_victims:
+                big = sorted(victims, key=lambda v: -npads.get(v, 0))[:len(victims) - max_victims]
+                banned.update(big)
+                progress = True
+                if why is not None:
+                    why.append("too many in the way: " + " ".join(victims))
+                continue
+            snap = (list(rt["tracks"]), list(rt["vias"]))
+            rt["tracks"] = [t for t in rt["tracks"] if t[0] not in victims] + [[net, l_, R.widths[0], p0[0], p0[1], p1[0], p1[1]] for (l_, p0, p1) in sg]
+            rt["vias"] = [v for v in rt["vias"] if v[0] not in victims] + [[net, x, y] for (x, y) in vs]
+            fixed = hard | {net}
+            R2 = make_router(pre, rt, plan, fixed)
+            ok = True
+            for v in victims:
+                miss = close_net(R2, rt, pre, v, lc, hard=False)[1]
+                tries = 0
+                while miss and depth > 0 and tries < miss + 1:
+                    tries += 1
+                    R2, got = one_more(R2, rt, pre, plan, v, fixed | set(victims) - {v}, lc, depth - 1, max_victims)
+                    if not got:
+                        break
+                    miss = close_net(R2, rt, pre, v, lc, hard=False)[1]
+                if miss:
+                    ok = False
+                    banned.add(v)
+                    progress = True
+                    if why is not None:
+                        why.append(f"{v} would not close again")
+                    break
+            if not ok:
+                rt["tracks"], rt["vias"] = snap
+                continue
+            return make_router(pre, rt, plan, hard), True
+        if not progress:
+            break
+    return R, False
+
+
 def negotiate(R, rt, pre, plan, left, hard, lc, max_victims=int(os.environ.get("CLOSER_VICTIMS", "4"))):
     """For what is still open: search a way through the slow signals that are in the way, take those nets up, lay the new
     connection and route the nets that were taken up again. The change is kept only if every one of them closes again."""
     won = 0
+    depth = int(os.environ.get("CLOSER_DEPTH", "1"))
     for net in list(left):
-        pads = [p for p in pre["pads"] if p["net"] == net and not p["npth"]]
-        for _try in range(left[net] + 1):
-            segs = [t for t in rt["tracks"] if t[0] == net]
-            vias = [v for v in rt["vias"] if v[0] == net]
-            groups = islands(R, net, pads, segs, vias)
-            if len(groups) < 2:
-                break
-            nid = R.id(net)
-            cs = [cells_of(R, grp, pads, segs, vias) for grp in groups]
-            done = False
+        for _try in range(left[net]):
             why = []
-            for a in sorted(range(len(cs)), key=lambda i: len(cs[i])):
-                tgt = set().union(*[c for i, c in enumerate(cs) if i != a])
-                path = R._search(nid, cs[a], tgt, (0, 0, R.W, R.H), R.widths[0], lc, soft=True, vcost=300, regmul=3, maxexp=7000000, softpen=500)
-                if not path:
-                    why.append("no way, even through slow signals")
-                    continue
-                sg, vs, _c = R._path_to_copper(nid, path, R.widths[0], True)
-                if not sg and not vs:
-                    continue
-                victims = sorted(R.victims(sg, vs, R.widths[0], net, slack=0.002))
-                if len(victims) > max_victims:
-                    why.append("too many in the way: " + " ".join(victims))
-                    continue
-                snap = (list(rt["tracks"]), list(rt["vias"]))
-                rt["tracks"] = [t for t in rt["tracks"] if t[0] not in victims] + [[net, l_, R.widths[0], p0[0], p0[1], p1[0], p1[1]] for (l_, p0, p1) in sg]
-                rt["vias"] = [v for v in rt["vias"] if v[0] not in victims] + [[net, x, y] for (x, y) in vs]
-                R2 = make_router(pre, rt, plan, hard)
-                miss = sum(close_net(R2, rt, pre, v, lc, hard=False)[1] for v in victims)
-                if miss:
-                    rt["tracks"], rt["vias"] = snap
-                    why.append("would not close again: " + " ".join(victims))
-                    continue
-                R = R2
-                won += 1
-                done = True
-                print(f"   {net}: one more connection, by taking up and re-routing {', '.join(victims) or 'nothing'}")
-                break
-            if not done:
+            n0 = (len(rt["tracks"]), len(rt["vias"]))
+            R, got = one_more(R, rt, pre, plan, net, hard, lc, depth, max_victims, why)
+            if not got:
                 if os.environ.get("CLOSER_WHY"):
-                    print(f"   {net}: " + "; ".join(sorted(set(why))))
+                    print(f"   {net}: " + "; ".join(sorted(set(why))), flush=True)
                 break
+            won += 1
+            print(f"   {net}: one more connection", flush=True)
+            json.dump(dict(tracks=rt["tracks"], vias=rt["vias"], open={}), open(os.environ.get("CLOSER_SAVE", "/tmp/closer-progress.json"), "w"),
+                      separators=(",", ":"))
     return R, won
+
+
+def plane_pads(R, rt, pre, plane, lc):
+    """Pads of plane nets that have neither a via of their own nor a track to one: lead each to the nearest copper of
+    its net that does."""
+    added, left = 0, {}
+    for net in sorted(plane):
+        pads = [p for p in pre["pads"] if p["net"] == net and not p["npth"] and p["side"] != "*"]
+        segs = [t for t in rt["tracks"] if t[0] == net]
+        vias = [v for v in rt["vias"] if v[0] == net]
+        groups = islands(R, net, pads, segs, vias)
+        withvia = [grp for grp in groups if any(k == "v" for k, _i in grp)]
+        if not withvia:
+            continue
+        tgt = set()
+        for grp in withvia:
+            tgt |= cells_of(R, grp, pads, segs, vias)
+        nid = R.id(net)
+        for grp in groups:
+            if any(k == "v" for k, _i in grp):
+                continue
+            src = cells_of(R, grp, pads, segs, vias)
+            path = R._search(nid, src, tgt, (0, 0, R.W, R.H), R.widths[0], lc, vcost=200, regmul=3, maxexp=5000000)
+            name = ", ".join(f"{pads[i]['ref']}.{pads[i]['num']}" for k, i in grp if k == "p")
+            if not path:
+                left[f"{net} {name}"] = 1
+                continue
+            sg, vs, _c = R._path_to_copper(nid, path, R.widths[0])
+            R.commit(net, sg, vs, R.widths[0], hard=True, unit=net)
+            rt["tracks"] += [[net, l_, R.widths[0], p0[0], p0[1], p1[0], p1[1]] for (l_, p0, p1) in sg]
+            rt["vias"] += [[net, x, y] for (x, y) in vs]
+            added += 1
+    return added, left
 
 
 def run(folder, routes=None, lcost=None):
@@ -288,7 +364,9 @@ def run(folder, routes=None, lcost=None):
         added += n_add
         if n_left:
             left[net] = n_left
-    print(f"closing pass: {added} connections added on free cells; still open by this count: {sum(left.values())} in {len(left)} nets")
+    pa, pleft = plane_pads(R, rt, pre, plane, lc)
+    print(f"closing pass: {added} connections added on free cells, {pa} supply pads joined to their plane ({pleft or 'none left'}); "
+          f"still open by this count: {sum(left.values())} in {len(left)} nets", flush=True)
     for rnd in range(int(os.environ.get("CLOSER_ROUNDS", "2"))):
         if not left:
             break
