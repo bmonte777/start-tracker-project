@@ -26,7 +26,10 @@ FRAME = {
     "ST-520": Location(),
     "ST-501": Location(Plane(origin=(1.6, 0, 0), x_dir=(0, -1, 0), z_dir=(-1, 0, 0))),
 }
-STEP = {"ST-520": "st-520", "ST-501": "st-501"}
+# ST-602: the envelope stands in the pack with its inner face at Y 0 and its parts toward +Y; seen from outside the pack
+# (from +Y) the board's X runs toward -X of the pack and its Y is up.
+FRAME["ST-602"] = Location(Plane(origin=(0, 0, 0), x_dir=(-1, 0, 0), z_dir=(0, 1, 0)))
+STEP = {"ST-520": "st-520", "ST-501": "st-501", "ST-602": "st-602"}
 DRAFT = {"ST-501": "mainboard"}
 CAP = 4.0     # mm: neighbours further away than this are not reported
 
@@ -96,7 +99,7 @@ def check(pid, pose=None):
 
 def main():
     out = []
-    for pid in ("ST-520", "ST-501"):
+    for pid in ("ST-520", "ST-501", "ST-602"):
         out += check(pid)
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, "w") as f:

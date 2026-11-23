@@ -1196,7 +1196,7 @@
 		(effects (font (size 1.6 1.6)) (justify left bottom))
 		(uuid "06788e39-8f75-546d-bcc6-3624b02dcde9")
 	)
-	(text "U1 BQ40Z50-R2 for two cells: VC2 is the top of the stack, VC3 and VC4 are tied to it. PCHG is not used (the charger\nBQ25792 does the pre-charge). PTC is switched off (PTC and PTCEN to VSS). TS1: 10 k thermistor bead on the cells.\nLEDs wired between pairs of the three LED pins as on TI's evaluation module; R21-R23 are 0 ohm links."
+	(text "U1 BQ40Z50-R2 for two cells: VC2 is the top of the stack, VC3 and VC4 are tied to it. PCHG is not used (the charger\nBQ25792 does the pre-charge). PTC is switched off (PTC and PTCEN to VSS). TS1: 10 k thermistor bead on the cells.\nLEDs wired between pairs of the three LED pins as on TI's evaluation module. R21-R23 (two of them in series with\nevery LED) keep the LED current between 4 mA (6 V pack) and 16 mA (8.4 V); the pins alone would sink 22 mA."
 		(exclude_from_sim no)
 		(at 200 18 0)
 		(effects (font (size 1.6 1.6)) (justify left bottom))
@@ -4590,7 +4590,7 @@
 		(dnp no)
 		(uuid "0acbc2d2-a9d9-5f03-bce0-332e31e001d5")
 		(property "Reference" "R7" (at 151.13 129.88 90) (effects (font (size 1 1))))
-		(property "Value" "5k1" (at 151.13 134.28 90) (effects (font (size 1 1))))
+		(property "Value" "10k" (at 151.13 134.28 90) (effects (font (size 1 1))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 151.13 132.08 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -4600,8 +4600,8 @@
 			(at 151.13 132.08 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "MPN" "0402WGF5101TCE" (at 151.13 132.08 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "LCSC" "C25905" (at 151.13 132.08 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "MPN" "0402WGF1002TCE" (at 151.13 132.08 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "LCSC" "C25744" (at 151.13 132.08 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "cadbfdb8-01c4-57fa-986a-dcfd7ec90a0e"))
 		(pin "2" (uuid "05d85d67-3712-5037-abd6-e55abb050f27"))
 		(instances
@@ -4618,7 +4618,7 @@
 		(dnp no)
 		(uuid "2daa47bd-5145-5be6-9a2c-ef4e61847eef")
 		(property "Reference" "R8" (at 196.85 129.88 90) (effects (font (size 1 1))))
-		(property "Value" "49k9" (at 196.85 134.28 90) (effects (font (size 1 1))))
+		(property "Value" "100k" (at 196.85 134.28 90) (effects (font (size 1 1))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 196.85 132.08 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -4628,8 +4628,8 @@
 			(at 196.85 132.08 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "MPN" "0402WGF4992TCE" (at 196.85 132.08 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "LCSC" "C25897" (at 196.85 132.08 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "MPN" "0402WGF1003TCE" (at 196.85 132.08 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "LCSC" "C25741" (at 196.85 132.08 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "343e4130-a1a9-5585-a4c7-2615b21fd983"))
 		(pin "2" (uuid "c716c40a-2d36-5b97-83a5-1f3af91b935c"))
 		(instances
@@ -5124,7 +5124,7 @@
 		(dnp no)
 		(uuid "60ba38a5-ad0f-55ff-afd6-7e703b8a84cd")
 		(property "Reference" "TH1" (at 330.2 57.15 0) (effects (font (size 1.27 1.27))))
-		(property "Value" "NTC 10k bead" (at 330.2 64.77 0) (effects (font (size 1.27 1.27))))
+		(property "Value" "NTC 10k 103AT bead" (at 330.2 64.77 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "ST:WirePads_1x02_P2.0mm_1.5x2.4mm"
 			(at 330.2 59.69 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -5521,7 +5521,7 @@
 		(dnp no)
 		(uuid "276e47e2-44cd-5b88-b8c5-3d9092e8d79f")
 		(property "Reference" "R21" (at 341.63 222.59 90) (effects (font (size 1 1))))
-		(property "Value" "0R" (at 341.63 226.99 90) (effects (font (size 1 1))))
+		(property "Value" "100R" (at 341.63 226.99 90) (effects (font (size 1 1))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 341.63 224.79 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -5531,8 +5531,8 @@
 			(at 341.63 224.79 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "MPN" "0402WGF0000TCE" (at 341.63 224.79 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "LCSC" "C17168" (at 341.63 224.79 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "MPN" "0402WGF1000TCE" (at 341.63 224.79 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "LCSC" "C25076" (at 341.63 224.79 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "371fb73a-5e0a-520a-8a4b-92698a7aa7ee"))
 		(pin "2" (uuid "fdfcc87e-6f4e-5497-85ea-db14ea53a85b"))
 		(instances
@@ -5549,7 +5549,7 @@
 		(dnp no)
 		(uuid "e3c880a7-6734-52f9-b08d-0a70a41c1b4a")
 		(property "Reference" "R22" (at 387.35 222.59 90) (effects (font (size 1 1))))
-		(property "Value" "0R" (at 387.35 226.99 90) (effects (font (size 1 1))))
+		(property "Value" "100R" (at 387.35 226.99 90) (effects (font (size 1 1))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 387.35 224.79 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -5559,8 +5559,8 @@
 			(at 387.35 224.79 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "MPN" "0402WGF0000TCE" (at 387.35 224.79 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "LCSC" "C17168" (at 387.35 224.79 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "MPN" "0402WGF1000TCE" (at 387.35 224.79 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "LCSC" "C25076" (at 387.35 224.79 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "9b92d050-41bd-5d4a-9f5f-0e702793d3f7"))
 		(pin "2" (uuid "c368ee79-e9f8-5391-b3cf-cd9f3257b81b"))
 		(instances
@@ -5577,7 +5577,7 @@
 		(dnp no)
 		(uuid "798793bb-6c1c-521b-88f1-86f1b4a9f9a4")
 		(property "Reference" "R23" (at 204.47 230.21 90) (effects (font (size 1 1))))
-		(property "Value" "0R" (at 204.47 234.61 90) (effects (font (size 1 1))))
+		(property "Value" "100R" (at 204.47 234.61 90) (effects (font (size 1 1))))
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 204.47 232.41 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
@@ -5587,8 +5587,8 @@
 			(at 204.47 232.41 90)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
-		(property "MPN" "0402WGF0000TCE" (at 204.47 232.41 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "LCSC" "C17168" (at 204.47 232.41 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "MPN" "0402WGF1000TCE" (at 204.47 232.41 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "LCSC" "C25076" (at 204.47 232.41 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "58a381ae-f8cc-5ca3-ba71-2e0ce6451852"))
 		(pin "2" (uuid "40eb0fc3-8893-5542-b30c-1780d058a5f5"))
 		(instances

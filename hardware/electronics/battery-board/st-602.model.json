@@ -367,15 +367,15 @@
   },
   {
    "ref": "R7",
-   "value": "5k1",
+   "value": "10k",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
    "owner": "Q3",
    "fields": {
-    "MPN": "0402WGF5101TCE",
-    "LCSC": "C25905"
+    "MPN": "0402WGF1002TCE",
+    "LCSC": "C25744"
    },
    "sheet": "main",
    "pins": {
@@ -385,15 +385,15 @@
   },
   {
    "ref": "R8",
-   "value": "49k9",
+   "value": "100k",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
    "owner": "Q3",
    "fields": {
-    "MPN": "0402WGF4992TCE",
-    "LCSC": "C25897"
+    "MPN": "0402WGF1003TCE",
+    "LCSC": "C25741"
    },
    "sheet": "main",
    "pins": {
@@ -704,7 +704,7 @@
   },
   {
    "ref": "TH1",
-   "value": "NTC 10k bead",
+   "value": "NTC 10k 103AT bead",
    "footprint": "ST:WirePads_1x02_P2.0mm_1.5x2.4mm",
    "lib_id": "Connector_Generic:Conn_01x02",
    "dnp": false,
@@ -946,15 +946,15 @@
   },
   {
    "ref": "R21",
-   "value": "0R",
+   "value": "100R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
    "owner": "U1",
    "fields": {
-    "MPN": "0402WGF0000TCE",
-    "LCSC": "C17168"
+    "MPN": "0402WGF1000TCE",
+    "LCSC": "C25076"
    },
    "sheet": "main",
    "pins": {
@@ -964,15 +964,15 @@
   },
   {
    "ref": "R22",
-   "value": "0R",
+   "value": "100R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
    "owner": "U1",
    "fields": {
-    "MPN": "0402WGF0000TCE",
-    "LCSC": "C17168"
+    "MPN": "0402WGF1000TCE",
+    "LCSC": "C25076"
    },
    "sheet": "main",
    "pins": {
@@ -982,15 +982,15 @@
   },
   {
    "ref": "R23",
-   "value": "0R",
+   "value": "100R",
    "footprint": "Resistor_SMD:R_0402_1005Metric",
    "lib_id": "Device:R",
    "dnp": false,
    "bom": true,
    "owner": "U1",
    "fields": {
-    "MPN": "0402WGF0000TCE",
-    "LCSC": "C17168"
+    "MPN": "0402WGF1000TCE",
+    "LCSC": "C25076"
    },
    "sheet": "main",
    "pins": {

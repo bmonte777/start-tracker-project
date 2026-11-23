@@ -82,14 +82,18 @@ def build():
     r(s, "5k1", "DSG", "DSG_G", owner="Q2")
     r(s, "10M", "DSG_G", "PACKP", owner="Q2")
     r(s, "10k", "Q4_G", "GND", owner="Q4")
-    r(s, "5k1", "OV_OUT", "FUSE_G", owner="Q3")
-    r(s, "49k9", "FUSE_G", "GND", owner="Q3")
+    # Fuse drive: U2's output (about 6 V) through R7, the gauge's FUSE pin (2 to 3.2 kohm inside, 6 to 8.65 V, or the pack
+    # voltage below 8 V) directly. R7 lets the gauge pull the gate up against U2's low output: at least 4.2 V on the gate
+    # in both cases, down to a 6 V pack. R8 keeps Q3 off.
+    r(s, "10k", "OV_OUT", "FUSE_G", owner="Q3")
+    r(s, "100k", "FUSE_G", "GND", owner="Q3")
     c(s, "100n", "FUSE_G", "GND", owner="Q3")
 
     # ------------------------------------------------------------------ gauge
     s.note(200, 18, "U1 BQ40Z50-R2 for two cells: VC2 is the top of the stack, VC3 and VC4 are tied to it. PCHG is not used (the charger\n"
                     "BQ25792 does the pre-charge). PTC is switched off (PTC and PTCEN to VSS). TS1: 10 k thermistor bead on the cells.\n"
-                    "LEDs wired between pairs of the three LED pins as on TI's evaluation module; R21-R23 are 0 ohm links.", 1.6)
+                    "LEDs wired between pairs of the three LED pins as on TI's evaluation module. R21-R23 (two of them in series with\n"
+                    "every LED) keep the LED current between 4 mA (6 V pack) and 16 mA (8.4 V); the pins alone would sink 22 mA.", 1.6)
     ic(s, "ST:BQ40Z50", "U", "BQ40Z50",
        {"BAT": "BAT", "VCC": "VCC", "PACK": "PACK_S", "PBI": "PBI", "VC4": "VC2", "VC3": "VC2", "VC2": "VC2", "VC1": "VC1", "SRP": "SRP",
         "SRN": "SRN", "TS1": "TS1", "TS2": "GND", "TS3": "GND", "TS4": "GND", "PTC": "GND", "PTCEN": "GND", "VSS": "GND", "EP": "GND",
@@ -110,7 +114,7 @@ def build():
     c(s, "100n50", "BAT", "GND", owner="U1")
     c(s, "100n50", "VCC", "GND", owner="U1")
     r(s, "10k", "PACKP", "PACK_S", owner="U1")
-    s.part("Connector_Generic:Conn_01x02", "TH1", "NTC 10k bead", "ST:WirePads_1x02_P2.0mm_1.5x2.4mm", {1: "TS1", 2: "GND"}, x=330, y=60, bom=False)
+    s.part("Connector_Generic:Conn_01x02", "TH1", "NTC 10k 103AT bead", "ST:WirePads_1x02_P2.0mm_1.5x2.4mm", {1: "TS1", 2: "GND"}, x=330, y=60, bom=False)
 
     # ------------------------------------------------------------------ second-level protector
     s.note(20, 165, "U2 BQ294700: trips at 4.35 V on either cell after 1 to 2 s (C11) and drives Q3 through R7.\n"
@@ -135,9 +139,9 @@ def build():
     r(s, "100R", "SMBC", "SMBC_J", owner="U3")
     r(s, "100R", "SMBD", "SMBD_J", owner="U3")
     r(s, "100R", "PRES", "PRES_J", owner="U3")
-    r(s, "0R", "LEDA", "LA", owner="U1")
-    r(s, "0R", "LEDB", "LB", owner="U1")
-    r(s, "0R", "LEDC", "LC", owner="U1")
+    r(s, "100R", "LEDA", "LA", owner="U1")
+    r(s, "100R", "LEDB", "LB", owner="U1")
+    r(s, "100R", "LEDC", "LC", owner="U1")
     fp, f = cat.fields("P", "LED_G")
     for a, k in (("LA", "LB"), ("LB", "LA"), ("LB", "LC"), ("LC", "LB")):     # LED 1 to 4: anode, cathode
         s.two("Device:LED", ref("D"), "green", k, a, fp, **f)
