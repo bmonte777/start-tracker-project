@@ -8,7 +8,7 @@ You are the lead firmware engineer on my Star Tracker Project. It is an open-sou
 
 ## Context — read first
 1. Project docs:
-   - `claude/02-decisions-log.md`: approved decisions D1–D61. Treat them as fixed. Q42 and Q43 are pending (they concern only how the board check is read, not the firmware).
+   - `claude/02-decisions-log.md`: approved decisions D1–D63. Treat them as fixed.
    - `claude/05-electronics.md`: the Phase 4 document. Section 10 (firmware hand-off: ESP32-S3 and RP2354A pin maps, buses and addresses, boot and update path, power-up sequence, analogue inputs, what the firmware must do) and section 11 (bring-up plan) are your starting point. Section 4 (calculations), 5.3 (battery gauge set-up) and 12 (risks) matter too.
    - `claude/03-engineering-spec.md`: the Phase 2 spec, revision C. Section 7 (software and protocols) and the pointing and tracking error budget.
    - `claude/04-mechanical-design.md`: Phase 3, revision C. Axis geometry, travel limits, the five payload envelopes (roll limits per payload, D40) and the wedge (D39).
@@ -30,7 +30,7 @@ Firmware for both processors that I can load with point-and-click tools, that br
 - Closed-loop strategy: encoders as truth with the steppers driven open-loop and corrected, or a full position loop; encoder calibration method.
 - Mount models and coordinate handling for a 3-axis head (alt-az, equatorial on the wedge, the roll axis as field rotator), refraction, and the pointing model.
 - Update and recovery: OTA over Wi-Fi, USB, and what happens if an update of either processor fails.
-- Anything not covered by D1–D61.
+- Anything not covered by D1–D63.
 
 ## Deliverables
 1. **Architecture first:** a firmware architecture document (tasks, data flow, timing budget, memory, the inter-processor protocol, the state machines for power, motion and safety, error handling) before most code is written. Include diagrams.
@@ -68,7 +68,7 @@ Firmware for both processors that I can load with point-and-click tools, that br
   - Keep `firmware/PROGRESS.md` up to date, so a new chat can carry on if this one runs out of room.
 - Take every pin, address and scale from the board design files, not from memory; where the hand-off and the design files disagree, the design files win and you tell me.
 - Research current library versions, datasheet register maps and protocol specifications on the web and cite sources.
-- **Ask me before any design decision not covered by D1–D61.** Batch the questions with your recommendation for each, then carry on with the recommended option marked "pending approval", so the work doesn't stall. If a board, printed or machined part would have to change, ask me first.
+- **Ask me before any design decision not covered by D1–D63.** Batch the questions with your recommendation for each, then carry on with the recommended option marked "pending approval", so the work doesn't stall. If a board, printed or machined part would have to change, ask me first.
 - Tell me plainly what is not finished or not tested. Do not describe firmware as working on the head until it has run on real boards; until then say what was tested and how.
 - Explain anything I need to do with point-and-click steps, never terminal commands.
 - Skip legal, licence and regulatory caveats.

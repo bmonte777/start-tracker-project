@@ -27,8 +27,8 @@ Bruno does not use KiCad: nothing is left for him to finish by hand in it. Every
   stops with an error if a segment it wants to remove is not there.
 - Power paths (wanted / reached, mm): VBAT_IN, CHG_SW1, CHG_SW2, CHG_PMID, VBUS_CHG, VBUS_A, PB_SW1, PB_SW2, VPB_RAW, VPB, PB_MID, VBUS_B,
   VM_IN 1.0 / 1.0; BST_SW 0.35 / 1.0; SW_5V 0.5 / 0.5; +5V 0.5 / 0.8; SW_3V3 0.5 / 1.0. Three pins are measured with a wider neck than the
-  standard 0.8 mm because the pin itself is narrow or sits in a row (Q42, pending approval): J3/J4 A4 1.5 mm, J3/J4 B9 2.9 mm (joined to
-  row A through the gap between the rows), U7.25 1.1 mm. Terminal changes (Q43, pending): U2.8 → U2.3 for VBUS_CHG, U12.7 removed.
+  standard 0.8 mm because the pin itself is narrow or sits in a row (D62): J3/J4 A4 1.5 mm, J3/J4 B9 2.9 mm (joined to
+  row A through the gap between the rows), U7.25 1.1 mm. Terminal changes (D63): U2.8 → U2.3 for VBUS_CHG, U12.7 removed.
 
 ### What the sixth chat changed on ST-501 (so nobody undoes it)
 - Placement: U3 turned 180°, charger block U2/L1 3 mm east, U6 1 mm east, Q2/Q3 on the west edge, R23 next to U7, Q6/L5 moved, U26 on
@@ -144,7 +144,7 @@ Baseline reproduced exactly first (164 open) with the tool chain below.
 
 ### Decisions of 22–23 Nov
 Q36 → D50 (pack pads stay, rail on In3), Q37 → D51 (six layers, via-in-pad): approved "Go with recommendations and continue".
-Q28, Q31–Q35, Q38–Q41 → D52–D61, approved 23 Nov ("Q28-Q41 - proceed with recommendations"). Q42, Q43 pending.
+Q28, Q31–Q35, Q38–Q41 → D52–D61, approved 23 Nov ("Q28-Q41 - proceed with recommendations"). Q42, Q43 → D62, D63, approved 23 Nov ("Q42 and Q43 - Continue with your recommendation").
 
 ## State at the end of the sixth chat (23 Nov, evening)
 - Phase 4 is complete apart from the points below. All three boards: ERC/DRC clean, power paths at width, fab files, STEP, renders.
@@ -152,7 +152,7 @@ Q28, Q31–Q35, Q38–Q41 → D52–D61, approved 23 Nov ("Q28-Q41 - proceed wit
   Docs doc, `docs/04-electronics.md` (rev B), Project copy `claude/05-electronics.md`, viewer: current.
 - Workflow "Phase 4 electronics build" run on GitHub on the branch: run 45238347825, green (all checks, all boards).
 - Pull request 6 was merged into main at 08:45 UTC on 23 Nov (before this chat's work); the work since is in pull request 8.
-- Still open: Q42, Q43 (pending approval); 19 mainboard BOM lines without a confirmed LCSC number (matched at upload or hand-fitted,
+- Still open: no questions; 19 mainboard BOM lines without a confirmed LCSC number (matched at upload or hand-fitted,
   list in `docs/04-electronics.md` 8.3); battery board: LED positions in 4-LED mode and TI's fuse-drive resistor values only in figures
   (topology confirmed, TI probably 5.1 k / 5.1 k, ours 10 k / 100 k); display module thickness assumed in the fit check.
 - Next phase: firmware, prompt in the Project as `claude/phase-5-prompt.md`.
