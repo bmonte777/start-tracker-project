@@ -112,7 +112,7 @@ def mainboard():
 def battery_board():
     m = P.BATT_BOARD
     b = box(-m["W"] / 2, m["W"] / 2, 0, m["T"], -m["H"] / 2, m["H"] / 2)
-    b += box(-12, 12, m["T"], m["T"] + 1.5, -3, 3)                 # 4 LEDs + gauge button, facing +Y
+    b += box(-12, 12, m["T"], m["T"] + 1.5, 10, 16)               # 4 LEDs + gauge button, facing +Y, 13 mm above the centre
     return b
 
 

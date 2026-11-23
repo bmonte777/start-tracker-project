@@ -96,51 +96,33 @@
   "parts_in_step": 46,
   "bbox": [
    -122.0,
-   73.4,
+   74.4,
    58.0,
    -90.0,
-   76.5,
+   77.5,
    98.0
   ],
-  "overlaps": [
-   {
-    "part": "ST-611 Pack light pipe",
-    "distance": 0.0,
-    "overlap_mm3": 4.26
-   }
-  ],
+  "overlaps": [],
   "nearest": [
    {
-    "part": "ST-606 Cell holder +Y",
-    "distance": 0.6
-   },
-   {
     "part": "ST-605 Pack shell lower",
-    "distance": 2.58
-   },
-   {
-    "part": "ST-610 Pack gasket",
-    "distance": 2.58
+    "distance": 0.05
    },
    {
     "part": "ST-612 Pack shell upper",
-    "distance": 2.58
+    "distance": 0.05
    },
    {
-    "part": "ST-601 Cell P50B 1",
-    "distance": 3.6
+    "part": "ST-611 Pack light pipe",
+    "distance": 0.91
    },
    {
-    "part": "ST-601 Cell P50B 2",
-    "distance": 3.6
+    "part": "ST-606 Cell holder +Y",
+    "distance": 1.6
    },
    {
-    "part": "ST-601 Cell P50B 3",
-    "distance": 3.6
-   },
-   {
-    "part": "ST-601 Cell P50B 4",
-    "distance": 3.6
+    "part": "ST-610 Pack gasket",
+    "distance": 1.96
    }
   ]
  }
