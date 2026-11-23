@@ -309,8 +309,10 @@ void motion_tick(motion_t *m, uint64_t head_us)
         }
         case ST_AX_TRACKING: {
             if (!s->sp_valid) { s->mode = ST_AX_HOLDING; break; }
-            uint64_t age_ms = (head_us - s->sp_t_us) / 1000u;
-            if (age_ms > s->sp_valid_ms) m->faults |= ST_F_SETPOINT_STALE;
+            /* setpoints are stamped 200 ms ahead, so the age is negative most of the time: signed (Phase 6 fix; unsigned it
+             * wrapped and the stale flag was always set) */
+            int64_t age_ms = ((int64_t)head_us - (int64_t)s->sp_t_us) / 1000;
+            if (age_ms > (int64_t)s->sp_valid_ms) m->faults |= ST_F_SETPOINT_STALE;
             if (m->link_lost && head_us - m->link_lost_at > (uint64_t)m->coast_s * 1000000u) {
                 start_stop(m, i);                         /* coasted 60 s without the ESP32 */
                 break;

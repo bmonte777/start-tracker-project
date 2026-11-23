@@ -33,6 +33,7 @@ static std::string print(cJSON *o)
 
 static std::string code_of(const std::string &e)
 {
+    if (e.rfind("invalid state", 0) == 0) return "state";
     if (e.find("limit") != std::string::npos) return "limit";
     if (e == "parked") return "parked";
     if (e.find("invalid") != std::string::npos || e.find("range") != std::string::npos) return "invalid";
@@ -66,6 +67,36 @@ static void settings_json(cJSON *o, const Settings &s)
     cJSON_AddNumberToObject(o, "guide_rate", s.guide_rate);
     cJSON_AddNumberToObject(o, "park_az", s.park_az);
     cJSON_AddNumberToObject(o, "park_alt", s.park_alt);
+}
+
+WsApi::WsApi(Head &h) : head_(h), svc_(h)
+{
+    boot_us_ = 0;
+    head_.on_tick = [this] { svc_.tick(); };
+}
+
+static const char *OPS_11[] = {"goto", "sync", "track", "stop", "park", "unpark", "park.set", "jog", "guide", "rotator.pa", "rotator.roll",
+    "align.clear", "time.set", "config.get", "config.set", "ivm.start", "ivm.stop", "state", "hello", "limits.get", "faults.get",
+    "faults.clear", "health.get", "pec.status", "pec.record", "pec.stop", "pec.play", "pec.save", "pec.clear", "pec.get", "job.start",
+    "job.pause", "job.resume", "job.stop", "job.status", "job.ack", "cal.status", "cal.encoder.start", "cal.encoder.status",
+    "cal.encoder.abort", "cal.encoder.apply", "cal.balance", "update.status"};
+
+std::string WsApi::info_json(int http_port, int alpaca_port, int lx200_port)
+{
+    cJSON *o = cJSON_CreateObject();
+    Settings s = head_.settings();
+    cJSON_AddStringToObject(o, "name", s.name.c_str());
+    cJSON_AddStringToObject(o, "model", "Star Tracker P1");
+    cJSON_AddStringToObject(o, "fw", FW_VERSION);
+    cJSON_AddStringToObject(o, "api", API_MINOR);
+    cJSON_AddNumberToObject(o, "http_port", http_port);
+    cJSON_AddNumberToObject(o, "ws_port", http_port);
+    cJSON_AddStringToObject(o, "ws_path", "/ws/v1");
+    cJSON_AddStringToObject(o, "op_path", "/startracker/v1/op");
+    cJSON_AddNumberToObject(o, "alpaca_port", alpaca_port);
+    cJSON_AddNumberToObject(o, "lx200_port", lx200_port);
+    cJSON_AddStringToObject(o, "platform", svc_.platform.c_str());
+    return print(o);
 }
 
 std::string WsApi::handle(const std::string &text)
@@ -182,18 +213,100 @@ std::string WsApi::handle(const std::string &text)
     } else if (op == "ivm.stop") {
         head_.intervalometer().stop();
     } else if (op == "state") {
+        // Phase 6 fix: the reply is a state event that also carries the request's id (1.0 sent it without)
+        std::string ev = state_event();
+        if (cJSON_IsNumber(id)) ev.insert(ev.size() - 1, ",\"id\":" + std::to_string((long long)id->valuedouble));
         cJSON_Delete(rep);
         cJSON_Delete(req);
-        return state_event();
-    } else if (op.rfind("pec.", 0) == 0 || op.rfind("job.", 0) == 0 || op.rfind("cal.", 0) == 0) {
-        e = "not implemented yet";
+        return ev;
+    } else if (op == "hello") {
+        result = cJSON_CreateObject();
+        Settings st = head_.settings();
+        cJSON_AddStringToObject(result, "api", API_MINOR);
+        cJSON_AddStringToObject(result, "fw", FW_VERSION);
+        cJSON_AddStringToObject(result, "name", st.name.c_str());
+        cJSON_AddStringToObject(result, "platform", svc_.platform.c_str());
+        cJSON_AddNumberToObject(result, "boot_id", svc_.boot_id);
+        cJSON_AddNumberToObject(result, "seq", (double)event_seq());
+        cJSON_AddNumberToObject(result, "faults_seq", head_.fault_seq());
+        cJSON *caps = cJSON_AddArrayToObject(result, "ops");
+        for (const char *o : OPS_11) cJSON_AddItemToArray(caps, cJSON_CreateString(o));
+        svc_.job_json(cJSON_AddObjectToObject(result, "job"));
+    } else if (op == "limits.get") {
+        result = cJSON_CreateObject();
+        svc_.limits_json(result);
+    } else if (op == "faults.get") {
+        result = cJSON_CreateObject();
+        cJSON *arr = cJSON_AddArrayToObject(result, "entries");
+        for (auto &f : head_.fault_log((uint32_t)num(args, "since", 0))) {
+            cJSON *x = cJSON_CreateObject();
+            cJSON_AddNumberToObject(x, "seq", f.seq);
+            cJSON_AddStringToObject(x, "t", iso8601(f.t_us).c_str());
+            cJSON_AddStringToObject(x, "level", f.level >= 2 ? "fault" : "warning");
+            cJSON_AddStringToObject(x, "msg", f.msg.c_str());
+            cJSON_AddItemToArray(arr, x);
+        }
+        cJSON_AddNumberToObject(result, "seq", head_.fault_seq());
+        cJSON_AddBoolToObject(result, "persistent", false);
+    } else if (op == "faults.clear") {
+        head_.clear_faults();
+    } else if (op == "health.get") {
+        result = cJSON_CreateObject();
+        svc_.health_json(result);
+    } else if (op == "pec.status") {
+        result = cJSON_CreateObject();
+        svc_.pec_json(result);
+    } else if (op == "pec.record") {
+        e = svc_.pec_record((int)num(args, "axis", 0), (int)num(args, "cycles", 2));
+    } else if (op == "pec.stop") {
+        e = svc_.pec_stop();
+    } else if (op == "pec.play") {
+        cJSON *on = args ? cJSON_GetObjectItemCaseSensitive(args, "on") : nullptr;
+        e = svc_.pec_play(!cJSON_IsFalse(on));
+    } else if (op == "pec.save") {
+        e = svc_.pec_save();
+    } else if (op == "pec.clear") {
+        e = svc_.pec_clear((int)num(args, "axis", 0));
+    } else if (op == "pec.get") {
+        result = cJSON_CreateObject();
+        e = svc_.pec_curve((int)num(args, "axis", 0), result);
+    } else if (op == "job.start") {
+        result = cJSON_CreateObject();
+        e = svc_.job_start(args, result);
+    } else if (op == "job.pause") {
+        e = svc_.job_pause();
+    } else if (op == "job.resume") {
+        e = svc_.job_resume();
+    } else if (op == "job.stop") {
+        e = svc_.job_stop();
+    } else if (op == "job.status") {
+        result = cJSON_CreateObject();
+        svc_.job_json(result);
+    } else if (op == "job.ack") {
+        e = svc_.job_ack((int)num(args, "job_id", -1), (int)num(args, "frame", -1));
+    } else if (op == "cal.status" || op == "cal.encoder.status") {
+        result = cJSON_CreateObject();
+        svc_.cal_json(result);
+    } else if (op == "cal.encoder.start") {
+        e = svc_.cal_encoder_start((int)num(args, "axis", 0), num(args, "speed_dps", 0.5));
+    } else if (op == "cal.encoder.abort") {
+        e = svc_.cal_abort();
+    } else if (op == "cal.encoder.apply") {
+        e = svc_.cal_encoder_apply();
+    } else if (op == "cal.balance") {
+        e = svc_.cal_balance(num(args, "swing_d", 5));
+    } else if (op == "update.status") {
+        result = cJSON_CreateObject();
+        cJSON_AddStringToObject(result, "fw", FW_VERSION);
+        cJSON_AddStringToObject(result, "api", API_MINOR);
+        if (svc_.update_status) svc_.update_status(result);
     } else {
         e = "invalid op " + op;
     }
     cJSON_AddBoolToObject(rep, "ok", e.empty());
     if (!e.empty()) {
         cJSON *er = cJSON_AddObjectToObject(rep, "err");
-        cJSON_AddStringToObject(er, "code", e == "not implemented yet" ? "notimpl" : code_of(e).c_str());
+        cJSON_AddStringToObject(er, "code", e.rfind("not implemented yet", 0) == 0 ? "notimpl" : code_of(e).c_str());
         cJSON_AddStringToObject(er, "msg", e.c_str());
     }
     if (result) cJSON_AddItemToObject(rep, "result", result);
@@ -207,6 +320,7 @@ std::string WsApi::state_event()
     cJSON *o = cJSON_CreateObject();
     cJSON_AddNumberToObject(o, "v", 1);
     cJSON_AddStringToObject(o, "ev", "state");
+    cJSON_AddNumberToObject(o, "seq", (double)event_seq());
     cJSON_AddStringToObject(o, "t", iso8601(s.t_us).c_str());
     cJSON_AddStringToObject(o, "mode", activity_name(s.activity));
     cJSON_AddStringToObject(o, "frame", head_.settings().mode == MountMode::Equatorial ? "eq" : "altaz");
@@ -252,6 +366,9 @@ std::string WsApi::state_event()
     cJSON_AddBoolToObject(iv, "running", ivm.running);
     cJSON_AddNumberToObject(iv, "done", ivm.done);
     cJSON_AddNumberToObject(iv, "count", ivm.count);
+    if (svc_.job_active()) svc_.job_json(cJSON_AddObjectToObject(o, "job")); else cJSON_AddNullToObject(o, "job");
+    svc_.pec_json(cJSON_AddObjectToObject(o, "pec"));
+    svc_.cal_json(cJSON_AddObjectToObject(o, "cal"));
     cJSON *fl = cJSON_AddArrayToObject(o, "faults");
     for (auto &f : s.faults) cJSON_AddItemToArray(fl, cJSON_CreateString(f.c_str()));
     return print(o);

@@ -1,6 +1,7 @@
-# Star Tracker — firmware build and tests. Started by hand only (spec 7.7):
-# github.com -> Actions -> "Firmware" -> Run workflow. Results are in the run's Artifacts box.
-name: Firmware
+# Star Tracker — firmware, simulator and apps: build and tests. Started by hand only (spec 7.7):
+# github.com -> Actions -> "Firmware and apps" -> Run workflow. Results are in the run's Artifacts box; the
+# "star-tracker-release" artifact holds the APK, the Windows installer, the firmware images and both simulators.
+name: Firmware and apps
 on:
   workflow_dispatch:
 
@@ -41,7 +42,7 @@ jobs:
           cp rp/st_rp2354a_bringup.bin firmware/esp32s3/main/embed/rp_bringup.bin
           cp rp/st_rp2354a_motion.bin firmware/esp32s3/main/embed/rp_motion.bin
           cp rp/st_rp2354a_flashstub.bin firmware/esp32s3/main/embed/rp_flashstub.bin
-      - name: Build system and bring-up images (ESP-IDF 5.5.6)
+      - name: Build system and bring-up images (ESP-IDF 5.5.6; mDNS from the component registry, Phase 6)
         uses: espressif/esp-idf-ci-action@v1
         with:
           esp_idf_version: v5.5.6
@@ -106,3 +107,128 @@ jobs:
           cmake --build build-sim --config Release
       - uses: actions/upload-artifact@v4
         with: { name: simulator-windows, path: build-sim/Release/StarTrackerSim.exe }
+
+  # ------------------------------------------------------------------ Phase 6: apps
+  app-tests:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.13" }
+      - name: Build the simulator
+        run: |
+          sudo apt-get install -y -q ninja-build
+          cmake -G Ninja -S firmware/sim -B firmware/sim/build
+          ninja -C firmware/sim/build
+      - name: Device client and end-to-end tests against the simulator
+        working-directory: app
+        run: node --test --test-concurrency=1 --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=app-tests.xml "tests/*.test.mjs" | tee app-tests.txt
+      - name: Windows backend logic (reused camera code, plate solver, head client) on Linux
+        working-directory: app/windows/backend
+        run: |
+          pip install numpy pillow pytest
+          python -m pytest -q tests | tee ../../backend-tests.txt
+      - name: Screenshots of every screen in Day, Night and Red (desktop and phone)
+        working-directory: app
+        run: |
+          npm install --no-save --prefix /tmp/pp puppeteer-core
+          PUPPETEER_DIR=/tmp/pp/node_modules node tools/screenshots.mjs --out screens --sizes desktop,phone --chrome "$(which google-chrome)"
+      - name: API check against the firmware source
+        run: python3 app/tools/check_api.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: app-test-reports, path: "app/app-tests.txt\napp/app-tests.xml\napp/backend-tests.txt\napp/screens/\napp/api-check.md" }
+
+  android-app:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 17 }
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build the APK
+        working-directory: app/android
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleRelease
+          mkdir -p out && cp app/build/outputs/apk/release/app-release.apk out/star-tracker-android.apk
+      - uses: actions/upload-artifact@v4
+        with: { name: android-apk, path: app/android/out/star-tracker-android.apk }
+
+  windows-app:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.13" }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Camera module (ptpwpd.dll, Windows Portable Devices)
+        working-directory: app/windows/backend/ptpwpd
+        shell: cmd
+        run: |
+          mkdir build
+          cl /nologo /LD /EHsc /O2 /W3 /DUNICODE /D_UNICODE ptpwpd.cpp /Fe:build\ptpwpd.dll /link PortableDeviceGUIDs.lib ole32.lib
+      - name: Python packages and tests
+        working-directory: app/windows/backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          copy ptpwpd\build\ptpwpd.dll startracker_desktop\ptpwpd.dll
+          python -m pytest -q tests
+          del startracker_desktop\ptpwpd.dll
+      - name: Package the backend (PyInstaller)
+        working-directory: app/windows/backend
+        run: |
+          New-Item -ItemType Directory -Force web | Out-Null
+          Copy-Item -Recurse ..\..\ui web\ui
+          Copy-Item -Recurse ..\..\shared web\shared
+          pyinstaller --noconfirm --windowed --name startracker-backend `
+            --add-binary "ptpwpd/build/ptpwpd.dll;." --add-data "web;web" --add-data "stars8.bin;." `
+            --collect-submodules zeroconf --collect-all bleak --collect-all winrt backend.py
+      - name: Smoke test (the backend serves the UI and answers the bridge)
+        working-directory: app/windows/backend
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath "dist\startracker-backend\startracker-backend.exe" -PassThru
+          $ok = $false
+          for ($i = 0; $i -lt 30; $i++) {
+            Start-Sleep -Seconds 1
+            try {
+              Invoke-WebRequest -UseBasicParsing http://127.0.0.1:5570/web/ui/index.html | Out-Null
+              $r = Invoke-RestMethod -Method Post -Uri http://127.0.0.1:5570/bridge/camera/status -Headers @{ "X-StarTracker" = "1" } -ContentType "application/json" -Body "[]"
+              Write-Host "camera status: $($r.result)"; $ok = $true; break
+            } catch { Write-Host "waiting... $($_.Exception.Message)" }
+          }
+          Stop-Process -Id $p.Id -Force
+          if (-not $ok) { throw "The backend did not start" }
+      - name: Build the installer (Tauri)
+        working-directory: app/windows
+        run: |
+          npm install
+          cd shell
+          ../node_modules/.bin/tauri build
+          New-Item -ItemType Directory -Force ..\out | Out-Null
+          Copy-Item target\release\bundle\nsis\*.exe ..\out\star-tracker-windows-setup.exe
+      - uses: actions/upload-artifact@v4
+        with: { name: windows-installer, path: app/windows/out/star-tracker-windows-setup.exe }
+
+  release:
+    needs: [esp32s3, simulator-and-tests, android-app, windows-app]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { path: all }
+      - name: One folder with everything
+        run: |
+          mkdir -p release
+          find all -type f \( -name '*.apk' -o -name '*-setup.exe' -o -name '*.stfw' -o -name 'st-esp32s3-*-full.bin' -o -name 'web-flasher.html' \
+            -o -name 'StarTrackerSim.exe' -o -name 'startracker-sim' \) -exec cp {} release/ \;
+          ls -la release
+      - uses: actions/upload-artifact@v4
+        with: { name: star-tracker-release, path: release/ }

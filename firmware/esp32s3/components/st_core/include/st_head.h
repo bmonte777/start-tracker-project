@@ -88,6 +88,9 @@ struct HeadState {
     PointingModel model;
 };
 
+struct FaultEntry { uint32_t seq = 0; int64_t t_us = 0; int level = 1; std::string msg; };   // level 1 warning, 2 fault
+constexpr size_t FAULT_LOG_N = 64;                // RAM ring; a copy in flash is not written yet (docs/06-apps.md section 10)
+
 class MotionPort {
 public:
     virtual ~MotionPort() = default;
@@ -104,7 +107,8 @@ public:
     // the motion processor's messages
     void on_motion(uint8_t type, const uint8_t *pl, size_t len);
     void on_power(const PowerInputs &in);
-    void tick();                                  // call every 100 ms (tracker task)
+    void tick();                                  // call every 100 ms (tracker task); then calls on_tick outside the lock
+    std::function<void()> on_tick;                // Phase 6 services (jobs, PEC, encoder calibration)
     // commands; return "" on success or a short error text (protocols map it)
     std::string goto_radec(double ra_h, double dec_d, bool j2000);
     std::string goto_altaz(double az_deg, double alt_deg);
@@ -129,8 +133,18 @@ public:
     double current_roll();
     Intervalometer &intervalometer() { return ivm_; }
     double now_s() { return clock_() / 1e6; }
-    void set_time_unix(double s) { time_offset_s_ = s - clock_() / 1e6; }
+    void set_time_unix(double s) { time_offset_s_ = s - clock_() / 1e6; if (on_set_time) on_set_time(s); }
+    std::function<void(double)> on_set_time;      // Phase 6 fix: time.set reaches the head clock (ESP32: clock_set_unix)
+    // Phase 6 additions
+    void add_fault(const std::string &msg);
+    std::vector<FaultEntry> fault_log(uint32_t since);
+    uint32_t fault_seq() { std::lock_guard<std::recursive_mutex> l(mu_); return fault_seq_; }
+    void clear_faults();
+    bool send_motion(uint8_t type, const void *payload, size_t len);
+    void motion_cfg(uint16_t key, int axis, int64_t value);
+    void roll_limits_at(double alt, double &lo, double &hi) { std::lock_guard<std::recursive_mutex> l(mu_); roll_limits(alt, lo, hi); }
 private:
+    void tick_locked();
     void compute_target(double t, double roll_hint, HeadAngles &out, bool &ok);
     void current_sky(HeadState &st);
     void send_setpoint();
@@ -167,6 +181,8 @@ private:
     Intervalometer ivm_;
     std::vector<std::string> faults_;
     int64_t last_sp_us_ = 0;
+    std::vector<FaultEntry> log_;
+    uint32_t fault_seq_ = 0;
 };
 
 }  // namespace st

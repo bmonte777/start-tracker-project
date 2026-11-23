@@ -43,6 +43,7 @@ static uint32_t crc32(const uint8_t *p, size_t n, uint32_t c = 0xFFFFFFFFu)
 
 esp_err_t ota_upload_handler(httpd_req_t *req)
 {
+    httpd_resp_set_hdr(req, "Access-Control-Allow-Origin", "*");   // the apps upload from their own pages (API 1.1)
     uint8_t hdr[64];
     int got = 0;
     while (got < 64) { int n = httpd_req_recv(req, (char *)hdr + got, 64 - got); if (n <= 0) return ESP_FAIL; got += n; }
@@ -106,6 +107,27 @@ esp_err_t ota_upload_handler(httpd_req_t *req)
     vTaskDelay(pdMS_TO_TICKS(500));
     esp_restart();
     return ESP_OK;
+}
+
+// update.status (API 1.1): which slot runs, whether the previous one can be returned to, the RP2354A copies
+void ota_status_json(cJSON *o)
+{
+    const esp_partition_t *run = esp_ota_get_running_partition();
+    const esp_partition_t *last = esp_ota_get_last_invalid_partition();
+    esp_ota_img_states_t st = ESP_OTA_IMG_UNDEFINED;
+    if (run) esp_ota_get_state_partition(run, &st);
+    cJSON_AddStringToObject(o, "running_slot", run ? run->label : "?");
+    cJSON_AddStringToObject(o, "running_state", st == ESP_OTA_IMG_VALID ? "valid" : st == ESP_OTA_IMG_PENDING_VERIFY ? "pending_verify" : "undefined");
+    cJSON_AddBoolToObject(o, "rollback_possible", esp_ota_check_rollback_is_possible());
+    cJSON_AddStringToObject(o, "last_invalid_slot", last ? last->label : "");
+    const esp_partition_t *rp = rp_part();
+    uint32_t g[3] = {}, n[3] = {};
+    if (rp) { esp_partition_read(rp, GOOD, g, sizeof g); esp_partition_read(rp, NEW, n, sizeof n); }
+    cJSON_AddBoolToObject(o, "rp_good_copy", g[0] == RPIM);
+    cJSON_AddNumberToObject(o, "rp_good_size", g[0] == RPIM ? g[1] : 0);
+    cJSON_AddBoolToObject(o, "rp_new_pending", n[0] == RPIM);
+    const esp_app_desc_t *d = esp_app_get_description();
+    cJSON_AddStringToObject(o, "esp_build", d ? d->version : "");
 }
 
 static bool flash_rp_from_slot(uint32_t slot, std::string &log)

@@ -9,6 +9,7 @@
 #include "esp_http_server.h"
 #include "esp_log.h"
 #include "esp_mac.h"
+#include "esp_random.h"
 #include "esp_netif.h"
 #include "esp_wifi.h"
 #include "freertos/FreeRTOS.h"
@@ -130,13 +131,75 @@ static esp_err_t index_handler(httpd_req_t *req)
     return httpd_resp_send(req, web_index_html_start, web_index_html_end - web_index_html_start);
 }
 
+// ---------------------------------------------------------------- API 1.1 HTTP routes (Phase 6, docs/06-apps.md section 4)
+static void cors(httpd_req_t *req)
+{
+    httpd_resp_set_hdr(req, "Access-Control-Allow-Origin", "*");
+    httpd_resp_set_hdr(req, "Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS");
+    httpd_resp_set_hdr(req, "Access-Control-Allow-Headers", "Content-Type");
+}
+
+static esp_err_t options_handler(httpd_req_t *req)          // CORS preflight from the apps' pages
+{
+    cors(req);
+    httpd_resp_set_hdr(req, "Access-Control-Max-Age", "600");
+    httpd_resp_set_status(req, "204 No Content");
+    return httpd_resp_send(req, nullptr, 0);
+}
+
+static esp_err_t info_handler(httpd_req_t *req)             // GET /startracker/v1/info on port 80 and 32323
+{
+    std::string j;
+    {
+        std::lock_guard<std::mutex> l(proto_mu);
+        j = wsapi->info_json(80, 32323, 4030);
+    }
+    cors(req);
+    httpd_resp_set_type(req, "application/json");
+    return httpd_resp_send(req, j.data(), (ssize_t)j.size());
+}
+
+static esp_err_t op_handler(httpd_req_t *req)               // POST /startracker/v1/op: one request, one reply
+{
+    cors(req);
+    if (req->content_len == 0 || req->content_len > 32768) { httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "body 1..32768 bytes"); return ESP_FAIL; }
+    std::string body(req->content_len, '\0');
+    size_t got = 0;
+    while (got < body.size()) { int n = httpd_req_recv(req, &body[got], body.size() - got); if (n <= 0) return ESP_FAIL; got += (size_t)n; }
+    std::string reply;
+    {
+        std::lock_guard<std::mutex> l(proto_mu);
+        reply = wsapi->handle(body);
+    }
+    httpd_resp_set_type(req, "application/json");
+    return httpd_resp_send(req, reply.data(), (ssize_t)reply.size());
+}
+
+// mDNS (Q51): startracker.local, services _startracker._tcp and _http._tcp on port 80. The component comes from Espressif's
+// registry (idf_component.yml), which the workflow can reach; without it the head still answers Alpaca discovery.
+#if __has_include("mdns.h")
+#include "mdns.h"
+static void mdns_start(const std::string &name)
+{
+    if (mdns_init() != ESP_OK) return;
+    mdns_hostname_set("startracker");
+    mdns_instance_name_set(name.c_str());
+    mdns_txt_item_t txt[] = {{"api", "1.1"}, {"ws", "/ws/v1"}, {"name", name.c_str()}};
+    mdns_service_add(name.c_str(), "_startracker", "_tcp", 80, txt, 3);
+    mdns_service_add(name.c_str(), "_http", "_tcp", 80, nullptr, 0);
+    mdns_service_add(name.c_str(), "_alpaca", "_tcp", 32323, nullptr, 0);
+}
+#else
+static void mdns_start(const std::string &) {}
+#endif
+
 // WebSocket: requests answered in the handler; state events pushed by a task to every open socket
 static esp_err_t ws_handler(httpd_req_t *req)
 {
     if (req->method == HTTP_GET) return ESP_OK;                // handshake done by httpd
     httpd_ws_frame_t f = {};
     f.type = HTTPD_WS_TYPE_TEXT;
-    if (httpd_ws_recv_frame(req, &f, 0) != ESP_OK || f.len > 4096) return ESP_FAIL;
+    if (httpd_ws_recv_frame(req, &f, 0) != ESP_OK || f.len > 32768) return ESP_FAIL;   // job.start with 400 poses
     std::string text(f.len, '\0');
     f.payload = (uint8_t *)&text[0];
     if (httpd_ws_recv_frame(req, &f, f.len) != ESP_OK) return ESP_FAIL;
@@ -228,10 +291,21 @@ void net_servers_start(Head &head)
 {
     alpaca = new Alpaca(head);
     wsapi = new WsApi(head);
+    wsapi->services().platform = "head";
+    wsapi->services().boot_id = esp_random() & 0x7FFFFFFF;
+    wsapi->services().store = [](const std::string &key, const std::vector<int16_t> &v) {   // PEC tables, encoder maps
+        nvs_handle_t h;
+        if (nvs_open("st_tables", NVS_READWRITE, &h) != ESP_OK) return false;
+        bool ok = nvs_set_blob(h, key.c_str(), v.data(), v.size() * sizeof(int16_t)) == ESP_OK && nvs_commit(h) == ESP_OK;
+        nvs_close(h);
+        return ok;
+    };
+    wsapi->services().update_status = [](cJSON *o) { ota_status_json(o); };
+    mdns_start(head.settings().name);
     httpd_config_t c = HTTPD_DEFAULT_CONFIG();
     c.server_port = 80;
     c.ctrl_port = 32768;
-    c.max_uri_handlers = 12;
+    c.max_uri_handlers = 16;
     c.uri_match_fn = httpd_uri_match_wildcard;
     c.core_id = 0;
     c.stack_size = 8192;
@@ -243,6 +317,10 @@ void net_servers_start(Head &head)
             {"/api/v1/*", HTTP_GET, alpaca_handler, nullptr, false, false, nullptr},
             {"/api/v1/*", HTTP_PUT, alpaca_handler, nullptr, false, false, nullptr},
             {"/management/*", HTTP_GET, alpaca_handler, nullptr, false, false, nullptr},
+            {"/startracker/v1/info", HTTP_GET, info_handler, nullptr, false, false, nullptr},
+            {"/startracker/v1/op", HTTP_POST, op_handler, nullptr, false, false, nullptr},
+            {"/startracker/v1/*", HTTP_OPTIONS, options_handler, nullptr, false, false, nullptr},
+            {"/api/update", HTTP_OPTIONS, options_handler, nullptr, false, false, nullptr},
         };
         for (auto &h : u) httpd_register_uri_handler(web, &h);
     }
@@ -257,6 +335,7 @@ void net_servers_start(Head &head)
             {"/api/v1/*", HTTP_GET, alpaca_handler, nullptr, false, false, nullptr},
             {"/api/v1/*", HTTP_PUT, alpaca_handler, nullptr, false, false, nullptr},
             {"/management/*", HTTP_GET, alpaca_handler, nullptr, false, false, nullptr},
+            {"/startracker/v1/info", HTTP_GET, info_handler, nullptr, false, false, nullptr},
         };
         for (auto &h : u) httpd_register_uri_handler(alp, &h);
     }

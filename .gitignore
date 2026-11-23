@@ -11,3 +11,14 @@ firmware/esp32s3/sdkconfig
 firmware/esp32s3/sdkconfig.old
 firmware/esp32s3/managed_components/
 firmware/esp32s3/main/embed/
+
+# app build outputs
+app/node_modules/
+app/windows/node_modules/
+app/windows/backend/dist/
+app/windows/backend/build/
+app/windows/shell/target/
+app/android/.gradle/
+app/android/app/build/
+app/android/local.properties
+.pytest_cache/

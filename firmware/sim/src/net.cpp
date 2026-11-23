@@ -15,6 +15,7 @@ typedef SOCKET sock_t;
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
+#include <csignal>
 #include <sys/socket.h>
 #include <unistd.h>
 typedef int sock_t;
@@ -28,6 +29,10 @@ void startup()
 #ifdef _WIN32
     WSADATA w;
     WSAStartup(MAKEWORD(2, 2), &w);
+#else
+    // A client that vanishes mid-send (an app killed, a browser closed) must not kill the simulator: without this, Linux
+    // and macOS end the process with SIGPIPE on the next send (found by the Phase 6 screenshot runs).
+    signal(SIGPIPE, SIG_IGN);
 #endif
 }
 
@@ -206,14 +211,21 @@ static void http_conn(sock_t c, HttpFn fn, WsFn ws, WsEventFn ev, int period)
             ws_session(c, ws, ev, period);
             return;
         }
+        if (method == "OPTIONS") {   // CORS preflight from the apps' pages (file:// or the Windows window)
+            std::string out = "HTTP/1.1 204 No Content\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET, PUT, POST, OPTIONS\r\n"
+                              "Access-Control-Allow-Headers: Content-Type\r\nAccess-Control-Max-Age: 600\r\nContent-Length: 0\r\nConnection: keep-alive\r\n\r\n";
+            if (!send_all(c, out)) { CLOSESOCK(c); return; }
+            continue;
+        }
         st::HttpRequest r;
         r.method = method;
         size_t q = target.find('?');
         r.path = url_decode(target.substr(0, q));
         if (q != std::string::npos) parse_params(target.substr(q + 1), r.params);
-        if (method == "PUT" || method == "POST") parse_params(body, r.params);
+        if (method == "PUT" || (method == "POST" && body.size() < 4096 && body.find('{') == std::string::npos)) parse_params(body, r.params);
+        r.body = body;
         st::HttpResponse resp = fn(r);
-        static const std::map<int, const char *> reason = {{200, "OK"}, {400, "Bad Request"}, {404, "Not Found"}, {405, "Method Not Allowed"}, {500, "Internal Server Error"}};
+        static const std::map<int, const char *> reason = {{200, "OK"}, {400, "Bad Request"}, {403, "Forbidden"}, {404, "Not Found"}, {405, "Method Not Allowed"}, {500, "Internal Server Error"}};
         std::string out = "HTTP/1.1 " + std::to_string(resp.status) + " " + (reason.count(resp.status) ? reason.at(resp.status) : "OK") +
                           "\r\nContent-Type: " + resp.type + "; charset=utf-8\r\nContent-Length: " + std::to_string(resp.body.size()) +
                           "\r\nAccess-Control-Allow-Origin: *\r\nConnection: keep-alive\r\n\r\n" + resp.body;

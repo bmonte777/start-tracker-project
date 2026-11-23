@@ -237,7 +237,7 @@ void Head::send_setpoint()
     if (!(ok0 && ok1 && ok2)) return;
     std::string why;
     if (!limit_ok(a0.az, a0.alt, a0.roll, &why)) {
-        faults_.push_back("tracking stopped: " + why);
+        add_fault("tracking stopped: " + why);
         abort();
         return;
     }
@@ -277,14 +277,13 @@ void Head::on_motion(uint8_t type, const uint8_t *pl, size_t len)
         const char *an = e.axis < 3 ? ax[e.axis] : "head";
         char b[96];
         switch (e.code) {
-        case ST_EV_STALL: snprintf(b, sizeof b, "%s: stall (StallGuard), backed off 1 deg", an); faults_.push_back(b); break;
-        case ST_EV_SLIP: snprintf(b, sizeof b, "%s: slip of %ld arcsec, re-synced from the encoder", an, (long)e.value); faults_.push_back(b); break;
-        case ST_EV_LIMIT: snprintf(b, sizeof b, "%s: soft limit reached", an); faults_.push_back(b); break;
-        case ST_EV_DERATE: snprintf(b, sizeof b, "%s motor at %.1f C: current lowered", an, e.value / 10.0); faults_.push_back(b); break;
-        case ST_EV_FAULT_SET: snprintf(b, sizeof b, "motion fault 0x%lx (%s)", (unsigned long)e.value, an); faults_.push_back(b); break;
+        case ST_EV_STALL: snprintf(b, sizeof b, "%s: stall (StallGuard), backed off 1 deg", an); add_fault(b); break;
+        case ST_EV_SLIP: snprintf(b, sizeof b, "%s: slip of %ld arcsec, re-synced from the encoder", an, (long)e.value); add_fault(b); break;
+        case ST_EV_LIMIT: snprintf(b, sizeof b, "%s: soft limit reached", an); add_fault(b); break;
+        case ST_EV_DERATE: snprintf(b, sizeof b, "%s motor at %.1f C: current lowered", an, e.value / 10.0); add_fault(b); break;
+        case ST_EV_FAULT_SET: snprintf(b, sizeof b, "motion fault 0x%lx (%s)", (unsigned long)e.value, an); add_fault(b); break;
         default: break;
         }
-        if (faults_.size() > 20) faults_.erase(faults_.begin());
     }
 }
 
@@ -304,6 +303,12 @@ void Head::on_power(const PowerInputs &in)
 
 // ------------------------------------------------------------------ 10 Hz tick
 void Head::tick()
+{
+    tick_locked();
+    if (on_tick) on_tick();                                       // services (jobs, PEC, calibration): outside the lock
+}
+
+void Head::tick_locked()
 {
     std::lock_guard<std::recursive_mutex> l(mu_);
     int64_t now = clock_();
@@ -353,7 +358,7 @@ void Head::tick()
         if (!since) since = now;
         if (!ivm_.release || now - since > 300000000) {
             ivm_.stop();
-            faults_.push_back("battery low: parking");
+            add_fault("battery low: parking");
             park();
             since = 0;
         }
@@ -631,6 +636,56 @@ HeadState Head::state()
     s.faults = faults_;
     s.model = model_;
     return s;
+}
+
+}  // namespace st
+
+namespace st {
+
+// ---------------------------------------------------------------- Phase 6 additions: fault log, raw motion access
+void Head::add_fault(const std::string &msg)
+{
+    std::lock_guard<std::recursive_mutex> l(mu_);
+    faults_.push_back(msg);
+    if (faults_.size() > 20) faults_.erase(faults_.begin());
+    FaultEntry e;
+    e.seq = ++fault_seq_;
+    e.t_us = clock_();
+    e.level = (msg.find("fault") != std::string::npos || msg.find("stall") != std::string::npos || msg.find("slip") != std::string::npos) ? 2 : 1;
+    e.msg = msg;
+    log_.push_back(e);
+    if (log_.size() > FAULT_LOG_N) log_.erase(log_.begin());
+}
+
+std::vector<FaultEntry> Head::fault_log(uint32_t since)
+{
+    std::lock_guard<std::recursive_mutex> l(mu_);
+    std::vector<FaultEntry> out;
+    for (auto &e : log_) if (e.seq > since) out.push_back(e);
+    return out;
+}
+
+void Head::clear_faults()
+{
+    std::lock_guard<std::recursive_mutex> l(mu_);
+    faults_.clear();
+    log_.clear();
+}
+
+bool Head::send_motion(uint8_t type, const void *payload, size_t len)
+{
+    std::lock_guard<std::recursive_mutex> l(mu_);
+    return port_.send(type, payload, len);
+}
+
+void Head::motion_cfg(uint16_t key, int axis, int64_t value)
+{
+    st_cfg_t c;
+    memset(&c, 0, sizeof c);
+    c.key = key;
+    c.axis = (uint8_t)axis;
+    c.value = value;
+    send_motion(ST_MSG_CFG_SET, &c, sizeof c);
 }
 
 }  // namespace st

@@ -1,8 +1,10 @@
 # Phase 5 — Firmware
 
-Star Tracker Project · Phase 5 · revision A · branch `phase-5-firmware`
+Star Tracker Project · Phase 5 · revision B (Phase 6 additions, 23 Nov 2026) · branches `phase-5-firmware`, `phase-6-apps`
 
 **Status (23 November 2026):** Docs version: https://claude.ai/artifact/A6iY9Ye6ca5gv9BDEiazDP — stages 1–7 written; all firmware builds; 29 of 29 host tests, 18 of 18 protocol tests against the simulator and 40 of 40 source checks pass. **Nothing has run on a real board yet.** Decisions Q44–Q51 were approved by Bruno on 23 November 2026 and are recorded as D64–D71.
+
+**Revision B (Phase 6):** API 1.1 for the apps (section 6.2: jobs, PEC training, encoder calibration, balance check, limits, health, fault log, `hello`, the HTTP op transport), four fixes found while building the apps (`state` answered without its `id`; `time.set` never reached the head clock; the RP2354A's stale-setpoint flag was always set; the simulator died of SIGPIPE when a client vanished), mDNS and the BLE service UUID. The portable parts are tested in the simulator; the ESP32-only parts (HTTP routes, mDNS, NVS store, BLE advert) are written but not compiled in this workspace (section 10).
 
 ## 1. Where things stand
 
@@ -316,16 +318,40 @@ Source: `firmware/esp32s3/` (ESP-IDF 5.5.6). Portable parts (`st_core`, `st_prot
 | `time.set` | `unix_s` | Head time when there is no GNSS |
 | `config.get` / `config.set` | keys: `lat`, `lon`, `elev_m`, `pressure_hpa`, `temp_c`, `refraction`, `mode` (`altaz`/`eq`), `wedge_deg`, `payload` (1–5), `wedge_fitted`, `pier_extension`, `roll_derotate`, `slew_dps`, `guide_rate`, `name` | Settings |
 | `ivm.start` / `ivm.stop` | `count` (0 = endless), `exposure_s`, `interval_s`, `focus_s`, `delay_s` | Intervalometer on the shutter port |
-| `state` | — | One state event on demand |
-| `pec.*`, `job.*`, `cal.*` | — | Reserved; answer `notimpl` in this version |
+| `state` | — | One state event on demand; since 1.1 it carries the request's `id` (1.0 sent it without) |
+| `pec.*`, `job.*`, `cal.*` and the other 1.1 ops | — | Section 6.2 (API 1.1, Phase 6) |
 
-State event fields: `t` (UTC), `mode` (`idle`, `slewing`, `tracking`, `moving`, `parking`, `parked`), `frame`, `tracking`, `parked`, `axes.{az,alt,roll}.{pos_d, enc_d, rate_dps, i_ma, load, temp_c, flags}`, `radec.{ra_h, dec_d}` (J2000) and `ra_now_h`, `dec_now_d`, `rot_d`, `altaz.{az_d, alt_d}`, `batt.{soc, v, temp_c, ext, motion_budget_w}`, `motor.{vmot, rail, faults, link}`, `model.{points, rms_as}`, `ivm.{running, done, count}`, `faults` (latest messages).
+State event fields: `seq` (1.1: one step per 200 ms of head time), `t` (UTC), `mode` (`idle`, `slewing`, `tracking`, `moving`, `parking`, `parked`, `fault`), `frame`, `tracking`, `parked`, `axes.{az,alt,roll}.{pos_d, enc_d, rate_dps, i_ma, load, temp_c, flags}`, `radec.{ra_h, dec_d}` (J2000) and `ra_now_h`, `dec_now_d`, `rot_d`, `altaz.{az_d, alt_d}`, `batt.{soc, v, temp_c, ext, motion_budget_w}`, `motor.{vmot, rail, faults, link}`, `model.{points, rms_as}`, `ivm.{running, done, count}`, `faults` (latest messages); 1.1 adds `job` (null when none runs), `pec` and `cal` (the objects of `job.status`, `pec.status`, `cal.status`).
+
+As implemented (the code is the contract): `config.get` also returns `park_az` and `park_alt` (read-only); `track` without `on` turns tracking on; `goto` with both `az_d` and `ra_h` takes the alt/az pair.
+
+### 6.2 API 1.1 additions (Phase 6, decision D76)
+
+Same request and reply format; a 1.0 app keeps working. Designed with the apps (docs/06-apps.md section 4) and implemented in the portable `st_proto/services.cpp`, so the simulator runs exactly this code.
+
+| op | args | Result / effect |
+|---|---|---|
+| `hello` | `app`, `last_seq` | `api` ("1.1"), `fw`, `name`, `platform` (`head`/`simulator`), `boot_id`, `seq`, `faults_seq`, `ops` (every op this head answers), `job` (as `job.status`) |
+| `limits.get` | — | `payload`, `payload_name`, `margin_d`, `alt_min_d`, `alt_max_d` (with the pier cap), `alt_cap_d` (null = none), `roll_min_d`, `roll_max_d`, `roll_lo_now_d`, `roll_hi_now_d` (at the current altitude, tripod included), `tripod_roll_d.{alt0, alt45}`, `wedge_fitted`, `pier_extension`, `slew_dps_max` |
+| `faults.get` / `faults.clear` | `since` (seq) | `entries[{seq, t, level (warning/fault), msg}]`, `seq`, `persistent` (false: a RAM ring of 64; flash not written yet) |
+| `health.get` | — | per axis: `calibrated`, `encoder_ok`, `enc_minus_cmd_rms_as`, `enc_minus_cmd_mean_as`, `temp_c`, `i_ma`, `load`, `flags`; `battery` (`cycles`, `soh_pct`, `cells_v` null until the gauge values are passed on); `motor`; `link_ok`; `faults_total` |
+| `pec.status` | — | `state` (idle/recording/ready/playing), `axis`, `cycle`, `cycles`, `progress`, `period_s` (861.6), `pp_as`, `rms_as`, `noise_as`, `playing`, `saved` |
+| `pec.record` | `axis` (0–2), `cycles` (1–10) | Learns encoder − plan by motor angle over three motor turns while tracking (refused when not tracking); smooths with harmonics 1–12; table = −smoothed error (0.01″, 1 024 points) |
+| `pec.stop` / `pec.play` / `pec.save` / `pec.clear` / `pec.get` | — / `on` / — / `axis` / `axis` | Stop (keeps ≥ half a period); send the table to the RP2354A as `TABLE` 1 (or zeros); store in NVS (`notimpl` in the simulator); clear; 128-point table and raw curve for the chart |
+| `job.start` | `type`: `poses` (`poses[{az_d, alt_d, roll_d?} or {ra_h, dec_d}]`, ≤ 400), `pathlapse` (`keys[{t_s, az_d, alt_d, roll_d?}]`, `frames`, `interval_s`), `astro` (`frames`, `dither_as`, `dither_every`; needs tracking); `shutter`: `port` / `app` / `none`; `exposure_s`, `settle_s`, `interval_s`, `focus_s`, `ack_timeout_s` | `job_id`, `frames`. Every pose is checked against the payload limits before anything moves. With `port` the head fires its shutter socket; with `app` it waits at each frame (`waiting_ack`) for `job.ack`, and pauses after `ack_timeout_s` with tracking kept |
+| `job.pause` / `job.resume` / `job.stop` / `job.status` / `job.ack` | — / — / — / — / `job_id`, `frame` | `job.status`: `state` (none, moving, settling, exposing, waiting_ack, interval, paused, done, stopped, failed), `job_id`, `type`, `shutter`, `frame`, `frames`, `elapsed_s`, `eta_s`, `reason` |
+| `cal.encoder.start` | `axis`, `speed_dps` (0.05–2, default 0.5) | The D67 routine: relaxes slip (2°) and correction, clears the map, moves to the start, sweeps the travel (full turn on azimuth), fits harmonics 1–8 and a 0.5° grid (each grid value the mean over ±0.9°, one period of the reducer's own error, so that error is not mapped) |
+| `cal.encoder.apply` / `cal.encoder.abort` / `cal.status` (= `cal.encoder.status`) | — | Send the map as `TABLE` 2 and restore slip 0.05° / 2″ deadband, store it; abort puts the previous map back; status: `routine`, `state`, `axis`, `progress`, `reason`, `result` (`samples`, `travel_d`, `raw_pp_as`, `raw_rms_as`, `harmonic_rms_as`, `after_rms_as`, `full_turn`) |
+| `cal.balance` | `swing_d` (1–15, default 5) | Rocks altitude ±swing, compares StallGuard load and current each way: `load_up`, `load_down`, `i_up_ma`, `i_down_ma`, `imbalance`, `verdict` |
+| `update.status` | — | `fw`, `api`, `running_slot`, `running_state`, `rollback_possible`, `last_invalid_slot`, `rp_good_copy`, `rp_good_size`, `rp_new_pending`, `esp_build` (simulator: `last_upload`) |
+
+**HTTP (1.1):** `GET /startracker/v1/info` on port 80 and on the Alpaca port 32323 (name, model, fw, api, `http_port`, `ws_port`, `ws_path`, `op_path`, `alpaca_port`, `lx200_port`, `platform`), because Alpaca discovery only reports the Alpaca port. `POST /startracker/v1/op`: one request in the body, one reply back, for native code that cannot keep a WebSocket open (Android with the screen off). CORS: `Access-Control-Allow-Origin: *` and `OPTIONS` preflight on `/startracker/v1/*` and `/api/update`. **mDNS:** `startracker.local`, services `_startracker._tcp` (TXT `api`, `ws`, `name`), `_http._tcp`, `_alpaca._tcp`. **BLE:** the scan response carries the 128-bit service UUID.
 
 Alpaca notes: RA/Dec are JNow (`EquatorialSystem` = topocentric); `AlignmentMode` 0 alt-az or 1 polar (wedge); the roll axis is the Rotator, not `MoveAxis(2)`; synchronous slews return when the slew has finished; `SideOfPier`, `FindHome`, `SyncToAltAz` and aperture/focal length are not implemented (allowed for this mount type).
 
 ## 7. Simulator and test results
 
-**Simulator** (`firmware/sim`, built by the workflow; `StarTrackerSim.exe` on Windows). It runs the real motion core on three simulated axes (step counting, ±20″ reducer periodic error twice per wave-generator turn, 12″ lost motion, encoder noise 5.4″ RMS), the real link framing between the two halves, the real Head model, and the real Alpaca, LX200, WebSocket and discovery servers. Start it, then point N.I.N.A. (Alpaca discovery), Stellarium (Telescope control → Meade LX200 → TCP localhost:4030), ConformU or the web page (http://localhost:8080) at it. Options: `--speed`, `--eq`, `--lat`, `--lon`, `--payload`.
+**Simulator** (`firmware/sim`, built by the workflow; `StarTrackerSim.exe` on Windows). It runs the real motion core on three simulated axes (step counting, ±20″ reducer periodic error twice per wave-generator turn, 12″ lost motion, encoder noise 5.4″ RMS), the real link framing between the two halves, the real Head model, and the real Alpaca, LX200, WebSocket and discovery servers. Start it, then point N.I.N.A. (Alpaca discovery), Stellarium (Telescope control → Meade LX200 → TCP localhost:4030), ConformU or the web page (http://localhost:8080) at it. Options: `--speed`, `--eq`, `--lat`, `--lon`, `--payload`, and since Phase 6 `--raw-encoder` (encoders without their map, for `cal.encoder`) and `--soc` (battery at start). It also answers `/startracker/v1/info`, `/startracker/v1/op` and `/api/update` (checks a bundle exactly as the head does, but does not replace itself).
 
 **Unit and integration tests: 29 of 29 pass** (`firmware/tests/unit_results.txt`).
 
@@ -364,7 +390,7 @@ Alpaca notes: RA/Dec are JNow (`EquatorialSystem` = topocentric); `AlignmentMode
 ## 8. Loading and updating, point and click
 
 ### 8.1 Getting the files
-1. On github.com open the repository, click **Actions**, pick **Firmware** on the left, click **Run workflow** (branch `main` once this pull request is merged), then **Run workflow** again.
+1. On github.com open the repository, click **Actions**, pick **Firmware and apps** on the left (called **Firmware** before Phase 6), click **Run workflow** (branch `main` once this pull request is merged), then **Run workflow** again.
 2. When the run shows a green tick (about 15 minutes), open it and download **esp32s3-images-and-flasher** (and **simulator-windows** if you want the simulator). Unzip.
 
 ### 8.2 First load of a new board (ESP32-S3)
@@ -439,19 +465,22 @@ Nothing here has run on a real board, and none of it is described as working on 
 | PD controller patch load / EEPROM write | Written from TI's TRM (PBMs/PBMc, FLad/FLwd/FLvy). Untested; the images must first be made with TI's tool |
 | Status-register bit positions of the TPS2575x (plug, role) and the BQ25792 register map | From the TRM / data sheet, to be confirmed in Stage C (the bring-up menu prints the raw values) |
 | MT6835 CRC initial value and the BW register position | From the data sheet; bring-up test g shows the CRC rate on the first board |
-| Encoder calibration routine (the step-referenced map of D67) | The motion core applies a map sent as `TABLE` messages. The ESP32 routine that measures it (`cal.*`) is **not written yet** |
-| PEC training (`pec.*`) and motion jobs (`job.*`: panorama, time-lapse, Holy Grail) | Not written. The motion core already plays a PEC table |
+| Encoder calibration routine (the step-referenced map of D67) | Written (Phase 6, `cal.encoder.*`) and tested in the simulator with a raw ±250″ encoder: the map holds 181.9″ RMS of the 181.8″ put in. Not run on hardware |
+| PEC training (`pec.*`) and motion jobs (`job.*`) | Written (Phase 6) and tested in the simulator. `pec.save` and the encoder map store into NVS on the head (written, not compiled here); the simulator keeps them in RAM. Holy Grail exposure ramping stays in the app (D73) |
 | Satellite and comet tracking from TLE or rates | Not written |
-| mDNS (`startracker.local`) | Not included: the ESP-IDF mdns component comes from Espressif's registry, which this workspace cannot reach. Add it in the workflow build. Alpaca discovery works without it |
+| mDNS (`startracker.local`) | Code and `idf_component.yml` added (Phase 6); the component comes from Espressif's registry at the workflow build. Not compiled in this workspace. Alpaca discovery works without it |
 | ConformU, Stellarium, N.I.N.A. | See section 7 |
 | Windows simulator build | In the workflow but never compiled here (`continue-on-error`) |
 | StallGuard threshold, SpreadCycle switching speed | Defaults off; to be tuned from the Stage D slew logs |
 | Magnetometer heading for a first pointing estimate | Read, but not yet turned into an azimuth offset (needs the local declination) |
-| Sleep trigger, port A sourcing limit, port B 15 W switching, fault log in flash | Logic or policy written; the trigger or the controller command is not wired yet |
+| Sleep trigger, port A sourcing limit, port B 15 W switching, fault log in flash | Logic or policy written; the trigger or the controller command is not wired yet. The fault log is a RAM ring of 64 (Phase 6) |
+| Phase 6 ESP32-only code: `/startracker/v1/info` and `/op` routes, CORS, NVS store, `update.status`, mDNS, BLE scan-response UUID | Written; **not compiled here** (no ESP-IDF in the workspace). The workflow builds it |
+| Gauge cycle count, state of health, cell voltages to the apps | Read by the power task, not passed to the Head yet (`health.get` reports null) |
+| A go-to in the simulator's first moments after start can be lost | Seen once in the Windows backend tests; the tests wait one second after starting the simulator |
 
 ## 11. Open questions
 
-None from this phase. Q44–Q51 were approved as D64–D71 and Q42–Q43 (Phase 4) as D62–D63. The firmware items still to write are listed in section 10; the Phase 6 brief picks up `cal.*`, `pec.*`, `job.*` and mDNS.
+None from this phase. Q44–Q51 were approved as D64–D71 and Q42–Q43 (Phase 4) as D62–D63. The firmware items still to write are listed in section 10. Phase 6 added `cal.*`, `pec.*`, `job.*` and mDNS (section 6.2; decisions D72–D77 in the log).
 
 ## 12. Sources
 

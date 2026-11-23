@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include "st_head.h"
+#include "st_services.h"
 
 namespace st {
 
@@ -12,6 +13,7 @@ struct HttpRequest {
     std::string method;                         // GET / PUT
     std::string path;                           // /api/v1/telescope/0/rightascension
     std::map<std::string, std::string> params;  // query (GET) or form (PUT); keys as received
+    std::string body;                           // raw body (POST /startracker/v1/op)
 };
 struct HttpResponse { int status = 200; std::string type = "application/json"; std::string body; };
 
@@ -53,11 +55,17 @@ private:
 // --------------------------------------------------------------- WebSocket JSON API v1 (ws://<head>/ws/v1)
 class WsApi {
 public:
-    explicit WsApi(Head &h) : head_(h) {}
-    std::string handle(const std::string &text);   // one request -> one reply
-    std::string state_event();                     // {"v":1,"ev":"state",...}, sent 5 times a second
+    explicit WsApi(Head &h);
+    std::string handle(const std::string &text);   // one request -> one reply (also POST /startracker/v1/op)
+    std::string state_event();                     // {"v":1,"ev":"state","seq":n,...}, sent 5 times a second
+    // GET /startracker/v1/info: identity and where the apps connect (API 1.1)
+    std::string info_json(int http_port, int alpaca_port, int lx200_port);
+    Services &services() { return svc_; }
 private:
     Head &head_;
+    Services svc_;
+    int64_t boot_us_ = 0;
+    uint64_t event_seq() { int64_t n = (int64_t)(head_.now_s() * 1e6); if (!boot_us_ || n < boot_us_) boot_us_ = n; return (uint64_t)((n - boot_us_) / 200000) + 1; }   // one step per 200 ms of head time
 };
 
 std::string iso8601(int64_t unix_us);

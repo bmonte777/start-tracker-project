@@ -1,0 +1,10 @@
+<!-- Star trails around the pole star, in the adaptive icon's safe zone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+    <group android:scaleX="0.85" android:scaleY="0.85" android:translateX="-1.25" android:translateY="19.4">
+        <path android:strokeColor="#8CFFFFFF" android:strokeWidth="2.6" android:strokeLineCap="round" android:pathData="M44,30A22,22 0,0 1,86 26" />
+        <path android:strokeColor="#61FFFFFF" android:strokeWidth="2.4" android:strokeLineCap="round" android:pathData="M50,30A16,16 0,0 1,80 27" />
+        <path android:strokeColor="#40FFFFFF" android:strokeWidth="2.2" android:strokeLineCap="round" android:pathData="M56,30A10,10 0,0 1,74 28" />
+        <path android:fillColor="#FFFFB43D" android:pathData="M65,18L67.4,26.6L76,29L67.4,31.4L65,40L62.6,31.4L54,29L62.6,26.6Z" />
+    </group>
+</vector>
