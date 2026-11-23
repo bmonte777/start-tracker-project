@@ -12,13 +12,15 @@ R = {  # 0402, 1 % unless noted
     "100R": ("R0402", "0402WGF1000TCE", "C25076"), "330R": ("R0402", "0402WGF3300TCE", "C25104"), "470R": ("R0402", "0402WGF4700TCE", "C25117"),
     "1k": ("R0402", "0402WGF1001TCE", "C11702"), "2k2": ("R0402", "0402WGF2201TCE", "C25879"), "3k3": ("R0402", "0402WGF3301TCE", "C25890"),
     "4k7": ("R0402", "0402WGF4701TCE", "C25900"), "5k1": ("R0402", "0402WGF5101TCE", "C25905"), "5k23": ("R0402", "RC0402FR-075K23L", "C477746"),
-    "6k19": ("R0402", "RC0402FR-076K19L", ""), "8k2": ("R0402", "0402WGF8201TCE", "C25924"), "10k": ("R0402", "0402WGF1002TCE", "C25744"),
+    "6k19": ("R0402", "RC0402FR-076K19L", "C112297"), "8k2": ("R0402", "0402WGF8201TCE", "C25924"), "10k": ("R0402", "0402WGF1002TCE", "C25744"),
     "14k3": ("R0402", "RC0402FR-0714K3L", "C185465"), "15k": ("R0402", "0402WGF1502TCE", "C25756"), "20k": ("R0402", "0402WGF2002TCE", "C25765"),
-    "23k2": ("R0402", "RC0402FR-0723K2L", ""), "26k7": ("R0402", "RC0402FR-0726K7L", ""), "30k1": ("R0402", "RC0402FR-0730K1L", "C138009"),
-    "31k6": ("R0402", "RC0402FR-0731K6L", "C276265"), "33k": ("R0402", "0402WGF3302TCE", "C25779"), "36k5": ("R0402", "RC0402FR-0736K5L", ""),
-    "44k2": ("R0402", "RC0402FR-0744K2L", ""), "49k9": ("R0402", "0402WGF4992TCE", "C25897"), "54k9": ("R0402", "RC0402FR-0754K9L", ""),
-    "84k5": ("R0402", "RC0402FR-0784K5L", ""), "100k": ("R0402", "0402WGF1003TCE", "C25741"), "365k": ("R0402", "RC0402FR-07365KL", ""),
+    "23k2": ("R0402", "RC0402FR-0723K2L", "C163477"), "26k7": ("R0402", "RC0402FR-0726K7L", "C138023"), "30k1": ("R0402", "RC0402FR-0730K1L", "C138009"),
+    "31k6": ("R0402", "RC0402FR-0731K6L", "C276265"), "33k": ("R0402", "0402WGF3302TCE", "C25779"), "36k5": ("R0402", "RC0402FR-0736K5L", "C15011"),
+    "44k2": ("R0402", "RC0402FR-0744K2L", "C354260"), "49k9": ("R0402", "0402WGF4992TCE", "C25897"), "54k9": ("R0402", "RC0402FR-0754K9L", "C137959"),
+    "84k5": ("R0402", "RC0402FR-0784K5L", "C185390"), "100k": ("R0402", "0402WGF1003TCE", "C25741"), "365k": ("R0402", "RC0402FR-07365KL", "C276268"),
     "0R15": ("R1206", "0.15 ohm 1 % 0.5 W current sense", ""), "0R01": ("R1206", "0.010 ohm 1 % 1 W current sense", ""),
+    # confirmed 23 Nov 2026 on lcsc.com (product pages C26086 and C2904209)
+    "10M": ("R0402", "0402WGJ0106TCE", "C26086"), "0R001": ("R1206", "HoJLR1206-1W-1mR-1%", "C2904209"),
 }
 
 C = {
@@ -83,6 +85,11 @@ PART = {  # active parts, connectors, magnetics
     "UFL": ("Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical", "U.FL-R-SMT-1(80)", "C88374"),
     "BATPADS": ("ST:WirePads_1x02_P5.0mm_3.5x5mm", "battery lead pads", ""),
     "NTC": ("Resistor_SMD:R_0603_1608Metric", "10 k B3950 NTC 0603", ""),
+    # battery board ST-602. Confirmed 23 Nov 2026: BQ294700DSGR on lcsc.com (C414622), BAT54WS (JSCJ) on jlcpcb.com (C2991936).
+    # The fuse ITV4030L0815 (2-cell) is not in LCSC's catalogue (only the 4-cell L1415 is): no number, bought from DigiKey / Mouser.
+    "BQ2947": ("Package_SON:WSON-8-1EP_2x2mm_P0.5mm_EP0.9x1.6mm", "BQ294700DSGR", "C414622"),
+    "BAT54": ("Diode_SMD:D_SOD-323", "BAT54WS", "C2991936"),
+    "FUSE3T": ("ST:Fuse_Littelfuse_ITV4030", "ITV4030L0815NR", ""),
 }
 
 

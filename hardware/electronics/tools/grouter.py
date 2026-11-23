@@ -296,7 +296,13 @@ class Router:
         self.widths = list(widths)
         self.cls = {w: i for i, w in enumerate(self.widths)}
         self.VIA = len(self.widths)            # class index of the via map
-        self.half = [w / 2 for w in self.widths] + [VIA_H / 2 + HOLE_CLR - CLR]
+        # the board's rules: clearance, via pad and via hole. The defaults are the six-layer mainboard's (JLCPCB multilayer);
+        # a two-layer board sets plan["rules"] = dict(clearance=0.15, via=0.6, drill=0.3)
+        global CLR, VIA_D, VIA_H
+        rules = pre.get("plan", {}).get("rules", {})
+        CLR, VIA_D, VIA_H = rules.get("clearance", 0.127), rules.get("via", 0.5), rules.get("drill", 0.3)
+        # a via counts as a round shape that keeps copper off its pad and off its hole, whichever reaches further
+        self.half = [w / 2 for w in self.widths] + [max(VIA_H / 2 + HOLE_CLR - CLR, VIA_D / 2)]
         self.nid = {}
         self.names = {}
         self.shapes = []                        # dict(kind, layers, geom, hw, nid, hard, net)
@@ -345,12 +351,12 @@ class Router:
                 self.shapes.append(dict(kind="r", layers=ls, geom=tuple(r), hw=0.0, nid=self.id(p["net"]), hard=True, net=p["net"]))
         for v in pre["vias"]:
             self.shapes.append(dict(kind="s", layers=tuple(range(self.NL)), geom=(v["x"], v["y"], v["x"], v["y"]),
-                                    hw=self.half[self.VIA], nid=self.id(v["net"]), hard=True, net=v["net"], via=True))
+                                    hw=self.half[self.VIA], nid=self.id(v["net"]), hard=True, net=v["net"], via=True, laid=True))
         for t in pre["tracks"]:
             l = t["layer"].replace(".Cu", "")
             if l in self.layers:
                 self.shapes.append(dict(kind="s", layers=(self.layers.index(l),), geom=(t["a"][0], t["a"][1], t["b"][0], t["b"][1]),
-                                        hw=t["w"] / 2, nid=self.id(t["net"]), hard=True, net=t["net"]))
+                                        hw=t["w"] / 2, nid=self.id(t["net"]), hard=True, net=t["net"], laid=True))
         for c in pre.get("cutouts", []):       # circular holes in the board: x, y, radius
             self.shapes.append(dict(kind="s", layers=tuple(range(self.NL)), geom=(c[0], c[1], c[0], c[1]),
                                     hw=c[2] + EDGE - CLR, nid=-1, hard=True, net=""))
@@ -415,8 +421,17 @@ class Router:
                 self._hole(s)
         self.reg = np.zeros((self.NL, self.H, self.W), np.int32)
         from matplotlib.path import Path
-        for rg in self.reg_polys:
+        from scipy import ndimage
+        if not hasattr(self, "_halo"):
+            self._halo = {}
+        for ri, rg in enumerate(self.reg_polys):
             if rg["side"] not in self.layers:
+                # an area on a plane layer (no tracks there): only its centre line counts, as a corridor that no
+                # other net's via may stand in, so that via holes can never cut the area through
+                if rg.get("spine"):
+                    for a, b in zip(rg["spine"], rg["spine"][1:]):
+                        for mp in (self.occ[self.VIA][0], self.hard[self.VIA][0]):
+                            r_seg(mp, a[0], a[1], b[0], b[1], rg["keep"], self.id(rg["net"]), self.ox, self.oy, G)
                 continue
             poly = np.array(rg["poly"])
             i0, i1 = max(0, self.ix(poly[:, 0].min())), min(self.W - 1, self.ix(poly[:, 0].max()))
@@ -425,6 +440,43 @@ class Router:
             m = Path(poly).contains_points(np.column_stack([xs.ravel(), ys.ravel()])).reshape(xs.shape)
             sub = self.reg[self.layers.index(rg["side"]), j0:j1 + 1, i0:i1 + 1]
             sub[m] = -self.id(rg["net"]) if rg.get("hard") else self.id(rg["net"])
+            if rg.get("hard"):
+                # A hard area is filled copper that keeps its clearance from everything else, so a foreign track or
+                # via right beside it would take a bite out of it. A band round the area is therefore closed too:
+                # 0.3 mm for tracks (except in front of the pads of other nets, which must keep their way out) and
+                # 0.45 mm for vias, on this layer and so through the board.
+                if ri not in self._halo:
+                    l = self.layers.index(rg["side"])
+                    pad = int(round(0.5 / G))
+                    a0, a1, b0, b1 = max(0, i0 - pad), min(self.W - 1, i1 + pad), max(0, j0 - pad), min(self.H - 1, j1 + pad)
+                    xs2, ys2 = np.meshgrid(self.ox + np.arange(a0, a1 + 1) * G, self.oy + np.arange(b0, b1 + 1) * G)
+                    full = Path(poly).contains_points(np.column_stack([xs2.ravel(), ys2.ravel()])).reshape(xs2.shape)
+                    disk = lambda r_: (lambda n_: (np.add.outer(np.arange(-n_, n_ + 1) ** 2, np.arange(-n_, n_ + 1) ** 2) <= n_ * n_))(int(round(r_ / G)))
+                    near = np.zeros_like(full)
+                    for p in self.pre["pads"]:
+                        if p["net"] == rg["net"] or p["side"] not in (rg["side"], "*"):
+                            continue
+                        r = p["r"]
+                        if r[2] + 0.6 < xs2[0, 0] or r[0] - 0.6 > xs2[0, -1] or r[3] + 0.6 < ys2[0, 0] or r[1] - 0.6 > ys2[-1, 0]:
+                            continue
+                        near |= (xs2 >= r[0] - 0.55) & (xs2 <= r[2] + 0.55) & (ys2 >= r[1] - 0.55) & (ys2 <= r[3] + 0.55)
+                    ht = ndimage.binary_dilation(full, disk(0.3)) & ~full & ~near
+                    hv = ndimage.binary_dilation(full, disk(rg.get("halo_v", 0.45)))
+                    self._halo[ri] = (l, a0, a1, b0, b1, ht, hv)
+                l, a0, a1, b0, b1, ht, hv = self._halo[ri]
+                sub2 = self.reg[l, b0:b1 + 1, a0:a1 + 1]
+                sub2[ht & (sub2 == 0)] = -self.id(rg["net"])
+                for mp in (self.occ[self.VIA][l], self.hard[self.VIA][l]):
+                    sv = mp[b0:b1 + 1, a0:a1 + 1]
+                    sv[hv & (sv == 0)] = self.id(rg["net"])
+            # a strip along the middle of the area ("spine", half width "keep") that no other net's via may stand in,
+            # so that a row of vias can never cut the area in two: the strip stays whole copper of at least
+            # 2 * (keep - via pad radius - zone clearance)
+            if rg.get("spine"):
+                l = self.layers.index(rg["side"])
+                for a, b in zip(rg["spine"], rg["spine"][1:]):
+                    for mp in (self.occ[self.VIA][l], self.hard[self.VIA][l]):
+                        r_seg(mp, a[0], a[1], b[0], b[1], rg["keep"], self.id(rg["net"]), self.ox, self.oy, G)
         self.t_build = time.time() - t0
 
     def _hole(self, s):
@@ -483,6 +535,11 @@ class Router:
         groups = []
         for p in pads:
             groups.append(dict(cells=self.pad_cells(p), pads=[p], bbox=list(p["r"])))
+        # copper laid by hand in design.py before routing belongs to its net: each piece joins the pads and pieces it touches
+        for s in self.shapes:
+            if s.get("laid") and s["net"] == net:
+                gm = s["geom"]
+                groups.append(dict(cells=self.shape_cells(s), pads=[], bbox=[min(gm[0], gm[2]), min(gm[1], gm[3]), max(gm[0], gm[2]), max(gm[1], gm[3])]))
         # pads that overlap on a shared layer are one piece of copper already
         merged = True
         while merged:
@@ -495,7 +552,7 @@ class Router:
                         break
                 if merged:
                     break
-        return groups
+        return [g_ for g_ in groups if g_["pads"]]
 
     @staticmethod
     def _merge(groups, a, b):
@@ -830,6 +887,25 @@ def net_groups_rect(R, net):
                     break
             if merged:
                 break
+    # copper laid by hand in design.py before routing belongs to its net: each piece joins the pads and pieces it touches
+    laid = [s_ for s_ in R.shapes if s_.get("laid") and s_["net"] == net]
+    if laid:
+        for s_ in laid:
+            gm = s_["geom"]
+            groups.append(dict(cells=R.shape_cells(s_), pads=[], wide=set(),
+                               bbox=[min(gm[0], gm[2]), min(gm[1], gm[3]), max(gm[0], gm[2]), max(gm[1], gm[3])]))
+        merged = True
+        while merged:
+            merged = False
+            for a in range(len(groups)):
+                for b in range(a + 1, len(groups)):
+                    if groups[a]["cells"] & groups[b]["cells"]:
+                        R._merge(groups, a, b)
+                        merged = True
+                        break
+                if merged:
+                    break
+        groups = [g_ for g_ in groups if g_["pads"]]
     return groups
 
 
@@ -863,6 +939,12 @@ def fanout(R, plane_nets, length=0.35, min_pads=12, max_pitch_dim=0.32, w=None, 
             count[p["net"]] = count.get(p["net"], 0) + 1
     n = 0
     stubs = []
+    # a pin from which a track was laid by hand (design.py) already has its way out: no stub and no via in front of it
+    byhand = set()
+    for p in R.pre["pads"]:
+        if p["net"] and any(t["net"] == p["net"] and p["r"][0] - 0.01 <= t["a"][0] <= p["r"][2] + 0.01 and p["r"][1] - 0.01 <= t["a"][1] <= p["r"][3] + 0.01
+                            for t in R.pre["tracks"]):
+            byhand.add((p["ref"], p["num"], p["x"], p["y"]))
     for ref, pads in by_ref.items():
         fine = [p for p in pads if min(p["r"][2] - p["r"][0], p["r"][3] - p["r"][1]) <= max_pitch_dim and p["side"] != "*"]
         if len(fine) < min_pads:
@@ -871,7 +953,7 @@ def fanout(R, plane_nets, length=0.35, min_pads=12, max_pitch_dim=0.32, w=None, 
         cy = sum((p["r"][1] + p["r"][3]) / 2 for p in fine) / len(fine)
         for p in fine:
             net = p["net"]
-            if not net or net in plane_nets or count.get(net, 0) < 2:
+            if not net or net in plane_nets or count.get(net, 0) < 2 or (p["ref"], p["num"], p["x"], p["y"]) in byhand:
                 continue
             dx, dy = p["r"][2] - p["r"][0], p["r"][3] - p["r"][1]
             px, py = (p["r"][0] + p["r"][2]) / 2, (p["r"][1] + p["r"][3]) / 2
@@ -905,7 +987,7 @@ def fanout(R, plane_nets, length=0.35, min_pads=12, max_pitch_dim=0.32, w=None, 
         n += 1
     # plane pins of the same chips: a via straight out on the pin's own axis (never sideways in front of a neighbour),
     # at the first distance where it clears the neighbours' stubs; the next pin's via lands further out by itself
-    nv = 0
+    nv = nin = 0
     R.fanned = set()
     for ref, pads in by_ref.items():
         fine = [p for p in pads if min(p["r"][2] - p["r"][0], p["r"][3] - p["r"][1]) <= max_pitch_dim and p["side"] != "*"]
@@ -917,7 +999,7 @@ def fanout(R, plane_nets, length=0.35, min_pads=12, max_pitch_dim=0.32, w=None, 
         kth = 0
         for p in order:
             net = p["net"]
-            if net not in plane_regions:
+            if net not in plane_regions or (p["ref"], p["num"], p["x"], p["y"]) in byhand:
                 continue
             kth += 1
             reg = plane_regions[net]
@@ -931,6 +1013,33 @@ def fanout(R, plane_nets, length=0.35, min_pads=12, max_pitch_dim=0.32, w=None, 
             l = R.lidx(p["side"])[0]
             k = R.cls[w]
             i0, j0 = R.ix(px), R.iy(py)
+            # a pin of the same net as the chip's centre pad goes inward to that pad (which has its own vias): no via
+            # outside the chip, so the lanes of the neighbouring pins stay free
+            ep = [q for q in pads if q["net"] == net and q is not p and q["side"] == p["side"]
+                  and (q["r"][2] - q["r"][0]) * (q["r"][3] - q["r"][1]) >= 2.0 and q["r"][0] <= cx <= q["r"][2] and q["r"][1] <= cy <= q["r"][3]]
+            if ep:
+                e = ep[0]["r"]
+                dist = (abs(px - (e[2] if ux > 0 else e[0])) if ux else abs(py - (e[3] if uy > 0 else e[1]))) + 0.2
+                # a pin at the end of its row lies beside the centre pad, not over it: it goes straight in and then
+                # at 45 degrees to the pad's corner
+                if ux:
+                    side = min(max(py, e[1] + 0.15), e[3] - 0.15) - py
+                else:
+                    side = min(max(px, e[0] + 0.15), e[2] - 0.15) - px
+                n_side = int(round(abs(side) / G))
+                n_in = int(round(dist / G)) - n_side
+                sg = (side > 0) - (side < 0)
+                cells = [(i0 - ux * t, j0 - uy * t) for t in range(n_in + 1)]
+                ia, ja = cells[-1]
+                cells += [(ia - ux * t + (0 if ux else sg * t), ja - uy * t + (sg * t if ux else 0)) for t in range(1, n_side + 1)]
+                if n_in * G >= half + 0.15 and all(R.occ[k][l][j, i] in (0, nid) for (i, j) in cells):
+                    legs = [(R.layers[l], R.mm(i0, j0), R.mm(ia, ja))]
+                    if n_side:
+                        legs.append((R.layers[l], R.mm(ia, ja), R.mm(*cells[-1])))
+                    R.commit(net, legs, [], w, hard=True, unit=f"{net}|{p['ref']}.{p['num']}|fan", plane=True)
+                    R.fanned.add((p["ref"], p["num"], p["x"], p["y"]))
+                    nin += 1
+                    continue
             for d in [(0.55 if kth % 2 else 1.3) + 0.05 * t for t in range(0, 30)]:
                 i, j = R.ix(px + ux * (half + d)), R.iy(py + uy * (half + d))
                 if not (0 <= i < R.W and 0 <= j < R.H) or not reg[j, i] or R.hole[j, i] or R.novia[j, i]:
@@ -953,6 +1062,7 @@ def fanout(R, plane_nets, length=0.35, min_pads=12, max_pitch_dim=0.32, w=None, 
                 R.fanned.add((p["ref"], p["num"], p["x"], p["y"]))
                 nv += 1
                 break
+    print(f"   fan-out: {nin} chip pins joined inward to their centre pad")
     return n, nv
 
 
@@ -984,6 +1094,11 @@ def escape(R, step, plane_nets, done, npads, push=None, crit=(), log=print):
     lc = np.array([step.get("layer_cost", {}).get(l, R.pre["plan"].get("layer_cost", {}).get(l, 1)) for l in R.layers], np.int64)
     rows = step.get("rows", {0: 0.0, 1: 1.1, 3: 1.9, 2: 9.0})
     total, failed = 0, []
+    boxes = {}
+    for ref, pads in by_ref.items():
+        fine = [p for p in pads if min(p["r"][2] - p["r"][0], p["r"][3] - p["r"][1]) <= step.get("max_pad", 0.32) and p["side"] != "*"]
+        if len(fine) >= step.get("min_pads", 12) and ref not in step.get("skip", ()):
+            boxes[ref] = (min(p["r"][0] for p in fine), max(p["r"][2] for p in fine), min(p["r"][1] for p in fine), max(p["r"][3] for p in fine))
     for ref, pads in by_ref.items():
         fine = [p for p in pads if min(p["r"][2] - p["r"][0], p["r"][3] - p["r"][1]) <= step.get("max_pad", 0.32) and p["side"] != "*"]
         if len(fine) < step.get("min_pads", 12) or ref in step.get("skip", ()):
@@ -991,7 +1106,24 @@ def escape(R, step, plane_nets, done, npads, push=None, crit=(), log=print):
         D = step.get("ring", 3.0)
         bx0, bx1 = min(p["r"][0] for p in fine), max(p["r"][2] for p in fine)
         by0, by1 = min(p["r"][1] for p in fine), max(p["r"][3] for p in fine)
-        x0, x1, y0, y1 = bx0 - D, bx1 + D, by0 - D, by1 + D
+        # where another fine-pitch chip faces this one closer than two rings, the ring ends half-way between the two:
+        # otherwise the first chip's tracks run on into the pins of the second and take their only way out
+        Dw = De = Ds = Dn = D
+        for ref2, (cx0, cx1, cy0, cy1) in boxes.items():
+            if ref2 == ref:
+                continue
+            if cy0 < by1 and cy1 > by0:
+                if cx0 >= bx1:
+                    De = min(De, max(1.0, (cx0 - bx1) / 2 - 0.05))
+                if cx1 <= bx0:
+                    Dw = min(Dw, max(1.0, (bx0 - cx1) / 2 - 0.05))
+            if cx0 < bx1 and cx1 > bx0:
+                if cy0 >= by1:
+                    Dn = min(Dn, max(1.0, (cy0 - by1) / 2 - 0.05))
+                if cy1 <= by0:
+                    Ds = min(Ds, max(1.0, (by0 - cy1) / 2 - 0.05))
+        x0, x1, y0, y1 = bx0 - Dw, bx1 + De, by0 - Ds, by1 + Dn
+        D = min(Dw, De, Ds, Dn)
         i0, i1, j0, j1 = max(2, R.ix(x0)), min(R.W - 3, R.ix(x1)), max(2, R.iy(y0)), min(R.H - 3, R.iy(y1))
         ring = set()
         for l in range(R.NL):
@@ -1096,6 +1228,32 @@ def escape(R, step, plane_nets, done, npads, push=None, crit=(), log=print):
                 failed.append(f"{ref}.{p['num']} {p['net']}")
         total += made
         log(f"   escape {ref}: {made} of {len(todo)} pins")
+    if step.get("pad_vias"):
+        # Boards with filled and capped vias: every pad of a slow signal that can hold a via gets one now, before the
+        # power and critical nets are routed. Those nets may then run right past such a pad on its own face without
+        # closing it in; the vias nothing joins are removed again by the closing pass.
+        chips = {ref for ref, pads in by_ref.items()
+                 if len([p for p in pads if min(p["r"][2] - p["r"][0], p["r"][3] - p["r"][1]) <= step.get("max_pad", 0.32) and p["side"] != "*"])
+                 >= step.get("min_pads", 12)}
+        nv = 0
+        for p in R.pre["pads"]:
+            net = p["net"]
+            if not net or p["side"] == "*" or p["npth"] or net in plane_nets or net in done or net in crit or npads.get(net, 0) < 2:
+                continue
+            if p["ref"] in chips or not p["ref"].startswith(tuple(step.get("pad_via_refs", ("R", "C", "D", "J", "TP", "L", "FB", "Q")))):
+                continue
+            if min(p["r"][2] - p["r"][0], p["r"][3] - p["r"][1]) < step["pad_vias"]:
+                continue
+            i, j = R.ix(p["x"]), R.iy(p["y"])
+            nid = R.id(net)
+            if R.hole[j, i] or any(R.occ[R.VIA][l][j, i] not in (0, nid) for l in range(R.NL)) or \
+                    any(R.reg[l][j, i] < 0 and R.reg[l][j, i] != -nid for l in range(R.NL)):
+                continue
+            idxs = R.commit(net, [], [R.mm(i, j)], w, hard=True, unit=f"{net}|{p['ref']}.{p['num']}|stub")
+            for q in idxs:
+                R.shapes[q]["esc"] = (p["ref"], p["num"])
+            nv += 1
+        log(f"   escape: {nv} vias in the pads of slow-signal parts")
     return total, failed
 
 

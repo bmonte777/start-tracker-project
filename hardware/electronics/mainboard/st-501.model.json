@@ -749,7 +749,8 @@
    "bom": true,
    "owner": "U2",
    "fields": {
-    "MPN": "RC0402FR-0726K7L"
+    "MPN": "RC0402FR-0726K7L",
+    "LCSC": "C138023"
    },
    "sheet": "power",
    "pins": {
@@ -1900,7 +1901,8 @@
    "bom": true,
    "owner": "U9",
    "fields": {
-    "MPN": "RC0402FR-076K19L"
+    "MPN": "RC0402FR-076K19L",
+    "LCSC": "C112297"
    },
    "sheet": "usb_b",
    "pins": {
@@ -1917,7 +1919,8 @@
    "bom": true,
    "owner": "U9",
    "fields": {
-    "MPN": "RC0402FR-0744K2L"
+    "MPN": "RC0402FR-0744K2L",
+    "LCSC": "C354260"
    },
    "sheet": "usb_b",
    "pins": {
@@ -2931,7 +2934,8 @@
    "bom": true,
    "owner": "U11",
    "fields": {
-    "MPN": "RC0402FR-0754K9L"
+    "MPN": "RC0402FR-0754K9L",
+    "LCSC": "C137959"
    },
    "sheet": "rails",
    "pins": {
@@ -3272,7 +3276,8 @@
    "bom": true,
    "owner": "U12",
    "fields": {
-    "MPN": "RC0402FR-0784K5L"
+    "MPN": "RC0402FR-0784K5L",
+    "LCSC": "C185390"
    },
    "sheet": "rails",
    "pins": {
@@ -3323,7 +3328,8 @@
    "bom": true,
    "owner": "U12",
    "fields": {
-    "MPN": "RC0402FR-07365KL"
+    "MPN": "RC0402FR-07365KL",
+    "LCSC": "C276268"
    },
    "sheet": "rails",
    "pins": {
@@ -3358,7 +3364,8 @@
    "bom": true,
    "owner": "U12",
    "fields": {
-    "MPN": "RC0402FR-0723K2L"
+    "MPN": "RC0402FR-0723K2L",
+    "LCSC": "C163477"
    },
    "sheet": "rails",
    "pins": {
@@ -3375,7 +3382,8 @@
    "bom": true,
    "owner": "U12",
    "fields": {
-    "MPN": "RC0402FR-0736K5L"
+    "MPN": "RC0402FR-0736K5L",
+    "LCSC": "C15011"
    },
    "sheet": "rails",
    "pins": {

@@ -48,3 +48,19 @@ Branch `phase-3-mechanical-design`. Rev C, 22 Nov 2026. Read this first if you p
 - 60T pulley bolt pattern to confirm on the Laifual drawing before ordering.
 - Phase 4 takes the board outlines in the doc as fixed inputs, reruns the power budget for the 16 V rail (D33) and reviews D26.
 - Pull request #4: Phase 3 mechanical design (branch phase-3-mechanical-design). All decisions approved; ready to merge.
+
+## Phase 4 changes (branch `phase-4-electronics`, 23 Nov 2026)
+
+- Battery pack for the ST-602 battery board (D58–D60, approved 23 Nov): board 1.6 mm behind the cell holder (`PK_YB` 74.4); two
+  grooved ribs per shell half hold its edges (`_board_rib`, ribs 7.0 wide, groove 1.7, wall 1.45) in ST-605 / ST-612; two 6 × 3 mm
+  wire notches in each cell holder ST-606; light pipe ST-611 7.0 mm long (`build_light_pipe`) with a flange 0.5 mm behind the wall, a
+  0.5 mm TPU lip (printed in two materials or glued on, it is not a separate part) and a 5 × 5 × 0.2 mm boss on the gauge button.
+  Board moved 1.0 mm further from the holder than first drawn, so the ribs have a printable wall. STEP, drawings and `out/checks.json`
+  (home pose: no hits, 92 parts) are current.
+- Fit check of the real boards: `python -m stcad.fit_boards` (needs `hardware/electronics/fab/<board>/<board>.step`), result in
+  `out/fit_boards.json`. 23 Nov 18:15: **no overlaps** for ST-520 ×3 (magnet gap 0.81–0.82 mm), ST-501 and ST-602.
+  ST-501: board 0.09 mm from the bezel bosses, OLED glass 0.70 mm from the bezel, J11 tails (cut to 0.6 mm) 0.39 mm from the azimuth
+  body. J11 and the OLED module are stand-ins in `fit_boards.py` (assumed module board 1.2 mm and glass 1.6 mm thick: measure the
+  bought module). ST-602: 0.05 mm to the shell ribs (the groove), 0.91 mm to the light pipe in the model (switch model about 1.1 mm
+  tall; datasheet 1.5 mm, so 0.3 mm in reality), 1.6 mm to the cell holder.
+

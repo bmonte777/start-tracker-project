@@ -122,6 +122,22 @@ PK_ZM = PZ0 + 24.5                     # split plane (lower shell top)
 PK_CX, PK_CZ = (PX0 + PX1) / 2, PZ0 + P.PACK['H'] / 2
 PK_W = P.PACK["wall"]
 PK_BOSS = [(PX0 + 4.5, P.PACK_Y0 + 6), (PX1 - 4.5, P.PACK_Y0 + 6), (PX0 + 4.5, PK_Y1 - 6), (PX1 - 4.5, PK_Y1 - 6)]
+# Battery board ST-602 (decision D58, was Q38): it stands 1.6 mm behind the +Y cell holder, its bottom and top edges in
+# the grooves of one rib on the floor of the lower shell and one under the roof of the upper shell. No screws.
+PK_YB = P.PACK_Y0 + PK_W + 12.0 + 3.0 + P.CELL_L + 3.0 + 1.6      # the board's inner face
+RIB_W, RIB_GROOVE, RIB_IN, RIB_WALL = 7.0, 1.7, 2.0, 1.45          # rib width, groove width, depth the board sits in, wall each side
+
+
+def _board_rib(z_edge, up):
+    """Grooved rib for one edge of the battery board. z_edge: the board edge; up: the rib stands on the floor (True)
+    or hangs from the roof (False)."""
+    y0 = PK_YB + P.BATT_BOARD["T"] / 2 - RIB_GROOVE / 2
+    z_wall = PZ0 + PK_W if up else PZ0 + P.PACK["H"] - PK_W
+    z_tip = z_edge + RIB_IN if up else z_edge - RIB_IN
+    rib = box(PK_CX - RIB_W / 2, PK_CX + RIB_W / 2, y0 - RIB_WALL, y0 + RIB_GROOVE + RIB_WALL, min(z_wall, z_tip), max(z_wall, z_tip))
+    z_g = z_edge - 0.2 if up else z_edge + 0.2                       # 0.2 mm under / over the board edge
+    rib -= box(PK_CX - RIB_W / 2 - 1, PK_CX + RIB_W / 2 + 1, y0, y0 + RIB_GROOVE, min(z_g, z_tip + (1 if up else -1)), max(z_g, z_tip + (1 if up else -1)))
+    return rib
 
 
 def _shell(z0, z1, open_top):
@@ -144,6 +160,8 @@ def build_pack_lower():
     s -= box(-10 + (PX0 + PX1) / 2, 10 + (PX0 + PX1) / 2, P.PACK_Y0 - 1, P.PACK_Y0 + PK_W + 1, PK_ZM - 8, PK_ZM + 1)
     feat("opening", "20 x 8", ((PX0 + PX1) / 2, P.PACK_Y0, PK_ZM - 4), "Y", None, "blade connector, lower half")
     s -= box(PX0 + 6, PX1 - 6, P.PACK_Y0 + 20, PK_Y1 - 20, PZ0 - 0.01, PZ0 + 0.6)
+    s += _board_rib(PK_CZ - P.BATT_BOARD["H"] / 2, True)
+    feat("slot", "1.7 x 7", (PK_CX, PK_YB + 0.8, PK_CZ - P.BATT_BOARD["H"] / 2), "Z", RIB_IN, "grooved rib: bottom edge of the battery board ST-602")
     return s
 
 
@@ -156,6 +174,8 @@ def build_pack_upper():
     s -= box(PX0 + 10, PX1 - 10, PK_Y1 - PK_W - 1, PK_Y1 + 1, PZ0 + 34, PZ0 + 42)
     feat("opening", "30 x 8", ((PX0 + PX1) / 2, PK_Y1, PZ0 + 38), "-Y", None, "light pipe / button ST-611")
     s -= Pos((PX0 + PX1) / 2, 44, PZ0 + P.PACK["H"] - 0.4) * extrude(RectangleRounded(30, 40, 3), 0.5)
+    s += _board_rib(PK_CZ + P.BATT_BOARD["H"] / 2, False)
+    feat("slot", "1.7 x 7", (PK_CX, PK_YB + 0.8, PK_CZ + P.BATT_BOARD["H"] / 2), "-Z", RIB_IN, "grooved rib: top edge of the battery board ST-602")
     return s
 
 
@@ -166,6 +186,11 @@ def build_cell_holder():
         s -= cyl(10.95, 2.0, dx, 1.0, dz, "Y")
         s -= cyl(8.0, 5, dx, -1, dz, "Y")
     feat("pocket", "21.9", (11.1, 1, 11.1), "Y", 2.0, "4x cell pockets; 16 mm windows for the nickel strip", 4)
+    # wire passages (decision D60, was Q40): PACK+ on one side; PACK-, the three bus wires, the middle tap and the
+    # thermistor leads on the other
+    for sx in (-1, 1):
+        s -= box(min(sx * 19.5, sx * 22.6), max(sx * 19.5, sx * 22.6), -1, 4, -3, 3)
+    feat("notch", "6 x 3", (22.5, 1.5, 0), "X", 3.0, "2x wire passage at mid-height, left and right edge", 2)
     return s
 
 
@@ -177,11 +202,22 @@ def build_pack_gasket():
     return s
 
 
+LP_LEN = PK_Y1 - (PK_YB + P.BATT_BOARD["T"]) - 2.0      # the pipe ends 2.0 mm before the board face (decision D59, was Q39)
+
+
 def build_light_pipe():
-    """Local: outer face at Y=0, pipe runs -Y into the pack (10 mm) to the LEDs on the battery board."""
-    s = box(-14.6, 14.6, -10, 0, -3.6, 3.6)
-    s += box(-3, 3, 0, 0.8, -3, 3)
-    feat("pin", "29.2 x 7.2", (0, 0, 0), "-Y", 10, "clear PETG, press into the shell window; centre nub = gauge button")
+    """Local: outer face at Y=0, the pipe runs -Y into the pack and ends 2.0 mm before the battery board. It slides
+    0.3 mm in its window: the flat boss on its inner end then presses the gauge button (1.5 mm tall), whose spring
+    pushes it back. A flange behind the wall keeps it in; the TPU lip on the flange closes the window."""
+    s = box(-14.6, 14.6, -LP_LEN, 0, -3.6, 3.6)
+    s += box(-3, 3, 0, 0.8, -3, 3)                                    # finger nub outside
+    s += box(-16.6, 16.6, -PK_W - 1.5, -PK_W - 0.5, -5.6, 5.6)         # flange, 0.5 mm behind the wall's inner face
+    lip = box(-16.6, 16.6, -PK_W - 0.5, -PK_W, -5.6, 5.6) - box(-15.4, 15.4, -PK_W - 1, 0, -4.4, 4.4)
+    s += lip                                                          # TPU lip, 0.5 mm, printed onto the flange
+    s += box(-2.5, 2.5, -LP_LEN - 0.2, -LP_LEN, -2.5, 2.5)             # boss over the button: 0.3 mm from its top
+    feat("pin", "29.2 x 7.2", (0, 0, 0), "-Y", LP_LEN, "clear PETG; slides 0.3 mm in the shell window to press the gauge button")
+    feat("flange", "33.2 x 11.2 x 1.0", (0, -PK_W - 1.0, 0), "-Y", 1.0, "behind the wall; TPU 95A lip 1.2 wide x 0.5 printed on its outer face")
+    feat("boss", "5 x 5 x 0.2", (0, -LP_LEN, 0), "-Y", 0.2, "flat boss over the gauge button SW1")
     return s
 
 

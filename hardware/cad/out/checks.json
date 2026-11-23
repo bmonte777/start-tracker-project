@@ -1042,7 +1042,7 @@
   }
  },
  "mass": {
-  "total_kg": 6.83,
+  "total_kg": 6.829,
   "cog_mm": [
    22.1,
    -7.0,
@@ -1335,12 +1335,12 @@
    },
    "ST-605": {
     "name": "Pack shell lower",
-    "kg": 0.03,
+    "kg": 0.0302,
     "qty": 1
    },
    "ST-606": {
     "name": "Cell holder -Y",
-    "kg": 0.0048,
+    "kg": 0.0046,
     "qty": 2
    },
    "ST-608": {
@@ -1360,12 +1360,12 @@
    },
    "ST-611": {
     "name": "Pack light pipe",
-    "kg": 0.0027,
+    "kg": 0.0022,
     "qty": 1
    },
    "ST-612": {
     "name": "Pack shell upper",
-    "kg": 0.0315,
+    "kg": 0.0316,
     "qty": 1
    }
   },
@@ -1397,6 +1397,6 @@
    ]
   }
  },
- "seconds": 389.9,
+ "seconds": 353.9,
  "x_roll": 135.5
 }

@@ -15,7 +15,7 @@ from . import params as P
 from . import bought as B
 from .core import REGISTRY, part_mass
 from . import parts_cart, parts_struct, parts_misc  # noqa: F401  (registers parts)
-from .parts_misc import (XB0, BTN_Y, BTN_Z, BOARD_X, BOARD_ZC, PK_CX, PK_CZ, PK_Y1, PK_ZM, PX0, PX1, YC)
+from .parts_misc import (XB0, BTN_Y, BTN_Z, BOARD_X, BOARD_ZC, PK_CX, PK_CZ, PK_Y1, PK_YB, PK_ZM, PX0, PX1, YC)
 
 
 @dataclass
@@ -160,7 +160,7 @@ def items():
     for k, (dx, dz) in enumerate([(-11.1, -11.1), (11.1, -11.1), (-11.1, 11.1), (11.1, 11.1)]):
         I(f"Cell P50B {k + 1}", "ST-601", "az", Pos(PK_CX + dx, ycell, PK_CZ + dz), B.cell, mass=P.CELL_M,
           color=(0.15, 0.35, 0.70), explode=(0, 100, 0))
-    I("Battery board", "ST-602", "az", Pos(PK_CX, ycell + P.CELL_L + 3.6, PK_CZ), B.battery_board, mass=0.015,
+    I("Battery board", "ST-602", "az", Pos(PK_CX, PK_YB, PK_CZ), B.battery_board, mass=0.015,
       color=(0.10, 0.45, 0.20), explode=(0, 100, 0))
     # tower details
     for k, a in enumerate((273.6, 43.4)):

@@ -12,9 +12,9 @@ on:
       boards:
         description: "Board folders (space separated)"
         required: false
-        default: "cartridge-board mainboard"
+        default: "cartridge-board mainboard battery-board"
       regenerate:
-        description: "Rebuild schematic and layout from design.py first, laying the committed routes on the mainboard (no autorouting here): yes / no"
+        description: "Rebuild schematic and layout from design.py first, laying the committed routes on the mainboard and the battery board (no autorouting here): yes / no"
         required: false
         default: "no"
 
@@ -29,21 +29,22 @@ jobs:
       - name: Tools (SVG converter, PDF tools) and KiCad's library tables
         run: |
           apt-get update
-          apt-get install -y --no-install-recommends librsvg2-bin poppler-utils python3-pil
+          apt-get install -y --no-install-recommends librsvg2-bin poppler-utils python3-pil python3-numpy python3-scipy python3-matplotlib
           # without the global library tables ERC reports every symbol as "library not configured"
           mkdir -p "$HOME/.config/kicad/9.0"
           cp /usr/share/kicad/template/*-lib-table "$HOME/.config/kicad/9.0/"
       - name: Calculations
         run: python3 docs/calc/phase4_calcs.py > /dev/null
       # The mainboard is routed off-line by tools/grouter.py (needs numpy, scipy, matplotlib and numba, 15-20 minutes) and
-      # the result is committed as mainboard/st-501.routes.json. Here layout.py only lays those routes on the board;
-      # the cartridge board has no route plan and its committed layout is checked as it is.
+      # the result is committed as mainboard/st-501.routes.json (battery-board/st-602.routes.json likewise). Here layout.py
+      # only lays those routes on the boards; the cartridge board has no route plan and its committed layout is checked as it is.
       - name: Rebuild from design.py (only when asked)
         if: ${{ inputs.regenerate == 'yes' }}
         working-directory: hardware/electronics
         run: |
           python3 tools/stfp.py
           python3 tools/layout.py mainboard | tail -5
+          python3 tools/layout.py battery-board | tail -5
       - name: ERC and DRC
         id: check
         continue-on-error: true
@@ -56,6 +57,18 @@ jobs:
           for b in ${{ inputs.boards }}; do
             if python3 tools/check.py $b > /dev/null; then python3 tools/fab.py $b; else echo "$b: checks not clean, no fabrication files"; fi
           done
+      # A connection can pass the design-rule check and still be a hair-thin track. This measures the narrowest place on
+      # the widest way between the current-carrying pins of every power net (POWER_PATHS in each board's design.py).
+      - name: Copper width of the power paths
+        id: width
+        continue-on-error: true
+        working-directory: hardware/electronics
+        run: |
+          bad=0
+          for b in ${{ inputs.boards }}; do
+            if grep -q POWER_PATHS $b/design.py; then python3 tools/dumpcu.py $b && python3 tools/pathwidth.py $b || bad=1; fi
+          done
+          exit $bad
       - name: Harness drawings, tables, board viewer
         working-directory: hardware/electronics
         run: |
@@ -74,6 +87,7 @@ jobs:
             hardware/electronics/fab/
             hardware/electronics/*/out/*-erc.json
             hardware/electronics/*/out/*-drc.json
+            hardware/electronics/*/out/*-pathwidth.json
             hardware/electronics/harness/
             hardware/electronics/doc/
             hardware/electronics/*/doc/*-open-connections.*
@@ -81,7 +95,7 @@ jobs:
             docs/calc/phase4_calcs.md
             docs/calc/phase4_results.json
       - name: Fail the run if a check found errors
-        if: steps.check.outcome == 'failure'
+        if: steps.check.outcome == 'failure' || steps.width.outcome == 'failure'
         run: |
-          echo "ERC or DRC reported errors: see the ERC and DRC step and the *-drc.json files in the download"
+          echo "ERC, DRC or the power-path width check reported errors: see those steps and the *-drc.json and *-pathwidth.json files in the download"
           exit 1

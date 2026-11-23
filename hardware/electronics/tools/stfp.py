@@ -100,6 +100,33 @@ def _rpm0026a():
 
 
 FPS.append(_rpm0026a())
+# Littelfuse ITV4030 three-terminal fuse: recommended pads from the product specification (drawing rev. 08/22/23, page 4):
+# pad 2 (heater) 1.20 x 1.60, pads 1 and 3 (fuse ends) 2.40 x 1.55, 0.90 apart, their edge 0.35 from pad 2; origin at the body centre.
+FPS.append(footprint("Fuse_Littelfuse_ITV4030", "Littelfuse ITV4030 three-terminal battery fuse, body 4.0 x 3.0 x 0.9 mm",
+                     [(2, -1.97, 0, 1.20, 1.60, "smd"), (3, 0.18, -1.225, 2.40, 1.55, "smd"), (1, 0.18, 1.225, 2.40, 1.55, "smd")],
+                     (-2.85, -2.25, 2.25, 2.25), fab=(-2.0, -1.5, 2.0, 1.5), silk=((-2.2, -1.7, -2.2, -1.0), (-2.2, 1.0, -2.2, 1.7))))
+for _nm, _w, _h, _d in (("TabPad_5.0x5.5mm", 5.0, 5.5, "Solder pad for a nickel-strip tab (hand-soldered, no paste)"),
+                        ("WirePad_3.2x4.0mm", 3.2, 4.0, "Solder pad for an 18 AWG lead (hand-soldered, no paste)"),
+                        ("WirePad_1.6x2.6mm", 1.6, 2.6, "Solder pad for a 26-28 AWG lead (hand-soldered, no paste)")):
+    FPS.append(footprint(_nm, _d, [(1, 0, 0, _w, _h, "smd_nopaste")], (-_w / 2 - 0.3, -_h / 2 - 0.3, _w / 2 + 0.3, _h / 2 + 0.3),
+                         fab=(-_w / 2, -_h / 2, _w / 2, _h / 2)))
+# Net tie for a Kelvin tap: two small pads 0.2 mm apart joined by copper, so that no track fits between them. Pad 1 lies on
+# the pad it taps, pad 2 starts the sense line.
+_nm, _txt = footprint("NetTie_2_Kelvin_0.3mm", "Net tie, two pads 0.3 x 0.4 mm, 0.5 mm between centres (Kelvin sense tap)",
+                      [(1, -0.25, 0, 0.3, 0.4, "smd_nopaste"), (2, 0.25, 0, 0.3, 0.4, "smd_nopaste")], (-0.6, -0.4, 0.6, 0.4))
+_txt = _txt.replace("(attr smd)", '(attr exclude_from_pos_files exclude_from_bom)\n\t(net_tie_pad_groups "1, 2")\n\t(fp_poly (pts (xy -0.25 -0.15) '
+                    '(xy 0.25 -0.15) (xy 0.25 0.15) (xy -0.25 0.15)) (stroke (width 0) (type solid)) (fill yes) (layer "F.Cu"))', 1)
+assert "net_tie_pad_groups" in _txt
+_a = _b = _txt.index("(fp_rect")                                   # no courtyard: the tie sits on the pad it taps
+_depth = 0
+while True:
+    _depth += {"(": 1, ")": -1}.get(_txt[_b], 0)
+    _b += 1
+    if _depth == 0:
+        break
+_txt = _txt[:_a] + _txt[_b:].lstrip()
+_txt = _txt.replace("exclude_from_bom)", "exclude_from_bom allow_missing_courtyard)", 1)
+FPS.append((_nm, _txt))
 _esp = derived("RF_Module", "ESP32-S3-WROOM-1", "ESP32-S3-WROOM-1_BodyCourtyard", (-9.3, -13.05, 9.3, 13.05),
                "courtyard reduced to the module body; the antenna keep-out zone is unchanged")
 if _esp:

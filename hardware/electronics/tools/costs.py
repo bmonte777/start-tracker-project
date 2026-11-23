@@ -2,6 +2,8 @@
 
 Run:  python3 tools/costs.py        -> fab/costs.json and a printed summary
 Prices are USD without VAT. "quoted" = read from LCSC / JLCPCB on 22 Nov 2026; everything else is an estimate by part class.
+Six-layer bare boards: JLCPCB lists 5 pieces up to 100 x 100 mm from USD 35.1 with ENIG and filled, capped vias included
+(jlcpcb.com, multilayer page, read 23 Nov 2026); the 1 oz inner copper (decision D61) and the larger quantities are estimates.
 Parts that have their own line in the master parts list (the large ICs, sockets, switches) are left out of the board
 totals here so that nothing is counted twice.
 """
@@ -12,7 +14,10 @@ import re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 FAB = os.path.join(HERE, "..", "fab")
-BOARDS = {"st-501": dict(per_head=1, layers=4, area_cm2=60.0, sides=2), "st-520": dict(per_head=3, layers=2, area_cm2=7.1, sides=2)}
+BOARDS = {"st-501": dict(per_head=1, layers=6, area_cm2=60.0, sides=2), "st-520": dict(per_head=3, layers=2, area_cm2=7.1, sides=2),
+          # battery board: parts on one face; the gauge, the second protector and the fuse have their own parts-list lines
+          "st-602": dict(per_head=1, layers=2, area_cm2=12.8, sides=1,
+                         own={"BQ40Z50RSMR-R2": "ST-603", "BQ294700DSGR": "ST-604", "ITV4030L0815NR": "ST-604"})}
 
 # manufacturer part -> master parts list line that already carries its price
 OWN_LINE = {"ESP32-S3-WROOM-1-N16R8": "ST-502", "RP2354A": "ST-503", "TMC2209-LA-T": "ST-504", "BQ25792RQMR": "ST-505",
@@ -29,7 +34,9 @@ QUOTED = {"SM04B-GHS-TB(LF)(SN)": (0.47, 0.36, 0.29, "quoted"), "TPS563201DDCR":
           "SMBJ12A-TR": (0.14, 0.10, 0.07, "quoted"), "BZT52C12S": (0.02, 0.012, 0.01, "est"), "MWSC0630H4R7MT": (0.25, 0.18, 0.14, "est"),
           "MWSC0630H2R2MT": (0.25, 0.18, 0.14, "est"), "SWPA5040S6R8MT": (0.12, 0.08, 0.06, "est"), "X322512MSB4SI": (0.08, 0.06, 0.05, "est"),
           "BLM18PG121SN1D": (0.012, 0.008, 0.006, "est"), "BM15B-GHS-TBT(LF)(SN)": (0.75, 0.55, 0.45, "est"),
-          "B4B-PH-SM4-TB(LF)(SN)": (0.20, 0.15, 0.12, "est"), "U.FL-R-SMT-1(80)": (0.15, 0.10, 0.08, "est")}
+          "B4B-PH-SM4-TB(LF)(SN)": (0.20, 0.15, 0.12, "est"), "U.FL-R-SMT-1(80)": (0.15, 0.10, 0.08, "est"),
+          "HoJLR1206-1W-1mR-1%": (0.10, 0.07, 0.05, "est"), "BAT54WS": (0.02, 0.012, 0.01, "est"),
+          "TS-1187A-B-A-B": (0.06, 0.045, 0.035, "est"), "19-217/GHC-YR1S2/3T": (0.012, 0.008, 0.006, "est")}
 CLASS = [(r"^R_0402|^R0402", (0.002, 0.0012, 0.0009)), (r"^R_1206|^R1206", (0.05, 0.03, 0.02)), (r"^C_0402|^C0402", (0.003, 0.002, 0.0015)),
          (r"^C_0603|^C0603", (0.012, 0.008, 0.006)), (r"^C_0805|^C0805", (0.03, 0.02, 0.015)), (r"^C_1206|^C1206", (0.05, 0.035, 0.025)),
          (r"^CP_Elec", (0.35, 0.25, 0.20)), (r"^L_0805|^L_0402", (0.06, 0.04, 0.03)), (r"^D_SOD", (0.03, 0.02, 0.015)),
@@ -46,6 +53,8 @@ def pcb_price(layers, area_cm2, n):
     """Bare board price each, USD: JLCPCB prototype tier up to 5-10 pieces, area-priced above that."""
     if layers == 2:                       # small round board, panel-priced
         return 0.8 if n <= 5 else (0.4 if n <= 30 else (0.15 if n <= 500 else 0.08))
+    if layers >= 6:                       # 100 x 60 mm, 6 layers, ENIG, filled and capped vias, 1 oz inner copper
+        return 9.0 if n <= 5 else (4.0 if n <= 200 else 2.8)
     return 6.0 if n <= 5 else (2.2 if n <= 200 else 1.5)      # 100 x 60 mm, 4 layers, ENIG
 
 
@@ -63,13 +72,15 @@ def board(name, spec):
     rows = list(csv.DictReader(open(bom_path(name))))
     parts = [0.0, 0.0, 0.0]
     own, types, joints, lines = {}, 0, 0, []
+    own_map = spec.get("own", OWN_LINE)
     for r in rows:
         q = len(r["Designator"].split(","))
         mpn = r.get("MPN", "")
-        if mpn in OWN_LINE:
-            own[OWN_LINE[mpn]] = own.get(OWN_LINE[mpn], 0) + q
-            types += 1
-            joints += q * 16
+        if mpn in own_map:
+            own[own_map[mpn]] = own.get(own_map[mpn], 0) + q
+            if r["LCSC Part #"]:              # a part without an LCSC number is not fitted by JLCPCB (the pack's fuse)
+                types += 1
+                joints += q * 16
             continue
         pr = QUOTED.get(mpn)
         if pr is None:

@@ -89,47 +89,84 @@
  {
   "board": "ST-501",
   "instance": "Mainboard",
-  "parts_in_step": 365,
+  "parts_in_step": 367,
   "bbox": [
-   -155.5,
+   -152.3,
    -35.0,
    56.0,
    -137.6,
    65.0,
    116.0
   ],
-  "overlaps": [
-   {
-    "part": "ST-310 Azimuth body",
-    "distance": 0.0,
-    "overlap_mm3": 0.21
-   },
-   {
-    "part": "ST-315 Front bezel",
-    "distance": 0.0,
-    "overlap_mm3": 4.04
-   }
-  ],
+  "overlaps": [],
   "nearest": [
    {
-    "part": "ST-326 OLED window 38 x 22 x 1 PC",
-    "distance": 0.58
+    "part": "ST-315 Front bezel",
+    "distance": 0.09
    },
    {
-    "part": "ST-316 Button cap 4",
-    "distance": 3.5
+    "part": "ST-310 Azimuth body",
+    "distance": 0.39
    },
    {
     "part": "ST-316 Button cap 1",
-    "distance": 3.66
+    "distance": 1.88
+   },
+   {
+    "part": "ST-326 OLED window 38 x 22 x 1 PC",
+    "distance": 2.6
    },
    {
     "part": "ST-316 Button cap 2",
-    "distance": 3.66
+    "distance": 2.98
    },
    {
     "part": "ST-316 Button cap 3",
+    "distance": 3.5
+   },
+   {
+    "part": "ST-327 Gasket bezel",
+    "distance": 3.59
+   },
+   {
+    "part": "ST-316 Button cap 4",
     "distance": 3.66
+   }
+  ]
+ },
+ {
+  "board": "ST-602",
+  "instance": "Battery board",
+  "parts_in_step": 46,
+  "bbox": [
+   -122.0,
+   74.4,
+   58.0,
+   -90.0,
+   77.5,
+   98.0
+  ],
+  "overlaps": [],
+  "nearest": [
+   {
+    "part": "ST-605 Pack shell lower",
+    "distance": 0.05
+   },
+   {
+    "part": "ST-612 Pack shell upper",
+    "distance": 0.05
+   },
+   {
+    "part": "ST-611 Pack light pipe",
+    "distance": 0.91
+   },
+   {
+    "part": "ST-606 Cell holder +Y",
+    "distance": 1.6
+   },
+   {
+    "part": "ST-610 Pack gasket",
+    "distance": 1.96
    }
   ]
  }

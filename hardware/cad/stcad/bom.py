@@ -191,22 +191,24 @@ def build_parts():
         # Parts with their own line below (large ICs, sockets, switches, LEDs) are not inside the board lines.
         if pid == "ST-501":
             c = P4["st-501"]
-            keep(pid, name="Mainboard: 4-layer PCB, assembly, passives, small semiconductors, inductors, connectors",
+            keep(pid, name="Mainboard: 6-layer PCB, assembly, passives, small semiconductors, inductors, connectors",
+                 mp="FR-4 6-layer", mq="FR-4 6-layer",
                  pr=U(*[c["per_board"][k] for k in ("1", "100", "1000")]), src="est",
-                 note=f"Phase 4 BOM: {c['bom_lines']} lines; JLCPCB fees estimated; at 1 head the price is the minimum order "
-                      "(5 bare boards, 2 assembled). ICs listed separately below")
+                 note=f"Phase 4 BOM: {c['bom_lines']} lines; six layers with filled and capped vias (D51) and 1 oz inner copper (D61); "
+                      "JLCPCB fees estimated; at 1 head the price is the minimum order (5 bare boards, 2 assembled). "
+                      "ICs listed separately below")
         elif pid == "ST-512":
-            keep(pid, name="GNSS active patch antenna 25 x 25 mm with U.FL lead", note="under the top cover's 1.5 mm window; Q32 pending")
+            keep(pid, name="GNSS active patch antenna 25 x 25 mm with U.FL lead", note="under the top cover's 1.5 mm window; D54")
         elif pid == "ST-509":
             keep(pid, name="Boost converter TPS61288 (motor rail 16 V / 10 V, D33, D43)", note="LCSC C5219223")
         elif pid == "ST-513":
-            keep(pid, name="Real-time clock RV-3028-C7 + MS621FE backup cell", note="Q28 pending (was a 0.1 F capacitor)")
+            keep(pid, name="Real-time clock RV-3028-C7 + MS621FE backup cell", note="D52 (was a 0.1 F capacitor)")
         elif pid == "ST-517":
             keep(pid, name="USB-C receptacle, upright, GT-USB-7051A", note="prototype part, LCSC C2843970, not sealed; Q30 pending")
         elif pid == "ST-518":
-            keep(pid, name="Tact switch TS-1187A", note="LCSC C318884; Q31 pending")
+            keep(pid, name="Tact switch TS-1187A", note="LCSC C318884; D53")
         elif pid == "ST-519":
-            keep(pid, name="Status LEDs: red, green, blue, 0603 (set of 3)", note="Q34 pending")
+            keep(pid, name="Status LEDs: red, green, blue, 0603 (set of 3)", note="D56")
         elif pid == "ST-520":
             c = P4["st-520"]
             keep(pid, name="Cartridge board: 2-layer PCB, assembly, passives, connectors",
@@ -218,9 +220,18 @@ def build_parts():
             keep(pid)
     # ---- 6xx
     keep("ST-601")
-    keep("ST-602", note="outline 32 x 40 x 1.6 at the +Y end of the pack, LEDs face the light pipe")
-    keep("ST-603")
-    keep("ST-604")
+    c = P4["st-602"]
+    keep("ST-602", name="Battery board: 2-layer PCB, assembly, passives, FETs, sense resistor, LEDs, button",
+         pr=U(*[c["per_board"][k] for k in ("1", "100", "1000")]), src="est",
+         note=f"Phase 4 BOM: {c['bom_lines']} lines; 32 x 40 x 1.6 at the +Y end of the pack, held in two grooved ribs (D58), "
+              "LEDs face the light pipe; at 1 head the price is the minimum order (5 bare boards, 2 assembled). "
+              "Gauge, second protector and fuse listed separately below")
+    keep("ST-603", note="BQ40Z50RSMR-R2, LCSC C2845123; alt: BQ28Z610 quoted USD 1.55-2.32")
+    # second protector: estimate; fuse: DigiKey list price read 23 Nov 2026 (SGD 7.32 / 4.29 / 3.47 at 1 / 100 / 1,000)
+    keep("ST-604", name="Second-level protector BQ294700 + three-terminal fuse ITV4030L0815NR (2-cell, 15 A)", sup="TI / Littelfuse",
+         pr=U(0.75 + 5.40, 0.55 + 3.17, 0.45 + 2.57), src="est + quoted (fuse)",
+         note="BQ294700DSGR, LCSC C414622. The fuse has no LCSC number: bought from DigiKey or Mouser and fitted by hand "
+              "(or consigned to JLCPCB)")
     printed("ST-605", name="Pack shell, lower half")
     printed("ST-606", name="Cell holder (end)", qty=2)
     keep("ST-607")

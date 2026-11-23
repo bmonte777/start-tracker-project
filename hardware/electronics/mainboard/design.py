@@ -516,20 +516,43 @@ FIXED = {
     "U15": (10.5, 25.3, 270, "B"), "U17": (10.5, 15.9, 270, "B"), "U19": (10.5, 6.5, 270, "B"),
     # processors
     "U13": (-6.0, -17.2, 180, "B"), "U14": (17.0, -6.5, 0, "B"),
-    # battery input and motor rail
-    "J1": (38.3, -25.5, 0, "B"), "Q1": (29.8, -25.5, 0, "B"), "Q6": (30.0, -19.0, 0, "B"), "U12": (33.5, -13.0, 0, "B"),
-    "L5": (41.5, -17.0, 0, "B"), "C77": (45.0, -6.5, 90, "B"), "C78": (45.0, 3.3, 90, "B"),
-    # port A and charger
-    "U3": (-25.0, -6.0, 0, "B"), "U2": (-27.0, 6.5, 0, "B"), "L1": (-19.5, 7.0, 0, "B"), "C19": (-39.5, 20.3, 0, "B"), "U4": (-33.5, -1.0, 0, "B"),
-    # port B
-    # port B, laid out as TI's reference: the two external FETs on the gate-drive side of the chip with their drains
-    # (Q4) and sources (Q5) toward the input capacitors, the inductor above the chip between the SW1 and SW2 pins
-    "U6": (-41.0, -5.5, 0, "B"), "U7": (-30.0, 17.5, 0, "B"), "L2": (-30.5, 25.2, 0, "B"), "U8": (-45.0, 2.0, 90, "B"),
-    "Q4": (-23.3, 25.0, 180, "B"), "Q5": (-23.3, 20.8, 0, "B"), "Q2": (-46.4, -4.2, 0, "B"), "Q3": (-46.4, -8.5, 0, "B"),
+    # battery input: the TVS diode back to back with the lead pads
+    "J1": (38.3, -25.5, 0, "B"), "Q1": (29.8, -25.5, 0, "B"), "D2": (38.65, -25.5, 180, "F"),
+    # motor rail: the coil right under the boost converter's switch pin, the switch transistor and the input capacitors at
+    # the coil's other pad
+    "U12": (33.5, -13.0, 0, "B"), "L5": (36.52, -18.6, 0, "B"), "Q6": (45.7, -19.9, 0, "B"), "C71": (42.0, -17.05, 270, "B"),
+    "C72": (42.0, -17.05, 90, "F"), "C77": (45.0, -6.5, 90, "B"), "C78": (45.0, 3.3, 90, "B"),
+    # charger, laid out as TI's reference: the coil above the SW1 / SW2 pins, the PMID capacitors on a bar to the right of
+    # them, the input (VBUS) capacitors right of the VBUS pins, the battery capacitors left of the BAT pins
+    "U2": (-24.0, 6.5, 0, "B"), "L1": (-23.5, 12.55, 0, "B"),
+    "C12": (-18.35, 9.9, 270, "B"), "C9": (-16.45, 10.775, 270, "B"), "C10": (-21.3, 10.775, 90, "F"), "C11": (-18.9, 10.775, 90, "F"),
+    "C6": (-19.125, 5.6, 180, "B"), "C7": (-19.125, 5.6, 0, "F"), "C8": (-18.32, 7.6, 180, "B"), "C19": (-17.3, -0.4, 180, "B"),
+    "C17": (-30.45, 7.7, 0, "B"), "C18": (-30.45, 7.7, 180, "F"),
+    "C2": (-23.1, 8.3, 90, "F"), "C3": (-25.5, 8.3, 90, "F"), "C4": (-22.9, 4.9, 270, "F"),
+    "R9": (-27.41, 6.25, 0, "B"), "R15": (-28.9, 5.25, 180, "B"),
+    # port A: the controller turned so that its two power pins face east: PPHV (to the charger) above VBUS (to the socket)
+    "U3": (-25.0, -6.0, 180, "B"), "D3": (-29.75, -21.6, 180, "F"), "U4": (-33.5, -5.2, 90, "B"),
+    "C20": (-28.175, -10.3, 180, "F"), "C44": (-38.6, -0.075, 90, "F"),
+    # port B converter, laid out as TI's reference: the two external FETs on the gate-drive side of the chip with their
+    # drains (Q4) and sources (Q5) toward the input capacitors, the coil above the chip between the SW1 and SW2 pins,
+    # the output capacitors and the sense resistor R23 right below the VOUT pins
+    "U7": (-30.0, 17.5, 0, "B"), "L2": (-30.5, 25.2, 0, "B"), "Q4": (-23.3, 25.0, 180, "B"), "Q5": (-23.3, 20.8, 0, "B"),
+    "C29": (-29.0, 20.73, 270, "B"), "C30": (-31.8, 20.73, 270, "B"), "C42": (-30.27, 14.75, 180, "B"), "C39": (-30.3, 13.3, 180, "B"),
+    "C40": (-30.3, 11.2, 180, "B"), "C41": (-30.3, 13.3, 0, "F"), "R23": (-34.55, 14.4, 0, "B"),
+    "C38": (-20.7, 23.12, 90, "B"), "C35": (-19.25, 22.9, 90, "B"), "C36": (-19.25, 22.9, 270, "F"), "C37": (-21.3, 22.9, 270, "F"),
+    # port B controller and its output switch: Q2 (from the converter) above Q3 (to the socket) at the board edge, drains
+    # together, 3.6 mm west of the controller's pins so that every one of them has room for its via
+    "U6": (-40.0, -5.5, 0, "B"), "Q2": (-47.3, -2.0, 90, "B"), "Q3": (-47.3, -6.6, 270, "B"), "C43": (-47.05, 1.6, 180, "B"),
+    "C50": (-46.9, -11.225, 90, "B"), "D6": (-40.2, -22.3, 270, "F"), "C49": (-37.25, 2.6, 0, "B"), "U8": (-41.0, 21.0, 0, "B"),
+    # shutter opto-coupler on the front face, right behind the shutter plug J12
+    "U26": (-47.5, -18.5, 90, "F"),
     # 5 V and 3.3 V rails
-    "U11": (-15.5, 19.6, 0, "B"), "L4": (-12.5, 26.2, 0, "B"), "C49": (-18.0, 14.3, 0, "B"), "U10": (-7.5, 12.5, 0, "B"), "L3": (-2.0, 12.5, 0, "B"),
+    "U11": (-15.5, 19.6, 0, "B"), "L4": (-11.6, 26.2, 0, "B"), "C63": (-17.1, 24.9, 90, "B"), "C64": (-17.1, 24.9, 270, "F"),
+    "U10": (-7.5, 12.5, 0, "B"), "L3": (-11.9, 9.0, 0, "B"),
     # sensors
-    "U24": (0.4, 1.7, 0, "B"), "U21": (-9.0, 0.0, 0, "B"), "U22": (-2.5, 20.5, 0, "B"), "U23": (-13.5, -0.5, 0, "B"),
+    "U24": (0.4, 1.7, 0, "B"), "U21": (-9.0, 0.0, 0, "B"), "U22": (-2.5, 20.5, 0, "B"), "U23": (-11.5, 4.3, 0, "B"),
+    # GNSS antenna socket (its footprint carries a no-copper area that the small parts must stay out of)
+    "J10": (-0.025, 10.65, 180, "B"),
     "J2": (13.4, -20.5, 180, "B"), "J12": (-45.5, -20.0, 90, "B"), "J5": (22.0, -21.5, 0, "B"), "J6": (22.0, -27.0, 0, "B"),
 }
 JACK = (-41.0, 11.0, 4.5)     # cut-out for the panel-mount 2.5 mm jack that sits in the bezel
@@ -559,9 +582,21 @@ def layout(pcb):
         h = VBAT_BUS_W / 2 + 0.3
         pcb.block("F", (min(ax, bx) - h, min(ay, by) - h, max(ax, bx) + h, max(ay, by) + h))
     pcb.keepout(["F", "B", "In1", "In2", "In3", "In4"], pcb.rect(*ANT), tracks=True, vias=True, copper=True)
+    # no small parts on the copper areas of the power paths, nor on the tracks and vias laid by hand
+    for _net, face, poly, _sp, _k in AREAS:
+        xs, ys = [q[0] for q in poly], [q[1] for q in poly]
+        pcb.block(face, (min(xs) - 0.25, min(ys) - 0.25, max(xs) + 0.25, max(ys) + 0.25))
+    hand(pcb)
+    # the places where the USB data vias were before they moved into the socket pads stay closed to parts: the routed
+    # tracks of 23 Nov were laid for this placement (C26, C27, R16 and U9 move otherwise)
+    for x_ in (0.0, -13.0):
+        for vx, vy in ((-25.41, -13.3), (-24.62, -12.75), (-24.62, -17.4), (-25.41, -17.95)):
+            x, y = pcb.pt((vx + x_, vy))
+            pcb.block("*", (x - 0.7, y - 0.7, x + 0.7, y + 0.7))
+    pcb.block("*", (-1.3, 9.4, 1.4, 11.9))                     # the no-copper area under the antenna socket J10
     # room for every pin of the fine-pitch chips to get out: a band round each of them stays free of other parts
-    for ref, w in (("U2", 1.8), ("U3", 1.8), ("U6", 1.8), ("U7", 1.5), ("U12", 1.5), ("U14", 2.3), ("U15", 1.5), ("U17", 1.5), ("U19", 1.5),
-                   ("U13", 1.3), ("U24", 1.2), ("U21", 1.0), ("U22", 1.0), ("U10", 0.7), ("U11", 0.7), ("U4", 0.7)):
+    for ref, w in (("U2", 1.8), ("U3", 2.4), ("U6", 2.4), ("U7", 1.5), ("U12", 1.5), ("U14", 3.2), ("U15", 2.0), ("U17", 2.0), ("U19", 2.0),
+                   ("U13", 1.3), ("U24", 1.2), ("U21", 1.0), ("U22", 1.0), ("U10", 0.7), ("U11", 0.7)):
         pcb.escape_ring(ref, w)
     own, rank = owners(pcb)
     for p in pcb.model["parts"]:
@@ -696,26 +731,247 @@ POWER_NETS = ["VBAT", "VBAT_IN", "VSYS", "VM_IN", "VMOT", "VBUS_A", "VBUS_B", "V
               "CHG_SW1", "CHG_SW2", "CHG_PMID", "PB_SW1", "PB_SW2", "BST_SW", "SW_5V", "SW_3V3"]
 PHASE_NETS = [f"{ax}_{p_}" for ax, _a in AXES for p_ in ("A1", "A2", "B1", "B2", "BRA", "BRB")]
 POUR_NETS = ("GND",)
+# The pins that carry the current of each power net and the copper width wanted between them (tools/pathwidth.py measures
+# the narrowest place on the widest way, over tracks and filled areas together). The supply planes are not in this list.
+POWER_PATHS = {
+    "VBAT_IN": (["J1.1", "Q1.9"], 1.0),
+    "CHG_SW1": (["U2.28", "L1.1"], 1.0), "CHG_SW2": (["U2.26", "L1.2"], 1.0), "CHG_PMID": (["U2.29", "C9.1", "C10.1", "C11.1"], 1.0),
+    # U2 pins 2 and 3 are the charger's VBUS pins; pins 8 and 9 (VAC2, VAC1) only sense the voltage
+    "VBUS_CHG": (["U3.20", "U2.2", "U2.3", "C19.1"], 1.0),
+    # "~1.5": at this pin the wide copper may begin up to 1.5 mm away instead of 0.8 mm. The VBUS pins of the USB-C
+    # sockets (0.3 mm wide) stand between the shell pins and the CC / data pins, which have to get out past them: the
+    # row A pins reach the wide copper above the socket by a neck 1.7 mm long, the row B pins through the row A pin
+    # opposite them ("~2.9"). Each pin carries a quarter of the port current, 0.75 A at 3 A.
+    "VBUS_A": (["J3.A4~1.5", "J3.B9~2.9", "U3.23", "U3.32"], 1.0),
+    # U7 pad 25 lies under the package and is reached through pin 21 only (0.25 mm wide, TI's own land pattern)
+    "PB_SW1": (["Q4.1", "Q5.9", "L2.1"], 1.0), "PB_SW2": (["L2.2", "U7.21", "U7.25~1.1"], 1.0),
+    "VPB_RAW": (["U7.11", "U7.12", "C39.1", "C40.1", "R23.1"], 1.0), "VPB": (["R23.2", "Q2.1", "C43.1"], 1.0),
+    "PB_MID": (["Q2.9", "Q3.9"], 1.0), "VBUS_B": (["Q3.1", "J4.A4~1.5", "J4.B9~2.9", "C50.1"], 1.0),
+    # U12 pin 7 (VIN) is the converter's own supply, a few milliamps: it is not a terminal of the power path
+    "VM_IN": (["Q6.9", "L5.1", "C71.1", "C72.1"], 1.0), "BST_SW": (["U12.4", "L5.2"], 0.35),
+    "SW_5V": (["U11.2", "L4.1"], 0.5), "+5V": (["L4.2", "C63.1", "U3.34", "U6.28"], 0.5), "SW_3V3": (["U10.5", "L3.1"], 0.5),
+}
+
+
+def _rect(net, face, x0, y0, x1, y1):
+    """A rectangular copper area with its centre line; no other net's via within reach of the centre line."""
+    w, h = x1 - x0, y1 - y0
+    if w >= h:
+        sp = [(x0 + h / 2, (y0 + y1) / 2), (x1 - h / 2, (y0 + y1) / 2)]
+    else:
+        sp = [((x0 + x1) / 2, y0 + w / 2), ((x0 + x1) / 2, y1 - w / 2)]
+    if sp[0] == sp[1]:
+        sp[1] = (sp[1][0] + 0.05, sp[1][1])
+    return (net, face, [(x0, y0), (x1, y0), (x1, y1), (x0, y1)], sp, min(w, h) / 2 + 0.3)
+
+
+# Copper areas of the power paths on the outer faces: net, face, outline, centre line, half width kept free of other
+# nets' vias. No other net's track or via may lie in them (tools/grouter.py: hard region with a spine); finish() makes
+# each one a filled zone. Built the way the battery board ST-602 was built.
+AREAS = [
+    # battery input: from the reverse-polarity FET's drain up and east over the minus pad to the plus pad
+    ("VBAT_IN", "B", [(27.9, -26.7), (30.6, -26.7), (30.6, -22.75), (39.3, -22.75), (39.3, -23.3), (42.5, -23.3), (42.5, -21.5),
+                      (29.0, -21.5), (29.0, -24.3), (27.9, -24.3)], [(28.5, -25.5), (29.8, -25.5), (29.8, -22.1), (41.0, -22.1), (41.0, -23.0)], 0.9),
+    # charger: SW1 and SW2 straight up from their pins into the coil pads, PMID out to the right under the coil pad
+    ("CHG_SW1", "B", [(-23.8, 8.95), (-23.27, 8.95), (-22.75, 9.47), (-22.75, 10.8), (-19.4, 10.8), (-19.4, 14.2), (-21.6, 14.2),
+                      (-21.6, 12.2), (-23.8, 12.2)], [(-24.0, 9.25), (-23.4, 9.6), (-23.3, 11.5), (-20.5, 11.5), (-20.5, 13.6)], 0.6),
+    ("CHG_SW2", "B", [(-25.25, 8.95), (-24.2, 8.95), (-24.2, 12.2), (-25.3, 12.2), (-25.3, 14.2), (-27.6, 14.2), (-27.6, 10.8),
+                      (-25.25, 10.8)], [(-24.72, 9.5), (-24.72, 11.5), (-26.5, 11.5), (-26.5, 13.6)], 0.6),
+    ("CHG_PMID", "B", [(-22.5, 8.7), (-15.3, 8.7), (-15.3, 9.9), (-22.5, 9.9)], [(-22.0, 9.3), (-15.9, 9.3)], 0.7),
+    ("VBUS_CHG", "B", [(-21.55, 5.0), (-21.3, 5.0), (-21.3, 4.6), (-19.9, 4.6), (-19.9, 5.0), (-18.4, 5.0), (-18.4, 8.4), (-21.3, 8.4),
+                       (-21.3, 7.6), (-21.55, 7.6)], [(-20.0, 5.6), (-20.0, 7.8)], 1.6),
+    _rect("VBAT", "B", -30.1, 7.15, -26.45, 8.25),
+    # port A controller: PPHV and VBUS leave to the east, each into its own inner-layer area
+    _rect("VBUS_CHG", "B", -22.3, -5.85, -18.5, -4.6), _rect("VBUS_A", "B", -22.3, -7.4, -18.5, -6.15),
+    _rect("VBUS_A", "B", -25.45, -9.55, -24.3, -8.45), _rect("+5V", "B", -26.9, -9.55, -25.75, -8.45),
+    # port A socket (front face): a pad of copper above the socket at each pair of VBUS pins
+    _rect("VBUS_A", "F", -30.4, -12.4, -26.42, -11.2), _rect("VBUS_A", "F", -23.62, -12.4, -20.4, -11.2),
+    # 5 V: at the port B controller's pins and at the converter's output
+    _rect("+5V", "B", -40.45, -2.9, -39.55, -1.9), _rect("+5V", "B", -17.85, 25.3, -15.7, 26.4),
+    # port B converter
+    ("PB_SW1", "B", [(-27.0, 19.55), (-22.45, 19.55), (-22.45, 22.3), (-24.42, 22.3), (-24.42, 25.55), (-27.0, 25.55)],
+     [(-23.5, 20.6), (-25.7, 20.6), (-25.7, 24.9)], 0.9),
+    ("PB_SW2", "B", [(-30.79, 19.5), (-30.075, 19.5), (-30.075, 19.65), (-29.55, 20.18), (-29.55, 22.2), (-32.3, 24.95), (-32.3, 26.9),
+                     (-34.65, 26.9), (-34.65, 23.5), (-33.3, 23.5), (-32.3, 22.5), (-32.3, 20.75), (-31.28, 20.75), (-31.28, 20.11),
+                     (-30.79, 19.62)], [(-30.4, 20.3), (-30.4, 22.0), (-33.3, 24.9), (-33.5, 26.0)], 0.6),
+    ("VPB_RAW", "B", [(-31.3, 15.52), (-30.22, 15.52), (-30.22, 15.2), (-30.35, 15.07), (-30.35, 10.4), (-31.85, 10.4), (-31.85, 13.7),
+                      (-34.05, 13.7), (-34.05, 15.1), (-32.3, 15.1), (-32.3, 15.3), (-31.3, 15.3)],
+     [(-30.76, 15.2), (-31.1, 14.4), (-31.1, 11.2), (-31.1, 14.4), (-33.5, 14.4)], 0.6),
+    # port B output switch
+    ("VPB", "B", [(-48.75, -0.8), (-46.72, -0.8), (-46.72, 0.7), (-47.4, 0.7), (-47.4, 2.4), (-48.75, 2.4)], [(-47.9, -0.3), (-48.1, 1.9)], 0.8),
+    _rect("PB_MID", "B", -48.55, -7.38, -46.05, -1.22), _rect("VBUS_B", "B", -47.85, -10.5, -45.9, -7.85),
+    # port B socket (front face)
+    _rect("VBUS_B", "F", -43.4, -12.4, -39.42, -11.2), _rect("VBUS_B", "F", -36.62, -12.4, -33.5, -11.2),
+    # motor rail
+    ("VM_IN", "B", [(38.4, -20.3), (40.7, -20.3), (41.2, -21.05), (46.5, -21.05), (46.5, -18.75), (43.0, -18.75), (43.0, -17.45),
+                    (41.25, -17.45), (41.25, -16.9), (38.4, -16.9)], [(39.5, -18.6), (42.0, -19.3), (45.4, -19.9)], 0.9),
+    _rect("VM_IN", "F", 41.2, -18.6, 42.8, -17.4),
+    ("BST_SW", "B", [(33.25, -13.3), (33.75, -13.3), (33.75, -14.65), (34.6, -15.5), (34.6, -20.3), (32.4, -20.3), (32.4, -15.5),
+                     (33.25, -14.65)], [(33.5, -14.0), (33.5, -19.5)], 0.6),
+    # 5 V converter
+    ("SW_5V", "B", [(-13.75, 19.3), (-11.0, 19.3), (-7.65, 23.5), (-7.65, 27.9), (-9.9, 27.9), (-9.9, 24.3), (-12.3, 21.2), (-12.3, 19.9),
+                    (-13.75, 19.9)], [(-13.0, 19.6), (-11.6, 19.9), (-8.8, 24.0), (-8.8, 27.0)], 0.5),
+]
+
+# Tracks and vias laid by hand: the short necks at the fine-pitch pins of the power stages, the connections under the
+# charger and the port B converter, and the vias from the copper areas into the inner layers.
+# (net, points, width, face); a point is (x, y) or ("REF", pad).
+HAND_TRACKS = [
+    # charger U2: ground, system rail, boot and regulator pins go inward to vias under the package (it has no centre pad)
+    ("GND", [("U2", 27), (-24.0, 6.3)], 0.2, "B"), ("GND", [("U2", 13), (-24.2, 5.4), (-24.0, 5.6), (-24.0, 6.3)], 0.2, "B"),
+    ("GND", [("U2", 10), (-23.0, 5.25), (-23.4, 5.25)], 0.2, "B"), ("GND", [("U2", 11), (-23.4, 5.25), (-23.75, 5.6), (-24.0, 5.85)], 0.2, "B"),
+    ("VSYS", [("U2", 25), (-24.9, 6.35)], 0.2, "B"),
+    ("CHG_BT2", [("U2", 19), (-25.45, 6.1), (-25.05, 5.7), (-25.05, 5.5)], 0.15, "B"), ("CHG_BT1", [("U2", 4), (-23.05, 6.9)], 0.15, "B"),
+    ("CHG_REGN", [("U2", 5), (-22.65, 6.5), (-23.05, 6.1)], 0.15, "B"), ("CHG_STAT", [("U2", 1), (-21.9, 8.3)], 0.3, "B"),
+    ("CHG_SW1", [("U2", 28), (-23.55, 9.3)], 0.2, "B"), ("CHG_SW2", [("U2", 26), (-24.45, 9.3)], 0.2, "B"),
+    ("CHG_PMID", [("U2", 29), (-23.1, 8.75), (-22.45, 9.4)], 0.2, "B"),
+    ("VBUS_CHG", [("U2", 2), (-21.0, 7.7)], 0.2, "B"), ("VBUS_CHG", [("U2", 3), (-21.2, 7.3)], 0.2, "B"),
+    ("VBUS_CHG", [("U2", 8), (-21.2, 5.3)], 0.2, "B"), ("VBUS_CHG", [("U2", 9), (-21.9, 4.65), (-21.55, 5.0), (-21.2, 5.0)], 0.2, "B"),
+    ("VBAT", [("U2", 23), (-26.6, 7.7)], 0.2, "B"), ("VBAT", [("U2", 22), (-26.6, 7.3)], 0.2, "B"),
+    # the boot and regulator capacitors stand on the front face under the charger, at the vias from its pins
+    ("CHG_BT1", [("C2", 1), (-23.1, 7.3), (-23.05, 6.9)], 0.15, "F"), ("CHG_SW1", [("C2", 2), (-23.25, 9.7)], 0.15, "F"),
+    ("CHG_BT2", [("C3", 1), (-25.6, 7.3), (-25.6, 6.05), (-25.05, 5.5)], 0.15, "F"), ("CHG_SW2", [("C3", 2), (-24.75, 9.7)], 0.15, "F"),
+    ("CHG_REGN", [("C4", 1), (-23.05, 6.1)], 0.2, "F"),
+    # port B converter U7
+    ("PB_SW2", [("U7", 21), (-30.25, 19.6), (-30.4, 19.9)], 0.25, "B"), ("PB_SW2", [("U7", 21), (-30.25, 18.75), (-30.0, 18.5), ("U7", 25)], 0.25, "B"),
+    ("VPB_RAW", [("U7", 11), ("U7", 26)], 0.25, "B"), ("VPB_RAW", [("U7", 11), (-30.62, 15.3)], 0.25, "B"),
+    ("VPB_RAW", [("U7", 12), (-31.12, 15.3)], 0.25, "B"),
+    ("GND", [("U7", 9), ("U7", 24)], 0.25, "B"), ("GND", [("U7", 10), (-29.88, 16.35), (-29.38, 16.35)], 0.2, "B"),
+    ("GND", [("U7", 9), (-29.38, 15.3), (-29.2, 15.0)], 0.25, "B"),
+    ("PB_BOOT1", [("U7", 22), (-29.75, 19.6), (-29.3, 20.05), ("C29", 1)], 0.15, "B"),
+    ("PB_BOOT2", [("U7", 20), (-31.05, 19.6), (-31.49, 20.04), ("C30", 1)], 0.15, "B"),
+    ("PB_SW1", [("U7", 23), (-28.95, 19.5), (-28.42, 20.03), (-28.42, 21.21), ("C29", 2)], 0.15, "B"),
+    ("PB_SW1", [("C29", 2), (-28.42, 21.21), (-26.9, 21.21)], 0.2, "B"),
+    # the converter's current-sense pin, straight from the far pad of the sense resistor (Kelvin connection)
+    ("VPB", [("U7", 13), (-31.9, 15.62), (-35.0, 15.62), (-35.6, 15.02), (-35.6, 14.6)], 0.15, "B"),
+    # port A controller U3
+    ("VBUS_CHG", [("U3", 20), (-21.3, -5.22)], 0.6, "B"), ("VBUS_A", [("U3", 23), (-21.3, -6.78)], 0.6, "B"),
+    ("+5V", [("U3", 34), (-26.0, -8.6), (-26.3, -9.0)], 0.6, "B"), ("VBUS_A", [("U3", 32), (-25.2, -8.6), (-24.85, -9.0)], 0.6, "B"),
+    # port B controller U6: its VPB sense pin to a via into the VPB area
+    ("VPB", [("U6", 19), (-45.4, -6.1)], 0.15, "B"),
+    ("+5V", [("U6", 28), (-40.2, -2.6)], 0.2, "B"), ("+5V", [("U6", 29), (-39.8, -2.6)], 0.2, "B"),
+    # USB-C sockets: the VBUS pins of row A go out upward between the shell pin and their neighbour; those of row B
+    # join them through the gap between the two rows, so that the CC and data pins of row B have the whole lower side
+    ("VBUS_A", [("J3", "A4"), (-26.99, -14.05), (-26.57, -13.63), (-26.57, -12.0)], 0.3, "F"),
+    ("VBUS_A", [("J3", "A9"), (-23.04, -14.05), (-23.47, -13.62), (-23.47, -12.0)], 0.3, "F"),
+    ("VBUS_A", [("J3", "B9"), ("J3", "A4")], 0.3, "F"), ("VBUS_A", [("J3", "B4"), ("J3", "A9")], 0.3, "F"),
+    ("VBUS_B", [("J4", "A4"), (-39.99, -14.05), (-39.57, -13.63), (-39.57, -12.0)], 0.3, "F"),
+    ("VBUS_B", [("J4", "A9"), (-36.04, -14.05), (-36.47, -13.62), (-36.47, -12.0)], 0.3, "F"),
+    ("VBUS_B", [("J4", "B9"), ("J4", "A4")], 0.3, "F"), ("VBUS_B", [("J4", "B4"), ("J4", "A9")], 0.3, "F"),
+    # USB-C sockets, data pins: D+ and D- are on both rows and in opposite order. The socket's footprint forbids copper on
+    # the front face just beyond the pad tips of these four pins, so each pin has a via in its own pad (filled and capped,
+    # D51; the D- vias sit at the pad's end so that the drill holes are 0.5 mm apart); D+ is joined on the inner face
+    # under the socket, D- on inner layer 2
+] + [t_ for x_, n_, j_ in ((0.0, "A", "J3"), (-13.0, "B", "J4")) for t_ in (
+    (n_ + "_DP", [(j_, "A6"), (-25.41 + x_, -14.3)], 0.15, "F"), (n_ + "_DN", [(j_, "A7"), (-24.62 + x_, -14.1)], 0.15, "F"),
+    (n_ + "_DP", [(j_, "B6"), (-24.62 + x_, -16.4)], 0.15, "F"), (n_ + "_DN", [(j_, "B7"), (-25.41 + x_, -16.6)], 0.15, "F"),
+    (n_ + "_DP", [(-25.41 + x_, -14.3), (-24.62 + x_, -15.09), (-24.62 + x_, -17.4)], 0.15, "B"),
+    (n_ + "_DN", [(-24.62 + x_, -14.1), (-24.62 + x_, -15.6), (-25.41 + x_, -16.39), (-25.41 + x_, -16.6)], 0.15, "In2"))
+] + [
+    # where the routed tracks take over: port A, D- from above on inner layer 2 and from below on the front face (the
+    # stub ends 0.15 mm short of the forbidden strip); port B, D+ from above and D- from below on the inner face
+    ("A_DN", [(-24.62, -12.75), (-24.62, -14.1)], 0.15, "In2"), ("A_DN", [("J3", "B7"), (-25.41, -17.0)], 0.15, "F"),
+    ("B_DP", [(-38.41, -13.3), (-38.41, -14.3)], 0.15, "B"), ("B_DN", [(-38.41, -16.6), (-38.41, -17.95)], 0.15, "B"),
+    # port A, CC pins: CC1 up between the two VBUS pads and east to a via, CC2 down to a via; both then run on the
+    # inner face straight to their pins on the controller
+    ("A_CC1", [("J3", "A5"), (-26.2, -10.9), (-26.05, -10.75), (-23.7, -10.75), (-23.3, -10.35), (-23.3, -9.85)], 0.15, "F"),
+    ("A_CC1", [("U3", 28), (-23.4, -8.5), (-23.3, -8.7), (-23.3, -9.85)], 0.15, "B"),
+    ("A_CC2", [("J3", "B5"), (-23.83, -17.95)], 0.15, "F"),
+    ("A_CC2", [("U3", 29), (-23.8, -8.4), (-23.83, -8.6), (-23.83, -17.95)], 0.15, "B"),
+    # 3.3 V for the west of the board, where inner layer 1 is taken by the other rails: a feeder on inner layer 2 from
+    # the 3.3 V plane (via east of the system-rail trunk) to a via at each USB controller's supply pin
+    ("+3V3", [("U6", 32), (-38.6, -0.85)], 0.2, "B"), ("+3V3", [("U3", 38), (-27.4, -10.3)], 0.2, "B"),
+    ("+3V3", [(-14.2, 0.9), (-31.0, 0.9), (-31.0, -9.4), (-30.1, -10.3), (-27.4, -10.3)], 0.4, "In2"),
+    ("+3V3", [(-31.0, 0.9), (-37.0, 0.9), (-38.6, -0.7), (-38.6, -0.85)], 0.4, "In2"),
+    # 3.3 V converter: switch pin to the coil
+    ("SW_3V3", [("U10", 5), (-9.2, 11.75), (-9.85, 11.1), (-9.85, 10.8)], 0.3, "B"),
+]
+HAND_VIAS = [
+    ("GND", (-24.0, 7.2)), ("GND", (-24.0, 6.3)), ("VSYS", (-24.9, 7.15)), ("VSYS", (-24.9, 6.35)), ("CHG_BT2", (-25.05, 5.5)),
+    ("CHG_BT1", (-23.05, 6.9)), ("CHG_REGN", (-23.05, 6.1)), ("CHG_SW1", (-23.25, 9.7)), ("CHG_SW2", (-24.75, 9.7)), ("CHG_STAT", (-21.9, 8.3)),
+    ("VBUS_CHG", (-20.9, 6.8)), ("VBUS_CHG", (-20.1, 6.8)), ("VBUS_CHG", (-19.3, 6.8)),
+    ("VBUS_CHG", (-20.9, 7.7)), ("VBUS_CHG", (-20.1, 7.7)), ("VBUS_CHG", (-19.3, 7.7)),
+    ("CHG_PMID", (-21.75, 9.3)), ("CHG_PMID", (-20.85, 9.3)), ("CHG_PMID", (-19.35, 9.3)), ("CHG_PMID", (-18.45, 9.3)),
+    ("VBAT", (-28.3, 7.7)), ("VBAT", (-27.5, 7.7)),
+    ("GND", (-29.2, 15.0)),
+    ("VBUS_CHG", (-21.25, -5.22)), ("VBUS_CHG", (-20.45, -5.22)), ("VBUS_CHG", (-19.65, -5.22)), ("VBUS_CHG", (-18.85, -5.22)),
+    ("VBUS_A", (-21.25, -6.78)), ("VBUS_A", (-20.45, -6.78)), ("VBUS_A", (-19.65, -6.78)), ("VBUS_A", (-18.85, -6.78)),
+    ("+5V", (-26.3, -9.0)), ("VBUS_A", (-24.85, -9.0)), ("+5V", (-40.0, -2.35)), ("VPB", (-45.4, -6.1)),
+    ("VBUS_A", (-29.6, -11.8)), ("VBUS_A", (-28.8, -11.8)), ("VBUS_A", (-28.0, -11.8)),
+    ("VBUS_A", (-22.6, -11.8)), ("VBUS_A", (-21.8, -11.8)), ("VBUS_A", (-21.0, -11.8)),
+    ("VBUS_B", (-42.6, -11.8)), ("VBUS_B", (-41.8, -11.8)), ("VBUS_B", (-41.0, -11.8)),
+    ("VBUS_B", (-35.6, -11.8)), ("VBUS_B", (-34.8, -11.8)), ("VBUS_B", (-34.0, -11.8)),
+    ("VPB", (-48.35, 0.35)), ("VPB", (-47.55, 0.35)),
+    ("VM_IN", (41.6, -18.0)), ("VM_IN", (42.4, -18.0)), ("VBAT_IN", (40.3, -25.5)), ("VBAT_IN", (41.3, -25.5)),
+    ("A_CC1", (-23.3, -9.85)), ("A_CC2", (-23.83, -17.95)), ("+3V3", (-38.6, -0.85)), ("+3V3", (-27.4, -10.3)), ("+3V3", (-14.2, 0.9)),
+] + [v_ for x_, n_ in ((0.0, "A"), (-13.0, "B")) for v_ in (
+    (n_ + "_DP", (-25.41 + x_, -14.3)), (n_ + "_DN", (-24.62 + x_, -14.1)), (n_ + "_DP", (-24.62 + x_, -16.4)), (n_ + "_DN", (-25.41 + x_, -16.6)))]
+
+
+def hand(pcb):
+    """Lays HAND_TRACKS and HAND_VIAS and keeps the small parts off them."""
+    for net, pts, w, face in HAND_TRACKS:
+        pcb.track(net, pts, w, face)
+        q = [pcb.pt(p_) for p_ in pts]
+        for a, b in zip(q, q[1:]):
+            n_ = max(1, int(max(abs(b[0] - a[0]), abs(b[1] - a[1])) / 0.3))
+            for i in range(n_ + 1):
+                x, y = a[0] + (b[0] - a[0]) * i / n_, a[1] + (b[1] - a[1]) * i / n_
+                if face in ("F", "B"):
+                    pcb.block(face, (x - 0.4, y - 0.4, x + 0.4, y + 0.4))
+    for net, p_ in HAND_VIAS:
+        pcb.via(net, p_)
+        x, y = pcb.pt(p_)
+        pcb.block("*", (x - 0.7, y - 0.7, x + 0.7, y + 0.7))
+
+
 ANT = (-30.0, -30.0, 18.0, -23.9)        # ESP32 antenna: no copper on any layer
 
-# In1 (inner layer 1) is the power layer. 3.3 V everywhere, with the system rail under the power half and along a
-# corridor to the motor switch, and the motor rail under the drivers, the cartridge plugs and the boost converter.
+# In1 (inner layer 1) is the power layer: 3.3 V everywhere, and on top of it one area per supply rail.
+# The system rail runs from the charger north to the port B converter, east to the 3.3 V and 5 V converters and down a
+# trunk east of port A to the corridor along the bottom edge that feeds the motor switch. The long runs of the USB and
+# 5 V rails lie here too, each as its own area: they are joined to the copper on the outer faces by vias in the pads.
 FULL = [(-49.5, -29.5), (49.5, -29.5), (49.5, 29.5), (-49.5, 29.5)]
-IN2 = [
-    ("+3V3", FULL, 0),
-    ("VSYS", [(-49.5, -29.5), (-30.6, -29.5), (-30.6, -23.4), (-12.0, -23.4), (-12.0, -19.6), (-16.5, -19.6), (-16.5, -4.0), (-18.0, 3.0),
-              (-18.0, 9.3), (-5.0, 9.3), (-5.0, 23.5), (-18.0, 23.5), (-18.0, 29.5), (-49.5, 29.5)], 1),
-    ("VSYS", [(-12.5, -23.4), (34.0, -23.4), (34.0, -16.6), (27.0, -16.6), (27.0, -19.6), (-12.5, -19.6)], 2),
-    ("VMOT", [(11.8, 3.0), (11.8, 29.5), (49.5, 29.5), (49.5, -16.0), (25.5, -16.0), (25.5, 3.0)], 3),
+WEST = [(-49.5, -29.5), (-15.4, -29.5), (-15.4, 9.3), (-5.0, 9.3), (-5.0, 22.2), (-13.3, 22.2), (-13.3, 29.5), (-49.5, 29.5)]
+EAST = [(-15.4, -29.5), (49.5, -29.5), (49.5, 29.5), (-13.3, 29.5), (-13.3, 22.2), (-5.0, 22.2), (-5.0, 9.3), (-15.4, 9.3)]
+RAILS = [
+    ("VBUS_CHG", [(-21.75, -5.85), (-18.4, -5.85), (-18.4, 8.4), (-21.75, 8.4)]),
+    ("VBUS_A", [(-31.0, -12.4), (-31.0, -9.9), (-25.5, -9.9), (-25.5, -8.4), (-24.2, -8.4), (-24.2, -9.9), (-22.0, -9.9), (-22.0, -6.15),
+                (-18.4, -6.15), (-18.4, -12.4)]),
+    ("VBUS_B", [(-48.2, -12.4), (-33.4, -12.4), (-33.4, -10.0), (-45.6, -10.0), (-45.6, -7.9), (-48.2, -7.9)]),
+    # from the far pad of the sense resistor R23 round the north of the jack cut-out and down the west edge to Q2
+    ("VPB", [(-35.65, 13.0), (-35.65, 18.6), (-49.2, 18.6), (-49.2, -7.6), (-44.9, -7.6), (-44.9, -5.0), (-45.9, -5.0), (-45.9, 16.1),
+             (-37.4, 16.1), (-37.4, 13.0)]),
+    # from the 5 V converter along the top edge, down between the jack cut-out and the converters, to both USB controllers
+    ("+5V", [(-13.3, 22.5), (-13.3, 29.2), (-35.4, 29.2), (-35.4, -1.0), (-40.7, -1.0), (-40.7, -3.0), (-35.4, -3.0), (-35.4, -9.75),
+             (-25.65, -9.75), (-25.65, -8.3), (-33.7, -8.3), (-33.7, 27.4), (-18.2, 27.4), (-18.2, 24.9), (-16.6, 24.9), (-16.6, 22.5)]),
 ]
+# Centre lines of the rails on In1 and the half width kept free of other nets' vias (tools/grouter.py), so that the via
+# holes of the signals can never cut a rail through: the copper left whole is 2 x (half width - 0.45 mm).
+RAIL_SPINES = [
+    ("VBUS_CHG", [(-20.1, -5.2), (-20.1, 7.6)], 1.0),
+    ("VBUS_A", [(-20.0, -6.8), (-20.0, -11.1), (-30.0, -11.1)], 1.0),
+    ("VBUS_A", [(-24.85, -8.9), (-24.85, -10.5)], 0.95),
+    ("VBUS_B", [(-46.9, -9.0), (-46.9, -11.2), (-34.5, -11.2)], 1.0),
+    ("VPB", [(-36.4, 14.4), (-36.4, 17.35), (-47.55, 17.35), (-47.55, -6.3), (-45.4, -6.3)], 1.0),
+    ("+5V", [(-15.0, 26.0), (-17.4, 28.3), (-34.55, 28.3), (-34.55, -9.0), (-26.3, -9.0)], 0.8), ("+5V", [(-34.55, -2.0), (-40.0, -2.0)], 0.8),
+]
+IN2 = [
+    ("+3V3", EAST, 0),
+    ("VSYS", [(-33.4, 2.9), (-22.0, 2.9), (-22.0, 8.65), (-18.1, 8.65), (-18.1, -23.4), (-15.4, -23.4), (-15.4, 9.3), (-5.0, 9.3),
+              (-5.0, 22.2), (-16.9, 22.2), (-16.9, 24.7), (-18.4, 24.7), (-18.4, 27.1), (-33.4, 27.1)], 1),
+    ("VSYS", [(-18.1, -23.4), (48.9, -23.4), (48.9, -18.4), (46.2, -18.4), (46.2, -19.6), (-18.1, -19.6)], 2),
+    ("VMOT", [(11.8, 3.0), (11.8, 29.5), (49.5, 29.5), (49.5, -16.0), (25.5, -16.0), (25.5, 3.0)], 3),
+] + [(n_, poly, 4) for n_, poly in RAILS]
 # The battery rail crosses the board as one wide copper area (the pack input is at the lower right, the charger at the
 # left; decision D50 keeps the pack pads there): out of the reverse-polarity FET, up between buttons 3 and 4, west above
-# the buttons and under the ESP32 module, then north-west past port A to the charger's BAT pins. On the six-layer board
-# it lies on In3, so both outer faces are free; In2 crosses it freely.
-VBAT_BUS = [(32.9, -25.6), (30.5, -23.0), (30.5, -15.0), (29.0, -13.6), (3.5, -13.6), (1.5, -11.0), (-16.0, -11.0), (-18.6, -8.4),
-            (-18.6, 1.0), (-20.2, 2.6), (-33.0, 2.6), (-33.0, 8.6)]
+# the buttons and under the ESP32 module, north past port A and west below the charger to its BAT pins. On the six-layer
+# board it lies on In3, so both outer faces are free; In2 crosses it freely.
+VBAT_BUS = [(32.9, -25.6), (30.5, -23.0), (30.5, -15.0), (29.0, -13.6), (3.5, -13.6), (1.5, -11.0), (-14.8, -11.0), (-17.4, -8.4),
+            (-17.4, -0.4), (-19.0, 1.2), (-29.0, 1.2), (-29.0, 8.6)]
 VBAT_BUS_W = 4.6
 VBAT_LAYER = "In3"
+VBAT_SPINE = 1.2                          # mm each side of the centre line without foreign vias
 
 
 def in2_polys(net):
@@ -744,7 +1000,8 @@ def clusters(pts, gap=8.0):
 def pour_areas(pcb):
     """Copper areas on the outer faces: one round every group of pads of a power or motor-phase net that lie together."""
     out = []
-    for net in POWER_NETS + PHASE_NETS:
+    drawn = {a_[0] for a_ in AREAS} | {r_[0] for r_ in RAILS}
+    for net in [n_ for n_ in POWER_NETS + PHASE_NETS if n_ not in drawn or n_ == "VBAT"]:
         for side in ("B", "F"):
             pts = [xy for (r_, _p, xy, sd) in pcb.padpos.get(net, []) if sd == side and not r_.startswith("TP")]
             for grp in clusters(pts):
@@ -759,29 +1016,41 @@ def route_plan(pcb):
     bus = pcb.thick(VBAT_BUS, VBAT_BUS_W)
     areas = pour_areas(pcb)
     regions = [dict(net=a["net"], side=a["side"], poly=a["poly"]) for a in areas]
-    regions.append(dict(net="VBAT", side=VBAT_LAYER, poly=bus, hard=True))
+    regions += [dict(net=n_, side=f_, poly=[list(q) for q in poly], hard=True, spine=[list(q) for q in sp], keep=k_,
+                     halo_v=0.3 if f_ == "F" and n_ in ("VBUS_A", "VBUS_B") else 0.45)
+                for n_, f_, poly, sp, k_ in AREAS]
+    rails = [poly for _n, poly in RAILS]
+    regions += [dict(net=n_, side="In1", poly=[list(q) for q in dict(RAILS)[n_]], spine=[list(q) for q in sp], keep=k_) for n_, sp, k_ in RAIL_SPINES]
+    # the middle of the battery bus stays free of other nets' vias (tools/grouter.py: spine), which leaves it at least
+    # 1.5 mm of unbroken copper from the pack to the charger whatever is routed across it
+    regions.append(dict(net="VBAT", side=VBAT_LAYER, poly=bus, hard=True, spine=[list(q) for q in VBAT_BUS], keep=VBAT_SPINE))
     plane3v3 = ["+3V3"]
     steps = [
         dict(op="fanout", length=0.35),
         dict(op="plane", net="GND", polys=[FULL], w=0.25, ep=True, maxlen=4.0, in_pad=True),
         dict(op="plane", net="VMOT", polys=in2_polys("VMOT"), w=0.3, n_big=3, big_area=1.0, in_pad=True,
              n={"U15": 2, "U17": 2, "U19": 2, "U12": 3}),
-        dict(op="plane", net="VSYS", polys=in2_polys("VSYS"), w=0.3, n_big=3, big_area=1.0, n={"Q6": 2, "Q4": 2, "U2": 3}, in_pad=True),
+        dict(op="plane", net="VSYS", polys=in2_polys("VSYS"), w=0.3, n_big=3, big_area=1.0, n={"Q6": 2, "Q4": 2}, in_pad=True),
         dict(op="plane", net="VBAT", polys=[bus], w=0.3, n_big=3, big_area=1.0, n={"Q1": 2, "U2": 3}, maxlen=3.0, in_pad=True),
         dict(op="stitch", net="VBAT", polys=[bus], areas=[a["poly"] for a in areas if a["net"] == "VBAT" and a["side"] == "B"], max=10),
         dict(op="stitch", net="VSYS", polys=in2_polys("VSYS"),
              areas=[a["poly"] for a in areas if a["net"] == "VSYS" and a["side"] == "B"], max=6),
         dict(op="stitch", net="VMOT", polys=in2_polys("VMOT"),
              areas=[a["poly"] for a in areas if a["net"] == "VMOT" and a["side"] == "B"], max=6),
-        dict(op="plane", net="+3V3", polys=[FULL], exclude=in2_polys("VSYS") + in2_polys("VMOT"), w=0.25, in_pad=True),
+        # the rails that have their own area on In1: a via in or beside every pad, several in the large ones
+    ] + [dict(op="plane", net=n_, polys=[poly], w=0.3, n_big=3, big_area=1.0, maxlen=3.0, in_pad=True) for n_, poly in RAILS] + [
+        # 3.3 V: not in the west of the board, where the plane is cut up by the other rails (its pads there are routed)
+        dict(op="plane", net="+3V3", polys=[FULL], exclude=[WEST] + in2_polys("VSYS") + in2_polys("VMOT") + rails, w=0.25, in_pad=True),
         # Every slow-signal pin of the fine-pitch chips gets its way out first (tools/grouter.py: escape): a fixed track to
         # a ring 3 mm from its chip, so that no power or critical track can lie across it. The critical nets that follow
         # stay on the outer faces where they can and pay three to six times as much for an inner layer.
-        dict(op="escape", name="escape of the fine-pitch chips", ring=3.0, layer_cost={"B": 3, "In2": 2, "In3": 2}),
+        dict(op="escape", name="escape of the fine-pitch chips", ring=3.0, layer_cost={"B": 3, "In2": 2, "In3": 2}, pad_vias=0.5),
         dict(op="route", name="GNSS antenna feed", nets=["GNSS_ANT", "GNSS_RF"], widths=[0.2], hard=True, layer_cost={"F": 100}),
+        # The current of these nets is carried by their drawn areas (AREAS); what is routed here are the thin ties to
+        # the pads that lie outside an area (boot capacitors, test points, sense pins).
         dict(op="route", name="switch nodes and power stages", layer_cost={"In2": 6, "In3": 6}, hard=True, region_cost=1,
-             nets=["CHG_SW1", "CHG_SW2", "PB_SW1", "PB_SW2", "BST_SW", "SW_3V3", "SW_5V", "CHG_PMID", "VBUS_CHG", "VM_IN", "VBAT_IN",
-                   "VPB_RAW", "VPB", "PB_MID", "VBUS_A", "VBUS_B", "+5V"], widths=[1.0, 0.5, 0.3, 0.2, 0.15], order="given"),
+             nets=["CHG_SW1", "CHG_SW2", "PB_SW1", "PB_SW2", "BST_SW", "SW_3V3", "SW_5V", "CHG_PMID", "VM_IN", "VBAT_IN",
+                   "VPB_RAW", "PB_MID"], widths=[0.3, 0.2, 0.15], order="given"),
         dict(op="route", name="boot, gate drive and bias", layer_cost={"In2": 3, "In3": 3}, hard=True,
              nets=["CHG_BT?", "PB_BOOT?", "BST_BT", "BST_5V", "BST_3V3", "PB_DR1?", "CHG_REGN", "PB_VCC", "BST_VCC", "MSW_G", "Q1_G",
                    "*_5V", "RP_LX", "+1V1", "RP_AVDD", "+3V3A", "+3V3G"], widths=[0.3, 0.2, 0.15]),
@@ -814,6 +1083,8 @@ def finish(pcb):
             pcb.solid(ref)
     for a in pour_areas(pcb):
         pcb.zone(a["net"], a["side"], a["poly"], clearance=0.2, solid=True, priority=5)
+    for net, face, poly, _sp, _k in AREAS:
+        pcb.zone(net, face, poly, clearance=0.2, solid=True, priority=6)
     pcb.zone("VBAT", VBAT_LAYER, pcb.thick(VBAT_BUS, VBAT_BUS_W), clearance=0.2, solid=True, priority=4)
     for net, poly, prio in IN2:
         pcb.zone(net, "In1", poly, clearance=0.2, solid=True, priority=prio)
