@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Star Tracker — firmware loader</title>
+<style>
+  :root { --bg:#f5f6f8; --fg:#1d2330; --card:#fff; --line:#d7dbe3; --accent:#2f6db5; --warn:#b5402f; }
+  body.night { --bg:#0b0000; --fg:#ff4a3a; --card:#160302; --line:#4a120c; --accent:#ff4a3a; --warn:#ff9a8a; }
+  body { margin:0; font:15px/1.5 system-ui, sans-serif; background:var(--bg); color:var(--fg); }
+  header { display:flex; justify-content:space-between; align-items:center; padding:12px 18px; border-bottom:1px solid var(--line); }
+  h1 { font-size:19px; margin:0; } h2 { font-size:15px; margin:0 0 6px; }
+  main { max-width:860px; margin:0 auto; padding:14px; }
+  section { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px; margin:12px 0; }
+  button { font:inherit; color:var(--fg); background:transparent; border:1px solid var(--accent); border-radius:6px; padding:7px 14px; margin:4px 4px 4px 0; cursor:pointer; }
+  button:disabled { opacity:.4; cursor:default; } input[type=file] { margin:4px 0; }
+  progress { width:100%; height:16px; } pre { background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:8px; max-height:220px; overflow:auto; font-size:12px; }
+  .warn { color:var(--warn); } ol { margin:6px 0 0 18px; padding:0; }
+</style>
+</head>
+<body>
+<header><h1>Star Tracker — firmware loader</h1><button id="mode">Night</button></header>
+<main>
+  <section>
+    <h2>Before you start</h2>
+    <ol>
+      <li>Use Google Chrome or Microsoft Edge on a computer (this page uses Web Serial).</li>
+      <li>Download the latest run of the "Firmware" workflow on GitHub (Actions → Firmware → the run → Artifacts → <b>esp32s3-images-and-flasher</b>) and unzip it.</li>
+      <li>Connect the head's USB-C port <b>A</b> to the computer with a data cable.</li>
+    </ol>
+    <p class="warn" id="support"></p>
+  </section>
+  <section>
+    <h2>1 · Connect</h2>
+    <button id="connect">Connect to the head</button> <span id="chip"></span>
+  </section>
+  <section>
+    <h2>2 · Load a complete image (first load, or recovery)</h2>
+    <p>Pick <b>st-esp32s3-bringup-full.bin</b> for the bring-up menu (first boards, Stages B–D) or <b>st-esp32s3-system-full.bin</b> for the normal firmware. It is written at address 0 and replaces everything except the PD configuration.</p>
+    <input type="file" id="full" accept=".bin"><br>
+    <button id="writefull" disabled>Write complete image</button>
+  </section>
+  <section>
+    <h2>3 · Load the USB-C PD configuration images (once per head)</h2>
+    <p>Pick the two files made with TI's configuration tool (section 9 of the firmware document): port A (TPS25751D) and port B (TPS25752A). They go to the head's <i>pd_cfg</i> area; the bring-up menu item <b>P</b> then writes them into the two configuration EEPROMs.</p>
+    Port A: <input type="file" id="pda" accept=".bin"><br>Port B: <input type="file" id="pdb" accept=".bin"><br>
+    <button id="writepd" disabled>Write PD configuration</button>
+  </section>
+  <section>
+    <h2>Progress</h2>
+    <progress id="prog" max="100" value="0"></progress>
+    <pre id="log"></pre>
+  </section>
+  <section>
+    <h2>Normal updates</h2>
+    <p>Once the system firmware runs, you do not need this page: open the head's own page (Wi-Fi <i>StarTracker-xxxx</i>, address 192.168.4.1), choose <b>Update</b> and pick <b>star-tracker-update.stfw</b>. The head updates both processors and goes back to the previous firmware by itself if anything fails.</p>
+  </section>
+</main>
+<script type="module">
+import { ESPLoader, Transport } from "https://unpkg.com/esptool-js@0.5.4/bundle.js";
+const $ = id => document.getElementById(id);
+const mode = $('mode');
+function setNight(n) { document.body.classList.toggle('night', n); mode.textContent = n ? 'Day' : 'Night'; try { localStorage.setItem('night', n ? '1' : ''); } catch (e) {} }
+mode.onclick = () => setNight(!document.body.classList.contains('night'));
+try { setNight(!!localStorage.getItem('night')); } catch (e) {}
+if (!('serial' in navigator)) $('support').textContent = 'This browser has no Web Serial. Open the page in Chrome or Edge.';
+
+const term = { clean() { $('log').textContent = ''; }, writeLine(s) { $('log').textContent += s + '\n'; $('log').scrollTop = 1e9; }, write(s) { $('log').textContent += s; } };
+let loader = null, transport = null;
+const PD_CFG = 0x920000;   // partitions.csv: pd_cfg
+
+async function fileBytes(input) { const f = input.files[0]; if (!f) throw new Error('no file chosen'); return new Uint8Array(await f.arrayBuffer()); }
+function bstr(u8) { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return s; }
+async function write(files) {
+  $('prog').value = 0;
+  await loader.writeFlash({ fileArray: files.map(f => ({ data: bstr(f.data), address: f.address })), flashSize: 'keep', flashMode: 'keep', flashFreq: 'keep',
+    eraseAll: false, compress: true, reportProgress: (i, w, t) => { $('prog').value = Math.round(100 * w / t); } });
+  term.writeLine('done, restarting the head');
+  await loader.after('hard_reset');
+}
+$('connect').onclick = async () => {
+  try {
+    const port = await navigator.serial.requestPort({});
+    transport = new Transport(port, true);
+    loader = new ESPLoader({ transport, baudrate: 921600, terminal: term });
+    const chip = await loader.main();
+    $('chip').textContent = 'connected: ' + chip;
+    $('writefull').disabled = $('writepd').disabled = false;
+  } catch (e) { term.writeLine('could not connect: ' + e.message); }
+};
+$('writefull').onclick = async () => {
+  try { const d = await fileBytes($('full')); term.writeLine(`writing ${d.length} bytes at 0x0`); await write([{ data: d, address: 0 }]); }
+  catch (e) { term.writeLine('error: ' + e.message); }
+};
+$('writepd').onclick = async () => {
+  try {
+    const a = await fileBytes($('pda')), b = await fileBytes($('pdb'));
+    if (a.length > 0x7000 || b.length > 0x7000) throw new Error('a PD image is larger than 28 KB');
+    const blob = new Uint8Array(0x10000).fill(0xff);
+    new DataView(blob.buffer).setUint32(0, a.length, true);
+    new DataView(blob.buffer).setUint32(4, b.length, true);
+    blob.set(a, 0x1000); blob.set(b, 0x8000);
+    term.writeLine(`writing PD configuration (A ${a.length} bytes, B ${b.length} bytes) at 0x${PD_CFG.toString(16)}`);
+    await write([{ data: blob, address: PD_CFG }]);
+  } catch (e) { term.writeLine('error: ' + e.message); }
+};
+</script>
+</body>
+</html>

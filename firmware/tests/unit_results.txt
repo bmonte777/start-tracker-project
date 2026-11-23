@@ -1,0 +1,85 @@
+astro_gmst_meeus_12a
+  PASS
+astro_apparent_place_theta_persei_meeus_23a
+    apparent place error: -0.17" in RA (x cos dec), -0.21" in Dec
+  PASS
+astro_sun_meeus_25a
+  PASS
+astro_moon_meeus_47a
+    Moon error: RA 0.0009 deg, Dec -0.0002 deg, distance 41 km
+  PASS
+astro_refraction
+    Saemundsson and Bennett agree to 3.7" from the horizon to the zenith
+  PASS
+astro_horizon_round_trip
+  PASS
+link_crc16_check_value
+  PASS
+link_round_trip_random_payloads
+  PASS
+link_rejects_corruption
+    STATE frame 124 bytes on the wire (118 payload); 100 Hz = 13.5 % of 921 600 baud
+  PASS
+motion_slew_90deg_at_8dps_exact_steps
+    90 deg: 3840000 microsteps (want 3840000), 12.76 s, peak 342 steps/ms = 8.02 deg/s, overshoot 0.0 steps, rail 2 during the slew
+  PASS
+motion_short_move_and_reversal
+    after +10 deg then -20 deg retarget: axis at -9.9999 deg
+  PASS
+motion_sidereal_tracking_rate_is_exact
+    600 s sidereal: output vs ideal 0.65" RMS, worst 0.69" (12" lost motion taken out by the encoder loop, 2" deadband)
+  PASS
+motion_soft_limit_clamps
+    asked for +120 deg altitude, stopped at 95.000 deg
+  PASS
+motion_link_loss_stops_slew_and_coasts_tracking
+    link lost during a slew: axis ramped to rest at 3.06 deg (of 90)
+  PASS
+motion_slip_detected_and_resynced
+    after a 0.2 deg slip: command re-synced to -4.7979 deg, axis really at -4.7987 deg
+  PASS
+mount_altaz_round_trip_and_compass
+  PASS
+mount_eq_wedge_dec_equals_altitude
+  PASS
+mount_roll_derotation_holds_position_angle
+    field rotation over +/-5.7 h at dec 28.6 deg needs roll -92.7..32.7 deg; PA held to 2.49e-14 deg
+  PASS
+mount_pointing_fit_recovers_terms
+    24 points, 5" noise: fit RMS 7.3"
+  PASS
+power_budget_cases_from_phase4
+    6.0 V, camera 27 W: motion budget 7.8 W
+  PASS
+intervalometer_timing
+  PASS
+sim_goto_track_altaz_capella
+    alt-az Capella: slew 10.5 s, commanded pointing error 0.01" (alt 69.7 deg, az 60.6 deg)
+      10 min tracking: commanded error worst 0.01", encoder vs true output worst 19.6", image angle drift 2.941 deg
+  PASS
+sim_goto_track_eq_capella
+    EQ Capella: slew 21.0 s, commanded pointing error 0.01" (alt 69.7 deg, az 60.5 deg)
+      10 min tracking: commanded error worst 0.01", encoder vs true output worst 18.6", image angle drift 0.000 deg
+  PASS
+sim_roll_derotation_altaz
+    30 min with roll de-rotation: image angle within 0.000 deg of the set angle; roll moved -10.26 deg
+  PASS
+sim_limits_refuse_below_horizon_and_payload_roll
+    goto below the horizon: 'altitude limit -10'
+  PASS
+sim_low_battery_parks
+    battery at 4 %: activity 5, parked 1, roll 0.00 deg
+  PASS
+proto_alpaca_basic_flow
+    Alpaca slew done: RA 5.278150 h Dec 45.99799 deg (JNow), Alpaca reports {"Value":5.27814973439,"ClientTransactionID":0,"ServerTransactionID":21,"ErrorNumber":0,"ErrorMessage":""}
+  PASS
+proto_lx200_stellarium_sequence
+    LX200 :GR#:GD# -> 15:35:20#+50*42:14#
+    after :MS# -> 05:16:41#+45*59:53#
+  PASS
+proto_websocket_api
+    below-horizon goto -> {"v":1,"id":18,"ok":false,"err":{"code":"limit","msg":"altitude limit -10"}}
+    state event: 898 bytes
+  PASS
+
+29 passed, 0 failed

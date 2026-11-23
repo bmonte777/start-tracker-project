@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The head speaks plain http and ws on the local network (its own access point 192.168.4.1 or your Wi-Fi), at an
+     address only known at run time, so clear text is allowed. -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Star Tracker head</title>
+<style>
+  :root { --bg:#f5f6f8; --fg:#1d2330; --card:#ffffff; --line:#d7dbe3; --accent:#2f6db5; --warn:#b5402f; }
+  body.night { --bg:#0b0000; --fg:#ff4a3a; --card:#160302; --line:#4a120c; --accent:#ff4a3a; --warn:#ff8a7a; }
+  body { margin:0; font:15px/1.4 system-ui, sans-serif; background:var(--bg); color:var(--fg); }
+  header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-bottom:1px solid var(--line); }
+  h1 { font-size:18px; margin:0; }
+  main { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px; padding:12px; }
+  section { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px; }
+  h2 { font-size:14px; margin:0 0 8px; text-transform:uppercase; letter-spacing:.05em; opacity:.8; }
+  table { width:100%; border-collapse:collapse; } td { padding:3px 0; border-bottom:1px solid var(--line); } td:last-child { text-align:right; font-variant-numeric:tabular-nums; }
+  button, input, select { font:inherit; color:var(--fg); background:transparent; border:1px solid var(--line); border-radius:6px; padding:6px 10px; margin:3px 2px; }
+  button:hover { border-color:var(--accent); } .row { display:flex; flex-wrap:wrap; align-items:center; }
+  input { width:90px; } #msg { min-height:1.4em; color:var(--warn); } .ok { color:var(--accent); }
+</style>
+</head>
+<body>
+<header><h1>Star Tracker head</h1><button id="mode" title="Day / Night">Night</button></header>
+<main>
+  <section><h2>Status</h2><table id="st"></table></section>
+  <section><h2>Go to</h2>
+    <div class="row">RA (h) <input id="ra" value="5.5881"> Dec (&deg;) <input id="dec" value="-5.391"></div>
+    <div class="row"><button onclick="cmd('goto',{ra_h:+ra.value,dec_d:+dec.value,epoch:'J2000'})">Go to (J2000)</button>
+      <button onclick="cmd('sync',{ra_h:+ra.value,dec_d:+dec.value,epoch:'J2000'})">Sync</button>
+      <button onclick="cmd('goto',{body:'moon'})">Moon</button><button onclick="cmd('goto',{body:'sun'})">Sun</button></div>
+    <div class="row"><button onclick="cmd('track',{on:true})">Track on</button><button onclick="cmd('track',{on:false})">Track off</button>
+      <select id="rate" onchange="cmd('track',{on:true,rate:this.value})"><option>sidereal</option><option>lunar</option><option>solar</option><option>king</option></select></div>
+    <div class="row"><button onclick="cmd('park')">Park</button><button onclick="cmd('unpark')">Unpark</button><button onclick="cmd('stop')"><b>STOP</b></button></div>
+  </section>
+  <section><h2>Jog</h2>
+    <div class="row">Speed (&deg;/s) <input id="sp" value="1"></div>
+    <div class="row"><button onmousedown="jog(0,-1)" onmouseup="jog(0,0)">&larr; Az</button><button onmousedown="jog(0,1)" onmouseup="jog(0,0)">Az &rarr;</button>
+      <button onmousedown="jog(1,1)" onmouseup="jog(1,0)">Alt &uarr;</button><button onmousedown="jog(1,-1)" onmouseup="jog(1,0)">Alt &darr;</button></div>
+    <div class="row">Roll (&deg;) <input id="roll" value="0"><button onclick="cmd('rotator.roll',{roll_d:+roll.value})">Set roll</button></div>
+  </section>
+  <section><h2>Intervalometer</h2>
+    <div class="row">Frames <input id="n" value="10"> Exposure (s) <input id="ex" value="30"> Interval (s) <input id="iv" value="32"></div>
+    <div class="row"><button onclick="cmd('ivm.start',{count:+n.value,exposure_s:+ex.value,interval_s:+iv.value})">Start</button><button onclick="cmd('ivm.stop')">Stop</button></div>
+  </section>
+  <section><h2>Update</h2>
+    <div class="row">Bundle (.stfw) <input type="file" id="fw" accept=".stfw" style="width:auto"></div>
+    <div class="row"><button onclick="upd()">Update the head</button></div>
+    <div>Both processors are updated; if anything fails the head goes back to the previous firmware.</div>
+  </section>
+  <section><h2>Messages</h2><div id="msg"></div><div id="faults"></div></section>
+</main>
+<script>
+let ws, id = 1;
+const mode = document.getElementById('mode');
+function setNight(n) { document.body.classList.toggle('night', n); mode.textContent = n ? 'Day' : 'Night'; try { localStorage.setItem('night', n ? '1' : ''); } catch (e) {} }
+mode.onclick = () => setNight(!document.body.classList.contains('night'));
+try { setNight(!!localStorage.getItem('night')); } catch (e) {}
+function cmd(op, args) { if (ws && ws.readyState === 1) ws.send(JSON.stringify({v:1, id:id++, op, args: args || {}})); }
+function jog(axis, dir) { cmd('jog', {axis, dps: dir * (+document.getElementById('sp').value)}); }
+async function upd() {
+  const f = document.getElementById('fw').files[0]; const el = document.getElementById('msg');
+  if (!f) { el.textContent = 'choose the .stfw file first'; return; }
+  el.className = ''; el.textContent = 'uploading ' + f.name + ' ...';
+  try { const r = await fetch('/api/update', {method:'POST', body: f}); el.textContent = await r.text(); el.className = r.ok ? 'ok' : ''; }
+  catch (e) { el.textContent = 'upload failed: ' + e; }
+}
+function hms(h) { const s = Math.round(((h % 24) + 24) % 24 * 3600); return `${String(Math.floor(s/3600)).padStart(2,'0')}h${String(Math.floor(s/60)%60).padStart(2,'0')}m${String(s%60).padStart(2,'0')}s`; }
+function connect() {
+  ws = new WebSocket(`ws://${location.host}/ws/v1`);
+  ws.onmessage = e => {
+    const m = JSON.parse(e.data);
+    if (m.ev === 'state') {
+      const rows = [['Mode', m.mode + (m.tracking ? ' (tracking)' : '')], ['RA / Dec J2000', hms(m.radec.ra_h) + ' / ' + m.radec.dec_d.toFixed(4) + '°'],
+        ['Az / Alt', m.altaz.az_d.toFixed(3) + '° / ' + m.altaz.alt_d.toFixed(3) + '°'], ['Image angle', m.radec.rot_d.toFixed(2) + '°'],
+        ['Axes az / alt / roll', ['az','alt','roll'].map(k => m.axes[k].pos_d.toFixed(3)).join(' / ')],
+        ['Motor rail', m.motor.vmot.toFixed(1) + ' V' + (m.motor.link ? '' : ' (no link)')], ['Battery', m.batt.soc + ' %, ' + m.batt.v.toFixed(2) + ' V'],
+        ['Pointing model', m.model.points + ' points, ' + m.model.rms_as.toFixed(1) + '" RMS'], ['Intervalometer', m.ivm.running ? m.ivm.done + ' / ' + m.ivm.count : 'off'], ['Time (UTC)', m.t]];
+      document.getElementById('st').innerHTML = rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
+      document.getElementById('faults').innerHTML = (m.faults || []).slice(-5).map(f => `<div>${f}</div>`).join('');
+    } else if (m.id) {
+      const el = document.getElementById('msg');
+      el.className = m.ok ? 'ok' : ''; el.textContent = m.ok ? 'OK' : (m.err.code + ': ' + m.err.msg);
+    }
+  };
+  ws.onclose = () => setTimeout(connect, 1000);
+}
+connect();
+</script>
+</body>
+</html>

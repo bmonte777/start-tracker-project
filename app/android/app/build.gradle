@@ -1,0 +1,49 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace = 'pt.brunomonte.startracker'
+    compileSdk = 36
+
+    defaultConfig {
+        applicationId 'pt.brunomonte.startracker'      // D77: its own app, installed alongside the Benro app
+        minSdk 29                                      // Android 10 and newer
+        targetSdk 36
+        versionCode 1
+        versionName '0.6.0'
+    }
+
+    // The shared UI: app/ui and app/shared copied into assets/web at build time (one source for both platforms)
+    sourceSets {
+        main.assets.srcDirs += "$buildDir/generated/webassets"
+    }
+
+    signingConfigs {
+        // Fixed key kept in the repo so every build installs over the previous one (D77). Personal use.
+        personal {
+            storeFile file('startracker.keystore')
+            storePassword 'startracker'
+            keyAlias 'startracker'
+            keyPassword 'startracker'
+        }
+    }
+    buildTypes {
+        release { minifyEnabled false; signingConfig signingConfigs.personal }
+        debug { signingConfig signingConfigs.personal }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    lint { abortOnError false; checkReleaseBuilds false }
+}
+
+tasks.register('copyWebAssets', Sync) {
+    from('../../ui') { into 'web/ui' }
+    from('../../shared') { into 'web/shared'; exclude 'node/**' }
+    into "$buildDir/generated/webassets"
+}
+preBuild.dependsOn copyWebAssets
+
+// No other libraries: the app uses only the Android framework.

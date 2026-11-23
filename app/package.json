@@ -1,0 +1,11 @@
+{
+  "name": "star-tracker-app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Star Tracker apps (Phase 6): shared UI and device client. No dependencies; tests use node:test against the simulator.",
+  "scripts": {
+    "test": "node --test --test-concurrency=1 \"tests/*.test.mjs\"",
+    "check-api": "python3 tools/check_api.py"
+  }
+}

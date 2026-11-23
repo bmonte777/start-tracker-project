@@ -1,0 +1,4 @@
+## Phase 6: mDNS (startracker.local, _startracker._tcp) from Espressif's component registry. The workflow resolves it;
+## net.cpp builds without it (Alpaca discovery still works) if the registry cannot be reached.
+dependencies:
+  espressif/mdns: "^1.4"
