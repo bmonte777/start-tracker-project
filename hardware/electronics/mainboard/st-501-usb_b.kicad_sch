@@ -5433,6 +5433,7 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "MPN" "RC0402FR-076K19L" (at 76.2 198.12 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "LCSC" "C112297" (at 76.2 198.12 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "3d5e3570-4756-5055-b96b-a96bf46ccc9d"))
 		(pin "2" (uuid "43251b4c-912a-57ad-81ae-fff0306967be"))
 		(instances
@@ -5468,6 +5469,7 @@
 			(at 121.92 198.12 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "LCSC" "C354260" (at 121.92 198.12 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "d39af480-0170-5ae0-91e2-c7bf5567762b"))
 		(pin "2" (uuid "23469e55-5fd4-5d74-8699-7b38f769e2f7"))
 		(instances

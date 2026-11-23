@@ -4624,6 +4624,7 @@
 			(at 287.02 165.1 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "LCSC" "C138023" (at 287.02 165.1 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "149c204f-313b-5f89-b109-af27c896a61c"))
 		(pin "2" (uuid "3b1f7907-c61b-5a87-9476-214f0fb3249e"))
 		(instances

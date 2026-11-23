@@ -81,7 +81,7 @@ PARTS = [
     ('ST-328', 'Gasket, roll enclosure', 1, 'TPU printed', 'silicone moulded', 'make', 'own printer (H2S)', (0.08, 0.2, 0.05), 'filament', '3 g printed'),
     ('ST-329', 'O-ring 80 x 2, NBR 70 (roll enclosure on the cartridge sleeve)', 1, 'NBR', 'NBR', 'buy', 'generic', (0.6, 0.15, 0.08), 'est', ''),
     ('ST-330', 'Clamp screw 3/8in-16 x 12, coin slot, stainless', 1, 'stainless', 'stainless', 'buy', 'camera hardware supplier', (1.5, 0.6, 0.3), 'est', 'D13 exception, D36'),
-    ('ST-501', 'Mainboard: 6-layer PCB, assembly, passives, small semiconductors, inductors, connectors', 1, 'FR-4 6-layer', 'FR-4 6-layer', 'make', 'JLCPCB', (280.89, 14.85, 10.2), 'est', 'Phase 4 BOM: 93 lines; six layers with filled and capped vias (D51) and 1 oz inner copper (D61); JLCPCB fees estimated; at 1 head the price is the minimum order (5 bare boards, 2 assembled). ICs listed separately below'),
+    ('ST-501', 'Mainboard: 6-layer PCB, assembly, passives, small semiconductors, inductors, connectors', 1, 'FR-4 6-layer', 'FR-4 6-layer', 'make', 'JLCPCB', (259.05, 14.63, 10.18), 'est', 'Phase 4 BOM: 93 lines; six layers with filled and capped vias (D51) and 1 oz inner copper (D61); JLCPCB fees estimated; at 1 head the price is the minimum order (5 bare boards, 2 assembled). ICs listed separately below'),
     ('ST-502', 'Wi-Fi/BLE module ESP32-S3-WROOM-1-N16R8', 1, '-', '-', 'buy', 'Espressif via LCSC', (4.74, 3.72, 3.55), 'quoted', ''),
     ('ST-503', 'Motion MCU RP2354A (RP2350A + 2 MB flash, A4 stepping)', 1, '-', '-', 'buy', 'Raspberry Pi', (1.27, 1.09, 1.0), 'est', 'RP2350A quoted USD 1.10 / 0.90 / 0.80'),
     ('ST-504', 'Stepper driver TMC2209-LA', 3, '-', '-', 'buy', 'ADI Trinamic via LCSC', (2.95, 2.52, 1.82), 'quoted', '1k price est'),
