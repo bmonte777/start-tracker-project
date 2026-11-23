@@ -74,7 +74,7 @@ firmware/
 
 | Job | Where | Rate | Time used |
 |---|---|---|---|
-| Motion tick: target angle per axis (S-curve, setpoint polynomial, PEC, correction), angle → microsteps, limit clamp, PIO segment | core 1, timer alarm | 1 kHz | ≈ 45 µs (4.5 %) |
+| Motion tick: messages from core 0, encoder samples, target angle per axis (S-curve, setpoint polynomial, PEC, correction), angle → microsteps, limit clamp, PIO segment; every 200th tick the 5 Hz loop | core 1, timer alarm | 1 kHz | estimated ≈ 0.2 ms (double-precision maths on the M33; to be measured on the board) |
 | Encoder burst read, 3 × 48 bits at 8 MHz, CRC check, multi-turn unwrap | core 0 | 1 kHz | ≈ 25 µs |
 | ADC: three thermistors and `VMOT_MON`; STATE frame to the ESP32 | core 0 | 100 Hz | ≈ 40 µs |
 | TMC2209 status (`DRV_STATUS`, `SG_RESULT`), one driver per 33 ms | core 0 | 10 Hz per driver | UART at 115 200 baud |
@@ -83,9 +83,9 @@ firmware/
 
 **Step generation.** Each axis uses one PIO0 state machine. Every millisecond core 1 works out how many microsteps the axis must make in the next millisecond (a 64-bit accumulator, so the average rate has no rounding error at all) and pushes one segment: direction, count and half-period. The state machine plays the pulses evenly over the millisecond and then waits for the next segment. Numbers (300:1 gearing, 200-step motors, 256 microsteps, D2/D23): 15 360 000 microsteps per output turn, 0.084″ per microstep; 8°/s (D42) = 341 333 steps/s = 342 steps per tick, period 2.93 µs (the TMC2209 accepts up to fCLK/2); sidereal = 178.3 steps/s, one step every 5.6 ms, placed on the 1 ms grid: worst timing error 1 ms × 15″/s = 0.015″.
 
-**Shared data between the cores** goes through sequence-locked structures (writer bumps a counter before and after; reader retries if it changed), never through locks that could make core 1 wait.
+**Shared data between the cores.** Core 1 owns the whole motion state. Core 0 hands it link messages through a single-producer queue and sensor samples through a sequence-locked block (writer bumps a counter before and after; reader retries if it changed); core 1 publishes STATE, the wanted rail level and the driver currents the same way. Nothing uses a lock that could make core 1 wait.
 
-**Memory.** RP2354A: 520 KB SRAM, 2 MB flash. Image ≈ 110 KB; PEC tables 3 × 1 024 × int16 = 6 KB; encoder maps 3 × 721 × int16 = 4.3 KB. Flash: two 768 KB image slots (A/B, the RP2350 boot partitions), 64 KB configuration.
+**Memory.** RP2354A: 520 KB SRAM, 2 MB flash. Motion image 38 KB, bring-up image 51 KB (measured); PEC tables 3 × 1 024 × int32 = 12 KB; encoder maps 3 × 721 × int16 = 4.3 KB. Flash: one image at offset 0. A second (A/B) slot on the RP2354A is not needed because the ESP32 keeps the last good RP2354A image and can always rewrite it (section 3.9).
 
 ### 3.3 ESP32-S3: tasks
 

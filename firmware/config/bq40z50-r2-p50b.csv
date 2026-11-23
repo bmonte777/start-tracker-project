@@ -1,0 +1,35 @@
+# Star Tracker battery pack ST-602: BQ40Z50-R2 data-flash settings for 2S2P Molicel INR-21700-P50B
+# Enter in TI Battery Management Studio (bqStudio) -> Data Memory, class / subclass / name as shown there (TRM SLUUBK0).
+# Cell figures: Molicel P50B data sheet (5000 mAh, 3.6 V nominal, 4.20 V charge, 2.5 V cut-off, charge 0..60 C).
+# Pack figures: docs/04-electronics.md section 5.3 (design capacity 10 000 mAh, four LEDs, 6 A / 8 A current limits).
+Class,Subclass,Name,Value,Unit,Why
+Settings,Configuration,DA Configuration,"CC1:CC0 = 2 cells",bits,tick "2 cells" in bqStudio's bit view; leave the other bits at their defaults
+Gas Gauging,Design,Design Capacity mAh,10000,mAh,2 x 5000 mAh in parallel
+Gas Gauging,Design,Design Capacity cWh,7200,cWh,10 Ah x 7.2 V
+Gas Gauging,Design,Design Voltage,7200,mV,2 x 3.6 V
+Advanced Charge Algorithm,Standard Temp Charging,Voltage,4200,mV,per cell (P50B 4.20 V)
+Advanced Charge Algorithm,Standard Temp Charging,Current,4000,mA,4 A (0.4 C) as set on the BQ25792 (Phase 4 calc)
+Advanced Charge Algorithm,Low Temp Charging,Current,1000,mA,below 10 C
+Advanced Charge Algorithm,Pre-Charging,Current,250,mA,
+Advanced Charge Algorithm,Termination Config,Charge Term Taper Current,250,mA,
+Protections,CUV,Threshold,2700,mV,cell under-voltage (P50B cut-off 2.5 V + margin)
+Protections,CUV,Recovery,3000,mV,
+Protections,COV,Threshold Low Temp,4280,mV,
+Protections,COV,Threshold Standard Temp,4300,mV,cell over-voltage
+Protections,COV,Threshold High Temp,4280,mV,
+Protections,OCC,Threshold,6000,mA,charge over-current (section 5.3 suggestion)
+Protections,OCD1,Threshold,-8000,mA,discharge over-current (section 5.3 suggestion; blade connector 6 A continuous)
+Protections,OCD2,Threshold,-10000,mA,short peak (pack protection at 10 A, Phase 4 pack-current note)
+Protections,OTC,Threshold,50.0,degC,charge over-temperature (cells allow 60 C; head stops charging at 45 C cell)
+Protections,OTD,Threshold,60.0,degC,discharge over-temperature
+Protections,UTC,Threshold,0.0,degC,no charging below 0 C
+Protections,UTD,Threshold,-20.0,degC,head's operating range starts at -20 C
+Settings,Fuse,Min Blow Fuse Voltage,6000,mV,2-cell pack
+Settings,Fuse,Fuse Blow Timeout,30,s,
+LED Support,LED Configuration,LED Hold Time,4,s,
+SOC Flag Config,Thresholds,LED threshold 1,20,%,four LEDs fitted (D59): 20/40/60/80 %; threshold 5 at 100 % so a fifth step never lights (section 5.3)
+SOC Flag Config,Thresholds,LED threshold 2,40,%,
+SOC Flag Config,Thresholds,LED threshold 3,60,%,
+SOC Flag Config,Thresholds,LED threshold 4,80,%,
+SOC Flag Config,Thresholds,LED threshold 5,100,%,
+Chemistry,Chem ID,Chemistry ID,(look up),,Find Molicel INR-21700-P50B in bqStudio's chemistry list (latest chemistry plug-in); if absent run GPCCHEM with a relaxation + C/10 discharge log (TI SLUUCW4 section "Chemical ID")

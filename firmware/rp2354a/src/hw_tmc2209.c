@@ -132,7 +132,7 @@ bool hw_tmc_set_current(int axis, uint16_t ma)
     /* vsense=1 (0.749 A full scale, finer steps) up to 0.70 A, else vsense=0 (1.352 A) */
     bool vs = ma <= 700;
     float ifs = vs ? TMC_IFS_VSENSE1 : TMC_IFS_VSENSE0;
-    int cs = (int)lroundf(ma / 1000.0f / ifs * 32.0f) - 1;
+    int cs = (int)ceilf(ma / 1000.0f / ifs * 32.0f - 1e-4f) - 1;   /* never below the requested current */
     if (cs < 0) cs = 0;
     if (cs > 31) cs = 31;
     bool ok = true;

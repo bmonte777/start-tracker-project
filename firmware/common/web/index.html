@@ -42,6 +42,11 @@
     <div class="row">Frames <input id="n" value="10"> Exposure (s) <input id="ex" value="30"> Interval (s) <input id="iv" value="32"></div>
     <div class="row"><button onclick="cmd('ivm.start',{count:+n.value,exposure_s:+ex.value,interval_s:+iv.value})">Start</button><button onclick="cmd('ivm.stop')">Stop</button></div>
   </section>
+  <section><h2>Update</h2>
+    <div class="row">Bundle (.stfw) <input type="file" id="fw" accept=".stfw" style="width:auto"></div>
+    <div class="row"><button onclick="upd()">Update the head</button></div>
+    <div>Both processors are updated; if anything fails the head goes back to the previous firmware.</div>
+  </section>
   <section><h2>Messages</h2><div id="msg"></div><div id="faults"></div></section>
 </main>
 <script>
@@ -52,6 +57,13 @@ mode.onclick = () => setNight(!document.body.classList.contains('night'));
 try { setNight(!!localStorage.getItem('night')); } catch (e) {}
 function cmd(op, args) { if (ws && ws.readyState === 1) ws.send(JSON.stringify({v:1, id:id++, op, args: args || {}})); }
 function jog(axis, dir) { cmd('jog', {axis, dps: dir * (+document.getElementById('sp').value)}); }
+async function upd() {
+  const f = document.getElementById('fw').files[0]; const el = document.getElementById('msg');
+  if (!f) { el.textContent = 'choose the .stfw file first'; return; }
+  el.className = ''; el.textContent = 'uploading ' + f.name + ' ...';
+  try { const r = await fetch('/api/update', {method:'POST', body: f}); el.textContent = await r.text(); el.className = r.ok ? 'ok' : ''; }
+  catch (e) { el.textContent = 'upload failed: ' + e; }
+}
 function hms(h) { const s = Math.round(((h % 24) + 24) % 24 * 3600); return `${String(Math.floor(s/3600)).padStart(2,'0')}h${String(Math.floor(s/60)%60).padStart(2,'0')}m${String(s%60).padStart(2,'0')}s`; }
 function connect() {
   ws = new WebSocket(`ws://${location.host}/ws/v1`);

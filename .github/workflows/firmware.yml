@@ -1,0 +1,108 @@
+# Star Tracker — firmware build and tests. Started by hand only (spec 7.7):
+# github.com -> Actions -> "Firmware" -> Run workflow. Results are in the run's Artifacts box.
+name: Firmware
+on:
+  workflow_dispatch:
+
+jobs:
+  rp2354a:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check pins against the schematic model
+        run: python3 firmware/common/tools/gen_board.py && git diff --exit-code firmware/common/include/st_board.h
+      - name: Toolchain and Pico SDK 2.3.1
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-newlib ninja-build
+          git clone -q --depth 1 --branch 2.3.1 https://github.com/raspberrypi/pico-sdk.git $HOME/pico-sdk
+          git -C $HOME/pico-sdk submodule update --init --depth 1 lib/tinyusb
+      - name: Build motion, bring-up and flash-loader images
+        run: |
+          cmake -G Ninja -S firmware/rp2354a -B build-rp -DPICO_SDK_PATH=$HOME/pico-sdk
+          ninja -C build-rp
+          mkdir -p out
+          for t in motion bringup flashstub; do cp build-rp/st_rp2354a_$t.bin out/; done
+          cp build-rp/st_rp2354a_motion.uf2 build-rp/st_rp2354a_bringup.uf2 build-rp/st_rp2354a_motion.elf build-rp/st_rp2354a_bringup.elf out/
+          arm-none-eabi-size build-rp/*.elf
+      - uses: actions/upload-artifact@v4
+        with: { name: rp2354a-images, path: out/ }
+
+  esp32s3:
+    needs: rp2354a
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: rp2354a-images, path: rp }
+      - name: Embed the RP2354A images in the ESP32-S3 firmware
+        run: |
+          mkdir -p firmware/esp32s3/main/embed
+          cp rp/st_rp2354a_bringup.bin firmware/esp32s3/main/embed/rp_bringup.bin
+          cp rp/st_rp2354a_motion.bin firmware/esp32s3/main/embed/rp_motion.bin
+          cp rp/st_rp2354a_flashstub.bin firmware/esp32s3/main/embed/rp_flashstub.bin
+      - name: Build system and bring-up images (ESP-IDF 5.5.6)
+        uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: v5.5.6
+          target: esp32s3
+          path: firmware/esp32s3
+          command: >-
+            idf.py -B build-app -D SDKCONFIG=build-app/sdkconfig build &&
+            idf.py -B build-bu -D SDKCONFIG=build-bu/sdkconfig -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.bringup" build &&
+            (cd build-app && python -m esptool --chip esp32s3 merge_bin -o ../st-esp32s3-system-full.bin @flash_args) &&
+            (cd build-bu && python -m esptool --chip esp32s3 merge_bin -o ../st-esp32s3-bringup-full.bin @flash_args)
+      - name: Update bundle
+        run: |
+          mkdir -p out
+          sudo cp firmware/esp32s3/st-esp32s3-*-full.bin out/
+          sudo cp firmware/esp32s3/build-app/star_tracker_esp32s3.bin out/st-esp32s3-system-app.bin
+          python3 firmware/tools/make_bundle.py --esp out/st-esp32s3-system-app.bin --rp rp/st_rp2354a_motion.bin -o out/star-tracker-update.stfw
+          cp firmware/tools/web-flasher.html out/
+      - uses: actions/upload-artifact@v4
+        with: { name: esp32s3-images-and-flasher, path: out/ }
+
+  simulator-and-tests:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build simulator and tests
+        run: |
+          sudo apt-get install -y -q ninja-build
+          cmake -G Ninja -S firmware/sim -B build-sim
+          ninja -C build-sim
+      - name: Unit and integration tests
+        run: build-sim/st-tests | tee unit-tests.txt
+      - name: Protocol tests against the running simulator
+        run: |
+          build-sim/startracker-sim --speed 10 > sim.log 2>&1 &
+          sleep 3
+          python3 firmware/tests/proto/proto_test.py
+      - name: ASCOM ConformU (Telescope and Rotator)
+        continue-on-error: true
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          gh release download --repo ASCOMInitiative/ConformU --pattern '*linux-x64*' --dir cu
+          cd cu && for f in *.tar.xz; do tar xf "$f"; done; for f in *.zip; do [ -f "$f" ] && unzip -q "$f"; done; cd ..
+          CU=$(find cu -iname conformu -type f | head -1); chmod +x "$CU"
+          "$CU" conformance http://127.0.0.1:32323/api/v1/telescope/0 --logfilename conformu-telescope.txt || true
+          "$CU" conformance http://127.0.0.1:32323/api/v1/rotator/0 --logfilename conformu-rotator.txt || true
+          "$CU" alpacaprotocol http://127.0.0.1:32323/api/v1/telescope/0 --logfilename conformu-protocol.txt || true
+          grep -h -E "errors|issues" conformu-*.txt | tail -20 || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: test-reports, path: "unit-tests.txt\nproto_report.md\nconformu-*.txt\nsim.log" }
+      - uses: actions/upload-artifact@v4
+        with: { name: simulator-linux, path: build-sim/startracker-sim }
+
+  simulator-windows:
+    runs-on: windows-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build StarTrackerSim.exe
+        run: |
+          cmake -S firmware/sim -B build-sim
+          cmake --build build-sim --config Release
+      - uses: actions/upload-artifact@v4
+        with: { name: simulator-windows, path: build-sim/Release/StarTrackerSim.exe }
