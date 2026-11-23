@@ -1,6 +1,6 @@
 # Phase 4 (electronics) — progress
 
-Last update: 23 Nov 2026, 18:45 UTC (sixth Phase 4 chat). Branch `phase-4-electronics`, pull request #6 (draft). Phase 4 is **not complete**.
+Last update: 23 Nov 2026, 19:30 UTC (sixth Phase 4 chat). Branch `phase-4-electronics`, pull request #6 (draft). Phase 4 is complete except for the open points listed under "State at the end of the sixth chat".
 Bruno does not use KiCad: nothing is left for him to finish by hand in it. Everything is done from `design.py`, the router and the routes files.
 
 ## Done
@@ -146,18 +146,16 @@ Baseline reproduced exactly first (164 open) with the tool chain below.
 Q36 → D50 (pack pads stay, rail on In3), Q37 → D51 (six layers, via-in-pad): approved "Go with recommendations and continue".
 Q28, Q31–Q35, Q38–Q41 → D52–D61, approved 23 Nov ("Q28-Q41 - proceed with recommendations"). Q42, Q43 pending.
 
-## Next, in this order
-1. ST-501: 3D render (`kc "python3 tools/preview.py mainboard"`), `kc "python3 tools/fab.py mainboard"`, fit check
-   (`cd hardware/cad && python -m stcad.fit_boards`), viewer (`tools/viewer.py`).
-2. Battery board: CAD, fit check, price and parts-list lines are done (commits 32fba7e, 8ffbafe); `hardware/cad/PROGRESS.md`, the docs text
-   and `docs/calc/phase4_cost_model.json` still to update.
-3. Sheet https://claude.ai/artifact/9T9Gpvm2vWPRYqJtPChJa8 from `hardware/bom/master-parts-list.csv` (ST-501, 509, 512, 513, 517, 518,
-   519, 520, 530, ST-602 to 604).
-4. Diagrams (`docs/img/04-block-diagram.*`, `docs/img/04-power-tree.*`) and board renders into the Docs doc
-   https://claude.ai/artifact/9Y2pyZBkJu5i3eWqNy6xAx and `docs/04-electronics.md`.
-5. Workflow run on GitHub (pull request 7 first), fix what it reports.
-6. Final check against sources; documents; mark pull request 6 ready; `claude/phase-5-prompt.md`.
-7. Open questions: Q42, Q43 (pending approval, recommended options in use).
+## State at the end of the sixth chat (23 Nov, evening)
+- Phase 4 is complete apart from the points below. All three boards: ERC/DRC clean, power paths at width, fab files, STEP, renders.
+  Fit check: no overlaps. Parts list CSV, `bom_data.py`, `phase4_cost_model.json` and the Sheet agree (EUR 2,157.43 / 1,308.23 / 969.11).
+  Docs doc, `docs/04-electronics.md` (rev B), Project copy `claude/05-electronics.md`, viewer: current.
+- Workflow "Phase 4 electronics build" run on GitHub on the branch: run 45238347825, green (all checks, all boards).
+- Pull request 6 was merged into main at 08:45 UTC on 23 Nov (before this chat's work); the work since is in pull request 8.
+- Still open: Q42, Q43 (pending approval); 19 mainboard BOM lines without a confirmed LCSC number (matched at upload or hand-fitted,
+  list in `docs/04-electronics.md` 8.3); battery board: LED positions in 4-LED mode and TI's fuse-drive resistor values only in figures
+  (topology confirmed, TI probably 5.1 k / 5.1 k, ours 10 k / 100 k); display module thickness assumed in the fit check.
+- Next phase: firmware, prompt in the Project as `claude/phase-5-prompt.md`.
 
 ## Tool chain (as used on 22 and 23 Nov)
 KiCad 9.0.8 from Ubuntu 26.04 packages in a chroot (`debootstrap resolute`, then `apt install kicad kicad-footprints kicad-symbols kicad-packages3d
