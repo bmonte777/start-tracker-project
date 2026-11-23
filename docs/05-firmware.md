@@ -2,7 +2,7 @@
 
 Star Tracker Project · Phase 5 · revision A · branch `phase-5-firmware`
 
-**Status (23 November 2026):** stages 1–7 written; all firmware builds; 29 of 29 host tests, 18 of 18 protocol tests against the simulator and 40 of 40 source checks pass. **Nothing has run on a real board yet.** Decisions Q44–Q51 are pending approval.
+**Status (23 November 2026):** Docs version: https://claude.ai/artifact/A6iY9Ye6ca5gv9BDEiazDP — stages 1–7 written; all firmware builds; 29 of 29 host tests, 18 of 18 protocol tests against the simulator and 40 of 40 source checks pass. **Nothing has run on a real board yet.** Decisions Q44–Q51 are pending approval.
 
 ## 1. Where things stand
 
@@ -32,13 +32,13 @@ D1–D61 are fixed and followed. The questions below are not covered by them; th
 | # | Question | Recommended, used in the firmware |
 |---|---|---|
 | Q44 | Toolchains and language | ESP-IDF 5.5 (C++17) on the ESP32-S3, Pico SDK 2.3 (C11) on the RP2354A. Motion logic, maths and protocol handlers are portable C/C++ so the PC simulator builds the same source. Rust was looked at and not taken: its BLE, HTTP and OTA stacks are less mature |
-| Q45 | RP2354A core and PIO split | Core 1 runs only a hard 1 kHz motion tick (profiles, tracking, PEC, step planning). Core 0 runs the link, encoder reads at 1 kHz, the 5 Hz correction loop, the driver UART, safety and the ADC. PIO0: one state machine per axis that plays "N steps in this millisecond" segments. PPS and LINK_SYNC edges are time-stamped in a GPIO interrupt |
+| Q45 | RP2354A core and PIO split | Core 1 runs only a hard 1 kHz motion tick (profiles, tracking, PEC, step planning). Core 0 runs the link, encoder reads at 1 kHz, the driver UART, safety and the ADC (the 5 Hz correction loop runs inside the core 1 tick). PIO0: one state machine per axis that plays "N steps in this millisecond" segments. PPS and LINK_SYNC edges are time-stamped in a GPIO interrupt |
 | Q46 | Link protocol | UART0 at 921 600 baud; COBS frames of type, sequence, payload and CRC-16/CCITT; messages of spec 7.1; head time in µs steered by the GNSS 1 PPS; a LINK_SYNC pulse every second followed by the time of that edge |
 | Q47 | Closed loop and encoder calibration | Steppers driven open-loop with PEC (the gear train is the fine control); encoders give absolute position at power-up, a 5 Hz lost-motion correction with a ±2″ deadband and slip detection at 0.05°. Calibration: a table measured against motor steps over each axis's travel (harmonics plus a 0.5° residual grid). The MT6835's self-calibration needs 25 rpm or more for 64 turns, which the 300:1 output never reaches |
 | Q48 | Mount models and pointing | Internal frame = the head's own axis angles; matrix kinematics with the wedge tilt and IMU level; alt-az (roll de-rotates the field, Alpaca Rotator) and EQ on the wedge (azimuth = RA, altitude = Dec, roll = framing). Saemundsson refraction with pressure and temperature; a seven-term pointing model fitted by least squares; J2000 ↔ JNow with precession, nutation and aberration |
 | Q49 | Updates and recovery | Two ESP32 OTA slots with rollback; the ESP32 keeps the last good RP2354A image and rewrites it over SWD if the RP2354A fails to answer after an update; one `.stfw` bundle for both; the ESP32 keeps its USB pins on the built-in USB-serial so the web flasher can always recover it; no secure boot on prototypes |
 | Q50 | PD controller configuration | Write each controller's configuration into its EEPROM once (bring-up Stage C, 4CC `FLad`/`FLwd`/`FLvy`); the ESP32 also holds both images and loads them over I²C (`PBMs`/`PBMc`) if a controller starts in patch-wait mode |
-| Q51 | Small defaults | Access point "StarTracker-XXXX" with a password shown on the OLED; mDNS `startracker.local`; BLE pairing with a 6-digit code; settings in NVS; Alpaca on 32323, LX200 on 4030 |
+| Q51 | Small defaults | Access point "StarTracker-XXXX" with a password shown on the OLED; mDNS `startracker.local` (not built yet, section 10); BLE pairing with a 6-digit code; settings in NVS; Alpaca on 32323, LX200 on 4030 |
 
 Q42 and Q43 (Phase 4, how the board check is read) stay pending and do not touch the firmware.
 
@@ -50,6 +50,8 @@ Every pin, address and scale the firmware uses is generated from `hardware/elect
 |---|---|---|
 | Port B enable | R29 (TPS25752 GPIO3 → `PORTB_EN`) is marked not fitted | ESP32 IO46 alone drives `PORTB_EN`; the generator stops if R29 is ever fitted |
 | GNSS backup supply | MAX-M10S `V_BCKP` is tied to its 3.3 V feed `+3V3G` (ferrite from `+3V3`) | "GNSS in backup" (section 10.5) is the module's software backup mode (UBX-RXM-PMREQ); with the pack out it starts cold. `GNSS_RST` and `GNSS_SAFE` are test pads only |
+| Clock backup cell | The RV-3028 leaves the factory with backup switchover disabled (register 0x37 = 0x10) | Bring-up item 4 sets switchover and trickle charge (0x3F, 11 kΩ) in the clock's EEPROM; through its Schottky diode the MS621FE charges to about 3.08 V, inside its 2.8–3.3 V range |
+| TMC2209 logic supply | The driver's logic runs from its own regulator on VS | The driver UART only answers with the motor rail on; the bring-up test switches it to 10 V first |
 | Driver current before set-up | VREF = 5VOUT × 4.7 k / (33 k + 4.7 k) = 0.623 V → 0.34 A RMS | Drivers stay disabled until set up; set-up writes `GCONF.I_scale_analog = 0` (internal reference, 1.35 A / 0.75 A full scale) |
 | Debug pads J6 | TC2030 pin 6 carries `LINK_RX` (RP2354A TX) | A Debug Probe's UART input can listen to the link (binary frames); the RP2354A has no text console of its own, so its bring-up tests run from the ESP32 menu |
 | RP2354A USB | Only on test pads TP45/TP46; BOOTSEL on TP47 through 1 k | "Drag a file onto its USB drive" needs wires on three test pads; the normal path is the ESP32 over SWD |
@@ -75,11 +77,11 @@ firmware/
     src/                   hardware layer: PIO step generators, MT6835, TMC2209, motor rail, ADC, link, time base
     bringup/               bring-up tests run from the ESP32 menu
   esp32s3/           application processor (ESP-IDF)
-    components/st_core     portable: astro, kinematics, pointing model, tracker, power policy, intervalometer
+    components/st_core     portable: astro, kinematics, pointing model, Head (tracker, limits, power policy, intervalometer)
     components/st_proto    portable: Alpaca, LX200 and WebSocket JSON handlers
-    components/st_hal      drivers: PD controllers, gauge, GNSS, RTC, IMU, magnetometer, OLED, buttons, LEDs, shutter
-    components/st_net      Wi-Fi, HTTP/WebSocket server, LX200 TCP, discovery, mDNS, BLE
-    components/st_sys      OTA, SWD flasher for the RP2354A, settings, bring-up menu
+    components/st_hal      drivers: PD controllers, charger, gauge, GNSS, RTC, IMU, magnetometer, OLED, I/O; link + head time
+    components/st_sys      bring-up menu, SWD flasher for the RP2354A
+    components/st_app      system firmware: tasks, UI, settings, Wi-Fi, HTTP/WebSocket, LX200, discovery, BLE, updates
   sim/               PC simulator: the portable code above + simulated hardware + the real servers
   tests/             unit tests (maths, rates, budget, link) and protocol tests
   tools/             diagrams, bundle maker, gauge and PD configuration helpers
@@ -95,7 +97,6 @@ firmware/
 | Encoder burst read, 3 × 48 bits at 8 MHz, CRC check, multi-turn unwrap | core 0 | 1 kHz | ≈ 25 µs |
 | ADC: three thermistors and `VMOT_MON`; STATE frame to the ESP32 | core 0 | 100 Hz | ≈ 40 µs |
 | TMC2209 status (`DRV_STATUS`, `SG_RESULT`), one driver per 33 ms | core 0 | 10 Hz per driver | UART at 115 200 baud |
-| Encoder correction and slip check | core 0 | 5 Hz | < 50 µs |
 | Link receive (UART interrupt into a ring buffer), watchdog | core 0 | continuous | — |
 
 **Step generation.** Each axis uses one PIO0 state machine. Every millisecond core 1 works out how many microsteps the axis must make in the next millisecond (a 64-bit accumulator, so the average rate has no rounding error at all) and pushes one segment: direction, count and half-period. The state machine plays the pulses evenly over the millisecond and then waits for the next segment. Numbers (300:1 gearing, 200-step motors, 256 microsteps, D2/D23): 15 360 000 microsteps per output turn, 0.084″ per microstep; 8°/s (D42) = 341 333 steps/s = 342 steps per tick, period 2.93 µs (the TMC2209 accepts up to fCLK/2); sidereal = 178.3 steps/s, one step every 5.6 ms, placed on the 1 ms grid: worst timing error 1 ms × 15″/s = 0.015″.
@@ -110,16 +111,16 @@ firmware/
 |---|---|---|---|---|
 | `link` | 1 | 20 | event + 1 Hz sync | UART frames to and from the RP2354A, LINK_SYNC strobe, time sync |
 | `tracker` | 1 | 18 | 10 Hz | target → head angles (astro, kinematics, pointing model) → SETPOINT with rate and acceleration; jobs |
-| `power` | 1 | 12 | 2 Hz + `PWR_IRQ_N` | both PD controllers, charger (through port A), gauge, pack budget, low-battery park, sleep |
+| `power` | 1 | 12 | 2 Hz | both PD controllers, charger (through port A), gauge, pack budget, low-battery park, sleep |
 | `sensors` | 1 | 10 | GNSS 1 Hz, IMU 50 Hz, mag 10 Hz | time, position, level, tip-over watch (3° in 0.5 s), first heading |
 | `ui` | 1 | 8 | 10 Hz | OLED, buttons (interrupt + 30 ms debounce), three LEDs |
 | `shutter` | — | esp_timer | µs | focus and release outputs, intervalometer |
 | `httpd` | 0 | 5 | event | Alpaca, web pages, WebSocket, update upload |
-| `lx200`, `discovery`, `mdns`, `nimble` | 0 | 5 | event | protocols and radio |
+| `lx200`, `alpdisc`, `wspush`, `nimble` | 0 | 5 | event | protocols, WebSocket state events (5 Hz), radio |
 
-The Head model (state, settings, faults) is one object behind a mutex; servers read a copy and post commands to a queue that the tracker task executes, so no network request ever blocks motion.
+The Head model (state, settings, faults) is one object behind its own lock. Protocol handlers call its methods; a command only plans and queues link messages, which the link's own lock serialises, so a network request never waits for motion and motion never waits for the network.
 
-**Memory.** ESP32-S3-WROOM-1-N16R8: 16 MB flash, 8 MB PSRAM. Partitions: `nvs` 64 KB, `otadata`, `phy_init`, `ota_0` and `ota_1` 4 MB each, `rp_img` 1 MB (RP2354A images: last good and new), `pd_cfg` 64 KB (both PD images), `storage` 6.6 MB LittleFS (web UI, logs, PEC and encoder tables, star list), `coredump` 64 KB.
+**Memory.** ESP32-S3-WROOM-1-N16R8: 16 MB flash, 8 MB PSRAM. Partitions: `nvs` 64 KB, `otadata`, `phy_init`, `ota_0` and `ota_1` 4 MB each, `rp_img` 1 MB (RP2354A images: last good and new), `pd_cfg` 64 KB (both PD images), `storage` 6.6 MB (reserved for logs, PEC and encoder tables; not mounted yet), `coredump` 64 KB.
 
 ### 3.4 Link protocol
 
@@ -158,8 +159,8 @@ Defined once in `firmware/common/include/st_link.h` and used unchanged by both p
 
 ### 3.6 Mount models, coordinates and pointing (Q48)
 
-- **Head frame.** The head's own axis angles (azimuth, altitude, roll) are the internal truth. The lens direction in the head frame is Rz(−az) · Ry(alt) · x̂.
-- **Mount orientation.** One rotation matrix from the head frame to the local horizon (east, north, up): in alt-az it holds the tilt measured by the IMU and the azimuth offset found by alignment; on the wedge (D39) it holds the wedge tilt (latitude) and the polar-alignment error, so the azimuth axis is the polar axis.
+- **Head frame.** The head's own axis angles (azimuth, altitude, roll) are the internal truth. The lens direction in the head frame is Rz(−az) · Ry(−alt) · x̂ (azimuth clockwise from above, altitude upward).
+- **Mount orientation.** One rotation matrix from the head frame to the local horizon (north, west, up): in alt-az it holds the tilt measured by the IMU and the azimuth offset found by alignment; on the wedge (D39) it holds the wedge tilt (latitude) and the polar-alignment error, so the azimuth axis is the polar axis.
 - **EQ on the wedge.** Azimuth = hour angle, altitude = declination, roll = framing only (no field rotation).
 - **Alt-az.** Azimuth and altitude track; roll de-rotates the field (the Alpaca Rotator reports and moves the same axis).
 - **Rates.** The tracker evaluates head angles at t, t + 0.5 s and t + 1 s and sends angle, rate and acceleration for each axis 10 times a second, 200 ms ahead. This works for any mode and any wedge tilt, includes refraction changing with altitude, and keeps the RP2354A free of astronomy.
@@ -170,13 +171,13 @@ Defined once in `firmware/common/include/st_link.h` and used unchanged by both p
 
 | Job | How |
 |---|---|
-| Pack state | BQ40Z50 over SMBus at 100 kHz: voltage, current, state of charge, temperature, status, cell voltages, every 2 s |
+| Pack state | BQ40Z50 over SMBus at 100 kHz: voltage, current, state of charge, temperature, status, cell voltages, safety and operation status, every 0.5 s |
 | Charging | the TPS25751D (port A) runs the BQ25792 itself (configured in its image); the ESP32 reads the charger through the controller (4CC `I2Cr`) and trims the charge current to 3 A above 35 °C inside the head (Phase 4 thermal check) |
-| Port A sourcing | allowed while the pack is above 20 % |
+| Port A sourcing | the policy allows it above 20 %; enforcing it in the controller is not written yet |
 | Port B (camera) | `PORTB_EN` high enables the TPS55288; the TPS25752A negotiates 5 V or 9 V at 3 A |
 | Pack budget (section 10.7) | allowed power = 6 A × pack voltage; motion gets what is left after port B, port A sourcing and 1.2 W of logic, sent to the RP2354A as `POWER.motion_budget_mw`. If a cold full-current slew and a 27 W camera load coincide, the slew current is lowered first, then port B is re-advertised at 15 W |
 | Low battery (D25) | 5 % or 6.2 V: finish the current exposure (5 min at most), park roll at 0° (P5 holds only within ±43°), park, sleep |
-| Sleep | drivers off, rail off, RP2354A held in reset, GNSS software backup, ESP32 deep sleep with ext1 wake on IO1, IO2, IO4, IO5, IO6, IO21 |
+| Sleep | drivers off, rail off, RP2354A held in reset, GNSS software backup, ESP32 deep sleep with ext1 wake on IO1, IO2, IO4, IO5, IO6, IO21 (written; what triggers it is not wired yet) |
 
 ![Power states](img/05-power-states.png)
 
@@ -193,9 +194,9 @@ Defined once in `firmware/common/include/st_link.h` and used unchanged by both p
 | Soft limit, payload envelope (D40) or tripod limit | RP2354A (clamp in the motion tick) | ramp to rest at the limit, `EVENT` |
 | Encoder and commanded angle differ > 0.05° | RP2354A | stop the axis, re-sync from the encoder, report |
 | StallGuard during a slew | RP2354A | stop, back off 1°, lower the speed by itself (D42), report |
-| Driver `DIAG` / over-temperature / short | RP2354A | disable the drivers, fault |
+| Driver over-temperature / short (`DRV_STATUS`) | RP2354A | fault reported |
 | Motor thermistor > 80 °C / > 95 °C | RP2354A | lower the current / stop the axis |
-| `VMOT` below 14.0 V on the 16 V level or 8.8 V on the 10 V level (Phase 4 monitor calc) | RP2354A | stop, rail off, report |
+| `VMOT` below 14.0 V on the 16 V level or 8.8 V on the 10 V level (Phase 4 monitor calc) | RP2354A | moving axes stop, fault reported |
 | IMU tilt changes > 3° in 0.5 s | ESP32 | STOP quick on all axes |
 | Pack at 5 % or 6.2 V | ESP32 | finish exposure, park, sleep |
 | Buttons 1 and 4 held 1 s | ESP32 | ramp all axes to rest and hold |
@@ -212,9 +213,8 @@ The ESP32 must never switch its USB pins away from the built-in USB-serial/JTAG:
 
 ### 3.10 Error handling
 
-- Every driver returns a status; failures increment a counter shown on the bring-up and service screens and reported in `faults` over the WebSocket.
-- I²C transactions retry twice, then mark the device missing; the head keeps running without it where it can (no IMU = no tip watch, shown as a warning).
-- Faults are latched with a code, axis and value, logged to a ring in LittleFS (last 500) and shown on the OLED.
+- Every driver returns a status. I²C transactions are tried three times, then counted as an error; the head keeps running without a missing device (no IMU = no tip watch).
+- Motion faults are latched bits in STATE plus an `EVENT` with axis and value; the Head keeps the last 20 messages, shows the latest on the OLED and sends them in the WebSocket state. A fault log in flash is not written yet.
 
 ## 4. Bring-up firmware (ready before the boards arrive)
 
@@ -447,7 +447,7 @@ Nothing here has run on a real board, and none of it is described as working on 
 | Windows simulator build | In the workflow but never compiled here (`continue-on-error`) |
 | StallGuard threshold, SpreadCycle switching speed | Defaults off; to be tuned from the Stage D slew logs |
 | Magnetometer heading for a first pointing estimate | Read, but not yet turned into an azimuth offset (needs the local declination) |
-| 15 W re-advertising on port B | The decision is made in firmware; switching the PDO set needs the second PDO set in the port B image and the TPS25752 command to apply it, which is not written yet |
+| Sleep trigger, port A sourcing limit, port B 15 W switching, fault log in flash | Logic or policy written; the trigger or the controller command is not wired yet |
 
 ## 11. Open questions
 
