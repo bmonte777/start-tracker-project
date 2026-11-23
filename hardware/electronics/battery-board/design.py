@@ -190,6 +190,13 @@ AREAS = [
 ]
 
 
+# Terminals of the pack-current path and the copper width wanted between them (tools/pathwidth.py)
+POWER_PATHS = {
+    "BP": (["J1.1", "F1.3"], 1.0), "BF": (["F1.1", "Q1.2"], 1.0), "VCC": (["Q1.9", "Q2.9"], 1.0), "PACKP": (["Q2.2", "J4.1"], 1.0),
+    "GND": (["J2.1", "R1.1"], 1.0), "PACKN": (["R1.2", "J5.1"], 1.0), "FUSE_H": (["F1.2", "Q3.9"], 0.5),
+}
+
+
 def layout(pcb):
     """Outer face seen from outside the pack: X to the right, Y up, origin at the board centre."""
     pcb.outline_rect(W, H, r=1.0)

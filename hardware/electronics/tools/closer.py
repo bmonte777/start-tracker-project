@@ -119,7 +119,8 @@ def prune(pre, rt, skip):
         for v in vias:
             n = sum(1 for s in segs + fix_s if g.seg_dist((v[1], v[2], v[1], v[2]), (s[3], s[4], s[5], s[6])) <= 0.24)
             inpad = any(p["r"][0] - 0.01 <= v[1] <= p["r"][2] + 0.01 and p["r"][1] - 0.01 <= v[2] <= p["r"][3] + 0.01 for p in pads)
-            if n >= 2 or (n >= 1 and inpad):
+            sides = {p["side"] for p in pads if p["r"][0] - 0.01 <= v[1] <= p["r"][2] + 0.01 and p["r"][1] - 0.01 <= v[2] <= p["r"][3] + 0.01}
+            if n >= 2 or (n >= 1 and inpad) or len(sides) >= 2 or "*" in sides:     # a via through two pads joins them by itself
                 keep_v.append(v)
             else:
                 gone += 1

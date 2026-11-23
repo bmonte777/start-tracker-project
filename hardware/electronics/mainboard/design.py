@@ -700,6 +700,18 @@ POWER_NETS = ["VBAT", "VBAT_IN", "VSYS", "VM_IN", "VMOT", "VBUS_A", "VBUS_B", "V
               "CHG_SW1", "CHG_SW2", "CHG_PMID", "PB_SW1", "PB_SW2", "BST_SW", "SW_5V", "SW_3V3"]
 PHASE_NETS = [f"{ax}_{p_}" for ax, _a in AXES for p_ in ("A1", "A2", "B1", "B2", "BRA", "BRB")]
 POUR_NETS = ("GND",)
+# The pins that carry the current of each power net and the copper width wanted between them (tools/pathwidth.py measures
+# the narrowest place on the widest way, over tracks and filled areas together). The supply planes are not in this list.
+POWER_PATHS = {
+    "VBAT_IN": (["J1.1", "Q1.9"], 1.0),
+    "CHG_SW1": (["U2.28", "L1.1"], 1.0), "CHG_SW2": (["U2.26", "L1.2"], 1.0), "CHG_PMID": (["U2.29", "C9.1", "C10.1", "C11.1"], 1.0),
+    "VBUS_CHG": (["U3.20", "U2.2", "U2.8", "C19.1"], 1.0), "VBUS_A": (["J3.A4", "J3.B9", "U3.23", "U3.32"], 1.0),
+    "PB_SW1": (["Q4.1", "Q5.9", "L2.1"], 1.0), "PB_SW2": (["L2.2", "U7.21", "U7.25"], 1.0),
+    "VPB_RAW": (["U7.11", "U7.12", "C39.1", "C40.1", "R23.1"], 1.0), "VPB": (["R23.2", "Q2.1", "C43.1"], 1.0),
+    "PB_MID": (["Q2.9", "Q3.9"], 1.0), "VBUS_B": (["Q3.1", "J4.A4", "J4.B9", "C50.1"], 1.0),
+    "VM_IN": (["Q6.9", "L5.1", "C71.1", "C72.1", "U12.7"], 1.0), "BST_SW": (["U12.4", "L5.2"], 0.35),
+    "SW_5V": (["U11.2", "L4.1"], 0.5), "+5V": (["L4.2", "C63.1", "U3.34", "U6.28"], 0.5), "SW_3V3": (["U10.5", "L3.1"], 0.5),
+}
 ANT = (-30.0, -30.0, 18.0, -23.9)        # ESP32 antenna: no copper on any layer
 
 # In1 (inner layer 1) is the power layer. 3.3 V everywhere, with the system rail under the power half and along a
