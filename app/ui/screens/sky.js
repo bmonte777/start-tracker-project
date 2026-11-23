@@ -50,7 +50,7 @@ export async function render(root) {
       <h3>Alt/Az position (hold, no tracking)</h3>
       <div class="row2"><label class="f">Azimuth °<input id="gaz" type="number" step="0.1" value="180"></label><label class="f">Altitude °<input id="galt" type="number" step="0.1" value="30"></label><button id="gotoaa">Go</button></div>
     </section>
-    <section class="card"><h2>Sky now</h2><div id="chart"></div><p class="small">Amber: where the head points. Green: the selected target. Stars to magnitude 3.5.</p></section>
+    <section class="card"><h2>Sky now</h2><div id="skyc"></div><p class="small">Amber: where the head points. Green: the selected target. Stars to magnitude 3.5.</p></section>
     <section class="card">
       <h2>Tracking</h2>
       <div class="seg" id="rates"><button value="sidereal" class="on">Stars</button><button value="lunar">Moon</button><button value="solar">Sun</button><button value="king">King</button></div>
@@ -98,7 +98,7 @@ export async function render(root) {
       ${sel.size ? `<tr><td>Size</td><td>${sel.size}′</td></tr>` : ''}${sel.alt ? `<tr><td>Also</td><td>${esc(sel.alt)}</td></tr>` : ''}` : '';
     $('#goto', root).disabled = !sel || offline || (sel.alt_d !== undefined && sel.alt_d < -5);
     $('#syncbtn', root).disabled = !sel || offline || sel.body || sel.ra === undefined;
-    $('#chart', root).innerHTML = chart(sel);
+    $('#skyc', root).innerHTML = chart(sel);
   };
   $('#q', root).addEventListener('input', showRes);
   $('#res', root).addEventListener('click', (e) => { const li = e.target.closest('li[data-i]'); if (!li) return; sel = results[+li.dataset.i]; showRes(); showSel(); });
@@ -123,7 +123,7 @@ export async function render(root) {
     b.addEventListener('pointerup', stop);
     b.addEventListener('pointercancel', stop);
   });
-  off = store.on((s, patch) => { if ('state' in patch) $('#chart', root).innerHTML = chart(sel); });
+  off = store.on((s, patch) => { if ('state' in patch) $('#skyc', root).innerHTML = chart(sel); });
   timer = setInterval(showRes, 30000);
   showRes();
   showSel();

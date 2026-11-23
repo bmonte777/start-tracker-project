@@ -15,6 +15,7 @@ typedef SOCKET sock_t;
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
+#include <csignal>
 #include <sys/socket.h>
 #include <unistd.h>
 typedef int sock_t;
@@ -28,6 +29,10 @@ void startup()
 #ifdef _WIN32
     WSADATA w;
     WSAStartup(MAKEWORD(2, 2), &w);
+#else
+    // A client that vanishes mid-send (an app killed, a browser closed) must not kill the simulator: without this, Linux
+    // and macOS end the process with SIGPIPE on the next send (found by the Phase 6 screenshot runs).
+    signal(SIGPIPE, SIG_IGN);
 #endif
 }
 

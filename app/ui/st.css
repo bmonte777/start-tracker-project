@@ -80,7 +80,7 @@ input.search{width:100%}
 .danger{background:color-mix(in srgb,var(--bad) 22%,transparent);border-color:color-mix(in srgb,var(--bad) 45%,transparent)}
 .kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px}
 .kv dt{color:var(--muted)} .kv dd{margin:0;font-family:var(--mono);font-size:13.5px;text-align:right}
-.chart{width:100%;height:220px;display:block;border-radius:var(--r-sm);background:var(--well);border:1px solid var(--tile-line)}
+canvas.chart,.chart{width:100%;height:auto;aspect-ratio:1200/440;display:block;border-radius:var(--r-sm);background:var(--well);border:1px solid var(--tile-line)}
 .steps{counter-reset:s;display:flex;flex-direction:column;gap:10px}
 .steps .step{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:var(--r-sm);background:var(--tile);border:1px solid var(--tile-line)}
 .steps .step::before{counter-increment:s;content:counter(s);flex:none;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
@@ -90,7 +90,8 @@ input.search{width:100%}
 .payloads .tile svg{width:100%;height:60px;display:block;margin-bottom:6px}
 .payloads .tile svg *{stroke:var(--ink);fill:none;stroke-width:2}
 .lv{min-height:260px}
-.lvph{color:#9fb0c8;font-size:14px;text-align:center;padding:30px}
+.lvph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#9fb0c8;font-size:14px;text-align:center;padding:30px;line-height:1.5}
+.lvph[hidden]{display:none}
 .progress{height:10px;border-radius:10px;background:var(--tile-strong);overflow:hidden}
 .progress span{display:block;height:100%;background:var(--accent);border-radius:10px;transition:width .4s}
 form.f-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;align-items:end}
@@ -98,3 +99,4 @@ form.f-grid label.f input,form.f-grid label.f select{width:100%}
 table.t{border-collapse:collapse;width:100%;font-size:13.5px}
 table.t th{text-align:left;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:6px 4px;font-weight:600}
 table.t td{padding:7px 4px;border-top:1px solid var(--tile-line)}
+select.f{width:13em;min-height:44px}

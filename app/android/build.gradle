@@ -1,0 +1,4 @@
+// Star Tracker for Android (D72). Same Android Gradle Plugin and Gradle as Benro-Polaris-Controller, which builds in CI.
+plugins {
+    id 'com.android.application' version '8.13.0' apply false
+}

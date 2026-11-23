@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Design "Blue Hour" (assets/web/ui.css) -->
+    <color name="paper">#5F8FC4</color>        <!-- Day: top of the morning sky -->
+    <color name="ink">#14202F</color>
+    <color name="accent">#FFB43D</color>
+    <!-- Night and Red modes (see assets/web/theme.js) -->
+    <color name="night">#0F1A2E</color>
+    <color name="red_black">#000000</color>
+</resources>

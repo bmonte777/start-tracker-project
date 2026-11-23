@@ -22,7 +22,7 @@ export async function render(root) {
   const site = { lat: store.config?.lat ?? 38.72, lon: store.config?.lon ?? -9.14 };
   root.innerHTML = pageHead('Planner', 'Night', `Tonight at ${site.lat.toFixed(2)}°, ${site.lon.toFixed(2)}° (the head’s site)`) + `
   <div class="grid three">
-    <section class="card lead span2"><h2>Altitude tonight</h2><canvas id="chart" class="chart" width="1200" height="440"></canvas>
+    <section class="card lead span2"><h2>Altitude tonight</h2><canvas id="nchart" class="chart" width="1200" height="440"></canvas>
       <div class="legend"><span><i style="background:#ffcf4a"></i>Sun</span><span><i style="background:#dfe6f0"></i>Moon</span><span><i style="background:#b9a7ff"></i>Milky Way core</span><span><i style="background:var(--accent)"></i>Where the head points</span></div></section>
     <section class="card"><h2>Darkness</h2><table id="dark"></table></section>
     <section class="card"><h2>Moon</h2><table id="moon"></table><div class="btns"><button id="trkmoon">Track the Moon</button></div></section>
@@ -49,7 +49,7 @@ export async function render(root) {
   $('#core', root).innerHTML = `${cev.map((e) => `<tr><td>Core ${e.type}s</td><td>${t(e.time)}</td></tr>`).join('') || '<tr><td>Rises / sets</td><td>not tonight</td></tr>'}
     <tr><td>Highest in darkness</td><td>${best.time ? `${best.alt.toFixed(0)}° at ${t(best.time)}` : 'not up in darkness'}</td></tr>`;
   // chart
-  const cv = $('#chart', root), g = cv.getContext('2d');
+  const cv = $('#nchart', root), g = cv.getContext('2d');
   const draw = () => {
     const W = cv.width, H = cv.height, x = (d) => (d - from) / (18 * 3600000) * W, y = (a) => H / 2 - a / 90 * (H / 2 - 20);
     g.clearRect(0, 0, W, H);

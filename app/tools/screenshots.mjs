@@ -33,7 +33,6 @@ const server = http.createServer((req, res) => {
 await new Promise((r) => server.listen(5599, r));
 const sim = await startSim(['--speed', '1']);
 fs.mkdirSync(OUT, { recursive: true });
-const browser = await puppeteer.launch({ executablePath: CHROME, headless: true, args: ['--no-sandbox', '--disable-gpu'] });
 const report = [];
 try {
   // put the simulated head in an interesting state: tracking Capella with the field held
@@ -48,26 +47,35 @@ try {
   for (const size of sizes) {
     for (const theme of THEMES) {
       for (const scr of SCREENS) {
+        // one browser per screen: nothing (sockets, timers, caches) carries over from the previous page
+        const browser = await puppeteer.launch({ executablePath: CHROME, headless: true, args: ['--no-sandbox', '--disable-gpu'] });
+        const guard = setTimeout(() => { try { browser.process().kill('SIGKILL'); } catch (e) { /* gone */ } }, 60000);
+        try {
         const page = await browser.newPage();
         await page.setViewport(SIZES[size]);
         const errors = [];
         page.on('pageerror', (e) => errors.push(e.message));
         page.on('console', (m) => { if (m.type() === 'error' && !/favicon|ERR_CONNECTION_REFUSED|Failed to load resource|blocked by CORS policy/.test(m.text())) errors.push(m.text()); });
         await page.goto(`http://127.0.0.1:5599/ui/index.html?head=127.0.0.1:8080&theme=${theme}#/${scr}`, { waitUntil: 'load' });
-        await page.waitForFunction((s) => window.__screenReady === s && window.__st && window.__st.state, { timeout: 20000 }, scr).catch((e) => errors.push('not ready: ' + e.message));
+        await page.waitForFunction((s) => window.__screenReady === s && window.__st && window.__st.state, { timeout: 20000 }, scr).catch(async () => { const d = await page.evaluate(() => ({ conn: window.__st && window.__st.conn, why: window.__st && window.__st.connWhy, ready: window.__screenReady })).catch((er) => er.message); errors.push('not ready: ' + JSON.stringify(d)); });
         await sleep(scr === 'pec' || scr === 'health' || scr === 'rig' ? 2500 : 1500);
+        // the red veil is fixed to the window; stretch it over the whole page for a full-page picture
+        await page.evaluate(() => { const v = document.getElementById('theme-red'); if (v) { v.style.bottom = 'auto'; v.style.height = document.documentElement.scrollHeight + 'px'; } });
         const file = path.join(OUT, `${scr}-${theme}${size === 'desktop' ? '' : '-' + size}.png`);
         await page.screenshot({ path: file, fullPage: true });
         const empty = await page.evaluate(() => document.querySelector('#view').innerText.trim().length < 20);
         report.push({ screen: scr, theme, size, ok: errors.length === 0 && !empty, errors, file: path.relative(path.join(APP, '..'), file) });
         console.log(`${errors.length || empty ? 'FAIL' : 'PASS'} ${scr} ${theme} ${size}${errors.length ? '  ' + errors.join(' | ') : ''}`);
-        await page.close();
+        } catch (e) { report.push({ screen: scr, theme, size, ok: false, errors: [String(e.message || e)] }); console.log(`FAIL ${scr} ${theme} ${size}  ${e.message}`); }
+        clearTimeout(guard);
+        if (process.env.ST_DEBUG) console.log('  sim after page:', await fetch(sim.http + '/startracker/v1/op', { method: 'POST', body: '{"v":1,"id":1,"op":"job.status"}', signal: AbortSignal.timeout(3000) }).then((r) => r.text()).catch((e) => 'NO ANSWER ' + e.message));
+        await browser.close().catch(() => {});
       }
     }
   }
 } finally {
-  await browser.close();
   await sim.stop();
+  server.closeAllConnections();
   server.close();
 }
 fs.writeFileSync(path.join(OUT, 'report.json'), JSON.stringify(report, null, 1));

@@ -3,7 +3,7 @@
 // screens/ that render into #view and get the latest head state through the store.
 import { CONN, StClient } from '../shared/stclient.js';
 import { discover } from '../shared/discovery.js';
-import { discoveryBridge, keepAwake, platform } from '../shared/native.js';
+import { discoveryBridge, hasShell, keepAwake, native, platform } from '../shared/native.js';
 
 // ------------------------------------------------------------------ small helpers for the screens
 export const $ = (sel, root = document) => root.querySelector(sel);
@@ -66,6 +66,7 @@ export async function connectTo(found) {
     try { store.set({ config: await c.getConfig(), limits: c.supports('limits.get') ? await c.limits() : null }); } catch (e) { /* shown by screens */ }
   });
   try { localStorage.setItem(LAST, JSON.stringify({ host: found.host, port: found.info?.http_port || 80 })); } catch (e) { /* */ }
+  if (hasShell()) native('setHead', { http: found.http }).catch(() => {});   // the native camera code talks to the head too
   try { await c.connect(); return true; } catch (e) { toast(e.message, 'bad'); return false; }
 }
 

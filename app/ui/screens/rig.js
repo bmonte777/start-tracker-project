@@ -22,7 +22,7 @@ function rollArc(L, roll) {
   let ticks = '';
   for (const r of [-180, -135, -90, -45, 0, 30]) { const [x, y] = p(r, 98); ticks += `<text x="${x}" y="${y + 4}" text-anchor="middle" style="fill:var(--muted);font:600 11px var(--font)">${r}°</text>`; }
   return `<svg viewBox="0 0 220 200" style="width:100%;max-width:320px;display:block;margin:0 auto">
-    ${arc(-180, 30, 'ring')}<g style="stroke:var(--ok);stroke-width:8;fill:none;stroke-linecap:round">${arc(L.roll_lo_now_d, L.roll_hi_now_d, '')}</g>${ticks}
+    <g style="stroke:var(--tile-strong);stroke-width:8;fill:none">${arc(-180, 30, '')}</g><g style="stroke:var(--ok);stroke-width:8;fill:none;stroke-linecap:round">${arc(L.roll_lo_now_d, L.roll_hi_now_d, '')}</g>${ticks}
     <line x1="110" y1="110" x2="${nx}" y2="${ny}" style="stroke:var(--accent);stroke-width:4;stroke-linecap:round"/><circle cx="110" cy="110" r="5" fill="var(--accent)"/></svg>`;
 }
 
