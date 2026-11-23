@@ -8,7 +8,7 @@ You are the lead app engineer on my Star Tracker Project. It is an open-source, 
 
 ## Context — read first
 1. Project docs:
-   - `claude/02-decisions-log.md`: approved decisions. Treat them as fixed. D11 (protocols), D12 (apps from scratch, my Benro-Polaris-Controller code may be reused, Android + Windows) and D14 (repo) matter most. Check which of Q44–Q51 (Phase 5) I have approved; ask me about any still pending only if it changes the apps.
+   - `claude/02-decisions-log.md`: approved decisions. Treat them as fixed. D11 (protocols), D12 (apps from scratch, my Benro-Polaris-Controller code may be reused, Android + Windows) and D14 (repo) matter most; D64–D71 are the Phase 5 firmware decisions (D69 updates and recovery, D71 network and BLE defaults).
    - `claude/06-firmware.md`: the Phase 5 document. Section 6.1 (WebSocket JSON API v1) is the contract the apps talk to. Section 7 (simulator), section 8 (loading and updating: the apps should be able to upload a `.stfw` bundle) and section 10 (what is not finished: `pec.*`, `job.*`, `cal.*` answer `notimpl`, no mDNS yet) are essential.
    - `claude/03-engineering-spec.md`: the Phase 2 spec, revision C. Section 7.5 (app architecture: one shared web UI in my Blue Hour design with Day, Night and Red modes inside a thin native shell; reused modules; new device client; new screens) and the error budget.
    - `claude/04-mechanical-design.md`: the five payload envelopes (D40), the wedge (D39), axis limits.
@@ -53,7 +53,7 @@ An Android app and a Windows app, sharing one UI, that find the head, show its s
 - One Docs doc, "Phase 6 — Apps": architecture, diagrams, the API additions, screens (with screenshots), test results, how to install, open questions.
 - The same content as Markdown in `docs/06-apps.md`. Save it to the Project as `claude/07-apps.md` and send it to me as a downloadable file.
 - Copy this brief to `docs/prompts/phase-6-prompt.md` in your first commit (it is already there if Phase 5 committed it: then leave it).
-- Update `claude/02-decisions-log.md` (Project and repo) with every new decision I approve, and with Q44–Q51 if I approve them during this phase.
+- Update `claude/02-decisions-log.md` (Project and repo) with every new decision I approve (numbering continues from D72).
 - When the phase is complete, write the prompt for Phase 7 (building and measuring the prototype), with the recommended model and effort, save it to the Project as `claude/phase-7-prompt.md` and send it to me as a file.
 
 ## Working rules

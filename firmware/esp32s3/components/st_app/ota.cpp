@@ -1,4 +1,4 @@
-// Star Tracker ESP32-S3 — updates for both processors (Q49).
+// Star Tracker ESP32-S3 — updates for both processors (D69).
 //
 // Bundle (.stfw, made by firmware/tools/make_bundle.py):
 //   header 64 bytes: "STFW" | u32 version 1 | u32 entries | u32 reserved | then per entry (up to 2, 24 bytes each):

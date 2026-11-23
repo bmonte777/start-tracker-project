@@ -400,7 +400,7 @@ void motion_slow_loop(motion_t *m)
             continue;
         }
         s->flags &= (uint16_t)~ST_AXF_SLIP;
-        /* lost-motion correction: only when not slewing, outside the deadband (Q47) */
+        /* lost-motion correction: only when not slewing, outside the deadband (D67) */
         if ((s->mode == ST_AX_HOLDING || (s->mode == ST_AX_TRACKING && s->sp_corr)) &&
             fabs(err) > deg_to_us(c, c->corr_deadband_deg)) {
             s->corr_goal = s->corr + err;

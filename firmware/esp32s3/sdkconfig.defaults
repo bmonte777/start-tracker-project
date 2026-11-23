@@ -7,7 +7,7 @@ CONFIG_SPIRAM=y
 CONFIG_SPIRAM_MODE_OCT=y
 CONFIG_SPIRAM_SPEED_80M=y
 CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
-# console on the built-in USB-serial/JTAG of port A; never hand the USB pins to anything else (Q49)
+# console on the built-in USB-serial/JTAG of port A; never hand the USB pins to anything else (D69)
 CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
 CONFIG_ESP_CONSOLE_SECONDARY_NONE=y
 CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE=y

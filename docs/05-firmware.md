@@ -2,11 +2,11 @@
 
 Star Tracker Project · Phase 5 · revision A · branch `phase-5-firmware`
 
-**Status (23 November 2026):** Docs version: https://claude.ai/artifact/A6iY9Ye6ca5gv9BDEiazDP — stages 1–7 written; all firmware builds; 29 of 29 host tests, 18 of 18 protocol tests against the simulator and 40 of 40 source checks pass. **Nothing has run on a real board yet.** Decisions Q44–Q51 are pending approval.
+**Status (23 November 2026):** Docs version: https://claude.ai/artifact/A6iY9Ye6ca5gv9BDEiazDP — stages 1–7 written; all firmware builds; 29 of 29 host tests, 18 of 18 protocol tests against the simulator and 40 of 40 source checks pass. **Nothing has run on a real board yet.** Decisions Q44–Q51 were approved by Bruno on 23 November 2026 and are recorded as D64–D71.
 
 ## 1. Where things stand
 
-- **Architecture** (this section and section 3) and **decisions** Q44–Q51, carried on with the recommended option.
+- **Architecture** (this section and section 3) and **decisions** D64–D71 (asked as Q44–Q51, approved as recommended).
 - **Bring-up firmware** for both processors, covering Stages B–D of the Phase 4 plan from a menu on the serial console and the OLED (section 4).
 - **RP2354A motion firmware** (section 5) and **ESP32-S3 system firmware** with Alpaca, LX200, WebSocket and BLE (section 6).
 - **Simulator and tests** (section 7): the real motion core and Head model on simulated axes, served over the real protocols.
@@ -27,20 +27,20 @@ Star Tracker Project · Phase 5 · revision A · branch `phase-5-firmware`
 
 ## 2. Decisions
 
-D1–D61 are fixed and followed. The questions below are not covered by them; the work carries on with the recommended option for each, marked **pending approval** until Bruno answers.
+D1–D63 are fixed and followed. The questions below were not covered by them. Bruno approved the recommended option for each on 23 November 2026 ("Q44–Q51 - Go with recommended"); they are recorded in the decisions log as D64–D71.
 
-| # | Question | Recommended, used in the firmware |
+| # | Question | Decision (approved) |
 |---|---|---|
-| Q44 | Toolchains and language | ESP-IDF 5.5 (C++17) on the ESP32-S3, Pico SDK 2.3 (C11) on the RP2354A. Motion logic, maths and protocol handlers are portable C/C++ so the PC simulator builds the same source. Rust was looked at and not taken: its BLE, HTTP and OTA stacks are less mature |
-| Q45 | RP2354A core and PIO split | Core 1 runs only a hard 1 kHz motion tick (profiles, tracking, PEC, step planning). Core 0 runs the link, encoder reads at 1 kHz, the driver UART, safety and the ADC (the 5 Hz correction loop runs inside the core 1 tick). PIO0: one state machine per axis that plays "N steps in this millisecond" segments. PPS and LINK_SYNC edges are time-stamped in a GPIO interrupt |
-| Q46 | Link protocol | UART0 at 921 600 baud; COBS frames of type, sequence, payload and CRC-16/CCITT; messages of spec 7.1; head time in µs steered by the GNSS 1 PPS; a LINK_SYNC pulse every second followed by the time of that edge |
-| Q47 | Closed loop and encoder calibration | Steppers driven open-loop with PEC (the gear train is the fine control); encoders give absolute position at power-up, a 5 Hz lost-motion correction with a ±2″ deadband and slip detection at 0.05°. Calibration: a table measured against motor steps over each axis's travel (harmonics plus a 0.5° residual grid). The MT6835's self-calibration needs 25 rpm or more for 64 turns, which the 300:1 output never reaches |
-| Q48 | Mount models and pointing | Internal frame = the head's own axis angles; matrix kinematics with the wedge tilt and IMU level; alt-az (roll de-rotates the field, Alpaca Rotator) and EQ on the wedge (azimuth = RA, altitude = Dec, roll = framing). Saemundsson refraction with pressure and temperature; a seven-term pointing model fitted by least squares; J2000 ↔ JNow with precession, nutation and aberration |
-| Q49 | Updates and recovery | Two ESP32 OTA slots with rollback; the ESP32 keeps the last good RP2354A image and rewrites it over SWD if the RP2354A fails to answer after an update; one `.stfw` bundle for both; the ESP32 keeps its USB pins on the built-in USB-serial so the web flasher can always recover it; no secure boot on prototypes |
-| Q50 | PD controller configuration | Write each controller's configuration into its EEPROM once (bring-up Stage C, 4CC `FLad`/`FLwd`/`FLvy`); the ESP32 also holds both images and loads them over I²C (`PBMs`/`PBMc`) if a controller starts in patch-wait mode |
-| Q51 | Small defaults | Access point "StarTracker-XXXX" with a password shown on the OLED; mDNS `startracker.local` (not built yet, section 10); BLE pairing with a 6-digit code; settings in NVS; Alpaca on 32323, LX200 on 4030 |
+| D64 (Q44) | Toolchains and language | ESP-IDF 5.5 (C++17) on the ESP32-S3, Pico SDK 2.3 (C11) on the RP2354A. Motion logic, maths and protocol handlers are portable C/C++ so the PC simulator builds the same source. Rust was looked at and not taken: its BLE, HTTP and OTA stacks are less mature |
+| D65 (Q45) | RP2354A core and PIO split | Core 1 runs only a hard 1 kHz motion tick (profiles, tracking, PEC, step planning). Core 0 runs the link, encoder reads at 1 kHz, the driver UART, safety and the ADC (the 5 Hz correction loop runs inside the core 1 tick). PIO0: one state machine per axis that plays "N steps in this millisecond" segments. PPS and LINK_SYNC edges are time-stamped in a GPIO interrupt |
+| D66 (Q46) | Link protocol | UART0 at 921 600 baud; COBS frames of type, sequence, payload and CRC-16/CCITT; messages of spec 7.1; head time in µs steered by the GNSS 1 PPS; a LINK_SYNC pulse every second followed by the time of that edge |
+| D67 (Q47) | Closed loop and encoder calibration | Steppers driven open-loop with PEC (the gear train is the fine control); encoders give absolute position at power-up, a 5 Hz lost-motion correction with a ±2″ deadband and slip detection at 0.05°. Calibration: a table measured against motor steps over each axis's travel (harmonics plus a 0.5° residual grid). The MT6835's self-calibration needs 25 rpm or more for 64 turns, which the 300:1 output never reaches |
+| D68 (Q48) | Mount models and pointing | Internal frame = the head's own axis angles; matrix kinematics with the wedge tilt and IMU level; alt-az (roll de-rotates the field, Alpaca Rotator) and EQ on the wedge (azimuth = RA, altitude = Dec, roll = framing). Saemundsson refraction with pressure and temperature; a seven-term pointing model fitted by least squares; J2000 ↔ JNow with precession, nutation and aberration |
+| D69 (Q49) | Updates and recovery | Two ESP32 OTA slots with rollback; the ESP32 keeps the last good RP2354A image and rewrites it over SWD if the RP2354A fails to answer after an update; one `.stfw` bundle for both; the ESP32 keeps its USB pins on the built-in USB-serial so the web flasher can always recover it; no secure boot on prototypes |
+| D70 (Q50) | PD controller configuration | Write each controller's configuration into its EEPROM once (bring-up Stage C, 4CC `FLad`/`FLwd`/`FLvy`); the ESP32 also holds both images and loads them over I²C (`PBMs`/`PBMc`) if a controller starts in patch-wait mode |
+| D71 (Q51) | Small defaults | Access point "StarTracker-XXXX" with a password shown on the OLED; mDNS `startracker.local` (not built yet, section 10); BLE pairing with a 6-digit code; settings in NVS; Alpaca on 32323, LX200 on 4030 |
 
-Q42 and Q43 (Phase 4, how the board check is read) stay pending and do not touch the firmware.
+Q42 and Q43 (Phase 4, how the board check is read) were approved as D62 and D63; they do not touch the firmware.
 
 ### 2.1 Findings from the design files
 
@@ -149,7 +149,7 @@ Defined once in `firmware/common/include/st_link.h` and used unchanged by both p
 
 **Time.** The ESP32 keeps head time: GNSS time of week plus the 1 PPS edge captured in an interrupt (both on IO15), or the RTC (RV-3028 Unix counter) until a fix arrives. Once a second it raises LINK_SYNC (IO16) and records its own clock at the edge, then sends `TIMESYNC` with the head time of that edge. The RP2354A time-stamps the same edge (GPIO2 interrupt) and fits head time = a + b × local time over the last 16 pairs, which tracks its crystal's drift. The RP2354A's own PPS input (GPIO3) measures its crystal against GNSS directly and keeps the rate right if the ESP32 stops sending. Error budget: interrupt latency < 2 µs, so the clock term stays at the spec's 0.04″.
 
-### 3.5 Closed-loop strategy and encoder calibration (Q47)
+### 3.5 Closed-loop strategy and encoder calibration (D67)
 
 - **Fine control is the gear train.** Tracking is open-loop microstepping with PEC, exactly as the spec's error budget assumes (encoder loop noise 0.3″ is an allowance, not the control).
 - **Encoders are the truth on a slow loop.** At power-up each axis takes its absolute angle from its encoder (multi-turn on azimuth is counted from the step count and confirmed by the encoder). Every 200 ms the motion core compares the averaged encoder angle (200 samples, which brings the MT6835's 0.0015° RMS noise down to about 0.4″) with the commanded angle; outside a ±2″ deadband it adds a small correction rate (limited to 1″/s while tracking) until they agree. This takes out the reducer wind-up at reversals (12–26″, spec 4.5).
@@ -157,7 +157,7 @@ Defined once in `firmware/common/include/st_link.h` and used unchanged by both p
 - **Calibration.** The MT6835 is ±252″ non-linear out of the box (its own self-calibration would need ≥ 25 rpm for 64 turns; the output turns at 1.3 rpm at 8°/s). So each axis is mapped once: the motor steps slowly over the axis's whole travel (a full turn on azimuth), the gear train (accurate to ±20″, and periodic) is the reference; the encoder-minus-steps error is fitted with harmonics of the output angle (orders 1–8, which hold the magnet and mounting errors), and the residual is kept on a 0.5° grid. The map is stored on the ESP32 and sent to the RP2354A at start-up. The reducer's own periodic error averages out over the many wave-generator turns in the travel.
 - **Bandwidth.** The MT6835 bandwidth register is set lower than the default (BW = 3) because the shaft never moves faster than 8°/s; the D48 noise test reports the spread at the setting used.
 
-### 3.6 Mount models, coordinates and pointing (Q48)
+### 3.6 Mount models, coordinates and pointing (D68)
 
 - **Head frame.** The head's own axis angles (azimuth, altitude, roll) are the internal truth. The lens direction in the head frame is Rz(−az) · Ry(−alt) · x̂ (azimuth clockwise from above, altitude upward).
 - **Mount orientation.** One rotation matrix from the head frame to the local horizon (north, west, up): in alt-az it holds the tilt measured by the IMU and the azimuth offset found by alignment; on the wedge (D39) it holds the wedge tilt (latitude) and the polar-alignment error, so the azimuth axis is the polar axis.
@@ -205,7 +205,7 @@ Defined once in `firmware/common/include/st_link.h` and used unchanged by both p
 
 A cleared fault always goes back through the self-test, never straight to tracking.
 
-### 3.9 Updates and recovery (Q49)
+### 3.9 Updates and recovery (D69)
 
 ![Update flow](img/05-update-flow.png)
 
@@ -245,7 +245,7 @@ One test image per processor, built from the same source as the real firmware so
 | d | C4 | Port B enable, contract | you confirm 5 V and 9 V held 3 A for one minute on the PD tester |
 | e | C5 | Four buttons, three LEDs | each button seen; each LED confirmed |
 | f | C6 | Shutter and focus opto-couplers | you confirm the meter beeps |
-| P | C | Write both PD configuration EEPROMs (Q50) | written and verified with `FLvy` |
+| P | C | Write both PD configuration EEPROMs (D70) | written and verified with `FLvy` |
 | g | D2 | Encoder read-out with status bits and CRC | 10 of 10 readings with good CRC, no warning |
 | h | D2 | Thermistors | 5–45 °C (room); open and short reported |
 | i | D3 | Driver UART: IOIN version, set-up written and counted (IFCNT) | three drivers answer version 0x21 and accept set-up |
@@ -439,7 +439,7 @@ Nothing here has run on a real board, and none of it is described as working on 
 | PD controller patch load / EEPROM write | Written from TI's TRM (PBMs/PBMc, FLad/FLwd/FLvy). Untested; the images must first be made with TI's tool |
 | Status-register bit positions of the TPS2575x (plug, role) and the BQ25792 register map | From the TRM / data sheet, to be confirmed in Stage C (the bring-up menu prints the raw values) |
 | MT6835 CRC initial value and the BW register position | From the data sheet; bring-up test g shows the CRC rate on the first board |
-| Encoder calibration routine (the step-referenced map of Q47) | The motion core applies a map sent as `TABLE` messages. The ESP32 routine that measures it (`cal.*`) is **not written yet** |
+| Encoder calibration routine (the step-referenced map of D67) | The motion core applies a map sent as `TABLE` messages. The ESP32 routine that measures it (`cal.*`) is **not written yet** |
 | PEC training (`pec.*`) and motion jobs (`job.*`: panorama, time-lapse, Holy Grail) | Not written. The motion core already plays a PEC table |
 | Satellite and comet tracking from TLE or rates | Not written |
 | mDNS (`startracker.local`) | Not included: the ESP-IDF mdns component comes from Espressif's registry, which this workspace cannot reach. Add it in the workflow build. Alpaca discovery works without it |
@@ -451,10 +451,7 @@ Nothing here has run on a real board, and none of it is described as working on 
 
 ## 11. Open questions
 
-| # | Question | Recommendation (used, pending approval) |
-|---|---|---|
-| Q44–Q51 | Section 2 | As in section 2 |
-| Q42, Q43 | Phase 4 board-check wording | Unchanged by this phase |
+None from this phase. Q44–Q51 were approved as D64–D71 and Q42–Q43 (Phase 4) as D62–D63. The firmware items still to write are listed in section 10; the Phase 6 brief picks up `cal.*`, `pec.*`, `job.*` and mDNS.
 
 ## 12. Sources
 

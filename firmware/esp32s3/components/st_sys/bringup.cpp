@@ -368,7 +368,7 @@ static bool t_pd_eeprom(size_t i)
         ok &= pd[k]->write_eeprom((const uint8_t *)img.data(), img.size(), log);
         out("%s", log.c_str());
     }
-    return verdict(i, ok, "both configuration EEPROMs written and verified (Q50)");
+    return verdict(i, ok, "both configuration EEPROMs written and verified (D70)");
 }
 
 // ---------------------------------------------------------------- menu
