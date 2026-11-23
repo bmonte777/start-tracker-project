@@ -59,13 +59,14 @@ def test_generator_reads_tycho_records(tmp_path):
     assert mdc.check(out)
 
 
-def synthetic_sky(rnd, ra0, dec0, radius=25.0, v_max=10.5):
-    """Uniform stars around ra0/dec0 with Tycho-2-like counts: about 0.6 per deg^2 to V 8, 24 per deg^2 to V 10.5."""
+def synthetic_sky(rnd, ra0, dec0, radius=25.0, v_max=10.5, density=14.0):
+    """Uniform stars around ra0/dec0 with Tycho-2-like counts to V 10.5: 14 per deg^2 on average (578,000 stars in
+    the real build), about 6 near the galactic poles. Cumulative counts grow about 10^(0.49 m) (1.0 -> 14 per deg^2
+    from V 8 to 10.5, as stars8 and the Tycho-2 build give)."""
     area = 2 * math.pi * (1 - math.cos(math.radians(radius))) * (180 / math.pi) ** 2
-    n = int(24.0 * area)
-    # cumulative counts grow 10^(0.64 m) between V 8 and 10.5 (0.6 -> 24 per deg^2); brighter ones 10^(0.5 m)
+    n = int(density * area)
     u = rnd.random(n)
-    v = v_max + np.log10(np.maximum(u, 1e-9)) / 0.64
+    v = v_max + np.log10(np.maximum(u, 1e-9)) / 0.46
     z = rnd.uniform(math.cos(math.radians(radius)), 1.0, n)
     phi = rnd.uniform(0, 2 * math.pi, n)
     x, y = np.sqrt(1 - z * z) * np.cos(phi), np.sqrt(1 - z * z) * np.sin(phi)
@@ -111,10 +112,11 @@ def render(cat, rnd, f, ra0, dec0, W=2000, H=1333, mag_lim=10.5):
 def test_long_lens_fields_need_the_deep_catalogue():
     rnd = np.random.default_rng(7)
     ok_deep = ok_shallow = wrong = 0
-    trials = 6
+    trials = 8
     for t in range(trials):
         ra0, dec0 = rnd.random() * 360, -60 + rnd.random() * 120
-        deep = synthetic_sky(rnd, ra0, dec0)
+        density = 6.0 if t % 2 else 14.0                  # odd trials: a sparse field near a galactic pole
+        deep = synthetic_sky(rnd, ra0, dec0, density=density)
         keep = deep.mag <= 8.0
         shallow = ps.Catalog(deep.ra[keep], deep.dec[keep], deep.mag[keep])
         f = [400, 500, 600][t % 3]
@@ -123,14 +125,14 @@ def test_long_lens_fields_need_the_deep_catalogue():
         for cat, name in ((deep, "deep"), (shallow, "shallow")):
             s = ps.solve(cat, stars, img.shape[1], img.shape[0], hint[0], hint[1], 3, plane_w, 0.25)
             if s is None:
-                print(f"f={f} {name}: not solved ({len(stars)} stars in the frame)")
+                print(f"f={f} {density:.0f}/deg2 {name}: not solved ({len(stars)} stars in the frame)")
                 continue
             err = math.hypot(*ps.project(s.ra, s.dec, ra0, dec0)) * 3600
             if err > max(60, 3 * s.scale * 3600):
                 wrong += 1
                 print(f"f={f} {name}: WRONG by {err:.0f}\"")
                 continue
-            print(f"f={f} {name}: ok {err:.1f}\" matched {s.matched} in {s.millis} ms")
+            print(f"f={f} {density:.0f}/deg2 {name}: ok {err:.1f}\" matched {s.matched} in {s.millis} ms")
             if name == "deep":
                 ok_deep += 1
             else:

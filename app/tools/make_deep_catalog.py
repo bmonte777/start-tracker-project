@@ -2,7 +2,7 @@
 
 stars11.bin = every star of stars8.bin (the reused catalogue, to V 8) + Tycho-2 stars with 8.0 < V <= 10.5,
 in the same format the solvers read: "STR1", u32 count, then count x (float32 ra, float32 dec, int16 mag*100),
-little-endian, sorted brightest first. About 1 million stars, about 10 MB.
+little-endian, sorted brightest first. About 578,000 stars (14 per square degree on average), 5.8 MB.
 
 Tycho-2 (Hog et al. 2000, CDS I/259): tyc2.dat.00.gz ... tyc2.dat.19.gz, records separated by '|':
   field 1 pflag, 2 mRAdeg, 3 mDEdeg (mean position, ICRS, epoch J2000; blank when pflag = X),
@@ -133,7 +133,7 @@ if __name__ == "__main__":
     ap.add_argument("--download", action="store_true", help="fetch the Tycho-2 files from CDS first")
     ap.add_argument("--stars8", default=str(Path(__file__).resolve().parents[1] / "windows/backend/stars8.bin"))
     ap.add_argument("--out", default="stars11.bin")
-    ap.add_argument("--min-stars", type=int, default=0, help="fail below this many stars (the workflow uses 800000)")
+    ap.add_argument("--min-stars", type=int, default=0, help="fail below this many stars (the workflow uses 450000; Tycho-2 gives about 578000 to V 10.5)")
     ap.add_argument("--check", help="check an existing stars11.bin and exit")
     a = ap.parse_args()
     if a.check:
