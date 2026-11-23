@@ -57,7 +57,7 @@ add("TPS25752A",
 add("BQ40Z50",
     [(32, "BAT", PI), (26, "VCC", PI), (27, "PACK", I), (1, "PBI", P), (2, "VC4", I), (3, "VC3", I), (4, "VC2", I), (5, "VC1", I), (8, "SRP", I),
      (6, "SRN", I), (10, "TS1", I), (11, "TS2", I), (12, "TS3", I), (13, "TS4", I), (23, "PTC", I), (24, "PTCEN", I), (9, "VSS", PI), (33, "EP", P)],
-    [(31, "CHG", O), (30, "PCHG", O), (28, "DSG", O), (25, "FUSE", O), (19, "SMBC", B), (18, "SMBD", B), (16, "PRES/SHUTDN", I), (15, "BTP_INT", O),
+    [(31, "CHG", O), (30, "PCHG", O), (28, "DSG", O), (25, "FUSE", O), (19, "SMBC", B), (18, "SMBD", B), (16, "PRES/SHUTDN", I), (15, "BTP_INT", P),
      (17, "DISP", I), (20, "LEDCNTLA", B), (21, "LEDCNTLB", B), (22, "LEDCNTLC", B), (7, "NC", "no_connect"), (14, "NC", "no_connect"),
      (29, "NC", "no_connect")],
     "Package_DFN_QFN:VQFN-32-1EP_4x4mm_P0.4mm_EP2.8x2.8mm", "https://www.ti.com/lit/gpn/bq40z50-r2",
@@ -81,6 +81,17 @@ for nm, descr in (("NMOS_DFN33", "N-channel MOSFET, DFN 3x3-8 (S 1-3, G 4, D 5-8
         "Package_DFN_QFN:DFN-8-1EP_3x3mm_P0.65mm_EP1.55x2.4mm", "~", descr, ref="Q")
 for nm, descr in (("NMOS_SOT23", "N-channel MOSFET, SOT-23 (G 1, S 2, D 3)"), ("PMOS_SOT23", "P-channel MOSFET, SOT-23 (G 1, S 2, D 3)")):
     add(nm, [(1, "G", I)], [(3, "D", P), (2, "S", P)], "Package_TO_SOT_SMD:SOT-23", "~", descr, ref="Q")
+
+add("BQ2947",
+    [(1, "VDD", PI), (2, "V4", I), (3, "V3", I), (4, "V2", I), (5, "V1", I), (6, "VSS", PI), (9, "EP", P)],
+    [(8, "OUT", O), (7, "CD", P)],
+    "Package_SON:WSON-8-1EP_2x2mm_P0.5mm_EP0.9x1.6mm", "https://www.ti.com/lit/gpn/bq2947",
+    "Second-level over-voltage protector for 2 to 4 cells in series, delay set by a capacitor, WSON-8 2 x 2 mm")
+
+add("ITV4030",
+    [(1, "F1", P), (2, "HEAT", P)], [(3, "F2", P)],
+    "ST:Fuse_Littelfuse_ITV4030", "https://www.littelfuse.com/products/fuses-overcurrent-protection/battery-protector/itv-three-terminal-fuses/itv4030-15a",
+    "Three-terminal battery fuse with heater: 1 and 3 are the two ends of the fuse, 2 is the heater (joined to the middle)", ref="F")
 
 if __name__ == "__main__":
     out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "lib")

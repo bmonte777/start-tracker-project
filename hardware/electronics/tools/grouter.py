@@ -296,7 +296,13 @@ class Router:
         self.widths = list(widths)
         self.cls = {w: i for i, w in enumerate(self.widths)}
         self.VIA = len(self.widths)            # class index of the via map
-        self.half = [w / 2 for w in self.widths] + [VIA_H / 2 + HOLE_CLR - CLR]
+        # the board's rules: clearance, via pad and via hole. The defaults are the six-layer mainboard's (JLCPCB multilayer);
+        # a two-layer board sets plan["rules"] = dict(clearance=0.15, via=0.6, drill=0.3)
+        global CLR, VIA_D, VIA_H
+        rules = pre.get("plan", {}).get("rules", {})
+        CLR, VIA_D, VIA_H = rules.get("clearance", 0.127), rules.get("via", 0.5), rules.get("drill", 0.3)
+        # a via counts as a round shape that keeps copper off its pad and off its hole, whichever reaches further
+        self.half = [w / 2 for w in self.widths] + [max(VIA_H / 2 + HOLE_CLR - CLR, VIA_D / 2)]
         self.nid = {}
         self.names = {}
         self.shapes = []                        # dict(kind, layers, geom, hw, nid, hard, net)
@@ -345,12 +351,12 @@ class Router:
                 self.shapes.append(dict(kind="r", layers=ls, geom=tuple(r), hw=0.0, nid=self.id(p["net"]), hard=True, net=p["net"]))
         for v in pre["vias"]:
             self.shapes.append(dict(kind="s", layers=tuple(range(self.NL)), geom=(v["x"], v["y"], v["x"], v["y"]),
-                                    hw=self.half[self.VIA], nid=self.id(v["net"]), hard=True, net=v["net"], via=True))
+                                    hw=self.half[self.VIA], nid=self.id(v["net"]), hard=True, net=v["net"], via=True, laid=True))
         for t in pre["tracks"]:
             l = t["layer"].replace(".Cu", "")
             if l in self.layers:
                 self.shapes.append(dict(kind="s", layers=(self.layers.index(l),), geom=(t["a"][0], t["a"][1], t["b"][0], t["b"][1]),
-                                        hw=t["w"] / 2, nid=self.id(t["net"]), hard=True, net=t["net"]))
+                                        hw=t["w"] / 2, nid=self.id(t["net"]), hard=True, net=t["net"], laid=True))
         for c in pre.get("cutouts", []):       # circular holes in the board: x, y, radius
             self.shapes.append(dict(kind="s", layers=tuple(range(self.NL)), geom=(c[0], c[1], c[0], c[1]),
                                     hw=c[2] + EDGE - CLR, nid=-1, hard=True, net=""))
@@ -491,6 +497,11 @@ class Router:
         groups = []
         for p in pads:
             groups.append(dict(cells=self.pad_cells(p), pads=[p], bbox=list(p["r"])))
+        # copper laid by hand in design.py before routing belongs to its net: each piece joins the pads and pieces it touches
+        for s in self.shapes:
+            if s.get("laid") and s["net"] == net:
+                gm = s["geom"]
+                groups.append(dict(cells=self.shape_cells(s), pads=[], bbox=[min(gm[0], gm[2]), min(gm[1], gm[3]), max(gm[0], gm[2]), max(gm[1], gm[3])]))
         # pads that overlap on a shared layer are one piece of copper already
         merged = True
         while merged:
@@ -503,7 +514,7 @@ class Router:
                         break
                 if merged:
                     break
-        return groups
+        return [g_ for g_ in groups if g_["pads"]]
 
     @staticmethod
     def _merge(groups, a, b):
@@ -838,6 +849,25 @@ def net_groups_rect(R, net):
                     break
             if merged:
                 break
+    # copper laid by hand in design.py before routing belongs to its net: each piece joins the pads and pieces it touches
+    laid = [s_ for s_ in R.shapes if s_.get("laid") and s_["net"] == net]
+    if laid:
+        for s_ in laid:
+            gm = s_["geom"]
+            groups.append(dict(cells=R.shape_cells(s_), pads=[], wide=set(),
+                               bbox=[min(gm[0], gm[2]), min(gm[1], gm[3]), max(gm[0], gm[2]), max(gm[1], gm[3])]))
+        merged = True
+        while merged:
+            merged = False
+            for a in range(len(groups)):
+                for b in range(a + 1, len(groups)):
+                    if groups[a]["cells"] & groups[b]["cells"]:
+                        R._merge(groups, a, b)
+                        merged = True
+                        break
+                if merged:
+                    break
+        groups = [g_ for g_ in groups if g_["pads"]]
     return groups
 
 
@@ -1020,6 +1050,11 @@ def escape(R, step, plane_nets, done, npads, push=None, crit=(), log=print):
     lc = np.array([step.get("layer_cost", {}).get(l, R.pre["plan"].get("layer_cost", {}).get(l, 1)) for l in R.layers], np.int64)
     rows = step.get("rows", {0: 0.0, 1: 1.1, 3: 1.9, 2: 9.0})
     total, failed = 0, []
+    boxes = {}
+    for ref, pads in by_ref.items():
+        fine = [p for p in pads if min(p["r"][2] - p["r"][0], p["r"][3] - p["r"][1]) <= step.get("max_pad", 0.32) and p["side"] != "*"]
+        if len(fine) >= step.get("min_pads", 12) and ref not in step.get("skip", ()):
+            boxes[ref] = (min(p["r"][0] for p in fine), max(p["r"][2] for p in fine), min(p["r"][1] for p in fine), max(p["r"][3] for p in fine))
     for ref, pads in by_ref.items():
         fine = [p for p in pads if min(p["r"][2] - p["r"][0], p["r"][3] - p["r"][1]) <= step.get("max_pad", 0.32) and p["side"] != "*"]
         if len(fine) < step.get("min_pads", 12) or ref in step.get("skip", ()):
@@ -1027,7 +1062,24 @@ def escape(R, step, plane_nets, done, npads, push=None, crit=(), log=print):
         D = step.get("ring", 3.0)
         bx0, bx1 = min(p["r"][0] for p in fine), max(p["r"][2] for p in fine)
         by0, by1 = min(p["r"][1] for p in fine), max(p["r"][3] for p in fine)
-        x0, x1, y0, y1 = bx0 - D, bx1 + D, by0 - D, by1 + D
+        # where another fine-pitch chip faces this one closer than two rings, the ring ends half-way between the two:
+        # otherwise the first chip's tracks run on into the pins of the second and take their only way out
+        Dw = De = Ds = Dn = D
+        for ref2, (cx0, cx1, cy0, cy1) in boxes.items():
+            if ref2 == ref:
+                continue
+            if cy0 < by1 and cy1 > by0:
+                if cx0 >= bx1:
+                    De = min(De, max(1.0, (cx0 - bx1) / 2 - 0.05))
+                if cx1 <= bx0:
+                    Dw = min(Dw, max(1.0, (bx0 - cx1) / 2 - 0.05))
+            if cx0 < bx1 and cx1 > bx0:
+                if cy0 >= by1:
+                    Dn = min(Dn, max(1.0, (cy0 - by1) / 2 - 0.05))
+                if cy1 <= by0:
+                    Ds = min(Ds, max(1.0, (by0 - cy1) / 2 - 0.05))
+        x0, x1, y0, y1 = bx0 - Dw, bx1 + De, by0 - Ds, by1 + Dn
+        D = min(Dw, De, Ds, Dn)
         i0, i1, j0, j1 = max(2, R.ix(x0)), min(R.W - 3, R.ix(x1)), max(2, R.iy(y0)), min(R.H - 3, R.iy(y1))
         ring = set()
         for l in range(R.NL):

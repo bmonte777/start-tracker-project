@@ -89,6 +89,17 @@ def prune(pre, rt, skip):
             continue
         pads = pads_of.get(net, [])
         segs = list(segs)
+        fix_s, fix_v = laid(pre, net)           # copper laid by hand in design.py: it stays, and what hangs on it is not loose
+        if (fix_s or fix_v) and len(pads) > 1 and len(islands(None, net, pads, fix_s, fix_v)) <= 1:
+            gone += len(segs) + len(vias)       # the hand-laid copper alone joins every pad of this net: nothing else is needed
+            segs, vias = [], []
+        if fix_s:                               # a routed piece that lies on hand-laid copper from end to end adds nothing
+            def on_laid(x, y, layer):
+                return any(o[1] == layer and g.seg_dist((x, y, x, y), (o[3], o[4], o[5], o[6])) <= o[2] / 2 + 0.03 for o in fix_s)
+            n0 = len(segs)
+            segs = [s_ for s_ in segs if not (on_laid(s_[3], s_[4], s_[1]) and on_laid(s_[5], s_[6], s_[1])
+                                              and on_laid((s_[3] + s_[5]) / 2, (s_[4] + s_[6]) / 2, s_[1]))]
+            gone += n0 - len(segs)
         changed = True
         while changed:
             changed = False
@@ -96,9 +107,9 @@ def prune(pre, rt, skip):
                 for (x, y) in ((s[3], s[4]), (s[5], s[6])):
                     ok = any((p["side"] in ("*", s[1])) and p["r"][0] - 0.01 <= x <= p["r"][2] + 0.01 and p["r"][1] - 0.01 <= y <= p["r"][3] + 0.01
                              for p in pads)
-                    ok = ok or any(math.hypot(v[1] - x, v[2] - y) <= 0.24 for v in vias)
+                    ok = ok or any(math.hypot(v[1] - x, v[2] - y) <= 0.24 for v in vias + fix_v)
                     ok = ok or any(o is not s and o[1] == s[1] and g.seg_dist((x, y, x, y), (o[3], o[4], o[5], o[6])) <= o[2] / 2 - 0.01
-                                   for o in segs)
+                                   for o in segs + fix_s)
                     if not ok:
                         segs.remove(s)
                         gone += 1
@@ -106,7 +117,7 @@ def prune(pre, rt, skip):
                         break
         keep_v = []
         for v in vias:
-            n = sum(1 for s in segs if g.seg_dist((v[1], v[2], v[1], v[2]), (s[3], s[4], s[5], s[6])) <= 0.24)
+            n = sum(1 for s in segs + fix_s if g.seg_dist((v[1], v[2], v[1], v[2]), (s[3], s[4], s[5], s[6])) <= 0.24)
             inpad = any(p["r"][0] - 0.01 <= v[1] <= p["r"][2] + 0.01 and p["r"][1] - 0.01 <= v[2] <= p["r"][3] + 0.01 for p in pads)
             if n >= 2 or (n >= 1 and inpad):
                 keep_v.append(v)
@@ -115,13 +126,54 @@ def prune(pre, rt, skip):
         # a via that went may leave a track end loose: one more round for those
         segs2 = [s for s in segs if all(
             any((p["side"] in ("*", s[1])) and p["r"][0] - 0.01 <= x <= p["r"][2] + 0.01 and p["r"][1] - 0.01 <= y <= p["r"][3] + 0.01 for p in pads)
-            or any(math.hypot(v[1] - x, v[2] - y) <= 0.24 for v in keep_v)
-            or any(o is not s and o[1] == s[1] and g.seg_dist((x, y, x, y), (o[3], o[4], o[5], o[6])) <= o[2] / 2 - 0.01 for o in segs)
+            or any(math.hypot(v[1] - x, v[2] - y) <= 0.24 for v in keep_v + fix_v)
+            or any(o is not s and o[1] == s[1] and g.seg_dist((x, y, x, y), (o[3], o[4], o[5], o[6])) <= o[2] / 2 - 0.01 for o in segs + fix_s)
             for (x, y) in ((s[3], s[4]), (s[5], s[6])))]
         gone += len(segs) - len(segs2)
         out_t += segs2
         out_v += keep_v
     return out_t, out_v, gone
+
+
+def tee(rt):
+    """Where a track ends on the middle of another track of its net, cut that track there, so that the two share an end
+    point (KiCad reports an end that lies on a track but on none of its ends as hanging loose)."""
+    by = {}
+    for t in rt["tracks"]:
+        by.setdefault((t[0], t[1]), []).append(t)
+    cut = 0
+    for segs in by.values():
+        again = True
+        while again:
+            again = False
+            for s in segs:
+                for k in (3, 5):
+                    x, y = s[k], s[k + 1]
+                    if any(o is not s and (math.hypot(o[3] - x, o[4] - y) < 1e-6 or math.hypot(o[5] - x, o[6] - y) < 1e-6) for o in segs):
+                        continue                 # it already shares an end point with another track
+                    for o in segs:
+                        if o is s:
+                            continue
+                        vx, vy = o[5] - o[3], o[6] - o[4]
+                        L2 = vx * vx + vy * vy
+                        if L2 < 1e-9:
+                            continue
+                        u = ((x - o[3]) * vx + (y - o[4]) * vy) / L2
+                        px, py = o[3] + u * vx, o[4] + u * vy
+                        if 0.0 < u < 1.0 and math.hypot(px - x, py - y) <= 0.04 and min(u, 1 - u) * math.sqrt(L2) > 0.02:
+                            s[k], s[k + 1] = round(px, 4), round(py, 4)
+                            segs.append([o[0], o[1], o[2], round(px, 4), round(py, 4), o[5], o[6]])
+                            o[5], o[6] = round(px, 4), round(py, 4)
+                            rt["tracks"].append(segs[-1])
+                            cut += 1
+                            again = True
+                            break
+                    if again:
+                        break
+                if again:
+                    break
+    rt["tracks"] = [t for t in rt["tracks"] if math.hypot(t[5] - t[3], t[6] - t[4]) > 1e-6]
+    return cut
 
 
 def anchor(pre, rt):
@@ -175,13 +227,20 @@ def make_router(pre0, rt, plan, hard):
     return R
 
 
+def laid(pre, net):
+    """The tracks and vias of a net that design.py laid by hand before routing (they are part of the board, not of the
+    routes file), in the routes file's form."""
+    return ([[net, t["layer"].replace(".Cu", ""), t["w"], t["a"][0], t["a"][1], t["b"][0], t["b"][1]] for t in pre.get("tracks", []) if t["net"] == net],
+            [[net, v["x"], v["y"]] for v in pre.get("vias", []) if v["net"] == net])
+
+
 def close_net(R, rt, pre, net, lc, hard=True):
     """Join the separate groups of one net on free cells. Returns (connections added, connections still missing)."""
     pads = [p for p in pre["pads"] if p["net"] == net and not p["npth"]]
     if len(pads) < 2:
         return 0, 0
-    segs = [t for t in rt["tracks"] if t[0] == net]
-    vias = [v for v in rt["vias"] if v[0] == net]
+    segs = [t for t in rt["tracks"] if t[0] == net] + laid(pre, net)[0]
+    vias = [v for v in rt["vias"] if v[0] == net] + laid(pre, net)[1]
     groups = islands(R, net, pads, segs, vias)
     if len(groups) < 2:
         return 0, 0
@@ -225,8 +284,8 @@ def one_more(R, rt, pre, plan, net, hard, lc, depth, max_victims, why=None):
     and, if that is not enough and depth allows, may itself take others up (never the nets already being worked on).
     Returns (router, True) if the board is better afterwards, (router, False) with everything as before otherwise."""
     pads = [p for p in pre["pads"] if p["net"] == net and not p["npth"]]
-    segs = [t for t in rt["tracks"] if t[0] == net]
-    vias = [v for v in rt["vias"] if v[0] == net]
+    segs = [t for t in rt["tracks"] if t[0] == net] + laid(pre, net)[0]
+    vias = [v for v in rt["vias"] if v[0] == net] + laid(pre, net)[1]
     groups = islands(R, net, pads, segs, vias)
     if len(groups) < 2:
         return R, False
@@ -315,8 +374,8 @@ def plane_pads(R, rt, pre, plane, lc):
     added, left = 0, {}
     for net in sorted(plane):
         pads = [p for p in pre["pads"] if p["net"] == net and not p["npth"] and p["side"] != "*"]
-        segs = [t for t in rt["tracks"] if t[0] == net]
-        vias = [v for v in rt["vias"] if v[0] == net]
+        segs = [t for t in rt["tracks"] if t[0] == net] + laid(pre, net)[0]
+        vias = [v for v in rt["vias"] if v[0] == net] + laid(pre, net)[1]
         groups = islands(R, net, pads, segs, vias)
         withvia = [grp for grp in groups if any(k == "v" for k, _i in grp)]
         if not withvia:
@@ -379,6 +438,9 @@ def run(folder, routes=None, lcost=None):
         print(f"closing pass, round {rnd + 1} of taking up: {won} more; still open by this count: {sum(left.values())} in {len(left)} nets")
         if not won:
             break
+    if not os.environ.get("CLOSER_KEEP"):         # what the passes above left hanging (dead ends, vias nothing uses) goes too
+        rt["tracks"], rt["vias"], gone = prune(pre, rt, plane)
+        print(f"closing pass: {gone} loose pieces removed at the end, {tee(rt)} tracks cut where another ends on them")
     json.dump(dict(tracks=rt["tracks"], vias=rt["vias"], open=left), open(os.path.join(folder, name + ".routes.json"), "w"), separators=(",", ":"))
     print(" ", left)
     return left
