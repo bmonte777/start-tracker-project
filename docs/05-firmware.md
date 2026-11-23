@@ -2,7 +2,7 @@
 
 Star Tracker Project · Phase 5 · revision A · branch `phase-5-firmware`
 
-**Status (23 November 2026):** Docs version: https://claude.ai/artifact/A6iY9Ye6ca5gv9BDEiazDP — stages 1–7 written; all firmware builds; 29 of 29 host tests, 18 of 18 protocol tests against the simulator and 40 of 40 source checks pass. **Nothing has run on a real board yet.** Decisions Q44–Q51 are pending approval.
+**Status (23 November 2026):** Docs version: https://claude.ai/artifact/A6iY9Ye6ca5gv9BDEiazDP — stages 1–7 written; all firmware builds; 29 of 29 host tests, 18 of 18 protocol tests against the simulator and 40 of 40 source checks pass. **Nothing has run on a real board yet.** Decisions Q44–Q51 were approved on 23 November 2026 and are recorded as D64–D71.
 
 ## 1. Where things stand
 
@@ -27,9 +27,9 @@ Star Tracker Project · Phase 5 · revision A · branch `phase-5-firmware`
 
 ## 2. Decisions
 
-D1–D61 are fixed and followed. The questions below are not covered by them; the work carries on with the recommended option for each, marked **pending approval** until Bruno answers.
+D1–D63 are fixed and followed. The questions below were approved as recommended on 23 November 2026 ("Approve Q44–Q57") and are now D64–D71 in the decisions log.
 
-| # | Question | Recommended, used in the firmware |
+| # | Question | Decision (approved) |
 |---|---|---|
 | Q44 | Toolchains and language | ESP-IDF 5.5 (C++17) on the ESP32-S3, Pico SDK 2.3 (C11) on the RP2354A. Motion logic, maths and protocol handlers are portable C/C++ so the PC simulator builds the same source. Rust was looked at and not taken: its BLE, HTTP and OTA stacks are less mature |
 | Q45 | RP2354A core and PIO split | Core 1 runs only a hard 1 kHz motion tick (profiles, tracking, PEC, step planning). Core 0 runs the link, encoder reads at 1 kHz, the driver UART, safety and the ADC (the 5 Hz correction loop runs inside the core 1 tick). PIO0: one state machine per axis that plays "N steps in this millisecond" segments. PPS and LINK_SYNC edges are time-stamped in a GPIO interrupt |
@@ -40,7 +40,7 @@ D1–D61 are fixed and followed. The questions below are not covered by them; th
 | Q50 | PD controller configuration | Write each controller's configuration into its EEPROM once (bring-up Stage C, 4CC `FLad`/`FLwd`/`FLvy`); the ESP32 also holds both images and loads them over I²C (`PBMs`/`PBMc`) if a controller starts in patch-wait mode |
 | Q51 | Small defaults | Access point "StarTracker-XXXX" with a password shown on the OLED; mDNS `startracker.local` (not built yet, section 10); BLE pairing with a 6-digit code; settings in NVS; Alpaca on 32323, LX200 on 4030 |
 
-Q42 and Q43 (Phase 4, how the board check is read) stay pending and do not touch the firmware.
+Q42 and Q43 (Phase 4) were approved as D62 and D63; they do not touch the firmware.
 
 ### 2.1 Findings from the design files
 
@@ -453,8 +453,8 @@ Nothing here has run on a real board, and none of it is described as working on 
 
 | # | Question | Recommendation (used, pending approval) |
 |---|---|---|
-| Q44–Q51 | Section 2 | As in section 2 |
-| Q42, Q43 | Phase 4 board-check wording | Unchanged by this phase |
+| Q44–Q51 | Section 2 | Approved 23 Nov 2026: D64–D71 |
+| Q42, Q43 | Phase 4 board-check wording | Approved: D62, D63 |
 
 ## 12. Sources
 

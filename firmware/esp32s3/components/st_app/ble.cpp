@@ -91,6 +91,12 @@ static void advertise()
     f.name_len = (uint8_t)dev_name.size();
     f.name_is_complete = 1;
     ble_gap_adv_set_fields(&f);
+    // scan response: the 128-bit service UUID, so the apps can filter scans by service and not only by name (Phase 6)
+    struct ble_hs_adv_fields rsp = {};
+    rsp.uuids128 = &SVC;
+    rsp.num_uuids128 = 1;
+    rsp.uuids128_is_complete = 1;
+    ble_gap_adv_rsp_set_fields(&rsp);
     struct ble_gap_adv_params p = {};
     p.conn_mode = BLE_GAP_CONN_MODE_UND;
     p.disc_mode = BLE_GAP_DISC_MODE_GEN;

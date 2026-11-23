@@ -6,7 +6,7 @@ So a new chat can carry on. Brief: `docs/prompts/phase-6-prompt.md`. Document: `
 
 - **Branch** `phase-6-apps`, made from `phase-5-firmware` because PR 10 was not merged yet.
 - **Push access** to `bmonte777/start-tracker-project` was refused by the session's permission check at the start. Work is committed locally in the workspace; push once Bruno has fixed GitHub access (Claude GitHub app → repository access).
-- **Decisions** Q52–Q57 sent to Bruno, work carries on with the recommendations (pending approval). Q44–Q51 (Phase 5) still pending; asked whether to record them.
+- **Decisions** Q44–Q57 approved by Bruno on 23 Nov ("Approve Q44–Q57"): recorded as D64–D71 (already logged by the Phase 5 session) and D72–D77 in `docs/02-decisions-log.md` and the Project copy.
 
 | Stage | State |
 |---|---|

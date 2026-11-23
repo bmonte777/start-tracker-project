@@ -14,6 +14,7 @@ const char *net_ap_pass();
 std::string net_sta_ip();
 esp_err_t ota_upload_handler(httpd_req_t *req);
 void ota_boot_check();
+void ota_status_json(cJSON *o);                       // update.status (API 1.1)
 void ble_start(Head &head, const std::string &name);
 uint32_t ble_passkey();
 void settings_save(const Settings &s, const std::string &ssid, const std::string &psk);
