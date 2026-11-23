@@ -1,6 +1,6 @@
 # Phase 4 — Electronics
 
-Star Tracker Project · revision A · 22 November 2026 · branch `phase-4-electronics`
+Star Tracker Project · revision A · 23 November 2026 · branch `phase-4-electronics`
 
 This document covers the electronics of the head: the calculations behind every value, the three boards, the wiring, what to order, what the firmware needs to know and how to bring the first boards up on the bench. Decisions D1–D41 are taken as fixed; D42–D51 were approved during this phase.
 
@@ -8,7 +8,7 @@ This document covers the electronics of the head: the calculations behind every 
 
 {{status_table}}
 
-**What you can do today:** answer the six open questions (Q28, Q31–Q35), and order the cartridge board (ST-520) if you want boards in hand early — its encoder chip was out of stock on the check date. **What is not ready:** {{not_ready}}
+**What you can do today:** answer the ten open questions (Q28, Q31–Q35 and the new Q38–Q41 in section 2.3), and order the cartridge board (ST-520) if you want boards in hand early — its encoder chip was out of stock on the check date. **What is not ready:** {{not_ready}}
 
 Board viewer (interactive BOM, Day / Night): <https://claude.ai/artifact/TntQCR18hPMWE3V6fTQ68L> · Docs version of this document: <https://claude.ai/artifact/9Y2pyZBkJu5i3eWqNy6xAx> · Parts list Sheet: <https://claude.ai/artifact/9T9Gpvm2vWPRYqJtPChJa8> · KiCad projects: `hardware/electronics/`.
 
@@ -51,6 +51,10 @@ Everything in the tables below that depends on a board is read from the board fi
 | Q33 | Shutter socket: a panel-mount 2.5 mm jack held by its nut in the bezel, wired to a 3-pin plug on the board, passing through a 9 mm cut-out in the board. | Keep it: no load on the board when a cable is pulled | A board-mounted jack (needs the bezel hole moved to the board edge) |
 | Q34 | Status light: three single-colour LEDs (red, green, blue) side by side behind the light pipe instead of one RGB package. | Keep it: all three are JLCPCB stock parts | One RGB LED, hand-fitted |
 | Q35 | Battery lead: soldered to two large pads on the mainboard, with an in-line XT30 connector 40 mm away, because a board-mounted XT30 collided with the buttons on the other face. | Keep it | Move the buttons 4 mm and fit a board-mounted XT30 |
+| Q38 | Battery board fixing in the pack, without screws. **Changes two printed parts** (ST-605, ST-612). | A rib 7 mm wide with a 1.7 mm groove on the floor of the lower shell and one under the roof of the upper shell; the board's bottom and top edges sit in them when the pack is closed | A pad of foam tape between board and cell holder, the board held by its soldered nickel tabs only |
+| Q39 | Pack light pipe and button. In the Phase 3 model the pipe touches the board, where the LEDs and the button now stand. **Changes one printed part** (ST-611). | The pipe ends 2.0 mm before the board with a flat boss over the button and slides 0.3 mm in its window to press it; a thin TPU lip on its flange keeps the window closed | A fixed pipe 2 mm shorter and no button: the LEDs then show only while charging or when the head asks for it |
+| Q40 | Wires from the board to the blade connector at the other end of the pack: the two cell holders are solid plates. **Changes one printed part** (ST-606, used twice). | A notch 6 × 3 mm at mid-height on the left and right edge of the holder: PACK+ on one side; PACK−, the three bus wires, the middle tap and the thermistor leads on the other | One wider notch on one side for all wires |
+| Q41 | Inner copper of the mainboard: JLCPCB's standard inner layers are half as thick as the outer ones, and the battery rail lies on one. | Order 1 oz inner copper: the rail then has about 10 mΩ instead of 20 mΩ (0.36 W instead of 0.72 W at the pack's 6 A limit), for a small surcharge on the bare boards | Standard 0.5 oz; the rail runs warmer during slews |
 
 ## 3. How the electronics are arranged
 
@@ -303,9 +307,9 @@ Fit the boards and harnesses following the Phase 3 assembly sequence, then repea
 
 ## 12. Risks and notes
 
-- **Mainboard routing is the open job.** Section 5.2 has the numbers: 18 connections of slow signals are still open on the six-layer board; everything else is routed and the board has no design-rule errors.
+- **The mainboard's power section is the open job.** Section 5.2 has the numbers: 2 signal connections are open and 11 of 17 power paths are too thin. The board has no design-rule errors, which is not enough to order it.
 - **Battery rail across the board.** About 10 mΩ of copper between the pack pads and the charger, on an inner layer (decision D50): 0.36 W at 6 A, a few milliwatts while tracking.
-- **Battery-board fuse.** The master parts list still names the 4-cell ITV4030L1415, which would not blow on this 2-cell pack; the part to use is the ITV4030L0815 (section 5.3). The line is corrected when the battery board is designed.
+- **Battery-board fuse.** The master parts list still names the 4-cell ITV4030L1415, which would not blow on this 2-cell pack; the board ST-602 is designed for the 2-cell ITV4030L0815 (section 5.3). The parts list line is still to be corrected.
 - **TPS55288 compensation** (20 k, 10 nF, 100 pF) is taken from the datasheet's typical design, not calculated for this output capacitor set. Check port B's load step on the oscilloscope in Stage C.
 - **MT6835 supply.** Out of stock at LCSC on the check date; the cartridge board cannot be completed without it. Alternatives with the same package and pinout do not exist, so order early.
 - **TMC2209 stock** at LCSC was 21 pieces; five sets need 15.
