@@ -12,7 +12,7 @@ import catalog as cat                    # noqa: E402
 from schgen import Design, NC           # noqa: E402
 
 LIB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "lib")
-PCB_ARGS = dict(layers=4, default_track=0.15, default_via=(0.5, 0.3), clearance=0.127)
+PCB_ARGS = dict(layers=6, default_track=0.15, default_via=(0.5, 0.3), clearance=0.127)
 
 # Cartridge plug, the same pin numbers at both ends of the harness (see cartridge-board/design.py)
 AXES = [("AZ", 0), ("ALT", 1), ("ROLL", 2)]
@@ -558,7 +558,7 @@ def layout(pcb):
     for (ax, ay), (bx, by) in zip(VBAT_BUS, VBAT_BUS[1:]):          # no parts on the front face where the battery bus runs
         h = VBAT_BUS_W / 2 + 0.3
         pcb.block("F", (min(ax, bx) - h, min(ay, by) - h, max(ax, bx) + h, max(ay, by) + h))
-    pcb.keepout(["F", "B", "In1", "In2"], pcb.rect(*ANT), tracks=True, vias=True, copper=True)
+    pcb.keepout(["F", "B", "In1", "In2", "In3", "In4"], pcb.rect(*ANT), tracks=True, vias=True, copper=True)
     # room for every pin of the fine-pitch chips to get out: a band round each of them stays free of other parts
     for ref, w in (("U2", 1.8), ("U3", 1.8), ("U6", 1.8), ("U7", 1.5), ("U12", 1.5), ("U14", 2.3), ("U15", 1.5), ("U17", 1.5), ("U19", 1.5),
                    ("U13", 1.3), ("U24", 1.2), ("U21", 1.0), ("U22", 1.0), ("U10", 0.7), ("U11", 0.7), ("U4", 0.7)):
@@ -583,10 +583,12 @@ def layout(pcb):
     pcb.netclass("Supply", 0.2, ["+3V3", "+3V3A", "+3V3G", "+1V1", "PDA_LDO3V3", "PDB_LDO3V3", "CHG_REGN", "PB_VCC", "BST_VCC", "RP_LX"]
                  + [f"{ax}_{p_}" for ax, _a in AXES for p_ in ("3V3", "5V")])
     pcb.sync_classes()
-    # In1 is solid ground from the start, so the autorouter drops a via to it at every ground pin
+    # Six layers (decision D51): F signal, In1 power, In2 and In3 signal, In4 ground, B signal. The inner face (B) carries
+    # the converters and nearly all parts, so the ground plane is the layer next to it.
     pcb.plane_layer("In1")
-    # ground: the router puts a via to the In1 plane beside every ground pad (tools/grouter.py, first step of the plan)
-    pcb.zone("GND", "In1", pcb.rect(-49.5, -29.5, 49.5, 29.5), clearance=0.2, solid=True)
+    pcb.plane_layer("In4")
+    # ground: the router puts a via to the In4 plane in or beside every ground pad (tools/grouter.py, first step of the plan)
+    pcb.zone("GND", "In4", pcb.rect(-49.5, -29.5, 49.5, 29.5), clearance=0.2, solid=True)
     return pcb
 
 
@@ -696,7 +698,7 @@ PHASE_NETS = [f"{ax}_{p_}" for ax, _a in AXES for p_ in ("A1", "A2", "B1", "B2",
 POUR_NETS = ("GND",)
 ANT = (-30.0, -30.0, 18.0, -23.9)        # ESP32 antenna: no copper on any layer
 
-# In2 (inner layer 2) is the power layer. 3.3 V everywhere, with the system rail under the power half and along a
+# In1 (inner layer 1) is the power layer. 3.3 V everywhere, with the system rail under the power half and along a
 # corridor to the motor switch, and the motor rail under the drivers, the cartridge plugs and the boost converter.
 FULL = [(-49.5, -29.5), (49.5, -29.5), (49.5, 29.5), (-49.5, 29.5)]
 IN2 = [
@@ -706,13 +708,14 @@ IN2 = [
     ("VSYS", [(-12.5, -23.4), (34.0, -23.4), (34.0, -16.6), (27.0, -16.6), (27.0, -19.6), (-12.5, -19.6)], 2),
     ("VMOT", [(11.8, 3.0), (11.8, 29.5), (49.5, 29.5), (49.5, -16.0), (25.5, -16.0), (25.5, 3.0)], 3),
 ]
-# The battery rail crosses the board on the front face as one wide copper area (the pack input is at the lower right,
-# the charger at the left): out of the reverse-polarity FET, up between buttons 3 and 4, west above the buttons and
-# under the ESP32 module, then north-west past port A to the charger's BAT pins. Kept south of the processors so that
-# their signals to the drivers, sensors and display do not have to cross it.
+# The battery rail crosses the board as one wide copper area (the pack input is at the lower right, the charger at the
+# left; decision D50 keeps the pack pads there): out of the reverse-polarity FET, up between buttons 3 and 4, west above
+# the buttons and under the ESP32 module, then north-west past port A to the charger's BAT pins. On the six-layer board
+# it lies on In3, so both outer faces are free; In2 crosses it freely.
 VBAT_BUS = [(32.9, -25.6), (30.5, -23.0), (30.5, -15.0), (29.0, -13.6), (3.5, -13.6), (1.5, -11.0), (-16.0, -11.0), (-18.6, -8.4),
             (-18.6, 1.0), (-20.2, 2.6), (-33.0, 2.6), (-33.0, 8.6)]
 VBAT_BUS_W = 4.6
+VBAT_LAYER = "In3"
 
 
 def in2_polys(net):
@@ -756,47 +759,48 @@ def route_plan(pcb):
     bus = pcb.thick(VBAT_BUS, VBAT_BUS_W)
     areas = pour_areas(pcb)
     regions = [dict(net=a["net"], side=a["side"], poly=a["poly"]) for a in areas]
-    regions.append(dict(net="VBAT", side="F", poly=bus, hard=True))
+    regions.append(dict(net="VBAT", side=VBAT_LAYER, poly=bus, hard=True))
     plane3v3 = ["+3V3"]
     steps = [
         dict(op="fanout", length=0.35),
-        dict(op="plane", net="GND", polys=[FULL], w=0.25, ep=True, maxlen=4.0),
-        dict(op="plane", net="VMOT", polys=in2_polys("VMOT"), w=0.3, n_big=3, big_area=1.0,
+        dict(op="plane", net="GND", polys=[FULL], w=0.25, ep=True, maxlen=4.0, in_pad=True),
+        dict(op="plane", net="VMOT", polys=in2_polys("VMOT"), w=0.3, n_big=3, big_area=1.0, in_pad=True,
              n={"U15": 2, "U17": 2, "U19": 2, "U12": 3}),
-        dict(op="plane", net="VSYS", polys=in2_polys("VSYS"), w=0.3, n_big=3, big_area=1.0, n={"Q6": 2, "Q4": 2, "U2": 3}),
-        dict(op="plane", net="VBAT", polys=[bus], w=0.3, n_big=3, big_area=1.0, surface="F", n={"Q1": 2, "U2": 3}, maxlen=3.0),
+        dict(op="plane", net="VSYS", polys=in2_polys("VSYS"), w=0.3, n_big=3, big_area=1.0, n={"Q6": 2, "Q4": 2, "U2": 3}, in_pad=True),
+        dict(op="plane", net="VBAT", polys=[bus], w=0.3, n_big=3, big_area=1.0, n={"Q1": 2, "U2": 3}, maxlen=3.0, in_pad=True),
         dict(op="stitch", net="VBAT", polys=[bus], areas=[a["poly"] for a in areas if a["net"] == "VBAT" and a["side"] == "B"], max=10),
         dict(op="stitch", net="VSYS", polys=in2_polys("VSYS"),
              areas=[a["poly"] for a in areas if a["net"] == "VSYS" and a["side"] == "B"], max=6),
         dict(op="stitch", net="VMOT", polys=in2_polys("VMOT"),
              areas=[a["poly"] for a in areas if a["net"] == "VMOT" and a["side"] == "B"], max=6),
-        dict(op="plane", net="+3V3", polys=[FULL], exclude=in2_polys("VSYS") + in2_polys("VMOT"), w=0.25),
-        dict(op="route", name="GNSS antenna feed", nets=["GNSS_ANT", "GNSS_RF"], widths=[0.35, 0.2], hard=True, layer_cost={"F": 100, "In2": 1000}),
-        dict(op="route", name="switch nodes and power stages", hard=True, region_cost=1,
+        dict(op="plane", net="+3V3", polys=[FULL], exclude=in2_polys("VSYS") + in2_polys("VMOT"), w=0.25, in_pad=True),
+        # Every slow-signal pin of the fine-pitch chips gets its way out first (tools/grouter.py: escape): a fixed track to
+        # a ring 3 mm from its chip, so that no power or critical track can lie across it. The critical nets that follow
+        # stay on the outer faces where they can and pay three to six times as much for an inner layer.
+        dict(op="escape", name="escape of the fine-pitch chips", ring=3.0, layer_cost={"B": 3, "In2": 2, "In3": 2}),
+        dict(op="route", name="GNSS antenna feed", nets=["GNSS_ANT", "GNSS_RF"], widths=[0.2], hard=True, layer_cost={"F": 100}),
+        dict(op="route", name="switch nodes and power stages", layer_cost={"In2": 6, "In3": 6}, hard=True, region_cost=1,
              nets=["CHG_SW1", "CHG_SW2", "PB_SW1", "PB_SW2", "BST_SW", "SW_3V3", "SW_5V", "CHG_PMID", "VBUS_CHG", "VM_IN", "VBAT_IN",
                    "VPB_RAW", "VPB", "PB_MID", "VBUS_A", "VBUS_B", "+5V"], widths=[1.0, 0.5, 0.3, 0.2, 0.15], order="given"),
-        dict(op="route", name="boot, gate drive and bias", hard=True,
+        dict(op="route", name="boot, gate drive and bias", layer_cost={"In2": 3, "In3": 3}, hard=True,
              nets=["CHG_BT?", "PB_BOOT?", "BST_BT", "BST_5V", "BST_3V3", "PB_DR1?", "PB_GV*", "CHG_REGN", "PB_VCC", "BST_VCC", "MSW_G", "Q1_G",
                    "*_CPO", "*_CPI", "*_VCP", "*_5V", "RP_LX", "+1V1", "RP_AVDD", "+3V3A", "+3V3G"], widths=[0.3, 0.2, 0.15]),
-        dict(op="route", name="motor phases and sense", nets=["*_A1", "*_A2", "*_B1", "*_B2", "*_BRA", "*_BRB"], hard=True,
+        dict(op="route", name="motor phases and sense", layer_cost={"In2": 6, "In3": 6}, nets=["*_A1", "*_A2", "*_B1", "*_B2", "*_BRA", "*_BRB"], hard=True,
              widths=[0.5, 0.3, 0.2]),
-        dict(op="route", name="USB pairs", nets=["A_DP", "A_DN", "B_DP", "B_DN"], widths=[0.2, 0.15], hard=True, order="given"),
-        dict(op="route", name="crystal and feedback", hard=True,
+        dict(op="route", name="USB pairs", layer_cost={"In2": 3, "In3": 3}, nets=["A_DP", "A_DN", "B_DP", "B_DN"], widths=[0.2, 0.15], hard=True, order="given"),
+        dict(op="route", name="crystal and feedback", layer_cost={"In2": 3, "In3": 3}, hard=True,
              nets=["RP_XIN", "RP_XOUT", "RP_XOUT_X", "FB_3V3", "FB_5V", "BST_FB", "BST_COMP*", "PB_COMP*", "VMSEL_D", "PB_FSW", "PB_ILIM",
                    "PB_MODE", "PB_DITH", "CHG_ILIM", "CHG_PROG", "CHG_TS", "SS_3V3", "*_VREF", "CHG_BATP", "CHG_SDRV"], widths=[0.15]),
-        # From here on the slow signals. First every signal pin of the fine-pitch chips gets a fixed way out to a ring
-        # 3 mm from its chip (tools/grouter.py: escape). Then the nets are routed; they may use the power layer (In2)
-        # where the outer faces leave no way, at five times the cost of an outer face. The planes on In2 close round
-        # such a track when the zones are filled.
-        dict(op="escape", name="escape of the fine-pitch chips", ring=3.0, layer_cost={"B": 3, "In2": 1000}),
+        # From here on the slow signals, on all four signal layers; the two inner ones cost twice an outer face, so
+        # short connections stay outside.
         dict(op="route", name="encoder SPI", nets=["ENC_MISO", "ENC_SCK_M", "ENC_MOSI_M", "CS_*_M", "*_SCK", "*_MOSI", "*_CS"], widths=[0.15],
-             layer_cost={"In2": 5}),
-        dict(op="rest", name="all other signals", widths=[0.15], layer_cost={"In2": 5}),
+             layer_cost={"In2": 2, "In3": 2}),
+        dict(op="rest", name="all other signals", widths=[0.15], layer_cost={"In2": 2, "In3": 2}),
     ]
-    return dict(plan=dict(layers=["F", "B", "In2"], layer_cost={"In2": 1000}, widths=[0.15, 0.2, 0.3, 0.35, 0.5, 1.0], steps=steps,
+    return dict(plan=dict(layers=["F", "B", "In2", "In3"], via_in_pad=0.5, layer_cost={"In2": 1000, "In3": 1000}, widths=[0.15, 0.2, 0.3, 0.35, 0.5, 1.0], steps=steps,
                           class_widths={"*_3V3": [0.3, 0.2, 0.15], "PDA_LDO*": [0.2, 0.15], "PDB_LDO*": [0.2, 0.15]}),
                 regions=regions, cutouts=[list(JACK)],
-                keepouts=[dict(r=list(ANT), layers=["F", "B", "In1", "In2"])])
+                keepouts=[dict(r=list(ANT), layers=["F", "B", "In1", "In2", "In3", "In4"])])
 
 
 def finish(pcb):
@@ -807,8 +811,8 @@ def finish(pcb):
             pcb.solid(ref)
     for a in pour_areas(pcb):
         pcb.zone(a["net"], a["side"], a["poly"], clearance=0.2, solid=True, priority=5)
-    pcb.zone("VBAT", "F", pcb.thick(VBAT_BUS, VBAT_BUS_W), clearance=0.2, solid=True, priority=4)
+    pcb.zone("VBAT", VBAT_LAYER, pcb.thick(VBAT_BUS, VBAT_BUS_W), clearance=0.2, solid=True, priority=4)
     for net, poly, prio in IN2:
-        pcb.zone(net, "In2", poly, clearance=0.2, solid=True, priority=prio)
+        pcb.zone(net, "In1", poly, clearance=0.2, solid=True, priority=prio)
     pcb.zone("GND", "F", full, clearance=0.2)
     pcb.zone("GND", "B", full, clearance=0.2)

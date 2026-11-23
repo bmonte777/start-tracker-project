@@ -60,9 +60,10 @@ def main(folder, bom_only=False):
     os.makedirs(gdir)
     os.makedirs(img, exist_ok=True)
     layers = "F.Cu,B.Cu,F.Paste,B.Paste,F.SilkS,B.SilkS,F.Mask,B.Mask,Edge.Cuts"
-    ncu = 4 if '"In1.Cu"' in open(pcb).read(20000) else 2
-    if ncu == 4:
-        layers = "F.Cu,In1.Cu,In2.Cu,B.Cu,F.Paste,B.Paste,F.SilkS,B.SilkS,F.Mask,B.Mask,Edge.Cuts"
+    head = open(pcb).read(20000)
+    ncu = 6 if '"In4.Cu"' in head else (4 if '"In1.Cu"' in head else 2)
+    if ncu >= 4:
+        layers = "F.Cu," + ",".join(f"In{i}.Cu" for i in range(1, ncu - 1)) + ",B.Cu,F.Paste,B.Paste,F.SilkS,B.SilkS,F.Mask,B.Mask,Edge.Cuts"
     run("kicad-cli", "pcb", "export", "gerbers", "--layers", layers, "--subtract-soldermask", "--use-drill-file-origin", "-o", gdir + "/", pcb)
     run("kicad-cli", "pcb", "export", "drill", "--format", "excellon", "--drill-origin", "plot", "--excellon-units", "mm",
         "--excellon-separate-th", "--generate-map", "--map-format", "pdf", "-o", gdir + "/", pcb)

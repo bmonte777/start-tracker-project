@@ -2,13 +2,13 @@
 
 Star Tracker Project · revision A · 22 November 2026 · branch `phase-4-electronics`
 
-This document covers the electronics of the head: the calculations behind every value, the three boards, the wiring, what to order, what the firmware needs to know and how to bring the first boards up on the bench. Decisions D1–D41 are taken as fixed; D42–D49 were approved during this phase.
+This document covers the electronics of the head: the calculations behind every value, the three boards, the wiring, what to order, what the firmware needs to know and how to bring the first boards up on the bench. Decisions D1–D41 are taken as fixed; D42–D51 were approved during this phase.
 
 ## 1. Where things stand
 
 {{status_table}}
 
-**What you can do today:** answer the eight open questions (Q28, Q31–Q37), and order the cartridge board (ST-520) if you want boards in hand early — its encoder chip was out of stock on the check date. **What is not ready:** {{not_ready}}
+**What you can do today:** answer the six open questions (Q28, Q31–Q35), and order the cartridge board (ST-520) if you want boards in hand early — its encoder chip was out of stock on the check date. **What is not ready:** {{not_ready}}
 
 Board viewer (interactive BOM, Day / Night): <https://claude.ai/artifact/TntQCR18hPMWE3V6fTQ68L> · Docs version of this document: <https://claude.ai/artifact/9Y2pyZBkJu5i3eWqNy6xAx> · Parts list Sheet: <https://claude.ai/artifact/9T9Gpvm2vWPRYqJtPChJa8> · KiCad projects: `hardware/electronics/`.
 
@@ -28,6 +28,8 @@ Everything in the tables below that depends on a board is read from the board fi
 | D47 | Cartridge plug pinout (JST-GH 15-way): 1–2 A1, 3–4 A2, 5 GND, 6 CS, 7 SCK, 8 MOSI, 9 MISO, 10 NTC, 11 +3V3, 12–13 B1, 14–15 B2 |
 | D48 | The encoder board stays at its Phase 3 height: chip-to-magnet gap {{magnet_gap}} mm against the datasheet's 1.0 mm minimum; the encoder error is measured on the P0 bench before any part is changed. No printed part changes |
 | D49 | Prototype USB-C sockets are the upright, unsealed GT-USB-7051A, about 1.5 mm proud of the bezel; a sealed type is looked at later if needed |
+| D50 | The pack pads stay at the lower right of the mainboard; the battery rail crosses the board as one copper area on an inner layer (about 10 mΩ) |
+| D51 | The mainboard is a six-layer board with filled and capped vias (via-in-pad): front face, power, two signal layers, ground, inner face |
 
 ### 2.2 Open items carried in, now closed
 
@@ -49,8 +51,6 @@ Everything in the tables below that depends on a board is read from the board fi
 | Q33 | Shutter socket: a panel-mount 2.5 mm jack held by its nut in the bezel, wired to a 3-pin plug on the board, passing through a 9 mm cut-out in the board. | Keep it: no load on the board when a cable is pulled | A board-mounted jack (needs the bezel hole moved to the board edge) |
 | Q34 | Status light: three single-colour LEDs (red, green, blue) side by side behind the light pipe instead of one RGB package. | Keep it: all three are JLCPCB stock parts | One RGB LED, hand-fitted |
 | Q35 | Battery lead: soldered to two large pads on the mainboard, with an in-line XT30 connector 40 mm away, because a board-mounted XT30 collided with the buttons on the other face. | Keep it | Move the buttons 4 mm and fit a board-mounted XT30 |
-| Q36 | Battery rail: the pack pads are at the lower right and the charger at the left, so the rail crosses the board as a 94 mm copper strip on the front face (about 10 mΩ: 0.36 W and 60 mV at the pack's 6 A limit, a few milliwatts while tracking). | Keep the pack pads where they are, so no harness and no printed part changes. On four layers the strip stays on the front face; if the board goes to six layers (Q37) the rail moves to an inner layer and the front face is free | Move the pack pads and the reverse-polarity FET beside the charger and reshuffle that corner: changes the lengths of harnesses ST-531-PWR and ST-532 |
-| Q37 | How to finish the mainboard: after three router runs 98 connections are still open (section 5.2). | Make the mainboard a six-layer board with vias in the pads of the fine-pitch chips. JLCPCB makes via-in-pad and ENIG at no extra charge from six layers up, and lists five 6-layer boards up to 100 × 100 mm from about USD 35. Outline, parts and placement stay; the layout is redone by the router with two more signal layers | Finish the 98 connections by hand in KiCad from the list, or stay on four layers and reassign the RP2354A's pins to match the placement |
 
 ## 3. How the electronics are arranged
 

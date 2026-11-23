@@ -98,6 +98,13 @@ D27 is confirmed: the TPS25751 datasheet lists the BQ25792 among the chargers it
 | D48 | Encoder chip-to-magnet gap (Q29) | The encoder board stays where Phase 3 put it; carriers ST-212 and ST-216 are not changed. The gap is 0.81–0.82 mm with the real chip package, under the MT6835 datasheet's 1.0 mm minimum, so the encoder error is measured on the P0 bench (bring-up Stage D) before anything is changed. Approved: "Continue as it is" |
 | D49 | USB-C sockets on the prototypes (Q30) | Upright GT-USB-7051A (LCSC C2843970), not sealed, about 1.5 mm proud of the bezel face. A sealed socket is looked at later if needed. Approved: "leave it unsealed for the prototype" |
 
+## 22 Nov 2026 — Phase 4 mainboard decisions (approved: "Go with recommendations and continue")
+
+| # | Topic | Decision |
+|---|---|---|
+| D50 | Battery rail on the mainboard (Q36) | The pack pads stay at the lower right, so no harness and no printed part changes. The rail crosses the board as one copper area 4.6 mm wide and about 94 mm long (about 10 mΩ: 0.36 W and 60 mV at the pack's 6 A limit); on the six-layer board of D51 it lies on inner layer 3 and both outer faces are free |
+| D51 | Mainboard build (Q37) | Six layers instead of four, with filled and capped vias (via-in-pad), which JLCPCB makes at no extra charge from six layers up. Stack: front face signal, power, two signal layers, ground, inner face signal. The vias to the planes sit in the pads of the small parts; outline, parts and placement do not change. Reason: on four layers 98 of about 950 connections could not be closed in three router runs |
+
 ### Phase 4 — pending approval (not decisions yet)
 
 The Phase 4 design carries on with the recommended option for each of these. Nothing that changes a printed or machined part has been changed.
@@ -110,5 +117,3 @@ The Phase 4 design carries on with the recommended option for each of these. Not
 | Q33 | Shutter socket | Panel-mount 2.5 mm jack in the bezel, through a 9 mm cut-out in the mainboard, wired to plug J12 |
 | Q34 | Status light | Three single-colour 0603 LEDs behind the light pipe instead of one RGB package |
 | Q35 | Battery lead | Soldered to two pads on the mainboard, with an in-line XT30 |
-| Q36 | Battery rail on the mainboard | Pack pads stay at the lower right; the rail crosses the board as a 94 mm copper strip on the front face (about 10 mΩ). On a six-layer board (Q37) it moves to an inner layer. Not taken: pack pads beside the charger, which changes harnesses ST-531-PWR and ST-532 |
-| Q37 | How to finish the mainboard layout (98 connections open after three router runs, 22 Nov) | Six layers with vias in the pads of the fine-pitch chips; outline, parts and placement stay. Not taken yet: finishing by hand in KiCad, or four layers with the RP2354A's pins reassigned. **No further routing is done until this is answered** |

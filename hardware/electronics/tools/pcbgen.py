@@ -13,7 +13,7 @@ from kisx import parse, find, findall   # noqa: E402
 
 MM = pcbnew.FromMM
 KICAD_FP = os.environ.get("KICAD_FOOTPRINT_DIR", "/usr/share/kicad/footprints")
-LAYER = {"F": pcbnew.F_Cu, "B": pcbnew.B_Cu, "In1": pcbnew.In1_Cu, "In2": pcbnew.In2_Cu}
+LAYER = {"F": pcbnew.F_Cu, "B": pcbnew.B_Cu, "In1": pcbnew.In1_Cu, "In2": pcbnew.In2_Cu, "In3": pcbnew.In3_Cu, "In4": pcbnew.In4_Cu}
 
 # JLCPCB capability (standard service, checked Nov 2026): 2-layer 0.127 / 0.127 mm, 4-layer 0.09 / 0.09 mm track and gap,
 # via 0.3 mm drill / 0.6 mm pad as standard (0.2 / 0.45 at extra cost), hole to hole 0.5 mm, copper to routed edge 0.2 mm.
@@ -55,7 +55,7 @@ class PCB:
             os.remove(self.path)
         self.board = pcbnew.NewBoard(self.path)
         self.board.SetCopperLayerCount(layers)
-        self.rules = dict(RULES[layers])
+        self.rules = dict(RULES[4 if layers > 4 else layers])     # six layers: the same limits as four
         self.default_track, self.default_via = default_track, default_via
         self.clearance = clearance or self.rules["min_clearance"]
         self.model = json.load(open(os.path.join(folder, name + ".model.json")))
@@ -517,7 +517,7 @@ class PCB:
         """No pour copper around bare (unplated) holes. The zone filler run from Python does not load the project's
         hole-clearance rule, so the clearance is drawn explicitly."""
         import math
-        layers = ["F", "B"] + (["In1", "In2"] if self.board.GetCopperLayerCount() == 4 else [])
+        layers = ["F", "B"] + [f"In{i}" for i in range(1, self.board.GetCopperLayerCount() - 1)]
         n = 0
         for fp in self.fps.values():
             for p_ in fp.Pads():

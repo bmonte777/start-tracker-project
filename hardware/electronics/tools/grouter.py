@@ -170,6 +170,14 @@ def astar(occT, hardT, occV, hardV, hole, novia, reg, nid, src, tmask, tb, vcost
                 for l2 in range(NL):
                     if l2 == l or lcost[l2] >= 100:
                         continue
+                    # the track goes on from the via on the other layer: its end there needs room for its own width
+                    c2 = occT[l2, y, x]
+                    if c2 != 0 and c2 != nid:
+                        if not soft:
+                            continue
+                        hc2 = hardT[l2, y, x]
+                        if hc2 != 0 and hc2 != nid:
+                            continue
                     nd = d + vcost + extra
                     nidx = l2 * HW + y * W + x
                     if nd < dist[nidx]:
@@ -339,7 +347,7 @@ class Router:
             self.shapes.append(dict(kind="s", layers=tuple(range(self.NL)), geom=(v["x"], v["y"], v["x"], v["y"]),
                                     hw=self.half[self.VIA], nid=self.id(v["net"]), hard=True, net=v["net"], via=True))
         for t in pre["tracks"]:
-            l = {"F.Cu": "F", "B.Cu": "B", "In2.Cu": "In2"}.get(t["layer"])
+            l = t["layer"].replace(".Cu", "")
             if l in self.layers:
                 self.shapes.append(dict(kind="s", layers=(self.layers.index(l),), geom=(t["a"][0], t["a"][1], t["b"][0], t["b"][1]),
                                         hw=t["w"] / 2, nid=self.id(t["net"]), hard=True, net=t["net"]))
@@ -395,7 +403,10 @@ class Router:
         for p in self.pre["pads"]:
             if p["drill"] > 0:
                 r_seg(self.hole, p["x"], p["y"], p["x"], p["y"], p["drill"] / 2 + HOLE_HOLE + VIA_H / 2 + 0.03, 1, self.ox, self.oy, G)
-            if p["side"] != "*":
+            # no vias on or right beside surface-mount pads, except, on boards built with filled and capped vias
+            # (plan["via_in_pad"] = smallest pad side in mm), in pads that are large enough to hold one
+            vip = self.pre.get("plan", {}).get("via_in_pad")
+            if p["side"] != "*" and not (vip and min(p["r"][2] - p["r"][0], p["r"][3] - p["r"][1]) >= vip):
                 r_rect(self.novia, p["r"][0], p["r"][1], p["r"][2], p["r"][3], VIA_D / 2 + 0.05, 1, self.ox, self.oy, G)
         for c in self.pre.get("cutouts", []):
             r_seg(self.hole, c[0], c[1], c[0], c[1], c[2] + HOLE_HOLE + VIA_H / 2, 1, self.ox, self.oy, G)
@@ -1311,7 +1322,7 @@ def run(folder, plot=False):
             reg = region_mask(R, step["polys"], step.get("exclude", []))
             pads = [p for p in pre["pads"] if p["net"] == net and not p["npth"]]
             planes[net] = dict(step=step, region=reg, tied=[])
-            nv = 0
+            nv = nin = 0
             todo = []
             for p in sorted(pads, key=lambda p: (p["r"][2] - p["r"][0]) * (p["r"][3] - p["r"][1])):
                 inreg = reg[min(R.H - 1, max(0, R.iy(p["y"]))), min(R.W - 1, max(0, R.ix(p["x"])))]
@@ -1328,11 +1339,25 @@ def run(folder, plot=False):
                         nv += m
                         planes[net]["tied"].append(p)
                         continue
+                # via in pad (boards of six layers and more: filled and capped vias): the via to the plane sits in the pad
+                # itself, so nothing stands beside the pad in the way of other tracks
+                if step.get("in_pad") and p["side"] != "*" and min(p["r"][2] - p["r"][0], p["r"][3] - p["r"][1]) >= step.get("in_pad_min", 0.5):
+                    m = ep_vias(R, net, p, reg) if area >= 1.2 else 0
+                    if not m:
+                        i, j = R.ix(p["x"]), R.iy(p["y"])
+                        if reg[j, i] and not R.hole[j, i] and all(R.occ[R.VIA][l][j, i] in (0, R.id(net)) for l in range(R.NL)):
+                            R.commit(net, [], [R.mm(i, j)], R.widths[0], hard=True, unit=f"{net}|{p['ref']}.{p['num']}|ep", plane=True)
+                            m = 1
+                    if m:
+                        nv += m
+                        nin += m
+                        planes[net]["tied"].append(p)
+                        continue
                 todo.append(p)
             for p in todo:
                 nv += do_plane_pad(net, p, quiet=True)
             nopen = sum(1 for k in report if k.startswith(net + "|"))
-            print(f"plane {net}: {len(pads)} pads, {nv} vias, {nopen} pads open ({time.time() - ts:.1f} s)")
+            print(f"plane {net}: {len(pads)} pads, {nv} vias ({nin} in pads), {nopen} pads open ({time.time() - ts:.1f} s)")
             done.add(net)
         elif op == "stitch":
             net = step["net"]

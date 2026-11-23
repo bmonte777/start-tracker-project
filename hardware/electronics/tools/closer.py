@@ -89,8 +89,7 @@ def run(folder, routes=None, lcost=None):
     pre = json.load(open(os.path.join(folder, "out", name + ".pre.json")))
     rt = json.load(open(routes))
     plan = pre["plan"]
-    lname = {"F": "F.Cu", "B": "B.Cu", "In2": "In2.Cu"}
-    pre["tracks"] = pre.get("tracks", []) + [dict(net=t[0], layer=lname[t[1]], w=t[2], a=[t[3], t[4]], b=[t[5], t[6]]) for t in rt["tracks"]]
+    pre["tracks"] = pre.get("tracks", []) + [dict(net=t[0], layer=t[1] + ".Cu", w=t[2], a=[t[3], t[4]], b=[t[5], t[6]]) for t in rt["tracks"]]
     pre["vias"] = pre.get("vias", []) + [dict(net=v[0], x=v[1], y=v[2]) for v in rt["vias"]]
     R = g.Router(pre, layers=plan["layers"], widths=plan["widths"])
     lc = lcost or [1 if l in ("F", "B") else 6 for l in R.layers]
