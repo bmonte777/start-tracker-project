@@ -52,8 +52,8 @@ def main(folder):
     nets = sorted({q["net"] for q in rows})
     out = [f"# {name.upper()} — connections still open", "",
            f"From KiCad's design-rule check of `{name}.kicad_pcb`: **{len(rows)} open connections in {len(nets)} nets**, "
-           f"{len(errs)} errors. F = front face (red in KiCad), B = inner face (blue), In2 = inner layer 2. "
-           "X and Y are the cursor position KiCad shows at the bottom of its window.", "",
+           f"{len(errs)} errors. F = front face (red in KiCad), B = back face (blue), In2 = inner layer 2. "
+           "X and Y are KiCad's page coordinates (board centre at 100, 100; Y grows downwards).", "",
            "| No. | Net | From | Face | X | Y | To | Face | X | Y | Distance, mm |", "|---|---|---|---|---|---|---|---|---|---|---|"]
     for i, q in enumerate(rows, 1):
         out.append(f"| {i} | `{q['net']}` | {q['a']} | {q['la']} | {q['ax']:.2f} | {q['ay']:.2f} | {q['b']} | {q['lb']} | {q['bx']:.2f} | "
@@ -64,27 +64,14 @@ def main(folder):
             its = "; ".join(i.get("description", "") for i in v.get("items", []))
             p = v["items"][0]["pos"] if v.get("items") else {"x": 0, "y": 0}
             out.append(f"| {v['type']} | {v['description']} | {its} | {p['x']:.2f} | {p['y']:.2f} |")
-    out += ["", "## Finishing a connection by hand in KiCad 9", "",
-            "1. Start **KiCad**, click **File → Open Project**, choose `hardware/electronics/mainboard/" + name + ".kicad_pro`, then click the "
-            "**PCB Editor** button (the green board icon).",
-            "2. The thin white lines are the open connections. To find one from the table: click **Edit → Find**, type the part name "
-            "from the *From* column (for example `U14`) and click **Find Next**; or move the cursor until the X and Y at the bottom of the "
-            "window match the table.",
-            "3. In the **Appearance** panel on the right, tab **Nets**, right-click the net's name and choose **Highlight** to see everything "
-            "that belongs to it.",
-            "4. Click **Route → Route Single Track** (or press **X**), click the pad or track end in the *From* column, move toward the *To* "
-            "item and click to set corners. KiCad will not let the track touch other copper. Press **V** to drop a via and continue on the "
-            "other face (red = front, blue = inner face). Click the *To* item to finish; **Esc** leaves the tool.",
-            "5. If there is no room, press **Esc**, click a track that is in the way and press **D** to drag it aside, or **U** then "
-            "**Delete** to remove a leftover track end (the board has some from connections that were taken up).",
-            "6. Vias must stay 0.8 mm apart centre to centre, and a track 0.25 mm from a via's hole; the check in step 7 reports any that "
-            "are not.",
-            "7. When the white lines are gone: **Inspect → Design Rules Checker**, tick **Refill all zones before performing DRC** and "
-            "**Test for parity between PCB and schematic**, click **Run DRC**. The tabs must show 0 *Violations* that are errors and 0 "
-            "*Unconnected Items*.",
-            "8. **File → Save**. Send the saved `" + name + ".kicad_pcb` back (attach it to a chat or upload it to the branch): the "
-            "fabrication files are then made from it by `tools/fab.py`. Do not run `tools/layout.py` on the board afterwards: it rebuilds "
-            "the layout from the scripts and would discard hand-made tracks."]
+    if rows or errs:
+        out += ["", "## How these are closed", "",
+                "Nobody finishes the board by hand in KiCad. Each open connection is joined on free cells by "
+                "`tools/closeonly.py <board> NET ...` (or laid by hand as explicit pieces), the result goes into the board's "
+                "`route_fixes.py` as a new stage, `tools/fixroutes.py <board>` applies it to the routes file and `tools/layout.py <board>` "
+                "lays the board and runs this check again."]
+    else:
+        out += ["", "Nothing is open: the board's connections are complete and KiCad reports no errors."]
     with open(os.path.join(doc, name + "-open-connections.md"), "w") as f:
         f.write("\n".join(out) + "\n")
     print(f"{len(rows)} open connections in {len(nets)} nets, {len(errs)} errors -> {name}-open-connections.md / .csv")

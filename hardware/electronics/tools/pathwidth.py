@@ -3,7 +3,8 @@ widest way from one terminal to the others, over tracks and filled copper areas 
 
 A connection can pass the design-rule check and still be a hair-thin track; this check finds those. It needs the copper
 of the laid-out board as JSON (tools/dumpcu.py, run with KiCad's Python) and the list of terminals in the board's
-design.py (POWER_PATHS: net -> (list of "REF.pin", width wanted in mm)).
+design.py (POWER_PATHS: net -> (list of "REF.pin", width wanted in mm); "REF.pin~1.5" lets the wide copper begin
+up to 1.5 mm from that pin instead of the usual 0.8 mm, for pins that are hemmed in by their neighbours).
 
 usage:  python3 dumpcu.py <board-folder>        (with KiCad's Python: writes <board>/out/<name>.copper.json)
         python3 pathwidth.py <board-folder>     (numpy, scipy, matplotlib)
@@ -114,7 +115,7 @@ def joined(net, grids, geo, box, terms, width, use_vias=True):
                 if ra != rb:
                     par[ra] = rb
     roots = []
-    for (ref, num) in terms:
+    for (ref, num, neck) in terms:
         got = set()
         for p in net["pads"]:
             if p["ref"] == ref and p["num"] == num:
@@ -122,7 +123,7 @@ def joined(net, grids, geo, box, terms, width, use_vias=True):
                     if l in labels:
                         # a pin narrower than the width asked for is reached when the wide copper comes to within
                         # NECK of it: the short neck at a fine-pitch pin is the pin's own width and cannot be wider
-                        e = n * G + 0.03 + (NECK if min(p["r"][2] - p["r"][0], p["r"][3] - p["r"][1]) < width else 0.0)
+                        e = n * G + 0.03 + (neck if min(p["r"][2] - p["r"][0], p["r"][3] - p["r"][1]) < width else 0.0)
                         i0, i1, j0, j1 = box(l, (p["r"][0] - e, p["r"][1] - e, p["r"][2] + e, p["r"][3] + e))
                         got |= {find(a) for a in set(np.unique(labels[l][j0:j1 + 1, i0:i1 + 1])) - {0}}
         if not got:
@@ -143,7 +144,8 @@ def main(folder):
     layers = ["F", "B"] if mod.PCB_ARGS.get("layers", 2) == 2 else ["F", "In1", "In2", "In3", "In4", "B"]
     rows = []
     for net, (terms, want) in mod.POWER_PATHS.items():
-        tl = [tuple(t.split(".")) for t in terms]
+        # "REF.pin" or "REF.pin~1.5": the second form gives this pin its own neck length (design.py says why)
+        tl = [tuple(t.split("~")[0].split(".")) + (float(t.split("~")[1]) if "~" in t else NECK,) for t in terms]
         grids, geo, box = raster(cu[net], layers)
         res = {}
         for vias in (False, True):

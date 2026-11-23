@@ -421,8 +421,17 @@ class Router:
                 self._hole(s)
         self.reg = np.zeros((self.NL, self.H, self.W), np.int32)
         from matplotlib.path import Path
-        for rg in self.reg_polys:
+        from scipy import ndimage
+        if not hasattr(self, "_halo"):
+            self._halo = {}
+        for ri, rg in enumerate(self.reg_polys):
             if rg["side"] not in self.layers:
+                # an area on a plane layer (no tracks there): only its centre line counts, as a corridor that no
+                # other net's via may stand in, so that via holes can never cut the area through
+                if rg.get("spine"):
+                    for a, b in zip(rg["spine"], rg["spine"][1:]):
+                        for mp in (self.occ[self.VIA][0], self.hard[self.VIA][0]):
+                            r_seg(mp, a[0], a[1], b[0], b[1], rg["keep"], self.id(rg["net"]), self.ox, self.oy, G)
                 continue
             poly = np.array(rg["poly"])
             i0, i1 = max(0, self.ix(poly[:, 0].min())), min(self.W - 1, self.ix(poly[:, 0].max()))
@@ -431,6 +440,35 @@ class Router:
             m = Path(poly).contains_points(np.column_stack([xs.ravel(), ys.ravel()])).reshape(xs.shape)
             sub = self.reg[self.layers.index(rg["side"]), j0:j1 + 1, i0:i1 + 1]
             sub[m] = -self.id(rg["net"]) if rg.get("hard") else self.id(rg["net"])
+            if rg.get("hard"):
+                # A hard area is filled copper that keeps its clearance from everything else, so a foreign track or
+                # via right beside it would take a bite out of it. A band round the area is therefore closed too:
+                # 0.3 mm for tracks (except in front of the pads of other nets, which must keep their way out) and
+                # 0.45 mm for vias, on this layer and so through the board.
+                if ri not in self._halo:
+                    l = self.layers.index(rg["side"])
+                    pad = int(round(0.5 / G))
+                    a0, a1, b0, b1 = max(0, i0 - pad), min(self.W - 1, i1 + pad), max(0, j0 - pad), min(self.H - 1, j1 + pad)
+                    xs2, ys2 = np.meshgrid(self.ox + np.arange(a0, a1 + 1) * G, self.oy + np.arange(b0, b1 + 1) * G)
+                    full = Path(poly).contains_points(np.column_stack([xs2.ravel(), ys2.ravel()])).reshape(xs2.shape)
+                    disk = lambda r_: (lambda n_: (np.add.outer(np.arange(-n_, n_ + 1) ** 2, np.arange(-n_, n_ + 1) ** 2) <= n_ * n_))(int(round(r_ / G)))
+                    near = np.zeros_like(full)
+                    for p in self.pre["pads"]:
+                        if p["net"] == rg["net"] or p["side"] not in (rg["side"], "*"):
+                            continue
+                        r = p["r"]
+                        if r[2] + 0.6 < xs2[0, 0] or r[0] - 0.6 > xs2[0, -1] or r[3] + 0.6 < ys2[0, 0] or r[1] - 0.6 > ys2[-1, 0]:
+                            continue
+                        near |= (xs2 >= r[0] - 0.55) & (xs2 <= r[2] + 0.55) & (ys2 >= r[1] - 0.55) & (ys2 <= r[3] + 0.55)
+                    ht = ndimage.binary_dilation(full, disk(0.3)) & ~full & ~near
+                    hv = ndimage.binary_dilation(full, disk(rg.get("halo_v", 0.45)))
+                    self._halo[ri] = (l, a0, a1, b0, b1, ht, hv)
+                l, a0, a1, b0, b1, ht, hv = self._halo[ri]
+                sub2 = self.reg[l, b0:b1 + 1, a0:a1 + 1]
+                sub2[ht & (sub2 == 0)] = -self.id(rg["net"])
+                for mp in (self.occ[self.VIA][l], self.hard[self.VIA][l]):
+                    sv = mp[b0:b1 + 1, a0:a1 + 1]
+                    sv[hv & (sv == 0)] = self.id(rg["net"])
             # a strip along the middle of the area ("spine", half width "keep") that no other net's via may stand in,
             # so that a row of vias can never cut the area in two: the strip stays whole copper of at least
             # 2 * (keep - via pad radius - zone clearance)
@@ -901,6 +939,12 @@ def fanout(R, plane_nets, length=0.35, min_pads=12, max_pitch_dim=0.32, w=None, 
             count[p["net"]] = count.get(p["net"], 0) + 1
     n = 0
     stubs = []
+    # a pin from which a track was laid by hand (design.py) already has its way out: no stub and no via in front of it
+    byhand = set()
+    for p in R.pre["pads"]:
+        if p["net"] and any(t["net"] == p["net"] and p["r"][0] - 0.01 <= t["a"][0] <= p["r"][2] + 0.01 and p["r"][1] - 0.01 <= t["a"][1] <= p["r"][3] + 0.01
+                            for t in R.pre["tracks"]):
+            byhand.add((p["ref"], p["num"], p["x"], p["y"]))
     for ref, pads in by_ref.items():
         fine = [p for p in pads if min(p["r"][2] - p["r"][0], p["r"][3] - p["r"][1]) <= max_pitch_dim and p["side"] != "*"]
         if len(fine) < min_pads:
@@ -909,7 +953,7 @@ def fanout(R, plane_nets, length=0.35, min_pads=12, max_pitch_dim=0.32, w=None, 
         cy = sum((p["r"][1] + p["r"][3]) / 2 for p in fine) / len(fine)
         for p in fine:
             net = p["net"]
-            if not net or net in plane_nets or count.get(net, 0) < 2:
+            if not net or net in plane_nets or count.get(net, 0) < 2 or (p["ref"], p["num"], p["x"], p["y"]) in byhand:
                 continue
             dx, dy = p["r"][2] - p["r"][0], p["r"][3] - p["r"][1]
             px, py = (p["r"][0] + p["r"][2]) / 2, (p["r"][1] + p["r"][3]) / 2
@@ -955,7 +999,7 @@ def fanout(R, plane_nets, length=0.35, min_pads=12, max_pitch_dim=0.32, w=None, 
         kth = 0
         for p in order:
             net = p["net"]
-            if net not in plane_regions:
+            if net not in plane_regions or (p["ref"], p["num"], p["x"], p["y"]) in byhand:
                 continue
             kth += 1
             reg = plane_regions[net]
