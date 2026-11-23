@@ -1,0 +1,45 @@
+; Star Tracker — step generator, one state machine per axis (PIO0 SM0 az, SM1 alt, SM2 roll).
+;
+; The CPU pushes one segment per 1 ms motion tick, two words:
+;   word A: bit 0 = direction, bits 31:1 = (step count - 1)
+;   word B: N = half-period loop count
+; Each step is 2N + 7 cycles: STEP high for N + 2 cycles, low for N + 5 cycles.
+; At 150 MHz the CPU keeps N >= 16 (STEP high >= 120 ns; TMC2209 needs about 100 ns).
+; DIR changes at least 8 cycles (53 ns) before the first STEP edge (TMC2209 DIR set-up 20 ns).
+; Pins: OUT base = DIR pin, SET base = STEP pin.
+
+.program stepgen
+.wrap_target
+    pull block
+    out pins, 1     [7]     ; DIR, then settle
+    out y, 31               ; y = count - 1
+    pull block              ; OSR = N
+step:
+    set pins, 1
+    mov x, osr
+hi:
+    jmp x-- hi
+    set pins, 0
+    mov x, osr
+lo:
+    jmp x-- lo
+    jmp y-- step
+.wrap
+
+% c-sdk {
+static inline void stepgen_program_init(PIO pio, uint sm, uint offset, uint step_pin, uint dir_pin) {
+    pio_sm_config c = stepgen_program_get_default_config(offset);
+    sm_config_set_out_pins(&c, dir_pin, 1);
+    sm_config_set_set_pins(&c, step_pin, 1);
+    sm_config_set_out_shift(&c, true, false, 32);       // shift right: bit 0 first, no autopull
+    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);      // 8-word TX FIFO = 4 segments
+    sm_config_set_clkdiv(&c, 1.0f);
+    pio_gpio_init(pio, step_pin);
+    pio_gpio_init(pio, dir_pin);
+    pio_sm_set_pins_with_mask(pio, sm, 0, (1u << step_pin) | (1u << dir_pin));
+    pio_sm_set_consecutive_pindirs(pio, sm, step_pin, 1, true);
+    pio_sm_set_consecutive_pindirs(pio, sm, dir_pin, 1, true);
+    pio_sm_init(pio, sm, offset, &c);
+    pio_sm_set_enabled(pio, sm, true);
+}
+%}

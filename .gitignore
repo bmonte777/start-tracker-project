@@ -5,3 +5,8 @@ hardware/electronics/*/out/
 *-backups/
 fp-info-cache
 _p2_*.json
+# firmware build outputs
+firmware/**/build/
+firmware/esp32s3/sdkconfig
+firmware/esp32s3/sdkconfig.old
+firmware/esp32s3/managed_components/
