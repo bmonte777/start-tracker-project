@@ -2,7 +2,7 @@
 
 Star Tracker Project · revision B · 23 November 2026, evening · branch `phase-4-electronics`
 
-This document covers the electronics of the head: the calculations behind every value, the three boards, the wiring, what to order, what the firmware needs to know and how to bring the first boards up on the bench. Decisions D1–D41 are taken as fixed; D42–D61 were approved during this phase.
+This document covers the electronics of the head: the calculations behind every value, the three boards, the wiring, what to order, what the firmware needs to know and how to bring the first boards up on the bench. Decisions D1–D41 are taken as fixed; D42–D63 were approved during this phase.
 
 ## 1. Where things stand
 
@@ -11,7 +11,7 @@ This document covers the electronics of the head: the calculations behind every 
 | Calculations | Done | `docs/calc/phase4_calcs.py`, `phase4_calcs.md` |
 | ST-520 cartridge board: schematic, layout, fab files | Done. ERC and DRC clean, fits the Phase 3 carrier | `hardware/electronics/cartridge-board/`, `fab/st-520/` |
 | ST-501 mainboard: schematic | Done. 391 parts, 229 nets, ERC clean, netlist cross-checked | `hardware/electronics/mainboard/` |
-| ST-501 mainboard: layout and fab files | **Done.** Six layers, filled and capped vias (D51), 1 oz inner copper (D61). KiCad's check: 0 errors, 0 open connections (14 warnings, all silkscreen). Power-path width check: all 17 paths at their width (three narrow pins accepted as Q42). Fabrication files, STEP model and renders made | section 5.2, `fab/st-501/` |
+| ST-501 mainboard: layout and fab files | **Done.** Six layers, filled and capped vias (D51), 1 oz inner copper (D61). KiCad's check: 0 errors, 0 open connections (14 warnings, all silkscreen). Power-path width check: all 17 paths at their width (three narrow pins accepted, D62). Fabrication files, STEP model and renders made | section 5.2, `fab/st-501/` |
 | ST-602 battery board | **Done.** 62 parts, 48 fitted by JLCPCB. ERC and DRC clean, every pack-current path at least 1.0 mm wide, fab files made. The fuse (no LCSC number) is bought from DigiKey or Mouser. Pack parts changed for it (D58–D60) and in the CAD | section 5.3, `hardware/electronics/battery-board/`, `fab/st-602/` |
 | Fit check | Done for all three boards: no overlaps (section 6) | `hardware/cad/out/fit_boards.json` |
 | Wiring harnesses | Done: 6 drawings, pin tables, purchase list | `hardware/electronics/harness/` |
@@ -22,7 +22,7 @@ This document covers the electronics of the head: the calculations behind every 
 | Board viewer | Done for all three boards | artifact + `hardware/electronics/doc/board-viewer.html` |
 | GitHub Actions workflow | **Run on GitHub on 23 November (run 45238347825): green.** ERC and DRC clean on all three boards, all 24 power paths at width (17 on ST-501, 7 on ST-602), fab files, harness drawings and viewer built from the committed files. Started by hand only | `.github/workflows/phase4-electronics.yml` |
 
-**What you can do today:** answer the two open questions Q42 and Q43 (section 2.3; both only concern how the width check is read, nothing on the boards changes), and order the first round of boards: the mainboard ST-501 and the cartridge board ST-520 (section 8). **What is not finished:** two points on the battery board are still unconfirmed against TI's own material (which LED positions the gauge lights with four LEDs fitted, and TI's exact fuse-drive resistor values, section 5.3); 19 mainboard lines have no confirmed LCSC number and are matched at upload or fitted by hand (section 8.3); Q42 and Q43 wait for your answer. None of these stops an order of the first round.
+**What you can do today:** order the first round of boards: the mainboard ST-501 and the cartridge board ST-520 (section 8). **What is not finished:** two points on the battery board are still unconfirmed against TI's own material (which LED positions the gauge lights with four LEDs fitted, and TI's exact fuse-drive resistor values, section 5.3); 19 mainboard lines have no confirmed LCSC number and are matched at upload or fitted by hand (section 8.3). None of these stops an order of the first round.
 
 Board viewer (interactive BOM, Day / Night): <https://claude.ai/artifact/TntQCR18hPMWE3V6fTQ68L> · Docs version of this document: <https://claude.ai/artifact/9Y2pyZBkJu5i3eWqNy6xAx> · Parts list Sheet: <https://claude.ai/artifact/9T9Gpvm2vWPRYqJtPChJa8> · KiCad projects: `hardware/electronics/`.
 
@@ -54,6 +54,8 @@ Everything in the tables below that depends on a board is read from the board fi
 | D59 | Pack light pipe ST-611 ends 2.0 mm before the board, with a boss over the gauge button; it slides 0.3 mm to press it; a TPU lip on its flange closes the window (Q39) |
 | D60 | A 6 × 3 mm wire notch on each side edge of both cell holders ST-606 (Q40) |
 | D61 | Mainboard ordered with 1 oz inner copper: the battery rail on inner layer 3 has about 10 mΩ (Q41) |
+| D62 | Power-path width check: three narrow pins accepted with their own allowance (Q42): the USB-C VBUS pins (wide copper within 1.5 mm of row A, 2.9 mm of row B through the row A pin opposite) and pad 25 of the TPS55288 (within 1.1 mm, through pin 21) |
+| D63 | Pins that only sense or supply a chip are not ends of a power path (Q43): the charger's input ends at VBUS pins 2 and 3 (not VAC2, pin 8); the boost converter's own supply pin 7 is not an end of the motor-rail input |
 
 ### 2.2 Open items carried in, now closed
 
@@ -65,14 +67,9 @@ Everything in the tables below that depends on a board is read from the board fi
 | Roll harness | 15 wires of 28 AWG PTFE, 680 mm, bundle about 2.8 mm in the 6.5 mm bore; the ±52.5° twist stretches a strand by 0.01 mm |
 | P0 round | The first order is the cartridge board plus the mainboard; the battery board follows in a second order (section 5.3) |
 
-### 2.3 Questions for you — carried on with the recommended option, marked "pending approval"
+### 2.3 Questions for you
 
-| No. | Question | Recommendation (used in the design) | If you say no |
-|---|---|---|---|
-| Q42 | The mainboard's power-path width check asks for wide copper within 0.8 mm of each pin. At three places that cannot be: the VBUS pins of both USB-C sockets (0.3 mm wide, between the shell pins and the CC and data pins) and pad 25 of the TPS55288, which lies under the chip. | Accept them, each written into the check with its reason: wide copper begins 1.5 mm from the row A VBUS pins, the row B VBUS pins reach it through the row A pin opposite (2.9 mm; each pin carries a quarter of the port current, 0.75 A at 3 A), and pad 25 is reached through pin 21 (1.1 mm, TI's own land pattern) | The USB-C sockets would need a different footprint with wider VBUS pads, and port B a different converter package |
-| Q43 | Which pins count as the ends of a power path. | Leave out pins that only sense or supply the chip itself: for the charger's input the ends are its two VBUS pins (2 and 3), not the sense pin VAC2 (8); pin 7 of the boost converter (its own supply, a few milliamps) is not an end of the motor-rail input | The check would ask for 1 mm copper to pins that carry milliamps; the board does not change either way |
-
-Q28, Q31–Q35 and Q38–Q41 were approved on 23 November and are now D52–D61 above.
+None open. Q28, Q31–Q35 and Q38–Q43 were approved on 23 November and are now D52–D63 above.
 
 ## 3. How the electronics are arranged
 
@@ -182,8 +179,8 @@ Round, 30 mm, two layers, 1.6 mm. Two M3 holes on a 23 mm circle. The MT6835 sit
 | `VBAT_IN` | pack to the reverse-polarity FET, 6 A | 1.0 | 1.0 |
 | `CHG_SW1`, `CHG_SW2` | charger coil, up to 5 A | 1.0 | 1.0, 1.0 |
 | `CHG_PMID`, `VBUS_CHG` | charger input | 1.0 | 1.0, 1.0 |
-| `VBUS_A`, `VBUS_B` | the two USB-C sockets, 3 A | 1.0 | 1.0, 1.0 (Q42 at the socket pins) |
-| `PB_SW1`, `PB_SW2` | port B converter coil | 1.0 | 1.0, 1.0 (Q42 at pad 25) |
+| `VBUS_A`, `VBUS_B` | the two USB-C sockets, 3 A | 1.0 | 1.0, 1.0 (D62 at the socket pins) |
+| `PB_SW1`, `PB_SW2` | port B converter coil | 1.0 | 1.0, 1.0 (D62 at pad 25) |
 | `VPB_RAW`, `VPB`, `PB_MID` | port B output, sense resistor, output switch | 1.0 | 1.0 |
 | `VM_IN` | boost converter input, up to 6 A | 1.0 | 1.0 |
 | `BST_SW` | boost converter coil | 0.35 at the pins | 1.0 |

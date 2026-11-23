@@ -14,7 +14,7 @@
  *   accel   int32  in 2^-32 revolution per second^2
  *   time    uint64 head time in microseconds (GNSS-steered, Unix epoch when GNSS/RTC known, else since boot)
  *
- * Status: protocol version 1. Pending approval as Q46.
+ * Status: protocol version 1. Decision D66 (asked as Q46).
  */
 #pragma once
 #include <stdint.h>

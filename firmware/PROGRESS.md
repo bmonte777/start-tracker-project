@@ -3,10 +3,10 @@
 Read this first if you are a new chat continuing Phase 5. Brief: `docs/prompts/phase-5-prompt.md`. Main document: `docs/05-firmware.md` (also Project doc `claude/06-firmware.md`).
 
 ## Branch and PR
-- Branch `phase-5-firmware` from `main` at 0c3ef7e (merge of PR 8). PR 10 open against `main`: https://github.com/bmonte777/start-tracker-project/pull/10
+- Branch `phase-5-firmware` from `main` at 0c3ef7e (merge of PR 8); `main` merged in again after PR 9 (D62–D63). PR 10 open against `main`: https://github.com/bmonte777/start-tracker-project/pull/10
 
-## Pending decisions (asked 23 Nov 2026, carried on with the recommendation)
-Q44 toolchains · Q45 RP2354A core/PIO split · Q46 link protocol · Q47 closed loop + encoder calibration · Q48 mount models and pointing · Q49 updates and recovery · Q50 PD configuration in EEPROM · Q51 small defaults. Text in `docs/05-firmware.md` section 2. When Bruno approves, add them to `docs/02-decisions-log.md` and the Project doc `claude/02-decisions-log.md` as D62 onward.
+## Decisions
+Q44–Q51 approved by Bruno on 23 Nov 2026 ("Go with recommended") and recorded as D64–D71 in `docs/02-decisions-log.md` and the Project doc `claude/02-decisions-log.md`. Q42–Q43 (Phase 4) are D62–D63. No open questions from this phase.
 
 ## Stages
 | Stage | State |

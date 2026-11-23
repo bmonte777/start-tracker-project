@@ -56,7 +56,7 @@ void net_wifi_start(const std::string &ssid, const std::string &psk)
     uint8_t mac[6];
     esp_read_mac(mac, ESP_MAC_WIFI_SOFTAP);
     snprintf(ap_ssid, sizeof ap_ssid, "StarTracker-%02X%02X", mac[4], mac[5]);
-    // password shown on the OLED (Q51): derived from the MAC so it is stable per head, 10 characters
+    // password shown on the OLED (D71): derived from the MAC so it is stable per head, 10 characters
     snprintf(ap_pass, sizeof ap_pass, "st%02x%02x%02x%02x", mac[2] ^ 0x5A, mac[3] ^ 0xA5, mac[4] ^ 0x3C, mac[5] ^ 0xC3);
     wifi_config_t ap = {};
     memcpy(ap.ap.ssid, ap_ssid, strlen(ap_ssid));

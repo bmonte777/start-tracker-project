@@ -31,7 +31,7 @@ foreach(img motion bringup)
   pico_add_extra_outputs(${t})          # .uf2, .bin, .hex, .elf
 endforeach()
 
-# RAM-only flash loader that the ESP32-S3 loads over SWD to (re)program this chip (Q49).
+# RAM-only flash loader that the ESP32-S3 loads over SWD to (re)program this chip (D69).
 add_executable(st_rp2354a_flashstub flashstub/flashstub.c)
 target_link_libraries(st_rp2354a_flashstub pico_stdlib hardware_flash)
 pico_set_binary_type(st_rp2354a_flashstub no_flash)

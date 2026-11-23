@@ -733,6 +733,8 @@ PHASE_NETS = [f"{ax}_{p_}" for ax, _a in AXES for p_ in ("A1", "A2", "B1", "B2",
 POUR_NETS = ("GND",)
 # The pins that carry the current of each power net and the copper width wanted between them (tools/pathwidth.py measures
 # the narrowest place on the widest way, over tracks and filled areas together). The supply planes are not in this list.
+# "REF.pin~x" gives one pin its own allowance instead of the 0.8 mm neck (D62: USB-C VBUS pins, TPS55288 pad 25); pins
+# that only sense or supply a chip are left out (D63: charger VAC2, boost VIN pin 7).
 POWER_PATHS = {
     "VBAT_IN": (["J1.1", "Q1.9"], 1.0),
     "CHG_SW1": (["U2.28", "L1.1"], 1.0), "CHG_SW2": (["U2.26", "L1.2"], 1.0), "CHG_PMID": (["U2.29", "C9.1", "C10.1", "C11.1"], 1.0),

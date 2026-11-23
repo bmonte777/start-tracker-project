@@ -1,6 +1,9 @@
 // Star Tracker ESP32-S3 — BLE set-up service (spec 7.2): Wi-Fi set-up (write), status (read/notify), command (write,
-// limited to stop, park and wifi.*). Pairing with a 6-digit passkey shown on the OLED (Q51). NimBLE host.
+// limited to stop, park and wifi.*). Pairing with a 6-digit passkey shown on the OLED (D71). NimBLE host.
 #include "st_app_int.h"
+#include "sdkconfig.h"
+
+#if CONFIG_BT_ENABLED
 #include <cstring>
 #include "cJSON.h"
 #include "esp_random.h"
@@ -126,3 +129,12 @@ void ble_start(Head &head, const std::string &name)
 }
 
 }  // namespace st
+
+#else  // Bluetooth off (the bring-up image): no BLE service, no passkey
+
+namespace st {
+void ble_start(Head &, const std::string &) {}
+uint32_t ble_passkey() { return 0; }
+}  // namespace st
+
+#endif
