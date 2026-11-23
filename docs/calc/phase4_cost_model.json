@@ -1,0 +1,802 @@
+{
+ "pixel_scale_300": 2.5851879999999996,
+ "pixel_scale_600": 1.2925939999999998,
+ "microstep_arcsec": 0.084375,
+ "motor_rpm_slew": 400.0,
+ "step_rate_slew": 341333.3333333334,
+ "motor_rpm_sidereal": 0.20890277777777777,
+ "ustep_rate_sidereal": 178.2637037037037,
+ "wg_period_s": 861.6448374443188,
+ "motor_period_s": 287.21494581477293,
+ "hd_main_period_s": 430.8224187221594,
+ "encoder_lsb_arcsec": 0.61798095703125,
+ "encoder_inl_arcsec": 252.00000000000003,
+ "wind_torque": {
+  "3": [
+   0.023,
+   0.061
+  ],
+  "5": [
+   0.063,
+   0.168
+  ],
+  "10": [
+   0.251,
+   0.674
+  ]
+ },
+ "az_eq_cases": {
+  "ref_roll0_lat37": 4.92,
+  "ref_rolled_lat37": 8.18,
+  "kg7_roll0_lat37": 8.95,
+  "kg7_rolled_lat37": 16.08,
+  "kg7_rolled_lat15": 19.45,
+  "altaz_any": 0.0,
+  "note": "size 17 on azimuth carries every case below its 39 N.m average-torque limit",
+  "kg7_roll30_lat37": 12.52
+ },
+ "loads": {
+  "az": {
+   "size": 17,
+   "static_ref_balanced": 4.92,
+   "static_ref_worst": 8.18,
+   "static_7kg_worst": 19.45,
+   "accel_7kg": 0.074,
+   "wind10_7kg": 0.67,
+   "design_total": 20.2,
+   "sf_vs_peak": 2.67,
+   "sf_vs_avg": 1.93,
+   "sf_vs_momentary": 5.35
+  },
+  "alt": {
+   "size": 17,
+   "static_ref_balanced": 0.58,
+   "static_ref_worst": 1.95,
+   "static_7kg_worst": 7.26,
+   "accel_7kg": 0.05,
+   "wind10_7kg": 0.67,
+   "design_total": 7.98,
+   "sf_vs_peak": 6.77,
+   "sf_vs_avg": 4.89,
+   "sf_vs_momentary": 13.53
+  },
+  "roll": {
+   "size": 14,
+   "static_ref_balanced": 0.0,
+   "static_ref_worst": 4.2,
+   "static_7kg_worst": 9.05,
+   "accel_7kg": 0.036,
+   "wind10_7kg": 0.67,
+   "design_total": 9.76,
+   "sf_vs_peak": 2.87,
+   "sf_vs_avg": 1.13,
+   "sf_vs_momentary": 5.53
+  }
+ },
+ "az_with_size14": {
+  "sf_vs_peak": 1.39,
+  "sf_vs_avg": 0.54,
+  "sf_vs_momentary": 2.67
+ },
+ "alpha_rad_s2": 0.2792526803190927,
+ "crb": {
+  "roll_ref": {
+   "M": 4.71,
+   "sf": 7.13,
+   "tilt_arcsec": 27.0
+  },
+  "roll_7kg": {
+   "M": 10.31,
+   "sf": 3.26,
+   "tilt_arcsec": 59.1
+  },
+  "alt_ref": {
+   "M": 3.82,
+   "sf": 13.75,
+   "tilt_arcsec": 12.3
+  },
+  "alt_ref_rolled": {
+   "M": 7.9,
+   "sf": 6.65,
+   "tilt_arcsec": 25.5
+  },
+  "alt_7kg_rolled": {
+   "M": 15.91,
+   "sf": 3.3,
+   "tilt_arcsec": 51.3
+  },
+  "az_ref_altaz": {
+   "M": 6.16,
+   "sf": 8.52,
+   "tilt_arcsec": 19.9
+  },
+  "az_ref_lat37": {
+   "M": 8.69,
+   "sf": 6.04,
+   "tilt_arcsec": 28.0
+  },
+  "az_7kg_altaz_rolled": {
+   "M": 20.14,
+   "sf": 2.61,
+   "tilt_arcsec": 64.9
+  },
+  "az_7kg_lat15_rolled": {
+   "M": 23.87,
+   "sf": 2.2,
+   "tilt_arcsec": 76.9
+  }
+ },
+ "structure": {
+  "I_arm_mm4": 207500,
+  "I_shelf_mm4": 51531,
+  "arm_ref_printed": 120.5,
+  "arm_ref_alu": 7.3,
+  "arm_7kg_printed": 249.9,
+  "arm_7kg_alu": 15.2,
+  "shelf_ref_printed": 84.1,
+  "shelf_ref_alu": 5.1,
+  "shelf_7kg_printed": 184.1,
+  "shelf_7kg_alu": 11.2
+ },
+ "windup": {
+  "az": 95.5,
+  "alt": 11.9,
+  "roll": 0.0
+ },
+ "windup_worst_ref": {
+  "az": 143.5,
+  "alt": 40.1,
+  "roll": 162.3
+ },
+ "windup_az_size14": 186.5,
+ "wind_deflection_5ms": {
+  "az": 1.29,
+  "alt": 1.29,
+  "roll": 2.75
+ },
+ "wind_deflection_3ms": {
+  "az": 0.47,
+  "alt": 0.47,
+  "roll": 0.99
+ },
+ "flexure_alu": {
+  "static_rss": 104.9,
+  "static_sum": 187.2,
+  "drift_5min": 2.29,
+  "rms_5min": 0.66
+ },
+ "flexure_printed": {
+  "static_rss": 180.4,
+  "static_sum": 379.4,
+  "drift_5min": 3.95,
+  "rms_5min": 1.14
+ },
+ "rot5_deg": 1.2534166666666666,
+ "dynamics": {
+  "az": {
+   "ref": {
+    "f_hz": 46.9,
+    "ring_arcsec": 0.66
+   },
+   "7kg": {
+    "f_hz": 30.9,
+    "ring_arcsec": 1.53
+   }
+  },
+  "alt": {
+   "ref": {
+    "f_hz": 60.2,
+    "ring_arcsec": 0.4
+   },
+   "7kg": {
+    "f_hz": 37.5,
+    "ring_arcsec": 1.04
+   }
+  },
+  "roll": {
+   "ref": {
+    "f_hz": 44.9,
+    "ring_arcsec": 0.72
+   },
+   "7kg": {
+    "f_hz": 30.5,
+    "ring_arcsec": 1.57
+   }
+  }
+ },
+ "settle": {
+  "f_sys": 10.0,
+  "zeta": 0.05,
+  "A0": 14.6,
+  "t_to_1arcsec": 0.85,
+  "t_to_1arcsec_zeta002": 2.13
+ },
+ "motor_need": {
+  "az": {
+   "slew_7kg_20C": 0.123,
+   "slew_7kg_m20C": 0.186,
+   "track_ref_20C": 0.047,
+   "track_ref_m20C": 0.11
+  },
+  "alt": {
+   "slew_7kg_20C": 0.062,
+   "slew_7kg_m20C": 0.125,
+   "track_ref_20C": 0.025,
+   "track_ref_m20C": 0.088
+  },
+  "roll": {
+   "slew_7kg_20C": 0.063,
+   "slew_7kg_m20C": 0.106,
+   "track_ref_20C": 0.016,
+   "track_ref_m20C": 0.058
+  }
+ },
+ "kt": 0.19798989873223327,
+ "speed_torque": {
+  "17HE15-1504S": [
+   {
+    "rpm": 1,
+    "pullout": 0.297,
+    "usable": 0.208,
+    "bemf": 0.02
+   },
+   {
+    "rpm": 100,
+    "pullout": 0.297,
+    "usable": 0.208,
+    "bemf": 2.07
+   },
+   {
+    "rpm": 200,
+    "pullout": 0.297,
+    "usable": 0.208,
+    "bemf": 4.15
+   },
+   {
+    "rpm": 300,
+    "pullout": 0.297,
+    "usable": 0.208,
+    "bemf": 6.22
+   },
+   {
+    "rpm": 400,
+    "pullout": 0.287,
+    "usable": 0.201,
+    "bemf": 8.29
+   },
+   {
+    "rpm": 500,
+    "pullout": 0.245,
+    "usable": 0.171,
+    "bemf": 10.37
+   },
+   {
+    "rpm": 600,
+    "pullout": 0.206,
+    "usable": 0.144,
+    "bemf": 12.44
+   },
+   {
+    "rpm": 800,
+    "pullout": 0.155,
+    "usable": 0.109,
+    "bemf": 16.59
+   }
+  ],
+  "17HS19-2004S1": [
+   {
+    "rpm": 1,
+    "pullout": 0.398,
+    "usable": 0.279,
+    "bemf": 0.02
+   },
+   {
+    "rpm": 100,
+    "pullout": 0.398,
+    "usable": 0.279,
+    "bemf": 2.18
+   },
+   {
+    "rpm": 200,
+    "pullout": 0.398,
+    "usable": 0.279,
+    "bemf": 4.37
+   },
+   {
+    "rpm": 300,
+    "pullout": 0.398,
+    "usable": 0.279,
+    "bemf": 6.55
+   },
+   {
+    "rpm": 400,
+    "pullout": 0.393,
+    "usable": 0.275,
+    "bemf": 8.74
+   },
+   {
+    "rpm": 500,
+    "pullout": 0.346,
+    "usable": 0.242,
+    "bemf": 10.92
+   },
+   {
+    "rpm": 600,
+    "pullout": 0.297,
+    "usable": 0.208,
+    "bemf": 13.11
+   },
+   {
+    "rpm": 800,
+    "pullout": 0.224,
+    "usable": 0.157,
+    "bemf": 17.48
+   }
+  ]
+ },
+ "motor_margin_400rpm_m20C": 1.48,
+ "motor_margin_400rpm_20C": 2.24,
+ "slew_margins": {
+  "ref_any_pose": {
+   "governing_axis": "az",
+   "need": 0.064,
+   "need_by_axis": {
+    "az": 0.064,
+    "alt": 0.033,
+    "roll": 0.037
+   },
+   "m400": 4.28,
+   "m300": 4.34,
+   "m200": 4.34
+  },
+  "ref_any_pose_m20": {
+   "governing_axis": "alt",
+   "need": 0.096,
+   "need_by_axis": {
+    "az": 0.127,
+    "alt": 0.096,
+    "roll": 0.079
+   },
+   "m400": 2.1,
+   "m300": 2.17,
+   "m200": 2.17
+  },
+  "kg7_altaz": {
+   "governing_axis": "roll",
+   "need": 0.063,
+   "need_by_axis": {
+    "az": 0.026,
+    "alt": 0.062,
+    "roll": 0.063
+   },
+   "m400": 3.17,
+   "m300": 3.28,
+   "m200": 3.28
+  },
+  "kg7_altaz_m20": {
+   "governing_axis": "alt",
+   "need": 0.125,
+   "need_by_axis": {
+    "az": 0.089,
+    "alt": 0.125,
+    "roll": 0.106
+   },
+   "m400": 1.61,
+   "m300": 1.67,
+   "m200": 1.67
+  },
+  "kg7_eq_extreme": {
+   "governing_axis": "az",
+   "need": 0.123,
+   "need_by_axis": {
+    "az": 0.123
+   },
+   "m400": 2.23,
+   "m300": 2.27,
+   "m200": 2.27
+  },
+  "kg7_eq_extreme_m20": {
+   "governing_axis": "az",
+   "need": 0.186,
+   "need_by_axis": {
+    "az": 0.186
+   },
+   "m400": 1.48,
+   "m300": 1.5,
+   "m200": 1.5
+  }
+ },
+ "az_motor_1p6_ohm": {
+  "m400": 1.47,
+  "m300": 1.5
+ },
+ "az_with_38mm_motor": {
+  "kg7_eq_extreme": {
+   "m400": 1.63,
+   "m300": 1.69,
+   "m200": 1.69
+  },
+  "kg7_eq_extreme_m20": {
+   "m400": 1.08,
+   "m300": 1.12,
+   "m200": 1.12
+  }
+ },
+ "current_settings": {
+  "az": {
+   "motor": "17HS19-2004S1",
+   "kt": 0.2086,
+   "track_20C": 0.32,
+   "track_m20C": 0.75,
+   "slew_20C": 0.83,
+   "slew_m20C": 1.26,
+   "max_rms": 1.35
+  },
+  "alt_roll": {
+   "motor": "17HE15-1504S",
+   "kt": 0.198,
+   "track_20C": 0.18,
+   "track_m20C": 0.63,
+   "slew_20C": 0.45,
+   "slew_m20C": 0.89,
+   "max_rms": 1.06
+  }
+ },
+ "bemf_400rpm": {
+  "az": 8.74,
+  "alt": 8.29,
+  "roll": 8.29
+ },
+ "belt": {
+  "d1": 12.73,
+  "d2": 38.2,
+  "centre": 58.62,
+  "wrap_deg": 154.9,
+  "teeth_in_mesh": 8.6,
+  "span_mm": 57.2,
+  "Te_design": 29.2,
+  "Te_at_max_current": 46.7,
+  "work_6mm": 27.8,
+  "work_9mm": 41.7,
+  "sf_6mm": 0.95,
+  "sf_9mm": 1.43,
+  "Te_az_stall_cold_slew": 58.4,
+  "Te_az_at_max_current": 62.6,
+  "static_tension": 14.0,
+  "shaft_load": 27.3,
+  "span_freq_hz": 291,
+  "pulley_error_out_arcsec": 2.16
+ },
+ "holding": {
+  "az": {
+   "hold": 9.9,
+   "sf_ref_typical": 2.01,
+   "sf_ref_worst": 1.21,
+   "sf_7kg_worst": 0.51
+  },
+  "alt": {
+   "hold": 8.1,
+   "sf_ref_typical": 13.99,
+   "sf_ref_worst": 4.16,
+   "sf_7kg_worst": 1.12
+  },
+  "roll": {
+   "hold": 6.6,
+   "sf_ref_typical": 660.0,
+   "sf_ref_worst": 1.57,
+   "sf_7kg_worst": 0.73
+  }
+ },
+ "budget_inputs": {
+  "pe_rms_raw": 14.1,
+  "pulley_rms_raw": 1.53,
+  "ustep_pk": 1.08,
+  "ustep_rms": 0.76,
+  "pa_drift": 2.63,
+  "refr45": 2.04,
+  "refr30": 4.07,
+  "refr20": 8.7,
+  "xtal_drift": 0.135,
+  "pe_max_rate": 0.292
+ },
+ "budget_eq": [
+  [
+   "Reducer periodic error, RA axis (after PEC)",
+   1.7
+  ],
+  [
+   "Belt and pulley run-out, 2 pulleys (after PEC)",
+   0.26
+  ],
+  [
+   "Stepper microstep non-linearity",
+   0.76
+  ],
+  [
+   "Encoder loop noise / hunting",
+   0.3
+  ],
+  [
+   "Differential flexure (aluminium arms)",
+   0.66
+  ],
+  [
+   "Thermal drift of structure",
+   0.2
+  ],
+  [
+   "Polar alignment error 2' (uncorrected)",
+   0.76
+  ],
+  [
+   "Refraction residual at 45 deg altitude (model on)",
+   0.06
+  ],
+  [
+   "Clock and step timing (GNSS-disciplined)",
+   0.04
+  ],
+  [
+   "Wind 3 m/s gusts on RA and Dec",
+   0.33
+  ],
+  [
+   "Low-speed friction ripple",
+   0.3
+  ]
+ ],
+ "budget_altaz": [
+  [
+   "Reducer periodic error, azimuth (after PEC, x cos alt)",
+   1.2
+  ],
+  [
+   "Reducer periodic error, altitude (after PEC)",
+   1.7
+  ],
+  [
+   "Roll axis error at the field corner (no PEC)",
+   0.71
+  ],
+  [
+   "Belt and pulley run-out, az + alt (after PEC)",
+   0.32
+  ],
+  [
+   "Stepper microstep non-linearity, az + alt",
+   0.94
+  ],
+  [
+   "Altitude reversal lost motion (encoder-corrected)",
+   0.5
+  ],
+  [
+   "Encoder loop noise / hunting",
+   0.3
+  ],
+  [
+   "Pointing-model rate error (1' model, alt <= 60 deg)",
+   1.0
+  ],
+  [
+   "Differential flexure (aluminium arms)",
+   0.3
+  ],
+  [
+   "Thermal drift of structure",
+   0.2
+  ],
+  [
+   "Refraction residual at 45 deg altitude (model on)",
+   0.06
+  ],
+  [
+   "Clock and step timing (GNSS-disciplined)",
+   0.04
+  ],
+  [
+   "Wind 3 m/s gusts on az and alt",
+   0.29
+  ]
+ ],
+ "budget_eq_total": 2.21,
+ "budget_altaz_total": 2.71,
+ "budget_eq_no_pec": 14.4,
+ "budget_altaz_no_pec": 17.4,
+ "budget_eq_catalogue_limit": 4.07,
+ "budget_eq_printed_arms": 2.4,
+ "goto_rms": 59.0,
+ "goto_rms_no_gear_map": 73.0,
+ "lost_motion": {
+  "az": 12.0,
+  "alt": 12.0,
+  "roll": 26.0
+ },
+ "belt_backlash_out_arcsec": 2.2,
+ "motor_loss_tracking": {
+  "az": 0.39,
+  "alt": 0.55,
+  "roll": 0.55
+ },
+ "energy": {
+  "nominal_wh": 72.0,
+  "usable_20C": 62.9,
+  "usable_m20C": 50.3
+ },
+ "power_modes": [
+  [
+   "Idle, Wi-Fi on, motors off",
+   1.2,
+   52.4
+  ],
+  [
+   "EQ tracking, 20 C (azimuth moving at 0.30 A, 2 holding at 0.15 A)",
+   2.0,
+   32.2
+  ],
+  [
+   "Alt-az tracking, 20 C (3 axes at 0.30 A)",
+   2.6,
+   23.8
+  ],
+  [
+   "Alt-az tracking, -20 C (3 axes at 0.65 A)",
+   7.1,
+   7.1
+  ],
+  [
+   "Alt-az tracking + camera power, 20 C",
+   8.1,
+   7.8
+  ],
+  [
+   "Time-lapse / panorama, 20 C (10 % slewing)",
+   3.8,
+   16.4
+  ],
+  [
+   "Slewing, 3 axes, peak (azimuth 1.20 A, altitude and roll 1.06 A)",
+   20.1,
+   3.1
+  ]
+ ],
+ "thermal": {
+  "r_th": 1.39,
+  "p_internal": 4.6,
+  "rise": 6.4,
+  "internal_at_40C": 46.4,
+  "motor_rise_065A": 23.0,
+  "motor_rise_106A": 62.0,
+  "motor_loss_065A": 1.94,
+  "motor_loss_106A": 5.17,
+  "az_motor_loss_065A": 1.18,
+  "az_motor_rise_065A": 14.0,
+  "az_motor_loss_peak": 4.45,
+  "az_motor_rise_peak": 53.0,
+  "az_peak_current": 1.26
+ },
+ "peak_slew_power_w": 20.1,
+ "boost_current_peak": 1.07,
+ "pack_current_peak": 3.35,
+ "mass_p1": {
+  "Reducers, hollow units (2 x size 17, 1 x size 14)": 2.7,
+  "Stepper motors x3": 0.95,
+  "Pulleys and belts x3": 0.14,
+  "Battery pack (4 cells + board + shell)": 0.34,
+  "Electronics and harness": 0.17,
+  "Printed housings and covers": 0.56,
+  "Aluminium parts (wedge, base, arm, shelf, clamp, plates)": 1.08,
+  "Fasteners, inserts, seals": 0.15
+ },
+ "mass_p1_total": 6.08,
+ "mass_prod": {
+  "Reducers, hollow units (2 x size 17, 1 x size 14)": 1.6,
+  "Stepper motors x3": 0.95,
+  "Pulleys and belts x3": 0.14,
+  "Battery pack (4 cells + board + shell)": 0.34,
+  "Electronics and harness": 0.17,
+  "Printed housings and covers": 0.95,
+  "Aluminium parts (wedge, base, arm, shelf, clamp, plates)": 1.08,
+  "Fasteners, inserts, seals": 0.12
+ },
+ "mass_prod_total": 5.34,
+ "cost": {
+  "materials": [
+   2154.0,
+   1309.0,
+   969.0
+  ],
+  "labour": [
+   0.0,
+   75.0,
+   33.0
+  ],
+  "allowance": [
+   0.12,
+   0.05,
+   0.05
+  ],
+  "cogs": [
+   2413.0,
+   1453.0,
+   1052.0
+  ],
+  "groups": {
+   "0": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "2": [
+    990.0,
+    871.0,
+    685.0
+   ],
+   "3": [
+    582.0,
+    271.0,
+    171.0
+   ],
+   "5": [
+    466.0,
+    87.0,
+    67.0
+   ],
+   "6": [
+    48.0,
+    47.0,
+    28.0
+   ],
+   "7": [
+    55.0,
+    26.0,
+    12.0
+   ],
+   "8": [
+    13.0,
+    7.0,
+    5.0
+   ]
+  },
+  "reducers": [
+   783.0,
+   692.0,
+   560.0
+  ],
+  "reducer_share": [
+   0.36,
+   0.53,
+   0.58
+  ],
+  "tooling_eur": 44600.0,
+  "tooling_per_unit_1000": 44.6,
+  "landed_1000": 1097,
+  "retail_low_high": [
+   2740.0,
+   3840.0
+  ],
+  "landed_1000_oem_sets": 782,
+  "retail_oem_low_high": [
+   1950.0,
+   2740.0
+  ],
+  "retail_multiples": {
+   "2.0": [
+    2190.0,
+    1560.0
+   ],
+   "2.5": [
+    2740.0,
+    1950.0
+   ],
+   "3.5": [
+    3840.0,
+    2740.0
+   ]
+  }
+ },
+ "inputs": {
+  "VBUS": 16.0,
+  "y_pay": 0.1355
+ }
+}

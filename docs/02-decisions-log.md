@@ -75,3 +75,45 @@ The restated weight target was confirmed in the same reply and is recorded in D2
 | D41 | No further weight cutting for P1 (closes the options left open by D35) | P1 stays at 6.21 kg for the head alone and 6.83 kg with the wedge. Titanium screws, a 2S1P battery, a pocketed arm and shelf, and a size-14 azimuth reducer are not taken. The production weight pass of D28 (Phase 8) is not affected. Approved: "No more weight cutting" |
 
 The FE 200-600 foot-height question is closed by D40: the design no longer depends on one lens.
+
+## 22 Nov 2026 — Phase 4 decisions (approved: "Go with all recommendations")
+
+The reasoning and numbers are in `docs/04-electronics.md` and `docs/calc/phase4_calcs.py`.
+
+| # | Topic | Decision |
+|---|---|---|
+| D42 | Slew speed in the cold (Q22, changes D26) | 8°/s over the whole −20 to +40 °C range; the 6°/s cold limit is dropped. At 16 V (D33) and with the Phase 3 geometry (D34), a 7 kg load in the EQ extreme at −20 °C has a margin of 1.48 at 8°/s and 1.50 at 6°/s, so slowing down no longer helps. The firmware still lowers the slew speed by itself if StallGuard reports a high load |
+| D43 | Two-level motor rail (Q23, refines D33) | The TPS61288 makes 16 V for slews and 10 V for tracking and holding, switched by one pin (VM_SEL, low = 10 V). On 16 V the drivers cannot regulate the small tracking currents: the StealthChop floor is 0.15 A on the 38 mm motors and 0.25 A on azimuth; on 10 V it is 0.10 A and 0.16 A |
+| D44 | 5 V rail (Q24, extends D27) | A TPS563201 buck (3 A) supplies PP5V of both PD controllers: 5 V / 3 A on port B and the cable supply. The TPS25752A needs it; TI's own evaluation board has a separate 5 V converter |
+| D45 | Inrush and reverse polarity (Q25) | A P-FET switch with soft start (MOTOR_PWR_EN) sits in front of the boost: 1.5 A inrush instead of about 62 A, and a true off for the motor rail. A second P-FET at the pack input blocks a reversed bench supply |
+| D46 | Motor thermistor (Q26) | A 10 k B3950 bead on two wires, taped to the motor case and soldered to two pads on the cartridge board. A chip thermistor on the board would sit 58 mm from the motor; its footprint stays on the board, not fitted |
+| D47 | Cartridge plug pinout (Q27) | JST-GH 15-way, the same at both ends: 1–2 phase A1, 3–4 phase A2, 5 GND, 6 CS, 7 SCK, 8 MOSI, 9 MISO, 10 thermistor, 11 +3.3 V, 12–13 phase B1, 14–15 phase B2. Wired by phase, not by lead colour: the 38 mm and 48 mm motors use different colours for the same phases (D32 check) |
+
+D27 is confirmed: the TPS25751 datasheet lists the BQ25792 among the chargers its firmware drives.
+
+## 22 Nov 2026 — Phase 4 follow-up decisions
+
+| # | Topic | Decision |
+|---|---|---|
+| D48 | Encoder chip-to-magnet gap (Q29) | The encoder board stays where Phase 3 put it; carriers ST-212 and ST-216 are not changed. The gap is 0.81–0.82 mm with the real chip package, under the MT6835 datasheet's 1.0 mm minimum, so the encoder error is measured on the P0 bench (bring-up Stage D) before anything is changed. Approved: "Continue as it is" |
+| D49 | USB-C sockets on the prototypes (Q30) | Upright GT-USB-7051A (LCSC C2843970), not sealed, about 1.5 mm proud of the bezel face. A sealed socket is looked at later if needed. Approved: "leave it unsealed for the prototype" |
+
+## 22 Nov 2026 — Phase 4 mainboard decisions (approved: "Go with recommendations and continue")
+
+| # | Topic | Decision |
+|---|---|---|
+| D50 | Battery rail on the mainboard (Q36) | The pack pads stay at the lower right, so no harness and no printed part changes. The rail crosses the board as one copper area 4.6 mm wide and about 94 mm long (about 10 mΩ: 0.36 W and 60 mV at the pack's 6 A limit); on the six-layer board of D51 it lies on inner layer 3 and both outer faces are free |
+| D51 | Mainboard build (Q37) | Six layers instead of four, with filled and capped vias (via-in-pad), which JLCPCB makes at no extra charge from six layers up. Stack: front face signal, power, two signal layers, ground, inner face signal. The vias to the planes sit in the pads of the small parts; outline, parts and placement do not change. Reason: on four layers 98 of about 950 connections could not be closed in three router runs |
+
+### Phase 4 — pending approval (not decisions yet)
+
+The Phase 4 design carries on with the recommended option for each of these. Nothing that changes a printed or machined part has been changed.
+
+| # | Question | Recommended, used in the design |
+|---|---|---|
+| Q28 | Clock backup | Seiko MS621FE rechargeable cell (about three months) instead of the 0.1 F capacitor (about two days) |
+| Q31 | Buttons | TS-1187A (1.5 mm tall); the four printed button caps grow by 2 mm |
+| Q32 | GNSS antenna | Active patch on a coax lead (U.FL socket on the board), flat under the top cover |
+| Q33 | Shutter socket | Panel-mount 2.5 mm jack in the bezel, through a 9 mm cut-out in the mainboard, wired to plug J12 |
+| Q34 | Status light | Three single-colour 0603 LEDs behind the light pipe instead of one RGB package |
+| Q35 | Battery lead | Soldered to two pads on the mainboard, with an in-line XT30 |

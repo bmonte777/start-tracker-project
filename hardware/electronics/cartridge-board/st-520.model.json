@@ -1,0 +1,376 @@
+{
+ "name": "st-520",
+ "title": "ST-520 cartridge board",
+ "rev": "A",
+ "parts": [
+  {
+   "ref": "J1",
+   "value": "BM15B-GHS-TBT",
+   "footprint": "ST:JST_GH_BM15B-GHS-TBT_1x15-1MP_P1.25mm_Vertical_3D",
+   "lib_id": "Connector_Generic_MountingPin:Conn_01x15_MountingPin",
+   "dnp": false,
+   "bom": true,
+   "owner": null,
+   "fields": {
+    "LCSC": "C5305069",
+    "MPN": "BM15B-GHS-TBT(LF)(SN)"
+   },
+   "sheet": "main",
+   "pins": {
+    "1": "M_A1",
+    "2": "M_A1",
+    "3": "M_A2",
+    "4": "M_A2",
+    "5": "GND",
+    "6": "ENC_CS",
+    "7": "ENC_SCK",
+    "8": "ENC_MOSI",
+    "9": "ENC_MISO",
+    "10": "NTC",
+    "11": "+3V3",
+    "12": "M_B1",
+    "13": "M_B1",
+    "14": "M_B2",
+    "15": "M_B2",
+    "MP": "GND"
+   }
+  },
+  {
+   "ref": "J2",
+   "value": "B4B-PH-SM4-TB",
+   "footprint": "ST:JST_PH_B4B-PH-SM4-TB_1x04-1MP_P2.00mm_Vertical_3D",
+   "lib_id": "Connector_Generic_MountingPin:Conn_01x04_MountingPin",
+   "dnp": false,
+   "bom": true,
+   "owner": null,
+   "fields": {
+    "LCSC": "C160354",
+    "MPN": "B4B-PH-SM4-TB(LF)(SN)"
+   },
+   "sheet": "main",
+   "pins": {
+    "1": "M_A1",
+    "2": "M_A2",
+    "3": "M_B1",
+    "4": "M_B2",
+    "MP": "GND"
+   }
+  },
+  {
+   "ref": "U1",
+   "value": "MT6835GT-STD",
+   "footprint": "Package_SO:TSSOP-16_4.4x5mm_P0.65mm",
+   "lib_id": "ST:MT6835GT",
+   "dnp": false,
+   "bom": true,
+   "owner": "U1",
+   "fields": {
+    "LCSC": "C2984637",
+    "MPN": "MT6835GT-STD"
+   },
+   "sheet": "main",
+   "pins": {
+    "9": "+3V3",
+    "12": "GND",
+    "8": "ENC_CS",
+    "7": "ENC_SCK",
+    "6": "ENC_MOSI",
+    "5": "MISO_U",
+    "4": "CAL_EN",
+    "16": null,
+    "15": null,
+    "14": null,
+    "1": null,
+    "2": null,
+    "3": null,
+    "10": "ENC_PWM",
+    "11": null,
+    "13": null
+   }
+  },
+  {
+   "ref": "C1",
+   "value": "100n",
+   "footprint": "Capacitor_SMD:C_0402_1005Metric",
+   "lib_id": "Device:C",
+   "dnp": false,
+   "bom": true,
+   "owner": "U1",
+   "fields": {
+    "LCSC": "C1525"
+   },
+   "sheet": "main",
+   "pins": {
+    "1": "+3V3",
+    "2": "GND"
+   }
+  },
+  {
+   "ref": "C2",
+   "value": "1u",
+   "footprint": "Capacitor_SMD:C_0402_1005Metric",
+   "lib_id": "Device:C",
+   "dnp": false,
+   "bom": true,
+   "owner": "U1",
+   "fields": {
+    "LCSC": "C52923"
+   },
+   "sheet": "main",
+   "pins": {
+    "1": "+3V3",
+    "2": "GND"
+   }
+  },
+  {
+   "ref": "C3",
+   "value": "10u",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "lib_id": "Device:C",
+   "dnp": false,
+   "bom": true,
+   "owner": "U1",
+   "fields": {
+    "LCSC": "C19702"
+   },
+   "sheet": "main",
+   "pins": {
+    "1": "+3V3",
+    "2": "GND"
+   }
+  },
+  {
+   "ref": "R1",
+   "value": "33R",
+   "footprint": "Resistor_SMD:R_0402_1005Metric",
+   "lib_id": "Device:R",
+   "dnp": false,
+   "bom": true,
+   "owner": "U1",
+   "fields": {
+    "LCSC": "C25105"
+   },
+   "sheet": "main",
+   "pins": {
+    "1": "MISO_U",
+    "2": "ENC_MISO"
+   }
+  },
+  {
+   "ref": "R2",
+   "value": "10k",
+   "footprint": "Resistor_SMD:R_0402_1005Metric",
+   "lib_id": "Device:R",
+   "dnp": false,
+   "bom": true,
+   "owner": "U1",
+   "fields": {
+    "LCSC": "C25744"
+   },
+   "sheet": "main",
+   "pins": {
+    "1": "+3V3",
+    "2": "ENC_CS"
+   }
+  },
+  {
+   "ref": "R3",
+   "value": "100k",
+   "footprint": "Resistor_SMD:R_0402_1005Metric",
+   "lib_id": "Device:R",
+   "dnp": false,
+   "bom": true,
+   "owner": "U1",
+   "fields": {
+    "LCSC": "C25741"
+   },
+   "sheet": "main",
+   "pins": {
+    "1": "CAL_EN",
+    "2": "GND"
+   }
+  },
+  {
+   "ref": "TH1",
+   "value": "NTC 10k bead",
+   "footprint": "ST:WirePads_1x02_P2.0mm_1.5x2.4mm",
+   "lib_id": "Connector_Generic:Conn_01x02",
+   "dnp": false,
+   "bom": false,
+   "owner": "U1",
+   "fields": {},
+   "sheet": "main",
+   "pins": {
+    "1": "NTC",
+    "2": "GND"
+   }
+  },
+  {
+   "ref": "RT1",
+   "value": "10k B3950",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "lib_id": "Device:Thermistor_NTC",
+   "dnp": true,
+   "bom": true,
+   "owner": "U1",
+   "fields": {
+    "LCSC": "C13564"
+   },
+   "sheet": "main",
+   "pins": {
+    "1": "NTC",
+    "2": "GND"
+   }
+  },
+  {
+   "ref": "TP1",
+   "value": "+3V3",
+   "footprint": "TestPoint:TestPoint_Pad_D1.0mm",
+   "lib_id": "Connector:TestPoint",
+   "dnp": false,
+   "bom": false,
+   "owner": "U1",
+   "fields": {},
+   "sheet": "main",
+   "pins": {
+    "1": "+3V3"
+   }
+  },
+  {
+   "ref": "TP2",
+   "value": "GND",
+   "footprint": "TestPoint:TestPoint_Pad_D1.0mm",
+   "lib_id": "Connector:TestPoint",
+   "dnp": false,
+   "bom": false,
+   "owner": "U1",
+   "fields": {},
+   "sheet": "main",
+   "pins": {
+    "1": "GND"
+   }
+  },
+  {
+   "ref": "TP3",
+   "value": "ENC_CS",
+   "footprint": "TestPoint:TestPoint_Pad_D1.0mm",
+   "lib_id": "Connector:TestPoint",
+   "dnp": false,
+   "bom": false,
+   "owner": "U1",
+   "fields": {},
+   "sheet": "main",
+   "pins": {
+    "1": "ENC_CS"
+   }
+  },
+  {
+   "ref": "TP4",
+   "value": "ENC_SCK",
+   "footprint": "TestPoint:TestPoint_Pad_D1.0mm",
+   "lib_id": "Connector:TestPoint",
+   "dnp": false,
+   "bom": false,
+   "owner": "U1",
+   "fields": {},
+   "sheet": "main",
+   "pins": {
+    "1": "ENC_SCK"
+   }
+  },
+  {
+   "ref": "TP5",
+   "value": "ENC_MISO",
+   "footprint": "TestPoint:TestPoint_Pad_D1.0mm",
+   "lib_id": "Connector:TestPoint",
+   "dnp": false,
+   "bom": false,
+   "owner": "U1",
+   "fields": {},
+   "sheet": "main",
+   "pins": {
+    "1": "ENC_MISO"
+   }
+  },
+  {
+   "ref": "TP6",
+   "value": "ENC_MOSI",
+   "footprint": "TestPoint:TestPoint_Pad_D1.0mm",
+   "lib_id": "Connector:TestPoint",
+   "dnp": false,
+   "bom": false,
+   "owner": "U1",
+   "fields": {},
+   "sheet": "main",
+   "pins": {
+    "1": "ENC_MOSI"
+   }
+  },
+  {
+   "ref": "TP7",
+   "value": "CAL_EN",
+   "footprint": "TestPoint:TestPoint_Pad_D1.0mm",
+   "lib_id": "Connector:TestPoint",
+   "dnp": false,
+   "bom": false,
+   "owner": "U1",
+   "fields": {},
+   "sheet": "main",
+   "pins": {
+    "1": "CAL_EN"
+   }
+  },
+  {
+   "ref": "TP8",
+   "value": "ENC_PWM",
+   "footprint": "TestPoint:TestPoint_Pad_D1.0mm",
+   "lib_id": "Connector:TestPoint",
+   "dnp": false,
+   "bom": false,
+   "owner": "U1",
+   "fields": {},
+   "sheet": "main",
+   "pins": {
+    "1": "ENC_PWM"
+   }
+  },
+  {
+   "ref": "TP9",
+   "value": "NTC",
+   "footprint": "TestPoint:TestPoint_Pad_D1.0mm",
+   "lib_id": "Connector:TestPoint",
+   "dnp": false,
+   "bom": false,
+   "owner": "U1",
+   "fields": {},
+   "sheet": "main",
+   "pins": {
+    "1": "NTC"
+   }
+  },
+  {
+   "ref": "H1",
+   "value": "M3",
+   "footprint": "ST:MountingHole_3.2mm_M3_ISO7380",
+   "lib_id": "Mechanical:MountingHole",
+   "dnp": false,
+   "bom": false,
+   "owner": "U1",
+   "fields": {},
+   "sheet": "main",
+   "pins": {}
+  },
+  {
+   "ref": "H2",
+   "value": "M3",
+   "footprint": "ST:MountingHole_3.2mm_M3_ISO7380",
+   "lib_id": "Mechanical:MountingHole",
+   "dnp": false,
+   "bom": false,
+   "owner": "U1",
+   "fields": {},
+   "sheet": "main",
+   "pins": {}
+  }
+ ]
+}

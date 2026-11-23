@@ -1,0 +1,119 @@
+# Phase 4 (electronics) — progress
+
+Last update: 23 Nov 2026, 01:30 UTC (third Phase 4 chat; this one can push). Branch `phase-4-electronics`, pull request #6 (draft). Phase 4 is **not complete**.
+The second Phase 4 chat could not push (the repo attached read-only); Bruno uploaded its files to the branch by hand on GitHub.
+
+## Done
+- Calculations: `docs/calc/phase4_calcs.py` (+ `.md`, `.json`). D42–D49 approved and in the decisions log.
+- ST-520 cartridge board: schematic, layout, fab package (`fab/st-520/`), ERC and DRC clean, fits its carrier. Order-ready.
+- ST-501 mainboard schematic: 7 sheets, 391 parts, 229 nets, ERC clean, netlist cross-checked. BOM in `mainboard/st-501-bom.csv`.
+- Harness drawings, cost model, parts list CSV and `bom_data.py`, firmware hand-off, bring-up plan, workflow file.
+- LCSC numbers in `tools/catalog.py` are all confirmed; blank means not confirmed. Never fill one in from memory.
+
+## ST-501 layout: where it stands (KiCad DRC, 23 Nov 01:30 UTC, `mainboard/out/st-501-drc.json`)
+- **Six layers now (D51), via-in-pad, battery rail on In3 (D50).** Stack: F sig / In1 power / In2 sig / In3 sig + VBAT bus / In4 GND / B sig.
+- 5,640 track segments, 1,177 vias. **18 connections open in 17 nets** (of about 950): +3V3 (J5.1), ALT_VREF, A_CC2, B_DP, CHG_TS,
+  LED_RP_A, LINK_SYNC, NTC_ALT_A ×2, PDA_ADC2, PDA_LDO3V3, PDA_SDAC, PDB_LD1, PDB_SDAC, STEP_ALT, STEP_ROLL, VMOT_MON, VPB.
+- **Errors: none.** Warnings: 4 same-net via pairs 0.4995 hole to hole, 2 connection_width in pours, silk overlaps at D11–D13.
+- List with positions and KiCad steps: `mainboard/doc/st-501-open-connections.md` / `.csv` (`tools/openlist.py mainboard`).
+- No fab files. Fit check, viewer, 3D render not redone.
+
+### Six-layer runs (23 Nov), in order
+1. Six layers, in-pad plane vias (`in_pad=True` on plane steps), escape after critical: 64 open.
+2. Escape first + critical steps may use In2/In3 at cost 3–6: 39 open, 9 clearance errors.
+3. **Clearance bug fixed** (`astar`: after a via the cell on the new layer was not checked in the track's own map; wide tracks ended
+   0.05 mm too close). No clearance error since. 58 open (routing got harder, correctly).
+4. `plan["via_in_pad"] = 0.5`: signal vias allowed in pads of 0.5 mm and more: 29 open.
+5. `*_CPO/_CPI/_VCP/_VREF` and `PB_GV*` moved from the critical steps to the slow signals (so their pins get escapes): 20 open after
+   closing. **Committed state = run 5 + closer** (`CLOSER_VICTIMS=8 CLOSER_ROUNDS=3 python3 tools/closer.py mainboard`).
+- `closer.py` now: `prune` (loose pieces), `anchor` (track end on the rim of a big pad → pad centre; KiCad does not count rim ends
+  on chamfered pads), `close_net` (free cells), `negotiate` (soft path, take up ≤ N slow nets, keep only if all close again;
+  `CLOSER_WHY=1` prints why a connection fails). Run-to-run the router lands between 18 and 30; more runs with other net orders may
+  close a few more, but the last ones need a human or real negotiated-congestion routing: each crosses 5–15 finished nets near U14/U3/U6.
+- Ordering note: Via Covering = Epoxy Filled & Capped. GNSS feed width (now 0.2 mm on B over In4) to be set from JLCPCB's calculator.
+- `costs.py` still prices the bare mainboard as four layers.
+
+### The three four-layer cycles (22 Nov), so nobody repeats them
+Baseline reproduced exactly first (164 open) with the tool chain below.
+1. *Critical nets hard before the slow signals* (`hardnets` in `grouter.run`: at the first step that is not `hard`, every unit of the
+   earlier hard steps becomes hard). Hardening after *each* step was tried first and is worse: later critical steps need to move earlier ones.
+   Also fixed: `save()` dropped a pin stub when a track joined it part-way (13 false opens). → **150 open**.
+2. *Escape step* (`op="escape"`, `grouter.escape`), placed after the critical steps: per chip with 12 or more pads of 0.32 mm or less, each
+   signal pin gets a hard track to a ring 3 mm out; via rows by pin position on its side (`rows`: pin 0 of 4 any distance, 1 not before
+   1.1 mm, 3 not before 1.9 mm, 2 no via inside the ring); kept only if the neighbours can still get out; falls back to soft (takes up
+   plane drops). Removed `+ 0.01` in `half[VIA]`: with it a lane 0.5 mm from a via centre was blocked, which walled in every pin beside
+   a plane pin (this was the "boxed in" of the old notes). Vias now also keep 0.25 mm hole clearance to existing copper when they are
+   placed (the old 0.2493 errors). In2 opened for encoder and rest steps (`layers=["F","B","In2"]`, cost 5; critical steps 1000 = closed).
+   → 73 of 96 pins escaped, **111 open**, U14 12 instead of 34. **This is the committed state** (plus the closing pass).
+3. *Escape before the critical steps*: 93 of 96 pins out, encoder bus and USB complete, but critical nets lost room (+1V1 9 open,
+   RP_XIN, VREF …) → **132 open**. Not kept; `design.py` has the order of cycle 2.
+- *Closing pass* `tools/closer.py mainboard [routes.json]` (40 s): all copper fixed, joins what is still apart on free cells, never takes
+  anything up. 111 → **98**. Its island finder is geometric and more reliable than `live_groups()`.
+- *Freerouting 2.1.0 on top of the critical routes* (DSN edited: plane nets removed from the netlist so they are net-less copper,
+  finished nets in an ignored class): passes take 1–3 min but it routes almost nothing ("maze search algorithm could not be created",
+  "no connection found"); with all nets left in, one pass takes 12 min and also closes nothing. Do not spend more time on it.
+
+### What was wrong with the first placement (do not go back to it)
+- Courtyard-to-courtyard margin 0.12 mm gave pad gaps of 0.42–0.44 mm; a 0.15 mm track with 0.127 mm clearance needs 0.44 mm. Nothing could pass between parts.
+- `owner` in the model was the last IC declared on the sheet, so about 80 parts sat beside the wrong chip (5–45 mm away).
+- `pcb.plane_vias()` put ground vias straight in front of chip pins. It is no longer called for this board.
+- Antenna keep-out was on F and B only.
+- Freerouting 2.1.0: the ground net costs 0.5 s per ratsnest update ("too many items"); without ground a pass takes under 2 min, but it still left 483 open
+  after 3 passes. Freerouting 1.9.0 needs a display (`xvfb-run`) and the full JRE; it was not seen to finish a pass in 5 min. Neither is used for ST-501 now.
+
+### What the board is built from now
+- `mainboard/design.py`: `FIXED` (hand positions; port B re-arranged), `owners()` + `HOT` + `OWNER` (which chip each small part belongs to and the placement order),
+  `escape_ring` bands, `IN2` (power-layer areas), `VBAT_BUS` (battery rail on F, also blocked for parts and for foreign tracks), `pour_areas()`,
+  `route_plan()` (router steps, in order), `finish()` (zones).
+- `tools/pcbgen.py`: `autoplace` (rings on both faces, margin 0.27), `escape_ring`, `dump` (hand-over file), `apply_routes`, `thick`.
+- `tools/grouter.py`: grid router, numpy + numba (`pip install numba`), runs outside KiCad. 0.05 mm grid, F and B, 45 degrees.
+- Flow: `layout.py mainboard --dump` (40 s) → `grouter.py mainboard` (10–14 min) → `layout.py mainboard` (routes, zones, DRC; 40 s).
+  `GR_CKPT=1` saves a checkpoint before the last step; `GR_RESUME=1` restarts from it. `--plot` writes `out/st-501-routes-{F,B}.png`.
+
+### Router notes that still hold
+- Flow: `layout.py mainboard --dump` (40 s) → `grouter.py mainboard` (critical part 90 s, escape 30 s, rest 13 min with In2) →
+  `closer.py mainboard` → `layout.py mainboard` (routes, zones, DRC; 40 s) → `openlist.py mainboard`.
+- `GR_CKPT_AT="<part of a step name>"` writes a checkpoint before that step (`GR_CKPT_FILE` = where, `GR_STOP=1` = stop there);
+  `GR_RESUME=1` restarts from `out/st-501.ckpt.pkl`; `GR_SKIP=escape` leaves an op out. A checkpoint made with two layers cannot be
+  resumed with three.
+- `live_groups()` (closing rounds inside the router) still reports connected nets as open; KiCad's DRC is the count to trust.
+- The 5 clearance errors: all a wide power track 0.100 mm from a pad of another power net; not explained yet (MARGIN is 0.02).
+
+### Decisions of 22–23 Nov
+Q36 → D50 (pack pads stay, rail on In3), Q37 → D51 (six layers, via-in-pad): approved "Go with recommendations and continue".
+Q28, Q31–Q35 are still pending (recommended options in use).
+
+## Next, in this order
+1. **ST-501**: close the last 18 (Bruno by hand from the list, or router work), DRC clean, 3D render, `tools/fab.py mainboard`,
+   `python -m stcad.fit_boards` (hardware/cad), `tools/viewer.py`. If Bruno hand-finishes: take his saved `.kicad_pcb` as the board
+   (do not run `layout.py` over it), run `check.py`, then fab.
+2. **ST-602 battery board** (folder `battery-board/` does not exist yet). Inputs, all read now:
+   - LEDs: charlieplexed on LEDCNTLA/B/C as on TI's EVM: LED1 A→B, LED2 B→A, LED3 B→C, LED4 C→B, LED5 C→A (anode→cathode); 3, 4 or 5 LEDs by setting.
+     Still to read in SLUUBK0: which positions a 3-LED display uses.
+   - Fuse **ITV4030L0815** (2 cells, 15 A, VOP 5.0–9.0 V, heater 2.2–3.3 Ω, fuse 1.0–3.0 mΩ; the L1415 at C3672030 is the 4-cell part and wrong).
+     Read from the datasheet drawing (rev. 08/22/23, page 4, static.chipdip.ru/lib/556/DOC043556381.pdf): terminals 1 and 3 = fuse ends,
+     2 = heater (to the fuse mid-point). Body 4.0 × 3.0 × 0.9; terminal 2 on a short edge, 3 and 1 on the long edges.
+     Land pattern: A1 1.20, A2 1.55, A3 2.40, B1 1.20, B2 1.60, B3 1.55, B4 0.90, B5 1.55 → pad 2 1.20 × 1.60 at (−1.97, 0);
+     pad 3 2.40 × 1.55 at (0.18, +1.225); pad 1 2.40 × 1.55 at (0.18, −1.225), origin at the body centre.
+     LCSC number of the L0815: not looked up yet — confirm in JLCPCB's library or leave blank.
+   - Screw-free fixing at the pack end: not designed.
+3. **Sheet** https://claude.ai/artifact/9T9Gpvm2vWPRYqJtPChJa8: copy the changed lines from `hardware/bom/master-parts-list.csv`
+   (ST-501, 509, 512, 513, 517, 518, 519, 520, 530, and ST-602 when priced). Not done.
+4. Block and power-tree diagrams and board renders into the Docs doc https://claude.ai/artifact/9Y2pyZBkJu5i3eWqNy6xAx and `docs/04-electronics.md`.
+   Not done. The Docs doc still has the text of 22 Nov 16:30; `docs/04-electronics.md` and the Project copy `claude/05-electronics.md` are current.
+5. Workflow: changed on 22 Nov (no Freerouting, library tables copied, routes laid on the board only when `regenerate` = yes, fab files
+   only for a board whose checks are clean, list of open connections in the download, run fails if a check has errors). **Not yet run on
+   GitHub.** With the mainboard open it will end red at the last step: that is correct until ST-501 is finished.
+6. Final check of every value against its source; mark the pull request ready; then `claude/phase-5-prompt.md`.
+7. Q28, Q31–Q35 await Bruno; carry on with the recommended options.
+
+## Tool chain (as used on 22 Nov)
+KiCad 9.0.8 from Ubuntu 26.04 packages in a chroot (`debootstrap resolute`, then `apt install kicad kicad-footprints kicad-symbols kicad-packages3d
+default-jre librsvg2-bin poppler-utils python3-pil`), global library tables copied from the template. Router: Python 3 with numpy, scipy, matplotlib, numba
+(host Python, outside the chroot; the chroot is entered only for `layout.py`, `check.py`, `fab.py`, `preview.py`). The chroot takes 4 minutes to build.
+
+## Tools
+`tools/build.py <board>` schematic + ERC · `tools/layout.py <board> [--no-route | --dump]` · `tools/grouter.py <board> [--plot]` ·
+`tools/closer.py <board>` · `tools/openlist.py <board>` · `tools/check.py <board>` ·
+`tools/fab.py <board> [--bom-only]` · `tools/docgen.py` · `tools/costs.py` · `tools/compose_doc.py` (reads `doc/status.json`) · `tools/viewer.py` ·
+`tools/preview.py <board>` · `harness/harness.py`.
