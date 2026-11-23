@@ -307,7 +307,7 @@ Fit the boards and harnesses following the Phase 3 assembly sequence, then repea
 
 ## 12. Risks and notes
 
-- **The mainboard's power section is the open job.** Section 5.2 has the numbers: 2 signal connections are open and 11 of 17 power paths are too thin. The board has no design-rule errors, which is not enough to order it.
+- **The mainboard's power section is the open job.** Section 5.2 has the numbers: 2 signal connections are open and 12 of 17 power paths are too thin. The board has no design-rule errors, which is not enough to order it.
 - **Battery rail across the board.** About 10 mΩ of copper between the pack pads and the charger, on an inner layer (decision D50): 0.36 W at 6 A, a few milliwatts while tracking.
 - **Battery-board fuse.** The master parts list still names the 4-cell ITV4030L1415, which would not blow on this 2-cell pack; the board ST-602 is designed for the 2-cell ITV4030L0815 (section 5.3). The parts list line is still to be corrected.
 - **TPS55288 compensation** (20 k, 10 nF, 100 pF) is taken from the datasheet's typical design, not calculated for this output capacitor set. Check port B's load step on the oscilloscope in Stage C.

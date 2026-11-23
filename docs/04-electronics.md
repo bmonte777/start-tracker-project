@@ -11,7 +11,7 @@ This document covers the electronics of the head: the calculations behind every 
 | Calculations | Done | `docs/calc/phase4_calcs.py`, `phase4_calcs.md` |
 | ST-520 cartridge board: schematic, layout, fab files | Done. ERC and DRC clean, fits the Phase 3 carrier | `hardware/electronics/cartridge-board/`, `fab/st-520/` |
 | ST-501 mainboard: schematic | Done. 391 parts, 229 nets, ERC clean, netlist cross-checked | `hardware/electronics/mainboard/` |
-| ST-501 mainboard: layout | **Not finished.** Six layers, filled and capped vias (D51). KiCad's check on 23 November, evening: 2 of about 950 connections open (both at the port B controller), no clearance errors, no shorts. **A new check of the copper width on the power paths fails on 11 of 17 paths** (0.10–0.50 mm found where 0.5–1.0 mm is wanted): the power stages have to be laid out again as wide copper before the board can be ordered. No fabrication files | section 5.2 |
+| ST-501 mainboard: layout | **Not finished.** Six layers, filled and capped vias (D51). KiCad's check on 23 November, evening: 2 of about 950 connections open (both at the port B controller), no clearance errors, no shorts. **A new check of the copper width on the power paths fails on 12 of 17 paths** (0.10–0.50 mm found where 0.5–1.0 mm is wanted): the power stages have to be laid out again as wide copper before the board can be ordered. No fabrication files | section 5.2 |
 | ST-602 battery board | **Designed and routed; checks clean; fabrication files made.** 62 parts, 48 of them fitted by JLCPCB. ERC and DRC clean (no errors, no warnings), every pack-current path at least 1.0 mm wide. Still open: the fuse has no LCSC number and is bought separately; three pack parts need small changes that wait for approval (Q38–Q40); the parts list lines ST-602 to ST-604 are not updated | section 5.3, `hardware/electronics/battery-board/`, `fab/st-602/` |
 | Fit check | Done for ST-520 and ST-602. ST-602 clears the cell holder by 0.6 mm and the shells by 2.6 mm; its LEDs and button overlap the inner end of the light pipe ST-611 by 4.3 mm³ (Q39). **To be rerun for ST-501** when its layout is final | section 6 |
 | Wiring harnesses | Done: 6 drawings, pin tables, purchase list | `hardware/electronics/harness/` |
@@ -563,7 +563,7 @@ Fit the boards and harnesses following the Phase 3 assembly sequence, then repea
 
 ## 12. Risks and notes
 
-- **The mainboard's power section is the open job.** Section 5.2 has the numbers: 2 signal connections are open and 11 of 17 power paths are too thin. The board has no design-rule errors, which is not enough to order it.
+- **The mainboard's power section is the open job.** Section 5.2 has the numbers: 2 signal connections are open and 12 of 17 power paths are too thin. The board has no design-rule errors, which is not enough to order it.
 - **Battery rail across the board.** About 10 mΩ of copper between the pack pads and the charger, on an inner layer (decision D50): 0.36 W at 6 A, a few milliwatts while tracking.
 - **Battery-board fuse.** The master parts list still names the 4-cell ITV4030L1415, which would not blow on this 2-cell pack; the board ST-602 is designed for the 2-cell ITV4030L0815 (section 5.3). The parts list line is still to be corrected.
 - **TPS55288 compensation** (20 k, 10 nF, 100 pF) is taken from the datasheet's typical design, not calculated for this output capacitor set. Check port B's load step on the oscilloscope in Stage C.

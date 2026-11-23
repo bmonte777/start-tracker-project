@@ -17,7 +17,7 @@
   ],
   [
    "ST-501 mainboard: layout",
-   "**Not finished.** Six layers, filled and capped vias (D51). KiCad's check on 23 November, evening: 2 of about 950 connections open (both at the port B controller), no clearance errors, no shorts. **A new check of the copper width on the power paths fails on 11 of 17 paths** (0.10–0.50 mm found where 0.5–1.0 mm is wanted): the power stages have to be laid out again as wide copper before the board can be ordered. No fabrication files",
+   "**Not finished.** Six layers, filled and capped vias (D51). KiCad's check on 23 November, evening: 2 of about 950 connections open (both at the port B controller), no clearance errors, no shorts. **A new check of the copper width on the power paths fails on 12 of 17 paths** (0.10–0.50 mm found where 0.5–1.0 mm is wanted): the power stages have to be laid out again as wide copper before the board can be ordered. No fabrication files",
    "section 5.2"
   ],
   [
