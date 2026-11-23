@@ -521,7 +521,7 @@ class Router:
         return math.hypot(dx, dy)
 
     # ---- one connection
-    def _search(self, nid, src_cells, tgt_cells, tb, w, lcost, soft=False, vcost=500, regmul=8, maxexp=4000000):
+    def _search(self, nid, src_cells, tgt_cells, tb, w, lcost, soft=False, vcost=500, regmul=8, maxexp=4000000, softpen=60):
         k = self.cls[w]
         # a track may only start where a track of this width is allowed to lie (a wide track cannot start between the
         # pins of a fine-pitch chip)
@@ -536,7 +536,7 @@ class Router:
         t = np.fromiter(tgt_cells, np.int64, len(tgt_cells))
         tmask.reshape(-1)[t] = 1
         idx, par, nexp = astar(self.occ[k], self.hard[k], self.occ[self.VIA], self.hard[self.VIA], self.hole, self.novia, self.reg, nid,
-                               self._src(src_cells), tmask, np.array(tb, np.int64), vcost, regmul, np.array(lcost, np.int64), soft, 60, maxexp)
+                               self._src(src_cells), tmask, np.array(tb, np.int64), vcost, regmul, np.array(lcost, np.int64), soft, softpen, maxexp)
         self.last_nexp = nexp
         if idx < 0:
             return None
@@ -628,7 +628,7 @@ class Router:
         return out
 
     # ---- victims of a path that was searched through other nets' tracks
-    def victims(self, segs, vias, w, net):
+    def victims(self, segs, vias, w, net, slack=0.03):
         out = set()
         mine = [(a[0], a[1], b[0], b[1], w / 2, l) for (l, a, b) in segs] + [(x, y, x, y, VIA_D / 2 + 0.03, "*") for (x, y) in vias]
         for s in self.shapes:
@@ -642,7 +642,7 @@ class Router:
                 if min(g[0], g[2]) - 1.2 > max(ax, bx) or max(g[0], g[2]) + 1.2 < min(ax, bx) or min(g[1], g[3]) - 1.2 > max(ay, by) \
                         or max(g[1], g[3]) + 1.2 < min(ay, by):
                     continue
-                lim = hw + s["hw"] + CLR + MARGIN + 0.03
+                lim = hw + s["hw"] + CLR + MARGIN + slack
                 if s.get("via") and l == "*":
                     lim = max(lim, VIA_H + HOLE_HOLE + 0.05)
                 if seg_dist((ax, ay, bx, by), g) < lim:

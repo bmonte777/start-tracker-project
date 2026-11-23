@@ -1,6 +1,6 @@
 # Phase 4 (electronics) — progress
 
-Last update: 22 Nov 2026, 23:15 UTC (third Phase 4 chat; this one can push). Branch `phase-4-electronics`, pull request #6 (draft). Phase 4 is **not complete**.
+Last update: 23 Nov 2026, 01:30 UTC (third Phase 4 chat; this one can push). Branch `phase-4-electronics`, pull request #6 (draft). Phase 4 is **not complete**.
 The second Phase 4 chat could not push (the repo attached read-only); Bruno uploaded its files to the branch by hand on GitHub.
 
 ## Done
@@ -10,18 +10,30 @@ The second Phase 4 chat could not push (the repo attached read-only); Bruno uplo
 - Harness drawings, cost model, parts list CSV and `bom_data.py`, firmware hand-off, bring-up plan, workflow file.
 - LCSC numbers in `tools/catalog.py` are all confirmed; blank means not confirmed. Never fill one in from memory.
 
-## ST-501 layout: where it stands (KiCad DRC, 22 Nov evening, `mainboard/out/st-501-drc.json`)
-- 4,729 track segments, 1,211 vias; 444 segments (779 mm) of slow signals on In2. **98 connections open in 61 nets** (of about 950):
-  20 on plane nets (+3V3 11, GND 5, VSYS 2, VBAT 1, VMOT 1), 15 on critical nets, 63 on slow signals.
-- Errors: 5 track-to-pad clearances (0.100–0.125 vs 0.127; all a power track beside a pad of L2, L4, D6, Q8, TP37: cause not found). No shorts.
-- Warnings that matter: 62 dangling tracks, 21 dangling vias, 12 isolated copper islands, 1 hole-to-hole 0.49.
-- Every open connection with its position: `mainboard/doc/st-501-open-connections.md` / `.csv` (`tools/openlist.py mainboard`), with click steps
-  for finishing by hand.
-- No fab files. Fit check, viewer, 3D render not redone for the new placement.
-- **Bruno's rule was: three router cycles, then stop and hand over the list. The three are used (150, 111, 132 open). Do not start a
-  fourth without his answer to Q37 (hand-finish, six layers, or pin reassignment).**
+## ST-501 layout: where it stands (KiCad DRC, 23 Nov 01:30 UTC, `mainboard/out/st-501-drc.json`)
+- **Six layers now (D51), via-in-pad, battery rail on In3 (D50).** Stack: F sig / In1 power / In2 sig / In3 sig + VBAT bus / In4 GND / B sig.
+- 5,640 track segments, 1,177 vias. **18 connections open in 17 nets** (of about 950): +3V3 (J5.1), ALT_VREF, A_CC2, B_DP, CHG_TS,
+  LED_RP_A, LINK_SYNC, NTC_ALT_A ×2, PDA_ADC2, PDA_LDO3V3, PDA_SDAC, PDB_LD1, PDB_SDAC, STEP_ALT, STEP_ROLL, VMOT_MON, VPB.
+- **Errors: none.** Warnings: 4 same-net via pairs 0.4995 hole to hole, 2 connection_width in pours, silk overlaps at D11–D13.
+- List with positions and KiCad steps: `mainboard/doc/st-501-open-connections.md` / `.csv` (`tools/openlist.py mainboard`).
+- No fab files. Fit check, viewer, 3D render not redone.
 
-### The third chat's three cycles (22 Nov), so nobody repeats them
+### Six-layer runs (23 Nov), in order
+1. Six layers, in-pad plane vias (`in_pad=True` on plane steps), escape after critical: 64 open.
+2. Escape first + critical steps may use In2/In3 at cost 3–6: 39 open, 9 clearance errors.
+3. **Clearance bug fixed** (`astar`: after a via the cell on the new layer was not checked in the track's own map; wide tracks ended
+   0.05 mm too close). No clearance error since. 58 open (routing got harder, correctly).
+4. `plan["via_in_pad"] = 0.5`: signal vias allowed in pads of 0.5 mm and more: 29 open.
+5. `*_CPO/_CPI/_VCP/_VREF` and `PB_GV*` moved from the critical steps to the slow signals (so their pins get escapes): 20 open after
+   closing. **Committed state = run 5 + closer** (`CLOSER_VICTIMS=8 CLOSER_ROUNDS=3 python3 tools/closer.py mainboard`).
+- `closer.py` now: `prune` (loose pieces), `anchor` (track end on the rim of a big pad → pad centre; KiCad does not count rim ends
+  on chamfered pads), `close_net` (free cells), `negotiate` (soft path, take up ≤ N slow nets, keep only if all close again;
+  `CLOSER_WHY=1` prints why a connection fails). Run-to-run the router lands between 18 and 30; more runs with other net orders may
+  close a few more, but the last ones need a human or real negotiated-congestion routing: each crosses 5–15 finished nets near U14/U3/U6.
+- Ordering note: Via Covering = Epoxy Filled & Capped. GNSS feed width (now 0.2 mm on B over In4) to be set from JLCPCB's calculator.
+- `costs.py` still prices the bare mainboard as four layers.
+
+### The three four-layer cycles (22 Nov), so nobody repeats them
 Baseline reproduced exactly first (164 open) with the tool chain below.
 1. *Critical nets hard before the slow signals* (`hardnets` in `grouter.run`: at the first step that is not `hard`, every unit of the
    earlier hard steps becomes hard). Hardening after *each* step was tried first and is worse: later critical steps need to move earlier ones.
@@ -40,15 +52,6 @@ Baseline reproduced exactly first (164 open) with the tool chain below.
 - *Freerouting 2.1.0 on top of the critical routes* (DSN edited: plane nets removed from the netlist so they are net-less copper,
   finished nets in an ignored class): passes take 1–3 min but it routes almost nothing ("maze search algorithm could not be created",
   "no connection found"); with all nets left in, one pass takes 12 min and also closes nothing. Do not spend more time on it.
-
-### Why it does not close (my reading)
-Not density. (1) U14's GPIOs were assigned by function, so most signals leave on the side away from their destination and must cross
-within 3 mm of the chip; (2) the VBAT bus takes the front face from y −15.9 to −11.3 right under U14's south side and under U13;
-(3) vias: 0.8 mm centre to centre and 0.96 mm for a track between two, against 0.4 mm pin pitch; (4) the rest step's rip-up has no
-memory (same nets take each other up until `max_rips`). A negotiated-congestion (PathFinder) rest step would fix (4) only.
-Recommended to Bruno (Q37): six layers with via-in-pad (free at JLCPCB from six layers: jlcpcb.com/resources/6-layer-pcbs); the router
-then needs: vias allowed on pads of the fine-pitch chips, two more signal layers (stack F, GND, sig, sig/power, GND or power, B), the
-VBAT bus on an inner layer.
 
 ### What was wrong with the first placement (do not go back to it)
 - Courtyard-to-courtyard margin 0.12 mm gave pad gaps of 0.42–0.44 mm; a 0.15 mm track with 0.127 mm clearance needs 0.44 mm. Nothing could pass between parts.
@@ -76,13 +79,12 @@ VBAT bus on an inner layer.
 - `live_groups()` (closing rounds inside the router) still reports connected nets as open; KiCad's DRC is the count to trust.
 - The 5 clearance errors: all a wide power track 0.100 mm from a pad of another power net; not explained yet (MARGIN is 0.02).
 
-### Questions put to Bruno on 22 Nov (answers pending; recommended option used)
-- **Q36 battery rail**: keep the pack pads at the lower right (94 mm bus, about 10 mΩ, 0.36 W at 6 A) — recommended, no harness change;
-  on six layers the bus goes to an inner layer. Alternative: J1 + Q1 beside U2, shuffle U25/U26/J12/BT1 (changes ST-531-PWR, ST-532).
-- **Q37 how to finish ST-501**: six layers with via-in-pad (recommended) / finish 98 connections by hand / reassign RP2354A pins on four layers.
+### Decisions of 22–23 Nov
+Q36 → D50 (pack pads stay, rail on In3), Q37 → D51 (six layers, via-in-pad): approved "Go with recommendations and continue".
+Q28, Q31–Q35 are still pending (recommended options in use).
 
 ## Next, in this order
-1. **ST-501**: wait for Q37. Then finish the layout that way, DRC clean, 3D render, `tools/fab.py mainboard`,
+1. **ST-501**: close the last 18 (Bruno by hand from the list, or router work), DRC clean, 3D render, `tools/fab.py mainboard`,
    `python -m stcad.fit_boards` (hardware/cad), `tools/viewer.py`. If Bruno hand-finishes: take his saved `.kicad_pcb` as the board
    (do not run `layout.py` over it), run `check.py`, then fab.
 2. **ST-602 battery board** (folder `battery-board/` does not exist yet). Inputs, all read now:
@@ -103,7 +105,7 @@ VBAT bus on an inner layer.
    only for a board whose checks are clean, list of open connections in the download, run fails if a check has errors). **Not yet run on
    GitHub.** With the mainboard open it will end red at the last step: that is correct until ST-501 is finished.
 6. Final check of every value against its source; mark the pull request ready; then `claude/phase-5-prompt.md`.
-7. Q28, Q31–Q37 await Bruno; carry on with the recommended options.
+7. Q28, Q31–Q35 await Bruno; carry on with the recommended options.
 
 ## Tool chain (as used on 22 Nov)
 KiCad 9.0.8 from Ubuntu 26.04 packages in a chroot (`debootstrap resolute`, then `apt install kicad kicad-footprints kicad-symbols kicad-packages3d

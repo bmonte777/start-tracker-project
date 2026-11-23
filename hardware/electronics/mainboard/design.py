@@ -783,14 +783,17 @@ def route_plan(pcb):
              nets=["CHG_SW1", "CHG_SW2", "PB_SW1", "PB_SW2", "BST_SW", "SW_3V3", "SW_5V", "CHG_PMID", "VBUS_CHG", "VM_IN", "VBAT_IN",
                    "VPB_RAW", "VPB", "PB_MID", "VBUS_A", "VBUS_B", "+5V"], widths=[1.0, 0.5, 0.3, 0.2, 0.15], order="given"),
         dict(op="route", name="boot, gate drive and bias", layer_cost={"In2": 3, "In3": 3}, hard=True,
-             nets=["CHG_BT?", "PB_BOOT?", "BST_BT", "BST_5V", "BST_3V3", "PB_DR1?", "PB_GV*", "CHG_REGN", "PB_VCC", "BST_VCC", "MSW_G", "Q1_G",
-                   "*_CPO", "*_CPI", "*_VCP", "*_5V", "RP_LX", "+1V1", "RP_AVDD", "+3V3A", "+3V3G"], widths=[0.3, 0.2, 0.15]),
+             nets=["CHG_BT?", "PB_BOOT?", "BST_BT", "BST_5V", "BST_3V3", "PB_DR1?", "CHG_REGN", "PB_VCC", "BST_VCC", "MSW_G", "Q1_G",
+                   "*_5V", "RP_LX", "+1V1", "RP_AVDD", "+3V3A", "+3V3G"], widths=[0.3, 0.2, 0.15]),
         dict(op="route", name="motor phases and sense", layer_cost={"In2": 6, "In3": 6}, nets=["*_A1", "*_A2", "*_B1", "*_B2", "*_BRA", "*_BRB"], hard=True,
              widths=[0.5, 0.3, 0.2]),
         dict(op="route", name="USB pairs", layer_cost={"In2": 3, "In3": 3}, nets=["A_DP", "A_DN", "B_DP", "B_DN"], widths=[0.2, 0.15], hard=True, order="given"),
         dict(op="route", name="crystal and feedback", layer_cost={"In2": 3, "In3": 3}, hard=True,
              nets=["RP_XIN", "RP_XOUT", "RP_XOUT_X", "FB_3V3", "FB_5V", "BST_FB", "BST_COMP*", "PB_COMP*", "VMSEL_D", "PB_FSW", "PB_ILIM",
-                   "PB_MODE", "PB_DITH", "CHG_ILIM", "CHG_PROG", "CHG_TS", "SS_3V3", "*_VREF", "CHG_BATP", "CHG_SDRV"], widths=[0.15]),
+                   "PB_MODE", "PB_DITH", "CHG_ILIM", "CHG_PROG", "CHG_TS", "SS_3V3", "CHG_BATP", "CHG_SDRV"], widths=[0.15]),
+        # The drivers' charge-pump and reference pins and the gate lines of port B's output switch carry next to no
+        # current; they are routed with the slow signals, so that their pins get an escape track like the others
+        # (their capacitors stand west of the drivers, across the neighbouring pins' way out).
         # From here on the slow signals, on all four signal layers; the two inner ones cost twice an outer face, so
         # short connections stay outside.
         dict(op="route", name="encoder SPI", nets=["ENC_MISO", "ENC_SCK_M", "ENC_MOSI_M", "CS_*_M", "*_SCK", "*_MOSI", "*_CS"], widths=[0.15],
@@ -807,7 +810,7 @@ def finish(pcb):
     """After routing: copper areas over every power net, the inner power layer, the battery bus, ground on both outer faces."""
     full = pcb.rect(-49.5, -29.5, 49.5, 29.5)
     for ref in pcb.fps:                       # IC ground pads and thermal pads join the pours solidly
-        if ref.startswith(("U", "Q", "J", "L", "R", "C", "SW")):
+        if ref.startswith(("U", "Q", "J", "L", "R", "C", "SW", "D", "TP")):
             pcb.solid(ref)
     for a in pour_areas(pcb):
         pcb.zone(a["net"], a["side"], a["poly"], clearance=0.2, solid=True, priority=5)

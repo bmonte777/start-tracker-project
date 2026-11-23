@@ -99,7 +99,7 @@ Round, 30 mm, two layers, 1.6 mm. Two M3 holes on a 23 mm circle. The MT6835 sit
 
 ### 5.2 ST-501 mainboard
 
-100 × 60 mm, four layers, 1.6 mm, four M3 holes 4 mm from the corners. Front face (toward the bezel): display header, four buttons, two USB-C sockets, three status LEDs. Inner face: everything else, nothing taller than 12 mm.
+100 × 60 mm, six layers with filled and capped vias (D51), 1.6 mm, four M3 holes 4 mm from the corners. Front face (toward the bezel): display header, four buttons, two USB-C sockets, three status LEDs. Inner face: everything else, nothing taller than 12 mm.
 
 **Schematic** — seven sheets, 391 parts, 229 nets, ERC 0 errors and 0 warnings; the netlist KiCad exports is compared with the design script on every build (0 mismatches). PDF: [`hardware/electronics/mainboard/doc/st-501-schematic.pdf`](../hardware/electronics/mainboard/doc/st-501-schematic.pdf).
 
@@ -155,7 +155,7 @@ The three cartridge harness lengths are measured along the cable route in the CA
 
 1. Open **jlcpcb.com**, sign in, click **Order now**.
 2. Click **Add gerber file** and choose the `…-gerbers.zip` of the board. The page shows the board outline and fills in size and layer count.
-3. Set **PCB Qty** to 5 (mainboard) or 15 (cartridge board), **PCB Thickness** 1.6, **Surface Finish** ENIG (flat pads for the fine-pitch chips; lead-free HASL is fine for the cartridge board). Leave everything else as offered.
+3. Set **PCB Qty** to 5 (mainboard) or 15 (cartridge board), **PCB Thickness** 1.6, **Surface Finish** ENIG (flat pads for the fine-pitch chips; lead-free HASL is fine for the cartridge board). Leave everything else as offered. For the mainboard also check that **Layers** shows 6 and set **Via Covering** to *Epoxy Filled & Capped* (no extra charge on six layers): its vias sit in pads.
 4. Switch **PCB Assembly** on. Under **Assembly Side** choose **Both Sides** (both boards carry parts on two faces; the page switches to *Standard* assembly). **PCBA Qty**: all boards. **Tooling holes**: *Added by JLCPCB*. Click **Next**.
 5. On the *Bill of materials* step, upload `…-bom.csv` and `…-cpl.csv`. Click **Process BOM & CPL**.
 6. The parts list appears with a tick against every line JLCPCB matched. For lines without a match (the ones listed in 8.3), either click the magnifier and pick the suggested part, or untick the line: the board then arrives with those pads empty, to be fitted by hand.
@@ -303,9 +303,9 @@ Fit the boards and harnesses following the Phase 3 assembly sequence, then repea
 
 ## 12. Risks and notes
 
-- **Mainboard routing is the open job.** Section 5.2 has the numbers. The power stages, planes and critical nets are routed; the slow signals round the fine-pitch chips are not all closed, and the board does not pass the design-rule check.
-- **Battery rail across the board.** About 10 mΩ of copper between the pack pads and the charger (section 5.2). It works, but it wastes about 0.36 W at 6 A; moving the pack pads beside the charger would be the clean fix.
-- **Battery-board fuse.** The fuse type listed so far is the 4-cell version and would not blow on this 2-cell pack (section 5.3).
+- **Mainboard routing is the open job.** Section 5.2 has the numbers: 18 connections of slow signals are still open on the six-layer board; everything else is routed and the board has no design-rule errors.
+- **Battery rail across the board.** About 10 mΩ of copper between the pack pads and the charger, on an inner layer (decision D50): 0.36 W at 6 A, a few milliwatts while tracking.
+- **Battery-board fuse.** The master parts list still names the 4-cell ITV4030L1415, which would not blow on this 2-cell pack; the part to use is the ITV4030L0815 (section 5.3). The line is corrected when the battery board is designed.
 - **TPS55288 compensation** (20 k, 10 nF, 100 pF) is taken from the datasheet's typical design, not calculated for this output capacitor set. Check port B's load step on the oscilloscope in Stage C.
 - **MT6835 supply.** Out of stock at LCSC on the check date; the cartridge board cannot be completed without it. Alternatives with the same package and pinout do not exist, so order early.
 - **TMC2209 stock** at LCSC was 21 pieces; five sets need 15.
