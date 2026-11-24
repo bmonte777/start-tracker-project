@@ -40,7 +40,7 @@ def build():
     s.part("ST:MT6835GT", "U1", "MT6835GT-STD", None,
            {"VDD": "+3V3", "VSS": "GND", "CSN": "ENC_CS", "SCK": "ENC_SCK", "MOSI": "ENC_MOSI", "MISO": "MISO_U", "CAL_EN": "CAL_EN",
             "A": NC, "B": NC, "Z": NC, "U": NC, "V": NC, "W": NC, "OUT": "ENC_PWM", "TEST": NC, "TEST_EN": NC},
-           x=135, y=62, LCSC="C2984637", MPN="MT6835GT-STD")
+           x=135, y=62, LCSC="C2932578", MPN="MT6835GT-STD-R")
     s.lane(105, 92, cols=3)
     s.C("C1", "100n", "+3V3", "GND", LCSC="C1525")
     s.C("C2", "1u", "+3V3", "GND", LCSC="C52923")

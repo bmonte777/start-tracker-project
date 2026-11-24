@@ -5,12 +5,14 @@ So a new chat can carry on. Brief: `docs/prompts/phase-7-prompt.md` (Project `cl
 ## State (24 Nov 2026) — round P0, order stage
 
 - **GitHub:** PR 12 was already merged. Branch `phase-7-prototype`, draft PR 13; push access granted by Bruno on 24 Nov (the first attach was refused, then approved).
-- **Open questions:** Q60–Q66 (doc section "Questions"), all *pending approval*; nothing in D1–D79 changed yet. Q64 (BOM part numbers) and Q65 (ST-205) touch board order files and a part: do not change them before Bruno approves.
-- **Printer:** not known whether the H2S has been bought (Q60). Memory says he owned no printer on 20 Nov.
+- **Decisions:** Q60–Q66 answered on 24 Nov → D80–D86 in `docs/02-decisions-log.md` and Project `claude/02-decisions-log.md`. No open questions.
+- **Printer:** none, and none will be bought (D80): all printed parts from JLC3DP.
+- **D84 applied:** ST-520 U1 → C2932578 / MT6835GT-STD-R; ST-501 U6 → TPS25752ASRSMR (pins checked against the datasheet). Changed in both BOM copies, both model JSONs, `cartridge-board/design.py`, `tools/catalog.py`, `tools/costs.py`, `tools/compose_doc.py`, `doc/status.json`, `doc/tables.json`, the doc template and `docs/04-electronics.md`. The cartridge BOMs keep CRLF line ends.
+- **ST-205:** shopping-list line now says "made from the Laifual drawing (D85)"; the wrong HTD link is removed.
 
 | Round stage | State |
 |---|---|
-| Order plan P0/P1 | done: Sheet + CSV, 53 lines, prices/stock read 24 Nov where marked |
+| Order plan P0/P1 | done: Sheet + CSV, 60 lines (full tool kit, D86), prices/stock read 24 Nov where marked |
 | P0 order guides | done (doc section "Order guides"): Laifual quote, JLCPCB parts + boards, JLCCNC, JLC3DP |
 | P0 order | waiting for Bruno (and the Laifual quote) |
 | P0 build guide, bring-up companion, measurement scripts | not started; next |
@@ -19,8 +21,8 @@ So a new chat can carry on. Brief: `docs/prompts/phase-7-prompt.md` (Project `cl
 
 ## Findings (reported to Bruno)
 
-- F1: ST-520 U1 LCSC C2984637 now lists as MT6835GT-A10K (out of stock); C2932578 = MT6835GT-STD-R, 850 in stock.
-- F2: ST-501 U6 MPN TPS25752ARSMR is not orderable; TPS25752ASRSMR (same RSM package) is. Pinout to be checked against the datasheet.
+- F1 (fixed, D84): ST-520 U1 LCSC C2984637 now lists as MT6835GT-A10K (out of stock); C2932578 = MT6835GT-STD-R, 850 in stock.
+- F2 (fixed, D84): ST-501 U6 MPN TPS25752ARSMR is not orderable; TPS25752ASRSMR (same RSM package) is. Pinout to be checked against the datasheet.
 - F3: shopping-list link for ST-205 (RS 236-5741) is a 3 mm HTD pulley, not GT2.
 - F4: ST-205 bolt pattern (4 × Ø3.4 on PCD 17) comes from the Harmonic Drive SHF outline; needs Laifual's LHT-III drawing.
 - Supply: TPS25751DREFR nearly gone (Mouser 78/0, Jan 2027; DigiKey Oct 2027); MAX-M10S and RV-3028-C7 0 at Mouser; TMC2209 21 at LCSC; ITV4030 fuse non-stocked at Mouser.

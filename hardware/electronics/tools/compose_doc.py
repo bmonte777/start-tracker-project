@@ -46,7 +46,7 @@ def main():
     for name in ("st-520", "st-501"):
         for value, mpn in T[name + "_stats"]["no_lcsc"]:
             nol.append((name.upper(), value, mpn, S["no_stock_how"].get(mpn, S["no_stock_how"].get(value, "pick in JLCPCB's parts matcher at upload"))))
-    nol = [("ST-520", "MT6835GT-STD", "MT6835GT-STD (C2984637)", "in the library, 0 in stock on the check date: pre-order through JLCPCB Parts Manager"),
+    nol = [("ST-520", "MT6835GT-STD", "MT6835GT-STD-R (C2932578)", "850 in stock at LCSC on 24 November (D84; the old number C2984637 now lists the A10K variant)"),
            ("ST-501", "TMC2209-LA-T", "TMC2209-LA-T (C465949)", "21 in stock, 15 needed for five sets: buy into your JLCPCB parts account before ordering")] + nol + [
            ("ST-602", "ITV4030L0815NR", "Littelfuse three-terminal fuse, 2-cell, 15 A", "not at LCSC: buy from DigiKey or Mouser, consign it to JLCPCB or fit it by hand with hot air")]
     no_stock = table(["Board", "Value", "Part", "How to get it on the board"], nol)

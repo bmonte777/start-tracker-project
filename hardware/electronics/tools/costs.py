@@ -21,11 +21,11 @@ BOARDS = {"st-501": dict(per_head=1, layers=6, area_cm2=60.0, sides=2), "st-520"
 
 # manufacturer part -> master parts list line that already carries its price
 OWN_LINE = {"ESP32-S3-WROOM-1-N16R8": "ST-502", "RP2354A": "ST-503", "TMC2209-LA-T": "ST-504", "BQ25792RQMR": "ST-505",
-            "TPS25751DREFR": "ST-506", "TPS25752ARSMR": "ST-507", "TPS55288RPMR": "ST-508", "TPS61288RQQR": "ST-509",
+            "TPS25751DREFR": "ST-506", "TPS25752ASRSMR": "ST-507", "TPS55288RPMR": "ST-508", "TPS61288RQQR": "ST-509",
             "TPS62932DRLR": "ST-510", "MAX-M10S-00B": "ST-511", "RV-3028-C7 32.768kHz 1ppm TA QC": "ST-513", "MS621FE-FL11E": "ST-513",
             "LSM6DSVTR": "ST-514", "MMC5983MA": "ST-515", "GT-USB-7051A": "ST-517", "TS-1187A-B-A-B": "ST-518",
             "KT-0603R": "ST-519", "19-217/GHC-YR1S2/3T": "ST-519", "19-217/BHC-ZL1M2RY/3T": "ST-519",
-            "TLP291(GB-TP,SE": "ST-532", "SM03B-GHS-TB(LF)(SN)": "ST-532", "MT6835GT-STD": "ST-521"}
+            "TLP291(GB-TP,SE": "ST-532", "SM03B-GHS-TB(LF)(SN)": "ST-532", "MT6835GT-STD": "ST-521", "MT6835GT-STD-R": "ST-521"}
 
 # (price at 1, 100, 1000 heads, source)
 QUOTED = {"SM04B-GHS-TB(LF)(SN)": (0.47, 0.36, 0.29, "quoted"), "TPS563201DDCR": (0.35, 0.25, 0.20, "est"),

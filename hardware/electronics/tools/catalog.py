@@ -36,7 +36,7 @@ C = {
 PART = {  # active parts, connectors, magnetics
     "BQ25792": ("Package_DFN_QFN:Texas_RQM0029A_VQFN-29_4x4mm_P0.4mm", "BQ25792RQMR", "C2862876"),
     "TPS25751D": (None, "TPS25751DREFR", ""),
-    "TPS25752A": (None, "TPS25752ARSMR", ""),
+    "TPS25752A": (None, "TPS25752ASRSMR", ""),
     "TPS55288": (None, "TPS55288RPMR", ""),
     "TPS61288": (None, "TPS61288RQQR", "C5219223"),
     "TPS62932": ("Package_TO_SOT_SMD:SOT-583-8", "TPS62932DRLR", "C3032935"),
@@ -44,7 +44,7 @@ PART = {  # active parts, connectors, magnetics
     "ESP32": ("ST:ESP32-S3-WROOM-1_BodyCourtyard", "ESP32-S3-WROOM-1-N16R8", "C2913202"),
     "RP2354A": (None, "RP2354A", "C41378174"),
     "TMC2209": ("Package_DFN_QFN:VQFN-28-1EP_5x5mm_P0.5mm_EP3.7x3.7mm_ThermalVias", "TMC2209-LA-T", "C465949"),
-    "MT6835": (None, "MT6835GT-STD", "C2984637"),
+    "MT6835": (None, "MT6835GT-STD-R", "C2932578"),
     "LSM6DSV": ("Package_LGA:LGA-14_3x2.5mm_P0.5mm_LayoutBorder3x4y", "LSM6DSVTR", ""),
     "MMC5983MA": (None, "MMC5983MA", "C404329"),
     "RV3028": (None, "RV-3028-C7 32.768kHz 1ppm TA QC", ""),

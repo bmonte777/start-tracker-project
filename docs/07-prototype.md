@@ -9,25 +9,25 @@ Live copy: [Phase 7 — Prototype](https://claude.ai/artifact/LVHGbTaGSPDXsHxDAe
 Round P0 can be ordered this week, but two things set the date: the azimuth reducer (quote first) and the port A PD controller TPS25751DREFR, which is close to sold out everywhere. Nothing has been built or measured yet; every number in this doc is a price, a stock figure or an earlier-phase estimate.
 
 - **Order this week (wave 1):** the Laifual quote for two LHT-17 units, the scarce ICs bought into your JLCPCB parts account, and then the two assembled mainboards and five cartridge boards.
-- **Also this week (wave 2 and tools):** the P0 machined parts (ST-303, ST-208, ST-207), the printed parts (from JLC3DP unless you already have the H2S), motors, belts, harness parts, screws and the bench tools.
+- **Also this week (wave 2 and tools):** the P0 machined parts (ST-303, ST-208, ST-207), the printed parts (from JLC3DP, D80), motors, belts, harness parts, screws and the bench tools.
 - **After P0 passes bring-up Stage D (wave 3):** the rest of P1: the second and third reducers, the battery board, cells, the EV2400, the remaining CNC and printed parts and the clamp.
-- **Priced so far, without the reducers:** about EUR 589 for wave 1, EUR 235 for wave 2, EUR 450 for tools and EUR 845 for wave 3. Many lines have no price checked yet (marked in the Sheet). The reducers are waiting on the quote: listings show USD 250–514 each.
-- **Blockers:** the Laifual drawing is needed before the 60T pulley ST-205 can be made (Q65). Seven decisions (Q60–Q66) are marked *pending approval*.
+- **Priced so far, without the reducers:** about EUR 589 for wave 1, EUR 235 for wave 2, EUR 1,168 for the full tool kit and EUR 845 for wave 3. Many lines have no price checked yet (marked in the Sheet). The reducers are waiting on the quote: listings show USD 250–514 each.
+- **Blockers:** the Laifual drawing is needed before the 60T pulley ST-205 can be made (D85). Your answers to Q60–Q66 are decisions D80–D86.
 - **Repo:** push access granted on 24 Nov. The work is on branch `phase-7-prototype`, in a pull request: `hardware/bom/order-plan-p0-p1.csv`, `docs/07-prototype.md`, `docs/prompts/phase-7-prompt.md`, `PROGRESS.md`. PR 12 was already merged into main.
 
-## Questions for you (pending approval)
+## Decisions D80–D86 (approved 24 Nov)
 
-None of these is covered by D1–D79. The plan below follows each recommendation, marked *pending approval*, until you answer.
+You answered all seven questions on 24 November. They are recorded in the decisions log, in the repo and in the Project.
 
-| # | Question | Recommendation | Why |
+| # | Topic | Decision | Your answer |
 | --- | --- | --- | --- |
-| Q60 | Have you bought the Bambu H2S? Where do the P0 printed parts come from? | Order the P0 printed parts from JLC3DP whether or not the printer has arrived: ST-211 cartridge housing in FDM PA12-CF, ST-212 carrier, ST-310 body and ST-315 bezel in MJF PA12. Print P1 parts on the H2S if you have it | P0 waits on nothing. PA12-CF is JLC3DP's closest match to the PAHT-CF in D35 (carbon-filled nylon, 105 °C heat deflection) |
-| Q61 | What does the P0 bench rig stand on? | **Option A:** the real azimuth body ST-310, built as P1 assembly steps 2–4, standing on a tripod or a 3/8"-16 bolt through ST-303's socket. The body, motor and mainboard (on the bezel ST-315) turn together; only the bench-supply and USB leads leave the axis. Option B: a new bench plate and test arm (ST-901/902), a CNC design I would draw first | No new design. Real geometry and real harness. ST-310 and ST-315 are kept for P1. Torque test T6 uses a cord round the body to a hanging weight |
-| Q62 | How many reducers to buy now? | Two LHT-17-100-U-III now. Measure both on P0; the better one goes on azimuth, the other on altitude. Buy the LHT-14 after test T2 | Risk R1 says to measure every unit; two units on one rig cost no extra parts |
-| Q63 | Board quantities and missing parts | ST-501: 5 bare, 2 assembled. ST-520: 5 assembled (P0 1, P1 3, spare 1). ST-602: 2 assembled, in the P1 order. If the clock U23 or the GNSS U24 is still out of stock at upload, leave those pads empty and fit the parts by hand later | P0 needs neither part. U24 is castellated and easy to solder by hand |
-| Q64 | Correct two part numbers in the board order files (no layout change) | ST-520 U1: LCSC C2984637 → C2932578 (MT6835GT-STD-R). ST-501 U6: TPS25752ARSMR → TPS25752ASRSMR | Findings F1 and F2 below |
-| Q65 | How to make the 60T pulley ST-205 | Ask Laifual for the LHT-17/14-100-U-III drawing and STEP with the quote. Then I correct ST-205's bolt pattern (a part change I will show you first) and you order it as a configured GT2 pulley (Misumi) or from JLCCNC | The bolt pattern in the CAD comes from the Harmonic Drive outline, not Laifual's drawing |
-| Q66 | Which bench tools do you already own? | Buy only what is missing from the tools wave. The EV2400 waits for P1 | The gauge is on the battery board, which is a P1 part |
+| D80 | Printed parts (changes D15, D29) | No printer: every P0 and P1 printed part comes from JLC3DP. Cartridge housings in FDM PA12-CF; body, tower, bezel and carriers in MJF PA12. The materials for the ASA, TPU and PETG parts are chosen at the P1 order | "No, I will outsource this job" |
+| D81 | P0 bench rig | Built in the real azimuth body ST-310 (P1 steps 2–4) on a tripod or a 3/8"-16 bolt; mainboard on the bezel ST-315; no new fixture | "Go as recommended" |
+| D82 | Reducers | Two LHT-17 now, both measured on P0; LHT-14 after test T2 | "OK" |
+| D83 | First board order | ST-501 5 bare / 2 assembled, ST-520 5 assembled, ST-602 in the P1 order; U23 and U24 hand-fitted later if out of stock | "OK" |
+| D84 | Part numbers | U1 on ST-520 → C2932578 (MT6835GT-STD-R); U6 on ST-501 → TPS25752ASRSMR. Applied (see F1, F2) | "Approved" |
+| D85 | 60T pulley ST-205 | Corrected from Laifual's drawing (shown to you first), then ordered | "OK" |
+| D86 | Bench tools | You own none: the tools wave buys the whole kit (EUR 1,168 priced so far) | "None" |
 
 ## Findings from the order check
 
@@ -35,20 +35,20 @@ Checking prices and stock turned up four problems in the files and four supply r
 
 | # | What | Where | Cause | Fix | State |
 | --- | --- | --- | --- | --- | --- |
-| F1 | The encoder's LCSC number now points to another variant | `st-520-bom.csv`, U1 | [LCSC C2984637](https://www.lcsc.com/product-detail/C2984637.html) is now listed as MT6835GT-A10K, out of stock. [C2932578](https://www.lcsc.com/product-detail/C2932578.html) is MT6835GT-STD-R, 850 in stock, USD 3.56 | Change U1 to C2932578 | Q64, pending |
-| F2 | Port B controller part number cannot be ordered | `st-501-bom.csv`, U6 | No distributor lists TPS25752ARSMR. [Mouser](https://www.mouser.com/c/?q=TPS25752) lists only TPS25752ASRSMR in the same 4 × 4 mm RSM package, 1,331 in stock | Change U6 to TPS25752ASRSMR; check the pinout against the TPS25752A datasheet before ordering | Q64, pending |
-| F3 | The 60T pulley link points to the wrong pulley | `hardware/fab/shopping-list.csv`, ST-205 | [RS 236-5741](https://uk.rs-online.com/web/p/belt-pulleys/2365741) is an Optibelt 3 mm HTD pulley, not GT2 2 mm. ST-205 is really a custom flanged pulley bolted to the reducer input | Do not buy it; Q65 | Blocked on the drawing |
-| F4 | ST-205's bolt pattern is not confirmed | `hardware/cad/stcad/bought.py`, `params.py` | Reducer envelopes use the Harmonic Drive SHF outline (4 × Ø3.4 on PCD 17) | Correct it from Laifual's LHT-III drawing | Q65 |
+| F1 | The encoder's LCSC number pointed to another variant | `st-520-bom.csv`, U1 | [LCSC C2984637](https://www.lcsc.com/product-detail/C2984637.html) is now listed as MT6835GT-A10K, out of stock. [C2932578](https://www.lcsc.com/product-detail/C2932578.html) is MT6835GT-STD-R, 850 in stock, USD 3.56 | U1 changed to C2932578 | Fixed (D84): BOMs, model, `design.py`, `catalog.py`, Phase 4 doc |
+| F2 | Port B controller part number could not be ordered | `st-501-bom.csv`, U6 | No distributor lists TPS25752ARSMR. [Mouser](https://www.mouser.com/c/?q=TPS25752) lists only TPS25752ASRSMR, in the same 4 × 4 mm RSM package. The [TPS25752A datasheet](https://edgeworker.ti.com/lit/gpn/tps25752a) names it as the orderable part | U6 changed to TPS25752ASRSMR; all 32 pins and the pad match the datasheet's pin table | Fixed (D84) |
+| F3 | The 60T pulley link points to the wrong pulley | `hardware/fab/shopping-list.csv`, ST-205 | [RS 236-5741](https://uk.rs-online.com/web/p/belt-pulleys/2365741) is an Optibelt 3 mm HTD pulley, not GT2 2 mm. ST-205 is really a custom flanged pulley bolted to the reducer input | Do not buy it | D85 |
+| F4 | ST-205's bolt pattern is not confirmed | `hardware/cad/stcad/bought.py`, `params.py` | Reducer envelopes use the Harmonic Drive SHF outline (4 × Ø3.4 on PCD 17) | Correct it from Laifual's LHT-III drawing | D85, waiting for the drawing |
 | S1 | TPS25751DREFR (port A, U3) nearly sold out | ST-501 | [Mouser](https://www.mouser.com/c/?q=TPS25751): two reads differ (78 in stock, then 0); 12,000 due 15 Jan 2027. [DigiKey](https://www.digikey.com/en/products/result?keywords=TPS25751DREFR): 0, next stock 7 Oct 2027 | Buy two this week. P0 runs from the bench supply without it, using a USB-A to C cable for data | Order first |
-| S2 | GNSS module MAX-M10S out of stock | ST-501, U24 | [Mouser](https://www.mouser.com/c/?q=MAX-M10S-00B): 0, 14,712 due 4 Jan 2027 | Fit later by hand | Q63 |
-| S3 | Clock RV-3028-C7 out of stock | ST-501, U23 | [Mouser](https://www.mouser.com/c/?q=RV-3028-C7): 0, 191,489 on order, no date shown | Fit later | Q63 |
+| S2 | GNSS module MAX-M10S out of stock | ST-501, U24 | [Mouser](https://www.mouser.com/c/?q=MAX-M10S-00B): 0, 14,712 due 4 Jan 2027 | Fit later by hand | D83 |
+| S3 | Clock RV-3028-C7 out of stock | ST-501, U23 | [Mouser](https://www.mouser.com/c/?q=RV-3028-C7): 0, 191,489 on order, no date shown | Fit later by hand | D83 |
 | S4 | Only 21 TMC2209 drivers at LCSC | ST-501 | [LCSC C465949](https://www.lcsc.com/product-detail/C465949.html): 21 in stock; two boards need 6 | Buy 6 into the JLCPCB parts account now | Wave 1 |
 
 The battery fuse ITV4030L0815NR is [non-stocked at Mouser](https://www.mouser.com/c/?q=ITV4030L0815NR) (minimum order 5,000). It is a P1 part, so DigiKey stock is checked before the P1 order.
 
 ## Round P0 order plan
 
-Place the orders in the sequence below, so that the long-lead items start first and the boards are ordered once their scarce parts are in your JLCPCB account. Every line (53 in all), with part numbers, links, prices, stock and the date each was checked, is in the Sheet and in `hardware/bom/order-plan-p0-p1.csv`. Totals include VAT only where the shop's price did.
+Place the orders in the sequence below, so that the long-lead items start first and the boards are ordered once their scarce parts are in your JLCPCB account. Every line (60 in all), with part numbers, links, prices, stock and the date each was checked, is in the Sheet and in `hardware/bom/order-plan-p0-p1.csv`. Totals include VAT only where the shop's price did.
 
 | Wave | Supplier | What | Priced total (EUR) |
 | --- | --- | --- | --- |
@@ -60,7 +60,7 @@ Place the orders in the sequence below, so that the long-lead items start first 
 | 2 | JLC3DP | ST-211 (PA12-CF), ST-212, ST-310, ST-315 (MJF PA12) | 55 (part estimate) |
 | 2 | StepperOnline (DE warehouse) | 17HS19-2004S1 (P0), 2 × 17HE15-1504S (P1, same parcel) | 23 |
 | 2 | 123-3D, JST parts, Fastener Express, Accu, 3DJake | Belts, 20T pulleys, magnets, harness parts, screws, inserts, Loctite, bushing | 79 (part priced) |
-| T | Elektor, RS, Tag-Connect, Kiwi | Bench supply, PD tester, Debug Probe, TC2030 cable, PA-09 crimper, 0.001 mm dial indicator | 451 |
+| T | Elektor, RS, TME, eleshop.eu, Tag-Connect, Kiwi, Waveshare | Bench supply, multimeter, oscilloscope, soldering and hot-air station, PD tester, Debug Probe, TC2030 cable, USB-UART adapter, PA-09 crimper, two torque drivers, 0.001 mm dial indicator and base | 1,168 |
 
 **Order sequence**
 
@@ -68,7 +68,7 @@ Place the orders in the sequence below, so that the long-lead items start first 
 2. **Today:** in JLCPCB Parts Manager, buy the wave-1 ICs into your parts account, TPS25751DREFR first. Sourced parts take 2–3 weeks to arrive at JLCPCB.
 3. **This week:** JLCCNC (ST-303, ST-208, ST-207) and JLC3DP (ST-211, ST-212, ST-310, ST-315). Both are quick and do not depend on the boards.
 4. **This week:** motors, belts, 20T pulleys, magnets, harness parts, screws, inserts and the bench tools.
-5. **When the sourced ICs show in your parts account:** order the boards (ST-501 and ST-520). If U23 or U24 is still missing, leave it unfitted (Q63).
+5. **When the sourced ICs show in your parts account:** order the boards (ST-501 and ST-520). If U23 or U24 is still missing, leave it unfitted (D83).
 6. **When the Laifual drawing arrives:** I correct ST-205 and give you its order guide.
 7. **After P0 bring-up Stage D:** wave 3 (P1). Its lines are in the Sheet already, with Phase 3 and Phase 4 estimates.
 
@@ -90,7 +90,7 @@ All files come from the repo on github.com: open **bmonte777/start-tracker-proje
 2. Click **Global Sourcing Parts** (or **Order Parts**), type the part number, e.g. `TPS25751DREFR`, and click **Search**.
 3. On the result, set **Quantity** to 2 and click **Add to cart** (or **Buy**). Repeat for TPS25752ASRSMR, TPS55288RPMR, LSM6DSVTR, MS621FE-FL11E, RV-3028-C7 and MAX-M10S-00B, two of each.
 4. Click **JLCPCB Parts** (the parts JLCPCB stocks itself), search `C465949` and buy 6, then `C2932578` and buy 5.
-5. Pay. The parts show under **My Parts Lib** when they reach JLCPCB (2–3 weeks for sourced parts). A part that is out of stock can be backordered there or left out (Q63).
+5. Pay. The parts show under **My Parts Lib** when they reach JLCPCB (2–3 weeks for sourced parts). A part that is out of stock can be backordered there or left out (D83).
 
 ### C. JLCPCB: assembled boards (once the parts from B are in your account)
 
@@ -98,7 +98,7 @@ All files come from the repo on github.com: open **bmonte777/start-tracker-proje
 2. On jlcpcb.com click **Order now**, then **Add gerber file** and choose `st-501-gerbers.zip`. Check that **Layers** shows 6.
 3. Set **PCB Qty** 5, **PCB Thickness** 1.6, **Surface Finish** ENIG, **Inner Copper Weight** 1 oz (D61), **Via Covering** *Epoxy Filled & Capped* (D51). Leave the rest as offered.
 4. Switch **PCB Assembly** on: **Assembly Side** *Both Sides*, **PCBA Qty** 2, **Tooling holes** *Added by JLCPCB*. Click **Next**.
-5. Upload the BOM and CPL files and click **Process BOM & CPL**. Lines U3, U6, U7, U21, U23, U24 and BT1 should match the parts in your account; U6 shows as TPS25752ASRSMR once Q64 is approved and the file is corrected. A line with no match: pick the suggested part (Phase 4 doc, 8.3) or untick it.
+5. Upload the BOM and CPL files and click **Process BOM & CPL**. Lines U3, U6, U7, U21, U23, U24 and BT1 should match the parts in your account; U6 shows as TPS25752ASRSMR (corrected file, D84). A line with no match: pick the suggested part (Phase 4 doc, 8.3) or untick it.
 6. On the placement view, check that each chip's red pin-1 dot sits on the board's pin-1 mark; rotate any that do not. **Save to cart**.
 7. Repeat for `st-520`: **PCB Qty** 5, 2 layers, lead-free HASL, **Assembly Side** *Both Sides*, **PCBA Qty** 5. U1 must show C2932578.
 8. Pay for both together. I check the order confirmation e-mail if you forward it.
@@ -110,7 +110,7 @@ All files come from the repo on github.com: open **bmonte777/start-tracker-proje
 3. For each part: **Material** *Aluminum 6061-T6*. **Surface finish** *Bead blasting + Anodizing, clear (natural)*; ST-208 is anodised only. **Tolerance** *ISO 2768-m* and *Upload 2D drawing* = the matching PDF (it carries the H7 fits, the threads and the 0.02 mm run-out). **Threads**: *Yes, as per drawing*. **Quantity** 1 each.
 4. Click **Add to cart**, then pay. If the page asks a question about a thread or a tolerance, send me a screenshot before you answer.
 
-### E. JLC3DP: printed parts (Q60 and Q61)
+### E. JLC3DP: printed parts (D80, D81)
 
 1. Download `hardware/fab/cnc/ST-310-MJF.step`, and `ST-211.stl`, `ST-212.stl`, `ST-315.stl` from `hardware/cad/stl/`.
 2. Open **jlc3dp.com**, click **Instant quote** and upload the four files.
