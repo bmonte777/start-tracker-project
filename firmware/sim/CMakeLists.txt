@@ -29,12 +29,17 @@ add_library(stcore STATIC
   ${FW}/esp32s3/components/st_proto/lx200.cpp
   ${FW}/esp32s3/components/st_proto/wsapi.cpp
   ${FW}/esp32s3/components/st_proto/services.cpp
+  ${FW}/esp32s3/components/st_proto/filestore.cpp
   src/sim_head.cpp)
 target_include_directories(stcore PUBLIC ${FW}/common/include ${FW}/rp2354a/motion
   ${FW}/esp32s3/components/st_core/include ${FW}/esp32s3/components/st_proto/include src)
 target_link_libraries(stcore PUBLIC cjson)
 if(NOT MSVC)
   target_compile_options(stcore PRIVATE -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers)
+else()
+  # M_PI, no min/max macros from windows.h, no "unsafe CRT" noise, gmtime_r shim, UTF-8 sources
+  target_compile_definitions(stcore PUBLIC _USE_MATH_DEFINES NOMINMAX _CRT_SECURE_NO_WARNINGS WIN32_LEAN_AND_MEAN)
+  target_compile_options(stcore PUBLIC /utf-8 "/FI${CMAKE_CURRENT_LIST_DIR}/src/msvc_compat.h")
 endif()
 
 find_package(Threads REQUIRED)

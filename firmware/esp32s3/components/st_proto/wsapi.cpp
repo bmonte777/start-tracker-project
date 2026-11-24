@@ -247,7 +247,7 @@ std::string WsApi::handle(const std::string &text)
             cJSON_AddItemToArray(arr, x);
         }
         cJSON_AddNumberToObject(result, "seq", head_.fault_seq());
-        cJSON_AddBoolToObject(result, "persistent", false);
+        cJSON_AddBoolToObject(result, "persistent", svc_.faults_persistent);
     } else if (op == "faults.clear") {
         head_.clear_faults();
     } else if (op == "health.get") {

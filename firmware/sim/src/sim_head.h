@@ -34,6 +34,7 @@ class SimHead : public st::MotionPort {
 public:
     SimHead(double start_unix_s, const st::Settings &s);
     bool send(uint8_t type, const void *payload, size_t len) override;   // application -> motion (via the pipe)
+    void gauge_health(st::PowerInputs &pin);                            // D79: simulated cycle count, SoH, cells
     void advance(double seconds);       // run the simulation forward
     int64_t now_us() const { return t_us_.load(); }
     st::Head &head() { return head_; }

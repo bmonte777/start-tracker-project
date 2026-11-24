@@ -141,10 +141,32 @@ jobs:
         if: always()
         with: { name: app-test-reports, path: "app/app-tests.txt\napp/app-tests.xml\napp/backend-tests.txt\napp/screens/\napp/api-check.md" }
 
-  android-app:
+  deep-catalog:
+    # D74: stars11.bin (stars8 + Tycho-2 to V 10.5) for the long-lens solver in both apps. Tycho-2 comes from CDS
+    # once and is kept in the Actions cache; if CDS cannot be reached the apps are built with stars8.bin only.
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.13" }
+      - uses: actions/cache@v4
+        with: { path: tycho2, key: tycho2-i259-v2 }
+      - name: Build stars11.bin
+        continue-on-error: true
+        run: |
+          pip install numpy
+          python app/tools/make_deep_catalog.py --tycho tycho2 --download --min-stars 450000 --out stars11.bin
+      - uses: actions/upload-artifact@v4
+        with: { name: deep-catalog, path: stars11.bin, if-no-files-found: warn }
+
+  android-app:
+    needs: deep-catalog
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with: { name: deep-catalog, path: app/android/app/src/main/assets }
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 17 }
       - uses: gradle/actions/setup-gradle@v4
@@ -158,9 +180,13 @@ jobs:
         with: { name: android-apk, path: app/android/out/star-tracker-android.apk }
 
   windows-app:
+    needs: deep-catalog
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with: { name: deep-catalog, path: app/windows/backend }
       - uses: actions/setup-python@v5
         with: { python-version: "3.13" }
       - uses: actions/setup-node@v4
@@ -187,8 +213,9 @@ jobs:
           New-Item -ItemType Directory -Force web | Out-Null
           Copy-Item -Recurse ..\..\ui web\ui
           Copy-Item -Recurse ..\..\shared web\shared
+          $deep = @(); if (Test-Path stars11.bin) { $deep = @("--add-data", "stars11.bin;.") }
           pyinstaller --noconfirm --windowed --name startracker-backend `
-            --add-binary "ptpwpd/build/ptpwpd.dll;." --add-data "web;web" --add-data "stars8.bin;." `
+            --add-binary "ptpwpd/build/ptpwpd.dll;." --add-data "web;web" --add-data "stars8.bin;." @deep `
             --collect-submodules zeroconf --collect-all bleak --collect-all winrt backend.py
       - name: Smoke test (the backend serves the UI and answers the bridge)
         working-directory: app/windows/backend

@@ -158,3 +158,10 @@ Q44–Q51 in the same reply confirm D64–D71 above. The app reasoning is in `do
 | D75 | Discovery and connection (Q55) | Search order: last head used → mDNS → Alpaca discovery UDP 32227 → the head's access point 192.168.4.1, confirmed by `GET /startracker/v1/info` (also served on the Alpaca port), which gives the WebSocket address. BLE only for first Wi-Fi set-up and emergency stop/park. On link loss the app reconnects (1, 2, 5, 5 … s) and catches up with `hello`; head jobs carry on, USB jobs pause at the next frame with the head tracking |
 | D76 | API 1.1 additions (Q56) | Made on both sides: `hello`, `limits.get`, `faults.get` / `faults.clear`, `health.get`, `pec.*`, `job.*`, `cal.status` and `cal.encoder.*`, `cal.balance`, `update.status`, `seq` on state events, the `state` op answered with its `id`, `POST /startracker/v1/op`, CORS for the apps' pages, the service UUID in the BLE scan response |
 | D77 | App defaults (Q57) | App name "Star Tracker", id `pt.brunomonte.startracker`, installed alongside the Benro app; Android 10+ and Windows 10/11 x64; a fixed signing key in the repo; angles in degrees and arcseconds |
+
+## 23 Nov 2026 — Phase 6 continuation (approved: "Yes to Q58 and Q59")
+
+| # | Topic | Decision |
+|---|---|---|
+| D78 | Persistent head data (Q58) | The fault log, the three PEC tables and the three encoder maps are kept in files in the ESP32's `storage` partition (LittleFS) instead of NVS or RAM, so they survive a restart; settings stay in NVS. `faults.get` reports `persistent: true` on the head |
+| D79 | Battery health to the apps (Q59) | The power task passes the gauge's cycle count, state of health and both cell voltages to the Head; `health.get` reports them (`battery.cycles`, `soh_pct`, `cells_v`) and the Health screen shows them |

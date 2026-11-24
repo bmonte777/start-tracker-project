@@ -1,6 +1,7 @@
 // Settings: everything in config.get / config.set (docs/05-firmware.md 6.1), plus the app's own preferences.
 import { $, act, esc, needHead, pageHead, prefs, refreshConfig, store } from '../app.js';
 import { CONFIG_KEYS, PAYLOADS } from '../../shared/models.js';
+import { native, platform } from '../../shared/native.js';
 
 const FIELDS = [
   ['name', 'Head name', 'text'], ['lat', 'Latitude °', 'number', '0.00001'], ['lon', 'Longitude ° (east +)', 'number', '0.00001'], ['elev_m', 'Elevation m', 'number', '1'],
@@ -18,7 +19,13 @@ export async function render(root) {
   <section class="card"><h2>This app</h2>
     <label class="chk"><input type="checkbox" id="keep"> Keep the screen on while a job runs</label>
     <label class="chk"><input type="checkbox" id="redauto"> Switch to Red after sunset</label>
-    <p class="small mt">Lens and sensor are set on Camera & jobs. The display mode (Day, Night, Red) is in the top bar.</p></section></div>`;
+    <p class="small mt">Lens and sensor are set on Camera & jobs. The display mode (Day, Night, Red) is in the top bar.</p></section>
+  <section class="card" id="astapcard" ${platform() === 'windows' ? '' : 'hidden'}><h2>Plate solving for long lenses</h2>
+    <p>For 300–600 mm the app can also use <b>ASTAP</b> with its D05 star database (about 100 MB, downloaded once from hnsky.org). The built-in solver stays in use for wider lenses and if ASTAP finds nothing.</p>
+    <div id="astapst" class="msg mt">Checking…</div><div class="meter mt"><span id="astapbar" style="width:0%"></span></div>
+    <div class="btns"><button id="astapget" class="primary">Get ASTAP</button></div>
+    <p class="small">Windows may ask to allow the star-database installer: click Yes.</p></section></div>`;
+  if (platform() === 'windows') astapCard(root);
   if (needHead(root)) return;
   const fill = () => {
     const c = store.config;
@@ -45,4 +52,28 @@ export async function render(root) {
     await refreshConfig();
     fill();
   }, 'Saved on the head');
+}
+
+// D74: ASTAP on Windows (backend astap.py through the bridge)
+function astapCard(root) {
+  const show = (st) => {
+    const msg = { ready: 'ASTAP is ready: long-lens frames are solved with ASTAP first.', downloading: st.message, installing: st.message,
+      failed: st.message, idle: 'Not installed: frames are solved with the built-in solver only.' }[st.state] || st.message;
+    $('#astapst', root).textContent = msg;
+    $('#astapst', root).className = 'msg mt' + (st.state === 'failed' ? ' bad' : st.state === 'ready' ? ' ok' : '');
+    $('#astapbar', root).style.width = Math.round((st.state === 'ready' ? 1 : st.progress || 0) * 100) + '%';
+    $('#astapget', root).disabled = ['downloading', 'installing', 'ready'].includes(st.state);
+    $('#astapget', root).textContent = st.state === 'failed' ? 'Try again' : 'Get ASTAP';
+    return st.state;
+  };
+  let timer = null;
+  const poll = async () => {
+    try {
+      const state = show(await native('astap', { action: 'status' }));
+      clearTimeout(timer);
+      if (['downloading', 'installing'].includes(state) && document.body.contains(root)) timer = setTimeout(poll, 1000);
+    } catch (e) { $('#astapst', root).textContent = e.message; }
+  };
+  $('#astapget', root).onclick = (e) => act(e.target, async () => { show(await native('astap', { action: 'install' })); poll(); });
+  poll();
 }

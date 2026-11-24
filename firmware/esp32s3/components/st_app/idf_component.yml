@@ -1,4 +1,6 @@
 ## Phase 6: mDNS (startracker.local, _startracker._tcp) from Espressif's component registry. The workflow resolves it;
 ## net.cpp builds without it (Alpaca discovery still works) if the registry cannot be reached.
+## Phase 6 continuation (D78): LittleFS for the storage partition (PEC tables, encoder maps, fault log).
 dependencies:
   espressif/mdns: "^1.4"
+  joltwallet/littlefs: "^1.23"

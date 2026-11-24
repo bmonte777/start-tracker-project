@@ -115,7 +115,8 @@ describe('queries added in 1.1', () => {
     const h = await c.health();
     assert.deepEqual(h.axes.map((a) => a.axis), ['az', 'alt', 'roll']);
     assert.equal(typeof h.battery.soc, 'number');
-    assert.equal(h.battery.cycles, null);          // not plumbed from the gauge yet (docs/06-apps.md section 10)
+    assert.equal(typeof h.battery.cycles, 'number');   // D79: passed on from the gauge (simulator: 37)
+    assert.equal(h.battery.cells_v.length, 2);
   });
 
   test('update.status answers', async () => {

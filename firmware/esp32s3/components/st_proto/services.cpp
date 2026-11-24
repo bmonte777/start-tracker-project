@@ -25,12 +25,44 @@ Services::Services(Head &h) : head_(h)
     for (int i = 0; i < ST_AXES; i++) pec_table_[i].assign(PEC_BINS, 0);
 }
 
+// ====================================================================================================== saved tables (D78)
+void Services::restore_saved()
+{
+    std::lock_guard<std::recursive_mutex> l(mu_);
+    if (!load) return;
+    bool first_pec = true;
+    for (int i = 0; i < ST_AXES; i++) {
+        std::vector<int16_t> v;
+        if (load("encmap" + std::to_string(i), v) && v.size() == (size_t)(2 * ENC_HARM + ENC_GRID)) enc_map_[i] = v;
+        v.clear();
+        if (load("pec" + std::to_string(i), v) && v.size() == (size_t)PEC_BINS) {
+            pec_table_[i] = v;
+            if (first_pec) { pec_axis_ = i; first_pec = false; }
+            pec_saved_ = pec_playing_ = true;
+            pst_ = PState::Playing;
+        }
+    }
+    if (link_was_ok_) send_saved_tables();
+}
+
+void Services::send_saved_tables()
+{
+    for (int i = 0; i < ST_AXES; i++) {
+        if (!enc_map_[i].empty()) send_table(2, i, enc_map_[i]);
+        bool any = false;
+        for (int16_t x : pec_table_[i]) if (x) { any = true; break; }
+        if (any && pec_playing_) send_table(1, i, pec_table_[i]);
+    }
+}
+
 // ====================================================================================================== tick
 void Services::tick()
 {
     std::lock_guard<std::recursive_mutex> l(mu_);
     HeadState s = head_.state();
     double now = head_.now_s();
+    if (s.link_ok && !link_was_ok_) send_saved_tables();
+    link_was_ok_ = s.link_ok;
     // health: encoder minus command while the axis holds or tracks slowly (the noise and wind-up the loop sees)
     for (int i = 0; i < ST_AXES; i++) {
         if (std::fabs(s.ax[i].rate_dps) < 0.02 && cst_ == CState::Idle) {
@@ -421,7 +453,8 @@ std::string Services::pec_clear(int axis)
     if (axis < 0 || axis > 2) return "invalid axis";
     pec_table_[axis].assign(PEC_BINS, 0);
     send_table(1, axis, pec_table_[axis]);
-    if (axis == pec_axis_) { pst_ = PState::Idle; pec_playing_ = false; pec_raw_.clear(); pec_pp_ = pec_rms_ = 0; }
+    if (erase) erase("pec" + std::to_string(axis));          // the saved copy goes too (D78)
+    if (axis == pec_axis_) { pst_ = PState::Idle; pec_playing_ = false; pec_saved_ = false; pec_raw_.clear(); pec_pp_ = pec_rms_ = 0; }
     return "";
 }
 
@@ -752,10 +785,13 @@ void Services::health_json(cJSON *o)
     cJSON_AddNumberToObject(b, "temp_c", s.pack_temp_c);
     cJSON_AddBoolToObject(b, "ext", s.ext_power);
     cJSON_AddNumberToObject(b, "motion_budget_w", s.power.motion_budget_mw / 1000.0);
-    // the gauge's cycle count, state of health and cell voltages are read by the power task but not passed to the Head yet
-    cJSON_AddNullToObject(b, "cycles");
-    cJSON_AddNullToObject(b, "soh_pct");
-    cJSON_AddNullToObject(b, "cells_v");
+    // D79: the gauge's cycle count, state of health and cell voltages (null until the gauge has answered)
+    if (s.pack_cycles >= 0) cJSON_AddNumberToObject(b, "cycles", s.pack_cycles); else cJSON_AddNullToObject(b, "cycles");
+    if (s.pack_soh_pct >= 0) cJSON_AddNumberToObject(b, "soh_pct", s.pack_soh_pct); else cJSON_AddNullToObject(b, "soh_pct");
+    if (s.cell_v[0] > 0 && s.cell_v[1] > 0) {
+        cJSON *cv = cJSON_AddArrayToObject(b, "cells_v");
+        for (int k = 0; k < 2; k++) cJSON_AddItemToArray(cv, cJSON_CreateNumber(r1(s.cell_v[k], 1000)));
+    } else cJSON_AddNullToObject(b, "cells_v");
     cJSON *m = cJSON_AddObjectToObject(o, "motor");
     cJSON_AddNumberToObject(m, "vmot", s.vmot);
     cJSON_AddNumberToObject(m, "rail", s.rail);

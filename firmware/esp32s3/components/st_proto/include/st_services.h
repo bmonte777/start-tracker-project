@@ -56,7 +56,11 @@ public:
     void health_json(cJSON *o);
 
     // platform hooks (set by the ESP32 app or the simulator)
-    std::function<bool(const std::string &key, const std::vector<int16_t> &data)> store;   // NVS / flash; nullptr = RAM only
+    std::function<bool(const std::string &key, const std::vector<int16_t> &data)> store;   // flash (D78); nullptr = RAM only
+    std::function<bool(const std::string &key, std::vector<int16_t> &data)> load;          // read back what store wrote
+    std::function<bool(const std::string &key)> erase;                                     // pec.clear
+    bool faults_persistent = false;               // true when the platform keeps the fault log in flash (D78)
+    void restore_saved();                         // load saved PEC tables and encoder maps; sent on every motion link-up
     std::function<void(cJSON *)> update_status;   // fills update.status
     std::string platform = "head";                // "head" or "simulator"
     uint32_t boot_id = 0;
@@ -111,6 +115,10 @@ private:
     void cal_fit();
     void cal_restore();
     void move_axis_to(int axis, double deg, double dps);
+
+    // saved tables are (re)sent to the RP2354A whenever its link comes up (start-up, RP2354A update or reset)
+    bool link_was_ok_ = false;
+    void send_saved_tables();
 
     // health: residual statistics while holding or tracking
     std::vector<double> hres_[ST_AXES];

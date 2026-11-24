@@ -47,7 +47,17 @@ SimHead::SimHead(double start_unix_s, const st::Settings &s)
     head_.apply_settings(s);
     st::PowerInputs pin;
     pin.pack_ok = true; pin.pack_v = pack_v; pin.soc = (int)soc; pin.inside_temp_c = 20;
+    gauge_health(pin);
     head_.on_power(pin);
+}
+
+// simulated gauge health (D79): a pack some months old, cells 8 mV apart
+void SimHead::gauge_health(st::PowerInputs &pin)
+{
+    pin.cycles = 37;
+    pin.soh_pct = 97;
+    pin.cell_v[0] = pack_v / 2 + 0.004;
+    pin.cell_v[1] = pack_v / 2 - 0.004;
 }
 
 bool SimHead::send(uint8_t type, const void *payload, size_t len)
@@ -113,6 +123,7 @@ void SimHead::tick_1ms()
         pack_v = 6.0 + 2.4 * soc / 100.0;
         st::PowerInputs pin;
         pin.pack_ok = true; pin.pack_v = pack_v; pin.soc = (int)soc; pin.inside_temp_c = 20; pin.portb_w = portb_w; pin.charging = charger;
+        gauge_health(pin);
         head_.on_power(pin);
     }
     link_errors = rx_app_.crc_errors + rx_mot_.crc_errors;

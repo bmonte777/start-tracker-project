@@ -293,13 +293,14 @@ void net_servers_start(Head &head)
     wsapi = new WsApi(head);
     wsapi->services().platform = "head";
     wsapi->services().boot_id = esp_random() & 0x7FFFFFFF;
-    wsapi->services().store = [](const std::string &key, const std::vector<int16_t> &v) {   // PEC tables, encoder maps
-        nvs_handle_t h;
-        if (nvs_open("st_tables", NVS_READWRITE, &h) != ESP_OK) return false;
-        bool ok = nvs_set_blob(h, key.c_str(), v.data(), v.size() * sizeof(int16_t)) == ESP_OK && nvs_commit(h) == ESP_OK;
-        nvs_close(h);
-        return ok;
-    };
+    if (FileStore *fs = storage()) {                               // D78: PEC tables, encoder maps in LittleFS
+        Services &sv = wsapi->services();
+        sv.store = [fs](const std::string &k, const std::vector<int16_t> &v) { return fs->put(k, v); };
+        sv.load = [fs](const std::string &k, std::vector<int16_t> &v) { return fs->get(k, v); };
+        sv.erase = [fs](const std::string &k) { return fs->remove(k); };
+        sv.faults_persistent = true;
+        sv.restore_saved();                                        // sent to the RP2354A when its link comes up
+    }
     wsapi->services().update_status = [](cJSON *o) { ota_status_json(o); };
     mdns_start(head.settings().name);
     httpd_config_t c = HTTPD_DEFAULT_CONFIG();

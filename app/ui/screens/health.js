@@ -9,7 +9,7 @@ export async function render(root) {
   <div class="grid three">
     <section class="card lead span2"><h2>Encoders</h2><table class="t" id="enc"><tr><th>Axis</th><th>Calibrated</th><th>Encoder − plan (RMS)</th><th>Mean</th><th>Motor</th><th>Load</th></tr></table>
       <p class="small mt">Encoder − plan is measured while an axis holds or tracks: it holds the encoder noise (0.0015° = 5.4″ per reading, about 0.4″ after the 5 Hz average) and the reducer’s own periodic error.</p></section>
-    <section class="card"><h2>Battery</h2><table id="bat"></table><p class="small">Cycle count, state of health and cell voltages are in the gauge (BQ40Z50) but not passed to the apps yet.</p></section>
+    <section class="card"><h2>Battery</h2><table id="bat"></table><p class="small">From the pack's gauge (BQ40Z50). State of health is the pack's capacity now against new; below about 80 % expect noticeably shorter nights.</p></section>
     <section class="card span2"><h2>Encoder calibration</h2>
       <p>Each MT6835 encoder is about ±250″ out of true when new. The head turns one axis slowly over its whole travel, using the gear train as the reference, fits the error and stores a map. Do it once per head, with the payload off, the head level and nothing in the way (azimuth makes a full turn).</p>
       <div class="row2"><label class="f">Axis<select id="cax" class="f"><option value="0">Azimuth (full turn)</option><option value="1">Altitude (−7° … 90°)</option><option value="2">Roll (payload range)</option></select></label>
@@ -22,6 +22,8 @@ export async function render(root) {
   </div>`;
   if (needHead(root)) return;
   const c = () => store.client;
+  // cells more than 50 mV apart point to a weak cell or a balancing problem
+  const cellNote = (cv) => { const d = Math.abs(cv[0] - cv[1]) * 1000; return d > 50 ? ` <span class="warn-t">${d.toFixed(0)} mV apart</span>` : ''; };
   const health = async () => {
     try {
       const h = await c().health();
@@ -31,7 +33,9 @@ export async function render(root) {
       const b = h.battery;
       $('#bat', root).innerHTML = `<tr><td>Charge</td><td>${b.soc} %</td></tr><tr><td>Voltage</td><td>${b.v.toFixed(2)} V</td></tr><tr><td>Temperature</td><td>${b.temp_c} °C</td></tr>
         <tr><td>USB-C power in</td><td>${b.ext ? 'yes' : 'no'}</td></tr><tr><td>Motion budget</td><td>${b.motion_budget_w.toFixed(1)} W</td></tr>
-        <tr><td>Cycles</td><td>${b.cycles ?? 'not read yet'}</td></tr><tr><td>State of health</td><td>${b.soh_pct ?? 'not read yet'}</td></tr>`;
+        <tr><td>Charge cycles</td><td>${b.cycles ?? 'not read yet'}</td></tr>
+        <tr><td>State of health</td><td>${b.soh_pct == null ? 'not read yet' : `<span class="${b.soh_pct >= 80 ? 'ok-t' : b.soh_pct >= 65 ? 'warn-t' : 'bad-t'}">${b.soh_pct} %</span>`}</td></tr>
+        <tr><td>Cells</td><td>${Array.isArray(b.cells_v) ? b.cells_v.map((v) => v.toFixed(3) + ' V').join(' · ') + cellNote(b.cells_v) : 'not read yet'}</td></tr>`;
       $('#drv', root).innerHTML = `<tr><td>Motor rail</td><td>${['off', '10 V', '16 V'][h.motor.rail] ?? h.motor.rail} · ${h.motor.vmot.toFixed(2)} V</td></tr>
         <tr><td>Motion faults</td><td>${h.motor.faults ? '0x' + h.motor.faults.toString(16) : 'none'}</td></tr><tr><td>Link to the motion processor</td><td>${h.link_ok ? 'OK' : 'lost'}</td></tr>
         <tr><td>Messages since start</td><td>${h.faults_total}</td></tr><tr><td>Running on</td><td>${esc(h.platform)}</td></tr>`;
@@ -40,7 +44,7 @@ export async function render(root) {
   const flog = async () => {
     try {
       const f = await c().faults(0);
-      $('#fpers', root).textContent = f.persistent ? '' : 'kept in memory until the head restarts';
+      $('#fpers', root).textContent = f.persistent ? 'kept in the head\'s flash: it survives a restart' : 'kept in memory until the head restarts';
       $('#flog', root).innerHTML = '<tr><th>#</th><th>Time (UTC)</th><th>Level</th><th>Message</th></tr>' + (f.entries.slice().reverse().map((e) => `<tr><td class="k">${e.seq}</td><td class="k">${esc(e.t.slice(0, 19).replace('T', ' '))}</td>
         <td>${e.level === 'fault' ? '<span class="bad-t">fault</span>' : '<span class="warn-t">warning</span>'}</td><td>${esc(e.msg)}</td></tr>`).join('') || '<tr><td colspan="4">Empty.</td></tr>');
     } catch (e) { /* offline */ }

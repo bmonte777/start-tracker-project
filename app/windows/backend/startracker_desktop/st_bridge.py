@@ -150,3 +150,8 @@ class StBridge:
 
     def location(self, a):
         raise RuntimeError("this PC has no location: type it in Settings, or send it from the phone app")
+
+    def astap(self, a):
+        """ASTAP for long lenses (D74): {"action": "status"} or {"action": "install"}."""
+        from . import astap
+        return astap.bridge(a)

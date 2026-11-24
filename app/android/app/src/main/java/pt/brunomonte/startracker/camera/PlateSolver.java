@@ -64,7 +64,7 @@ final class PlateSolver {
             }
         }
 
-        /** Reads stars8.bin: "STR1", count, then (float ra, float dec, short mag*100) little-endian. */
+        /** Reads stars8.bin or stars11.bin (D74): "STR1", count, then (float ra, float dec, short mag*100) little-endian. */
         static Catalog read(InputStream in) throws IOException {
             byte[] all;
             try (DataInputStream d = new DataInputStream(in)) {
@@ -85,6 +85,9 @@ final class PlateSolver {
             }
             return new Catalog(ra, dec, mag);
         }
+
+        /** Faintest magnitude in the catalogue: 8 for stars8.bin, 10.5 for stars11.bin. */
+        float magMax() { return mag.length > 0 ? mag[mag.length - 1] : 8f; }
 
         /** Indices of stars within radius (degrees) of ra0/dec0, brightest first. */
         int[] cone(double ra0, double dec0, double radiusDeg, float magLimit) {
@@ -306,7 +309,7 @@ final class PlateSolver {
         double radius = Math.min(85, hintRadius + fovDiag / 2);
         double frameArea = w * h * scale0 * scale0;
         double regionArea = Math.PI * radius * radius;
-        int[] all = cat.cone(hintRa, hintDec, radius, 8.0f);
+        int[] all = cat.cone(hintRa, hintDec, radius, cat.magMax());   // whole depth; 'want' keeps the density right
         int want = (int) Math.max(30, Math.min(all.length, 3.0 * nImg * regionArea / frameArea));
         int[] region = Arrays.copyOf(all, Math.min(all.length, want));
         // For verification a deeper list (some detected stars are fainter than the pattern set)

@@ -100,3 +100,11 @@ table.t{border-collapse:collapse;width:100%;font-size:13.5px}
 table.t th{text-align:left;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:6px 4px;font-weight:600}
 table.t td{padding:7px 4px;border-top:1px solid var(--tile-line)}
 select.f{width:13em;min-height:44px}
+
+/* phone width (checked at 412 px): RA/Dec readouts fit without cutting digits; wide tables scroll sideways */
+@media (max-width:480px){
+  .readout{gap:8px}
+  .readout div{padding:9px 10px}
+  .readout b{font-size:14px}
+  #enc,#flog{display:block;overflow-x:auto;white-space:nowrap;font-size:12.5px}
+}

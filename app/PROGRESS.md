@@ -2,36 +2,26 @@
 
 So a new chat can carry on. Brief: `docs/prompts/phase-6-prompt.md`. Document: `docs/06-apps.md` (Project copy `claude/07-apps.md`; Docs version "Phase 6 — Apps", https://claude.ai/artifact/NWYSdVtWxhScLNuzifSd4j). Firmware document revision B: `docs/05-firmware.md` (Project copy `claude/06-firmware.md`).
 
-## State (23 Nov 2026)
+## State (23 Nov 2026) — Phase 6 complete
 
-- **Branch** `phase-6-apps`, made from `phase-5-firmware` because PR 10 was not merged yet.
-- **GitHub:** push access was refused at the start, granted later; `phase-6-apps` is pushed (merged with the newer `phase-5-firmware`) and **PR 11** is open against `phase-5-firmware`. The "Firmware and apps" workflow can only be started by hand once PR 10 puts the workflow on `main`.
-- **Decisions** Q44–Q57 approved on 23 Nov ("Approve Q44–Q57"): D64–D71 (logged by the Phase 5 session) and D72–D77 in `docs/02-decisions-log.md` and the Project copy. New open questions Q58 (fault log, PEC tables, encoder maps in the `storage` partition) and Q59 (gauge values in `health.get`), both recommended yes.
+- **GitHub:** PR 11 (`phase-6-apps`) and PR 10 (`phase-5-firmware` → `main`) merged; the continuation is `phase-6-continue`, PR 12. This session has push access and can merge.
+- **Decisions:** D72–D77 ("Approve Q44–Q57"), D78–D79 ("Yes to Q58 and Q59") in `docs/02-decisions-log.md` and the Project copy. No open questions.
+- **Workflow "Firmware and apps"** is on `main` and green: APK, Windows installer, ESP32 and RP2354A images, both simulators, `stars11.bin` (578,242 stars), all tests. Artifact downloads are blocked from the Claude workspace (blob storage host), so phone screenshots are rendered locally.
 
 | Stage | State |
 |---|---|
-| 1 Architecture + decisions | done: `docs/06-apps.md` sections 2–4, diagrams `docs/img/06-*.svg/png` (`app/tools/diagrams.py`) |
-| 2 Device client `app/shared` | done: `stclient.js`, `models.js`, `discovery.js`, `stfw.js`, `ble.js`, `native.js`, `catalog.js`, `jobs.js`, `polar.js`, `node/bridge.mjs` |
-| 3 Shared UI `app/ui` | done: 13 screens (`screens/*.js`), Blue Hour Day/Night/Red, 39 screenshots in `docs/img/06-screens/` |
-| 4 Firmware additions (API 1.1) | portable code + simulator done and tested; ESP32-only (routes, CORS, NVS store, `update.status`, mDNS, BLE UUID) written, **not compiled here** |
-| 5 Android shell `app/android` | written (`MainActivity`, `StNative`, `HeadClient`, reused `camera/`), javac parse-check only; **first compile in the workflow** |
-| 6 Windows shell `app/windows` | written; backend runs on Linux and 33/33 pytest pass; WPD camera (`ptpwpd`), PyInstaller and Tauri build only on Windows (workflow) |
-| 7 Tests | all below pass |
-| 8 Release workflow | `.github/workflows/firmware.yml` renamed "Firmware and apps": jobs `app-tests`, `android-app`, `windows-app`, `release` (artifact `star-tracker-release`). **Never run yet** |
+| 1–3 Architecture, device client, shared UI | done; 39 desktop + 13 phone screen renders |
+| 4 Firmware additions | API 1.1, D78 LittleFS storage (`st_proto/filestore.cpp`, `st_app/storage.cpp`), D79 gauge values; ESP32 builds in CI |
+| 5 Android | APK builds in CI; `stars11.bin` asset from the `deep-catalog` job |
+| 6 Windows | installer builds and passes its smoke test in CI; ASTAP (`astap.py`, Settings card) |
+| 7 Tests | node 40/40 (incl. `persist.test.mjs`), backend 36 (3 skipped on Linux), API check 47/47, firmware 29/29 and 18/18 |
+| 8 Release | `star-tracker-release` artifact |
 
-## Tests (build the simulator first; `app/package.json` test script)
+## Tests (build the simulator first; `app/package.json` test script; backend: pytest in `app/windows/backend`)
 
-- Node against the simulator: `client` 16/16, `services` 9/9, `e2e` 7/7, `polar` 3/3, `jobs` 4/4 = 38/38.
-- Screens: 39/39 (`app/tools/screenshots.mjs`, desktop size; phone size in the workflow).
-- Windows backend pytest 33/33. API check against firmware source 47/47 (`app/api-check.md`).
-- Firmware's own: `st-tests` 29/29, `proto_test.py` 18/18 still pass.
+## Not tested (Phase 7)
 
-## Still to do (Phase 6 continuation)
-
-1. After PR 10 is merged, run the workflow on `phase-6-apps` and fix compile errors in Android, Windows (ptpwpd, PyInstaller, Tauri) and ESP32.
-2. D74: ASTAP download button and solver path on Windows; Tycho-2-based deeper catalogue for the Android solver (300–600 mm).
-3. Check the phone-size screenshots from the workflow and fix layout.
-4. Then write the Phase 7 prompt.
+Everything on a real head, phone and Windows PC: install, Sony camera jobs, BLE set-up, mDNS, ASTAP download and solve, deep-catalogue memory/time on a phone, LittleFS on the head, real gauge values.
 
 ## Findings (reported to Bruno)
 

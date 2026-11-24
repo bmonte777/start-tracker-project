@@ -3,6 +3,7 @@
 #include <string>
 #include "esp_http_server.h"
 #include "st_head.h"
+#include "st_filestore.h"
 #include "st_proto.h"
 
 namespace st {
@@ -17,5 +18,7 @@ void ota_boot_check();
 void ota_status_json(cJSON *o);                       // update.status (API 1.1)
 void ble_start(Head &head, const std::string &name);
 uint32_t ble_passkey();
+FileStore *storage_start();                          // D78: mount LittleFS; nullptr = RAM only
+FileStore *storage();
 void settings_save(const Settings &s, const std::string &ssid, const std::string &psk);
 }  // namespace st
