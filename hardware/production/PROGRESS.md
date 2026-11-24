@@ -4,6 +4,8 @@ So a new chat can carry on. Brief: `docs/prompts/phase-8-prompt.md` (Project `cl
 
 ## State (24 Nov 2026)
 
+- **ON HOLD (24 Nov, Bruno):** no Phase 7 orders yet (still comparing suppliers). Phase 8 resumes when P0 is measured or quotes arrive; only D95 (altitude seal) and sending the reducer RFQs are worth doing before then. Meanwhile Phase 9a (name, user guide operating chapters, website design study) runs from `docs/prompts/phase-9a-prompt.md` (Project `claude/phase-9a-prompt.md`).
+
 - **GitHub:** branch `phase-8-production`, made from `phase-7-prototype` (Phase 7 not finished, so its PR 13 is not merged). Draft PR open. The first attach was refused; Bruno fixed access the same day.
 - **Phase 7:** order stage, nothing measured. Every number that waits on P0/P1 is in the "Numbers pending P1" table of `docs/08-production.md` (18 rows).
 - **Hand-off prompt:** `docs/prompts/phase-8-continue-prompt.md` (rewritten 24 Nov night, after the stack-ups) (Project `claude/phase-8-continue-prompt.md`) carries Phase 8 on in a new chat.
