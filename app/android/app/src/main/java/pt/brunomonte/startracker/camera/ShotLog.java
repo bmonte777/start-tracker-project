@@ -22,7 +22,7 @@ import java.util.Locale;
  */
 final class ShotLog {
 
-    private static final String FOLDER = Environment.DIRECTORY_DOCUMENTS + "/Star Tracker/";
+    private static final String FOLDER = Environment.DIRECTORY_DOCUMENTS + "/Canopus/";
     private static final String HEADER = "time,job,step,file,shutter,aperture,iso,polaris_azimuth,polaris_altitude\n";
 
     private ShotLog() {

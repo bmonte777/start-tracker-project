@@ -9,7 +9,7 @@ export async function render(root) {
   <div class="grid three">
     <section class="card lead"><h2>On the head now</h2><table id="now"></table></section>
     <section class="card span2"><h2>Update</h2>
-      <ol class="how"><li>Get <b>star-tracker-update.stfw</b> from GitHub: Actions → <b>Firmware and apps</b> → the newest run → <b>star-tracker-release</b>.</li>
+      <ol class="how"><li>Get <b>canopus-update.stfw</b> from GitHub: Actions → <b>Firmware and apps</b> → the newest run → <b>canopus-release</b>.</li>
         <li>Pick it below. The app checks every image’s checksum before anything is sent.</li><li>Keep the head on power (USB-C or a charged pack) until it says it is back.</li></ol>
       <div class="row mt"><input id="file" type="file" accept=".stfw"><button id="send" class="primary" disabled>Update the head</button></div>
       <div id="check" class="mt"></div><div class="progress mt"><span id="bar" style="width:0"></span></div><div id="msg" class="msg mt"></div></section>

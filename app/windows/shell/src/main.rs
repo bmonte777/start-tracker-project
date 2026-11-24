@@ -53,13 +53,13 @@ fn main() {
                 }
                 let _ = win.eval(
                     "document.getElementById('msg').textContent = \
-                     'The Star Tracker backend did not start. Close Star Tracker and open it again.'",
+                     'The Canopus backend did not start. Close Canopus and open it again.'",
                 );
             });
             Ok(())
         })
         .build(tauri::generate_context!())
-        .expect("error while starting Star Tracker");
+        .expect("error while starting Canopus");
 
     app.run(|handle, event| {
         if let RunEvent::Exit = event {

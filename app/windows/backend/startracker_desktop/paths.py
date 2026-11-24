@@ -26,15 +26,15 @@ def catalog_file():
 
 
 def data_dir():
-    """Per-user writable folder: %LOCALAPPDATA%\\Star Tracker."""
+    """Per-user writable folder: %LOCALAPPDATA%\\Canopus."""
     base = os.environ.get("LOCALAPPDATA") or os.path.join(Path.home(), ".local", "share")
-    d = Path(base) / "Star Tracker"
+    d = Path(base) / "Canopus"
     d.mkdir(parents=True, exist_ok=True)
     return d
 
 
 def pictures_dir():
-    """The user's Pictures folder (follows OneDrive redirection) / Star Tracker."""
+    """The user's Pictures folder (follows OneDrive redirection) / Canopus."""
     pics = None
     if sys.platform == "win32":
         try:
@@ -51,6 +51,6 @@ def pictures_dir():
             pics = None
     if pics is None:
         pics = Path.home() / "Pictures"
-    d = pics / "Star Tracker"
+    d = pics / "Canopus"
     d.mkdir(parents=True, exist_ok=True)
     return d

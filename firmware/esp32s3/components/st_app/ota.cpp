@@ -51,7 +51,7 @@ esp_err_t ota_upload_handler(httpd_req_t *req)
     memcpy(&ver, hdr + 4, 4);
     memcpy(&entries, hdr + 8, 4);
     if (memcmp(hdr, "STFW", 4) || ver != 1 || entries == 0 || entries > 2) {
-        httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "not a Star Tracker bundle");
+        httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "not a Canopus bundle");
         return ESP_FAIL;
     }
     struct E { uint8_t type; uint32_t off, size; uint8_t sha12[12]; } e[2] = {};

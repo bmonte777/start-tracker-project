@@ -139,7 +139,7 @@ public final class HeadClient {
         try {
             panels.clear();
             org.json.JSONArray a = new JSONObject(json).optJSONArray("poses");
-            if (a == null) throw new IOException("Use the Star Tracker panorama planner (Camera & jobs)");
+            if (a == null) throw new IOException("Use the Canopus panorama planner (Camera & jobs)");
             for (int i = 0; i < a.length(); i++) panels.add(new double[]{a.getJSONObject(i).getDouble("az_d"), a.getJSONObject(i).getDouble("alt_d")});
         } catch (JSONException e) { throw new IOException(e.getMessage()); }
     }

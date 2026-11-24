@@ -116,7 +116,7 @@ class HeadClient:
         g = json.loads(grid) if isinstance(grid, str) else grid
         poses = g.get("poses")
         if not poses:
-            raise HeadError("Use the Star Tracker panorama planner (Camera & jobs)")
+            raise HeadError("Use the Canopus panorama planner (Camera & jobs)")
         self._panels = [(p["az_d"], p["alt_d"]) for p in poses]
 
     def panel_count(self):

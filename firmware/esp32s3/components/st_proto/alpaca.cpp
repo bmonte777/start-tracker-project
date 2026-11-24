@@ -130,11 +130,11 @@ HttpResponse Alpaca::management(const std::string &m, uint32_t ctid)
     uint32_t s = ++stid_;
     if (m == "/management/apiversions") return ok_body(ctid, s, "[1]");
     if (m == "/management/v1/description")
-        return ok_body(ctid, s, "{\"ServerName\":\"Star Tracker\",\"Manufacturer\":\"Star Tracker Project (open source)\",\"ManufacturerVersion\":\"0.1.0\",\"Location\":" +
+        return ok_body(ctid, s, "{\"ServerName\":\"Canopus\",\"Manufacturer\":\"Canopus (open source)\",\"ManufacturerVersion\":\"0.1.0\",\"Location\":" +
                                     jstr(head_.settings().name) + "}");
     if (m == "/management/v1/configureddevices")
-        return ok_body(ctid, s, "[{\"DeviceName\":\"Star Tracker head\",\"DeviceType\":\"Telescope\",\"DeviceNumber\":0,\"UniqueID\":\"5f1c0e2a-7a5d-4c49-9d2e-st000telescope\"},"
-                                "{\"DeviceName\":\"Star Tracker roll axis\",\"DeviceType\":\"Rotator\",\"DeviceNumber\":0,\"UniqueID\":\"5f1c0e2a-7a5d-4c49-9d2e-st0000rotator\"}]");
+        return ok_body(ctid, s, "[{\"DeviceName\":\"Canopus head\",\"DeviceType\":\"Telescope\",\"DeviceNumber\":0,\"UniqueID\":\"5f1c0e2a-7a5d-4c49-9d2e-st000telescope\"},"
+                                "{\"DeviceName\":\"Canopus roll axis\",\"DeviceType\":\"Rotator\",\"DeviceNumber\":0,\"UniqueID\":\"5f1c0e2a-7a5d-4c49-9d2e-st0000rotator\"}]");
     return bad_request("unknown management path");
 }
 
@@ -155,7 +155,7 @@ static bool common(const std::string &m, const std::string &verb, const HttpRequ
     if (m == "disconnect" && !get) { conn = false; out = ok_body(ctid, stid, ""); return true; }
     if (m == "connecting" && get) { out = ok_body(ctid, stid, "false"); return true; }
     if (m == "description" && get) { out = ok_body(ctid, stid, jstr(desc)); return true; }
-    if (m == "driverinfo" && get) { out = ok_body(ctid, stid, jstr("Star Tracker head firmware (ESP32-S3 + RP2354A), written from scratch")); return true; }
+    if (m == "driverinfo" && get) { out = ok_body(ctid, stid, jstr("Canopus head firmware (ESP32-S3 + RP2354A), written from scratch")); return true; }
     if (m == "driverversion" && get) { out = ok_body(ctid, stid, jstr("0.1")); return true; }
     if (m == "interfaceversion" && get) { out = ok_body(ctid, stid, std::to_string(ifver)); return true; }
     if (m == "name" && get) { out = ok_body(ctid, stid, jstr(desc)); return true; }
@@ -180,7 +180,7 @@ HttpResponse Alpaca::telescope(const std::string &m, const std::string &verb, co
 {
     uint32_t s = ++stid_;
     HttpResponse out;
-    if (common(m, verb, r, ctid, s, connected_[0], "Star Tracker head", 4, out)) return out;
+    if (common(m, verb, r, ctid, s, connected_[0], "Canopus head", 4, out)) return out;
     bool get = verb == "GET";
     auto ok = [&](const std::string &v) { return ok_body(ctid, s, v); };
     auto err = [&](int c, const std::string &msg) { return err_body(ctid, s, c, msg); };
@@ -392,7 +392,7 @@ HttpResponse Alpaca::rotator(const std::string &m, const std::string &verb, cons
 {
     uint32_t s = ++stid_;
     HttpResponse out;
-    if (common(m, verb, r, ctid, s, connected_[1], "Star Tracker roll axis", 4, out)) return out;
+    if (common(m, verb, r, ctid, s, connected_[1], "Canopus roll axis", 4, out)) return out;
     auto ok = [&](const std::string &v) { return ok_body(ctid, s, v); };
     auto err = [&](int c, const std::string &msg) { return err_body(ctid, s, c, msg); };
     if (!connected_[1]) return err(E_NOTCONN, "not connected");

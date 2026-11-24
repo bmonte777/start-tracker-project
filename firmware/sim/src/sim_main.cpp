@@ -51,7 +51,7 @@ int main(int argc, char **argv)
     s.mode = eq ? st::MountMode::Equatorial : st::MountMode::AltAz;
     s.wedge_deg = 90.0 - std::fabs(lat);
     s.payload = payload;
-    s.name = "StarTracker-SIM";
+    s.name = "Canopus-SIM";
     double now = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
     sim::SimHead sim(now, s);
     // start pointing at the horizon to the north, roll level
@@ -101,7 +101,7 @@ int main(int argc, char **argv)
             // the simulator checks the bundle like the head (ota.cpp) but does not replace itself
             std::string summary, e = sim::check_bundle(r.body, summary);
             h.type = "text/plain";
-            if (!e.empty()) { h.status = e == "not a Star Tracker bundle" ? 400 : 500; h.body = e; last_update = "refused: " + e; }
+            if (!e.empty()) { h.status = e == "not a Canopus bundle" ? 400 : 500; h.body = e; last_update = "refused: " + e; }
             else { h.body = "update stored; the head restarts and checks both processors"; last_update = "accepted (" + summary + "simulator does not restart)"; }
         }
         else if (r.path.rfind("/api/v1/", 0) == 0 || r.path.rfind("/management/", 0) == 0) { std::lock_guard<std::mutex> l(alp_mu); h = alpaca.handle(r); }
@@ -112,7 +112,7 @@ int main(int argc, char **argv)
     net::serve_lx200_sessions(lx_port, [&]() -> void * { return new st::Lx200(sim.head()); },
                               [](void *p, const std::string &in) { return ((st::Lx200 *)p)->feed(in); });
     net::serve_discovery(32227, alpaca_port);
-    printf("Star Tracker simulator: Alpaca http://localhost:%d, web/WebSocket http://localhost:%d (ws /ws/v1), LX200 tcp %d, speed x%g, %s mode at %.4f %.4f\n",
+    printf("Canopus simulator: Alpaca http://localhost:%d, web/WebSocket http://localhost:%d (ws /ws/v1), LX200 tcp %d, speed x%g, %s mode at %.4f %.4f\n",
            alpaca_port, http_port, lx_port, speed, eq ? "EQ" : "alt-az", lat, lon);
     fflush(stdout);
     auto t0 = std::chrono::steady_clock::now();

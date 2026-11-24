@@ -1,4 +1,4 @@
-"""The pictures downloaded from the camera (Pictures\\Star Tracker),
+"""The pictures downloaded from the camera (Pictures\\Canopus),
 newest first, with thumbnails; opened in the default Windows viewer."""
 import base64
 import io

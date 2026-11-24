@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Star Tracker",
+  "productName": "Canopus",
   "version": "0.6.0",
   "identifier": "pt.brunomonte.startracker",
   "build": {
@@ -10,7 +10,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "Star Tracker",
+        "title": "Canopus",
         "width": 1400,
         "height": 900,
         "minWidth": 390,
@@ -29,7 +29,7 @@
       "nsis"
     ],
     "publisher": "Bruno Monte",
-    "shortDescription": "Star Tracker head and Sony camera control",
+    "shortDescription": "Canopus head and Sony camera control",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

@@ -22,7 +22,7 @@ import java.io.ByteArrayOutputStream;
  */
 final class Gallery {
 
-    private static final String FOLDER = "Pictures/Star Tracker/";
+    private static final String FOLDER = "Pictures/Canopus/";
     private static final String OLD_FOLDER = "Pictures/Polaris Suite/";
 
     private final Activity a;

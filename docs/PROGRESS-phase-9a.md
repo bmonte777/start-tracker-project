@@ -5,10 +5,11 @@ So a new chat can carry on. Brief: `docs/prompts/phase-9a-prompt.md` (Project `c
 ## State (24 Nov 2026)
 
 - **Access:** the push attach was refused at first again; it worked once Bruno authorised it in chat.
-- **Deliverable 1, name:** round 1 (Vela, Corvo, Caravela…) rejected: Bruno wants no names tied to Portugal, only space/astronomy names. Round 2 (Trifid, Octans, Tycho top 3) and round 3 (Canopus, Thuban, Caelum top 3), 24 names in `docs/09a-name-shortlist.md`. Waiting for Bruno's pick (Q77). Domain checks: Bruno does them once a name is chosen.
-- **Decisions:** Q78 → D100 (visible names only), Q79 → D101 (Night observatory look), in `docs/02-decisions-log.md` and Project `claude/02-decisions-log.md`. Open: Q77. Nothing below the name starts until Q77 is answered.
-- **Deliverable 2, user guide:** not started (waits on Q77).
-- **Deliverable 3, website design study:** not started (waits on Q77, Q79).
+- **Deliverable 1, name: done.** Round 1 (Portuguese names) rejected; rounds 2–3 in `docs/09a-name-shortlist.md`. Bruno chose **Canopus** (D102).
+- **Rename applied (D103):** visible names only (D100) changed to Canopus in firmware and apps — AP/BLE `Canopus-XXXX`, `canopus.local`, OLED splash, app name, Alpaca/LX200 names, `canopus-update.stfw`, `canopus-release`, folders, `Canopus-SIM`. Kept: app id, `/startracker/v1/…`, `_startracker._tcp`, comments, bring-up banner. Tests: firmware 29/29, protocol 18/18, app 40/40, backend 36.
+- **Decisions:** Q77 → D102, Q78 → D100, Q79 → D101, Q80 → D103 (repo and Project decisions log). No open questions.
+- **Deliverable 2, user guide:** in progress.
+- **Deliverable 3, website design study:** next, look D101.
 
 ## Facts found for the guide
 

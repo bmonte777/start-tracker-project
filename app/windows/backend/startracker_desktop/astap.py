@@ -4,8 +4,8 @@ The hinted solver (plate_solver.py) handles wide fields; with 300-600 mm lenses 
 than its catalogue, so on Windows the app can also use ASTAP's command-line solver with its D05 star database.
 Both are downloaded once from Settings (hnsky.org links, hosted on SourceForge) into the app's own folder:
 
-    %LOCALAPPDATA%\\Star Tracker\\astap\\astap_cli.exe
-    %LOCALAPPDATA%\\Star Tracker\\astap\\d05\\*.1476   (the D05 installer is run silently with /DIR= here;
+    %LOCALAPPDATA%\\Canopus\\astap\\astap_cli.exe
+    %LOCALAPPDATA%\\Canopus\\astap\\d05\\*.1476   (the D05 installer is run silently with /DIR= here;
                                                       if it insists on its own folder, C:\\Program Files\\astap
                                                       is searched too)
 
@@ -31,7 +31,7 @@ UA = "Wget/1.21.4"
 
 def base_dir():
     root = os.environ.get("LOCALAPPDATA") or str(Path.home() / ".local" / "share")
-    return Path(root) / "Star Tracker" / "astap"
+    return Path(root) / "Canopus" / "astap"
 
 
 def _find_cli():

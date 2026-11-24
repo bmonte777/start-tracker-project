@@ -1,4 +1,4 @@
-"""One CSV line per photo in Documents\\Star Tracker\\
+"""One CSV line per photo in Documents\\Canopus\\
 shot-log-YYYY-MM-DD.csv (time, job, file, shutter, aperture, ISO, where the
 Polaris pointed), as ShotLog.java writes on Android."""
 import csv
@@ -25,7 +25,7 @@ def documents_dir():
                 ctypes.windll.ole32.CoTaskMemFree(p)
         except Exception:      # noqa: BLE001
             docs = None
-    d = (docs or Path.home() / "Documents") / "Star Tracker"
+    d = (docs or Path.home() / "Documents") / "Canopus"
     d.mkdir(parents=True, exist_ok=True)
     return d
 

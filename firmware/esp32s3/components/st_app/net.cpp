@@ -55,7 +55,7 @@ void net_wifi_start(const std::string &ssid, const std::string &psk)
     esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, on_ip, nullptr);
     uint8_t mac[6];
     esp_read_mac(mac, ESP_MAC_WIFI_SOFTAP);
-    snprintf(ap_ssid, sizeof ap_ssid, "StarTracker-%02X%02X", mac[4], mac[5]);
+    snprintf(ap_ssid, sizeof ap_ssid, "Canopus-%02X%02X", mac[4], mac[5]);
     // password shown on the OLED (D71): derived from the MAC so it is stable per head, 10 characters
     snprintf(ap_pass, sizeof ap_pass, "st%02x%02x%02x%02x", mac[2] ^ 0x5A, mac[3] ^ 0xA5, mac[4] ^ 0x3C, mac[5] ^ 0xC3);
     wifi_config_t ap = {};
@@ -175,14 +175,14 @@ static esp_err_t op_handler(httpd_req_t *req)               // POST /startracker
     return httpd_resp_send(req, reply.data(), (ssize_t)reply.size());
 }
 
-// mDNS (Q51): startracker.local, services _startracker._tcp and _http._tcp on port 80. The component comes from Espressif's
+// mDNS (Q51, D103): canopus.local, services _startracker._tcp and _http._tcp on port 80. The component comes from Espressif's
 // registry (idf_component.yml), which the workflow can reach; without it the head still answers Alpaca discovery.
 #if __has_include("mdns.h")
 #include "mdns.h"
 static void mdns_start(const std::string &name)
 {
     if (mdns_init() != ESP_OK) return;
-    mdns_hostname_set("startracker");
+    mdns_hostname_set("canopus");
     mdns_instance_name_set(name.c_str());
     mdns_txt_item_t txt[] = {{"api", "1.1"}, {"ws", "/ws/v1"}, {"name", name.c_str()}};
     mdns_service_add(name.c_str(), "_startracker", "_tcp", 80, txt, 3);

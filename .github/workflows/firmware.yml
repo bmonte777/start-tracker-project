@@ -1,6 +1,6 @@
 # Star Tracker — firmware, simulator and apps: build and tests. Started by hand only (spec 7.7):
 # github.com -> Actions -> "Firmware and apps" -> Run workflow. Results are in the run's Artifacts box; the
-# "star-tracker-release" artifact holds the APK, the Windows installer, the firmware images and both simulators.
+# "canopus-release" artifact holds the APK, the Windows installer, the firmware images and both simulators.
 name: Firmware and apps
 on:
   workflow_dispatch:
@@ -58,7 +58,7 @@ jobs:
           mkdir -p out
           sudo cp firmware/esp32s3/st-esp32s3-*-full.bin out/
           sudo cp firmware/esp32s3/build-app/star_tracker_esp32s3.bin out/st-esp32s3-system-app.bin
-          python3 firmware/tools/make_bundle.py --esp out/st-esp32s3-system-app.bin --rp rp/st_rp2354a_motion.bin -o out/star-tracker-update.stfw
+          python3 firmware/tools/make_bundle.py --esp out/st-esp32s3-system-app.bin --rp rp/st_rp2354a_motion.bin -o out/canopus-update.stfw
           cp firmware/tools/web-flasher.html out/
       - uses: actions/upload-artifact@v4
         with: { name: esp32s3-images-and-flasher, path: out/ }
@@ -175,9 +175,9 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew --no-daemon assembleRelease
-          mkdir -p out && cp app/build/outputs/apk/release/app-release.apk out/star-tracker-android.apk
+          mkdir -p out && cp app/build/outputs/apk/release/app-release.apk out/canopus-android.apk
       - uses: actions/upload-artifact@v4
-        with: { name: android-apk, path: app/android/out/star-tracker-android.apk }
+        with: { name: android-apk, path: app/android/out/canopus-android.apk }
 
   windows-app:
     needs: deep-catalog
@@ -240,9 +240,9 @@ jobs:
           cd shell
           ../node_modules/.bin/tauri build
           New-Item -ItemType Directory -Force ..\out | Out-Null
-          Copy-Item target\release\bundle\nsis\*.exe ..\out\star-tracker-windows-setup.exe
+          Copy-Item target\release\bundle\nsis\*.exe ..\out\canopus-windows-setup.exe
       - uses: actions/upload-artifact@v4
-        with: { name: windows-installer, path: app/windows/out/star-tracker-windows-setup.exe }
+        with: { name: windows-installer, path: app/windows/out/canopus-windows-setup.exe }
 
   release:
     needs: [esp32s3, simulator-and-tests, android-app, windows-app]
@@ -258,4 +258,4 @@ jobs:
             -o -name 'StarTrackerSim.exe' -o -name 'startracker-sim' \) -exec cp {} release/ \;
           ls -la release
       - uses: actions/upload-artifact@v4
-        with: { name: star-tracker-release, path: release/ }
+        with: { name: canopus-release, path: release/ }

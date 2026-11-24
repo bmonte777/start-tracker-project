@@ -2,7 +2,7 @@
 // Service 5354524b-0100-4d2a-9b1e-000000000001 ("STRK"). Pairing: passkey (6 digits) shown on the head's OLED;
 // the phone/PC's own pairing dialog asks for it. Characteristics:
 //   …0002 Wi-Fi set-up  write (encrypted, authenticated)  {"ssid":"…","psk":"…","mode":"sta"}
-//   …0003 Status        read / notify                       {"ip":"…","ap":"StarTracker-XXXX","soc":83,"mode":"idle","fw":"0.1.0"}
+//   …0003 Status        read / notify                       {"ip":"…","ap":"Canopus-XXXX","soc":83,"mode":"idle","fw":"0.1.0"}
 //   …0004 Command       write (encrypted)                   WebSocket request format, limited to stop and park
 // The radio work is native (Android BluetoothGatt, Windows bleak); this module only shapes the payloads.
 
@@ -10,7 +10,7 @@ export const SERVICE = '5354524b-0100-4d2a-9b1e-000000000001';
 export const CH_WIFI = '5354524b-0100-4d2a-9b1e-000000000002';
 export const CH_STATUS = '5354524b-0100-4d2a-9b1e-000000000003';
 export const CH_CMD = '5354524b-0100-4d2a-9b1e-000000000004';
-export const NAME_PREFIX = 'StarTracker-';
+export const NAME_PREFIX = 'Canopus-';
 export const MAX_WRITE = 255;     // ble.cpp: 256-byte buffer including the terminator
 
 export function wifiPayload(ssid, psk) {

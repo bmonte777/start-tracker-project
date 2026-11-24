@@ -82,7 +82,7 @@ describe('requests and errors', () => {
 
   test('one-shot HTTP op transport gives the same answer', async () => {
     const r = await httpOp(sim.http, 'config.get');
-    assert.equal(r.name, 'StarTracker-SIM');
+    assert.equal(r.name, 'Canopus-SIM');
     await assert.rejects(httpOp(sim.http, 'goto', { az_d: 0, alt_d: -40 }), (e) => e.code === 'limit');
   });
 });

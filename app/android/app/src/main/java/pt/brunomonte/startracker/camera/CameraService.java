@@ -68,7 +68,7 @@ public class CameraService extends Service {
                 new Intent(this, CameraService.class).setAction(ACTION_STOP_JOB), immutable);
         Notification n = new Notification.Builder(this, CHANNEL)
                 .setSmallIcon(R.drawable.ic_stat)
-                .setContentTitle((job == null ? "Star Tracker job" : job))
+                .setContentTitle((job == null ? "Canopus job" : job))
                 .setContentText("Keeps the job and the link to the head running with the screen off")
                 .setOngoing(true)
                 .setContentIntent(open)

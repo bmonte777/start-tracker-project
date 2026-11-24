@@ -333,7 +333,7 @@ class SonyCamera:
                        "bulb %.1f s" % s.bulb_seconds if bulb else sp.shutter(self.props.get(sp.SHUTTER, 0)))
 
     def _log_shot(self, step, file, shutter):
-        """One line in the day's shot log (Documents\\Star Tracker)."""
+        """One line in the day's shot log (Documents\\Canopus)."""
         az = alt = float("nan")
         try:
             az, alt = HeadClient().position()
@@ -1448,7 +1448,7 @@ class SonyCamera:
         return json.dumps(o)
 
     def diagnostics(self):
-        lines = ["Star Tracker (Windows) camera diagnostics", "Model: " + self.model,
+        lines = ["Canopus (Windows) camera diagnostics", "Model: " + self.model,
                  "Settings parse: " + (self.props.parse_problem or "ok"), "Properties:"]
         for p in self.props.props.values():
             lines.append("  %04x type %04x %s%s = %s (%s) choices %d" % (

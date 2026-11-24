@@ -48,11 +48,11 @@ inline void sha256(const uint8_t *data, size_t len, uint8_t out[32])
 // Check a .stfw bundle exactly as ota.cpp does; returns "" or the head's error text.
 inline std::string check_bundle(const std::string &b, std::string &summary)
 {
-    if (b.size() < 64 || memcmp(b.data(), "STFW", 4) != 0) return "not a Star Tracker bundle";
+    if (b.size() < 64 || memcmp(b.data(), "STFW", 4) != 0) return "not a Canopus bundle";
     uint32_t ver, entries;
     memcpy(&ver, b.data() + 4, 4);
     memcpy(&entries, b.data() + 8, 4);
-    if (ver != 1 || entries == 0 || entries > 2) return "not a Star Tracker bundle";
+    if (ver != 1 || entries == 0 || entries > 2) return "not a Canopus bundle";
     summary.clear();
     for (uint32_t i = 0; i < entries; i++) {
         const uint8_t *p = (const uint8_t *)b.data() + 16 + 24 * i;
