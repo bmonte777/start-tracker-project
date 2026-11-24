@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Canopus — support</title>
+<style>
+body{margin:0}
+.theme-day{--bg:#0B1020;--panel:#121933;--panel2:#18213F;--line:#2A3560;--ink:#EDE6D8;--muted:#B4AE9F;--accent:#E8A23A;--accentInk:#0B1020;--plate:#F1EEE7}
+.theme-night{--bg:#000000;--panel:#000000;--panel2:#0D0201;--line:#5A120D;--ink:#FF3B30;--muted:#FF3B30;--accent:#FF3B30;--accentInk:#000000;--plate:#000000}
+a{color:var(--accent)}a:hover{color:var(--ink)}
+.tbtn{font:600 14px/1 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:transparent;border:0;border-radius:999px;padding:10px 16px;min-height:44px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.tbtn.on{background:var(--accent);color:var(--accentInk)}
+.navlink{color:var(--ink);text-decoration:none;font:500 15px/1 system-ui,-apple-system,"Segoe UI",sans-serif;padding:12px 6px}
+.navlink:hover{color:var(--accent)}
+.navlink.cur{color:var(--accent)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 24px;border-radius:999px;font:600 16px/1 system-ui,-apple-system,"Segoe UI",sans-serif;text-decoration:none;border:1px solid var(--accent);background:var(--accent);color:var(--accentInk)}
+.btn:hover{color:var(--accentInk);filter:brightness(1.08)}
+details{border-bottom:1px solid var(--line)}
+details:last-child{border-bottom:0}
+summary{cursor:pointer;list-style:none;padding:20px 24px;font-weight:600;font-size:17px;display:flex;justify-content:space-between;gap:16px;min-height:44px;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--accent);font-size:22px;line-height:1}
+details[open] summary::after{content:"–"}
+.ans{margin:0;padding:0 24px 22px;line-height:1.6;color:var(--muted)}
+.pending{display:inline-block;padding:2px 8px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div id="root" class="theme-day" style="background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; min-height: 100vh">
+
+<header style="border-bottom: 1px solid var(--line)">
+<div style="max-width: 1200px; margin: 0 auto; padding: 16px 32px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+<a href="index.html" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink)">
+<svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true" fill="none" stroke-width="1.5"><circle cx="14" cy="14" r="12" stroke="var(--line)"></circle><path d="M14 4v20M4 14h20" stroke="var(--accent)"></path><circle cx="14" cy="14" r="3" fill="var(--accent)"></circle></svg>
+<span style="font-family: 'Iowan Old Style', Georgia, serif; font-size: 24px; letter-spacing: .12em">CANOPUS</span>
+</a>
+<nav aria-label="Main" style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px">
+<a class="navlink" href="index.html">Overview</a>
+<a class="navlink" href="specs.html">Specs</a>
+<a class="navlink cur" href="support.html" aria-current="page">Support</a>
+<div role="group" aria-label="Display mode" style="display: flex; gap: 4px; padding: 4px; border: 1px solid var(--line); border-radius: 999px">
+<button type="button" class="tbtn on" aria-pressed="true" data-mode="day"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"></circle><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M3 13l1.4-1.4M11.6 4.4L13 3"></path></svg>Day</button>
+<button type="button" class="tbtn " aria-pressed="false" data-mode="night"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 9.5A5.5 5.5 0 1 1 6.5 3a4.5 4.5 0 0 0 6.5 6.5z"></path></svg>Night</button>
+</div>
+</nav>
+</div>
+</header>
+
+<section style="max-width: 1200px; margin: 0 auto; padding: 64px 32px 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 40px; align-items: center">
+<div style="display: flex; flex-direction: column; gap: 16px">
+<p style="margin: 0; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent)">Support</p>
+<h1 style="margin: 0; font-family: 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: clamp(36px, 4.5vw, 56px); line-height: 1.1">Help for clear nights</h1>
+<p style="margin: 0; font-size: 18px; line-height: 1.6; color: var(--muted)">Start with the user guide: set-up, polar alignment, the eight jobs, every message the head can show and what to do about it.</p>
+</div>
+<div style="background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 14px">
+<svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true" fill="none" stroke="var(--accent)" stroke-width="1.5"><path d="M6 7h10a3 3 0 0 1 3 3v19a3 3 0 0 0-3-3H6zM30 7H20a3 3 0 0 0-1 0v22a3 3 0 0 1 3-3h8z"></path></svg>
+<h2 style="margin: 0; font-size: 24px">Canopus user guide</h2>
+<p style="margin: 0; line-height: 1.6; color: var(--muted)">19 chapters, from charging the pack to Alpaca set-up. Written before the first prototype; figures marked pending are confirmed on it.</p>
+<div><a class="btn" href="https://claude.ai/artifact/Gj22crYNNsjG5oRintECHD">Open the user guide</a></div>
+</div>
+</section>
+
+<section aria-labelledby="qs-h" style="max-width: 1200px; margin: 0 auto; padding: 40px 32px">
+<h2 id="qs-h" style="margin: 0 0 24px; font-family: 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: 36px">First night, in five steps</h2>
+<ol style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 16px">
+
+<li style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 10px">
+<span style="font-family: 'Iowan Old Style', Georgia, serif; font-size: 34px; color: var(--accent); line-height: 1">1</span>
+<span style="font-weight: 600; font-size: 17px">Charge</span>
+<span style="line-height: 1.55; color: var(--muted); font-size: 15px">Any USB-C PD charger on port A, up to 45 W. The head runs while it charges.</span>
+</li>
+
+<li style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 10px">
+<span style="font-family: 'Iowan Old Style', Georgia, serif; font-size: 34px; color: var(--accent); line-height: 1">2</span>
+<span style="font-weight: 600; font-size: 17px">Join its Wi-Fi</span>
+<span style="line-height: 1.55; color: var(--muted); font-size: 15px">Page 3 on the head shows the network Canopus-XXXX and its password. Join it from your phone or PC.</span>
+</li>
+
+<li style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 10px">
+<span style="font-family: 'Iowan Old Style', Georgia, serif; font-size: 34px; color: var(--accent); line-height: 1">3</span>
+<span style="font-weight: 600; font-size: 17px">Open the app</span>
+<span style="line-height: 1.55; color: var(--muted); font-size: 15px">Press Look again on Connect. Outdoors the head finds its own position and time.</span>
+</li>
+
+<li style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 10px">
+<span style="font-family: 'Iowan Old Style', Georgia, serif; font-size: 34px; color: var(--accent); line-height: 1">4</span>
+<span style="font-weight: 600; font-size: 17px">Pick your payload</span>
+<span style="line-height: 1.55; color: var(--muted); font-size: 15px">Choose the payload type closest to your kit and balance it, so the head knows its limits.</span>
+</li>
+
+<li style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 10px">
+<span style="font-family: 'Iowan Old Style', Georgia, serif; font-size: 34px; color: var(--accent); line-height: 1">5</span>
+<span style="font-weight: 600; font-size: 17px">Align and go</span>
+<span style="line-height: 1.55; color: var(--muted); font-size: 15px">Sync on two or three stars, or plate-solve, then go to a target. Tracking starts by itself.</span>
+</li>
+
+</ol>
+</section>
+
+<section aria-labelledby="dl-h" style="max-width: 1200px; margin: 0 auto; padding: 40px 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 20px">
+<h2 id="dl-h" style="grid-column: 1 / -1; margin: 0 0 4px; font-family: 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: 36px">Downloads, updates and repair</h2>
+<article style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 10px">
+<h3 style="margin: 0; font-size: 20px">Apps and firmware</h3>
+<p style="margin: 0; line-height: 1.6; color: var(--muted)">The Android app, the Windows installer and the head's firmware come from one release on GitHub: <b style="color: var(--ink)">Actions → Firmware and apps →</b> newest run <b style="color: var(--ink)">→ canopus-release</b>.</p>
+<a href="https://github.com/bmonte777/start-tracker-project" style="font-weight: 600">Project on GitHub →</a>
+</article>
+<article style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 10px">
+<h3 style="margin: 0; font-size: 20px">Updates and recovery</h3>
+<p style="margin: 0; line-height: 1.6; color: var(--muted)">Update from the app's <b style="color: var(--ink)">Firmware</b> screen or the head's own web page. A failed update rolls back by itself; if the head will not start, the web flasher rewrites it over USB from Chrome or Edge.</p>
+</article>
+<article style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 10px">
+<h3 style="margin: 0; font-size: 20px">Repair and parts</h3>
+<p style="margin: 0; line-height: 1.6; color: var(--muted)">Each axis is a cartridge held by four screws and one plug, and the 2, 2.5 and 3 mm hex keys open everything. Step-by-step repair and the parts list follow the first prototype.</p>
+<span class="pending" style="align-self: flex-start">Maintenance guide: after P1</span>
+</article>
+</section>
+
+<section aria-labelledby="faq-h" style="max-width: 1200px; margin: 0 auto; padding: 40px 32px">
+<h2 id="faq-h" style="margin: 0 0 24px; font-family: 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: 36px">Questions</h2>
+<div style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden">
+
+<details><summary>Do I need a router or the internet in the field?</summary><p class="ans">No. The head makes its own Wi-Fi network; your phone or PC joins it. Bluetooth is only for giving the head your home Wi-Fi once, and for an emergency stop or park.</p></details>
+
+<details><summary>Which cameras work?</summary><p class="ans">Any camera with a wired remote socket, through the head’s 2.5 mm shutter port. A Sony on USB-C to the phone or PC adds live view, camera settings, exposure ramping, HDR and focus stacks.</p></details>
+
+<details><summary>Does it work with my astronomy software?</summary><p class="ans">The head speaks ASCOM Alpaca and LX200 over Wi-Fi itself, so software that supports either connects directly, with no driver on the PC.</p></details>
+
+<details><summary>Alt-az or the wedge?</summary><p class="ans">Alt-az for landscapes, panoramas and wide-field astro; the roll axis keeps the stars at the same angle. Use the wedge for long lenses and long exposures.</p></details>
+
+<details><summary>How cold can it get?</summary><p class="ans">It is designed to run from −20 to +40 °C. In the cold the pack gives less: about 7.2 hours of tracking at −20 °C by calculation.</p></details>
+
+<details><summary>Can I use it in the rain?</summary><p class="ans">The prototype is splash-proof (IPX4); production heads are designed to take water jets (IPX6). Let it dry before you open the battery door or store it.</p></details>
+
+<details><summary>How much does it cost?</summary><p class="ans">No price yet: the first prototype is still being built and measured.</p></details>
+
+</div>
+</section>
+
+<section aria-labelledby="ct-h" style="max-width: 1200px; margin: 0 auto; padding: 40px 32px 88px">
+<div style="border: 1px solid var(--line); border-radius: 20px; padding: 32px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h2 id="ct-h" style="margin: 0; font-family: 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: 30px">Still stuck?</h2>
+<p style="margin: 0; line-height: 1.6; color: var(--muted)">Write to [YOUR EMAIL] with the message on the head's screen and the firmware version from the app's Firmware screen.</p>
+</div>
+<span class="pending">Contact address to be chosen</span>
+</div>
+</section>
+
+<footer style="border-top: 1px solid var(--line)">
+<div style="max-width: 1200px; margin: 0 auto; padding: 32px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; font-size: 14px; color: var(--muted)">
+<span>Canopus · an open-source project · design study, not published</span>
+<nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 20px">
+<a href="index.html">Overview</a>
+<a href="specs.html">Specs</a>
+<a href="https://github.com/bmonte777/start-tracker-project">Source on GitHub</a>
+</nav>
+</div>
+</footer>
+
+</div>
+<script>
+(function(){
+  var root=document.getElementById('root');
+  function set(night){
+    root.className=night?'theme-night':'theme-day';
+    document.querySelectorAll('[data-mode]').forEach(function(b){
+      var on=(b.getAttribute('data-mode')==='night')===night;
+      b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false');
+    });
+    try{localStorage.setItem('canopus-mode',night?'night':'day');}catch(e){}
+  }
+  document.querySelectorAll('[data-mode]').forEach(function(b){
+    b.addEventListener('click',function(){set(b.getAttribute('data-mode')==='night');});
+  });
+  var saved=null; try{saved=localStorage.getItem('canopus-mode');}catch(e){}
+  if(saved==='night') set(true);
+  var f=document.getElementById('interest-form');
+  if(f) f.addEventListener('submit',function(e){e.preventDefault();document.getElementById('sent').hidden=false;});
+})();
+</script>
+</body>
+</html>
