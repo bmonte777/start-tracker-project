@@ -1,6 +1,6 @@
 # Phase 8 — Design for mass production
 
-24 Nov 2026 · Bruno · First instalment (repo-independent work)
+24 Nov 2026 · Bruno · Second instalment (tolerance stack-ups added)
 
 Live copy: [Phase 8 — Design for mass production](https://claude.ai/artifact/SLxdWy4yw5mBx9BivGkV6M)
 
@@ -13,6 +13,7 @@ The repo is attached (the first request was refused; access was fixed on 24 Nov)
 This first instalment holds the work that does not need the measurements:
 
 - six production decisions (Q67–Q72, approved as D87–D92);
+- the tolerance stack-ups (deliverable 3) and the fixes they led to (D93–D99), with ST-303 and ST-313 at rev D;
 - the production process for every made part at 100 and 1,000 heads, with the break-even working;
 - a production fix for each scarce board part;
 - this week's prices for reducers, cells and competitors;
@@ -144,7 +145,7 @@ Prices with Portugal's 23 % VAT, for comparison with shop prices: case 1 at 2.0�
 
 ## Weight and spec budgets (estimate, pending CAD)
 
-With component-set reducers the head alone comes to about 5.11 kg. That is within 10 g of 5.1 kg for the head, but 0.63 kg over D28's 5.1 kg with the wedge: hence Q71.
+With component-set reducers the head alone comes to about 5.11 kg (5.14 kg after ST-313 rev D, see the stack-ups). That is within 10 g of 5.1 kg for the head, but 0.63 kg over D28's 5.1 kg with the wedge: hence Q71.
 
 1. P1 (Phase 3 rev C): head alone 6.21 kg, wedge 0.62 kg, together 6.83 kg.
 2. Q67, reducers 2.70 kg → 1.60 kg (spec 3.10): 6.21 − 1.10 = **5.11 kg** head alone; 5.11 + 0.62 = **5.73 kg** with the wedge.
@@ -158,6 +159,41 @@ With component-set reducers the head alone comes to about 5.11 kg. That is withi
 - Q69 sealed sockets and new gaskets change no power or accuracy figure.
 - Q70 MAX-M10M-00B draws less power than the S version (u-blox: up to 9 mW less), so the power budget improves slightly.
 
+## Tolerance stack-ups (deliverable 3)
+
+The full report, with every contributor and its source, is `hardware/production/tolerances/stackups.md`; the script `tools/production/tolerance_stackups.py` reruns it from `params.py` (self-test 12/12). Three cases: **P1** as ordered (printed and MJF parts, CNC to ISO 2768-m), **PROD** with the D87/D88 processes but the Phase 3 geometry, and **FIX** with the changes approved on 24 Nov (D94–D99). Worst case (WC) adds every tolerance. RSS treats each tolerance as ±3σ of a normal spread. Lines marked *estimate* in the report have no published figure yet and wait for a supplier drawing or a P1 measurement.
+
+**Method.** For a chain of contributors with nominal values nᵢ, signs sᵢ and tolerances ±tᵢ: nominal = Σ sᵢnᵢ; WC = nominal ± Σ tᵢ; RSS = nominal ± √(Σ tᵢ²). For radial offsets and angles the magnitudes add (WC = Σ tᵢ).
+
+| Stack | Limit | P1 | Production, Phase 3 geometry | Production with D94–D99 |
+| --- | --- | --- | --- | --- |
+| Encoder gap, size 17 | ≥ 0.2 mm, no contact (datasheet 1.0–3.0) | 1.03 nominal; WC -0.49…2.55; RSS 0.45…1.61 | WC -0.19…2.25 | 1.50; WC 1.08…1.92: inside 1.0–3.0 |
+| Encoder off-axis offset (DISP) | ≤ 0.3 mm | WC 1.61, RSS 0.59: **fail** | WC 1.18: **fail** | WC 0.32, RSS 0.11: pass (RSS) |
+| Belt centre-distance range | covers belt tolerance and fitting | margin +2.15 / +0.34 mm | same | +2.55 / +0.74 mm |
+| Pulley axial offset | ±0.5 mm | WC ±0.80: **fail**; RSS pass | WC ±0.65 | WC ±0.45: pass |
+| Pulley angle | ≤ 0.25° | WC 0.86°: **fail** | WC 0.40°, RSS pass | WC 0.26°, RSS 0.15° |
+| 60T pulley run-out | ≤ 0.03 mm TIR | 0.071: **fail** (EQ budget 2.19 → 2.22″, still < 3″) | same | 0.030: pass |
+| Component-set concentricity (D87) | ≤ 0.015 mm (estimate) | – | two set-ups: **fail** | one set-up: WC 0.020, RSS 0.012 |
+| V-ring azimuth VA-75 | fitted width 9.0 ± 1.2 | 6.7: **fail** | same | rev D: 9.0 (WC 8.3–9.7) |
+| V-ring altitude VA-80 | 9.0 ± 1.2 | 2.5: **fail** | same | D95: narrower seal on the housing face, being chosen |
+| V-ring roll VA-65 | 7.0 ± 1.0 | 6.0 (WC 5.85–6.15) | same | kept; back support added |
+| Wedge dowels | head drops on by hand | H7/m6 −0.012…+0.008 mm: **fail** | same | 4 E7 hole + slot: 0.008–0.028 mm |
+| Clamp seat (D20) | 45 ± 0.5 mm | pass | pass | pass |
+| OLED in the bezel window | margin ≥ 0 | pass; edge rows hide past 18° (WC 4.6°) | pass | chamfer (D99): 39° (WC 18°) |
+| USB-C in the bezel opening | margin ≥ 0 | WC -0.22 mm: may touch; RSS pass | same | sealed socket (D89) replaces it |
+| Housing seals | squeeze 15–30 % | 1 mm flat gasket on MJF: cannot take the 0.9 mm face error | 2.5 mm cord on MJF: 8.1–37.0 % | 3.0 mm cord, 2.15 groove: 16.1–28.9 % |
+
+**What the stack-ups found, in order of importance.**
+
+1. **V-ring fitted widths (Phase 3 error, affects P1).** A V-ring only seals at its catalogue fitted width B1 (VA-75 and VA-80: 9.0 ± 1.2 mm; VA-65: 7.0 ± 1.0 mm). The Phase 3 geometry gives 6.7 mm on azimuth, 2.5 mm on altitude and 6.0 mm on roll. ST-303 rev D moves the azimuth shoulder down 2.3 mm (D94). On roll a 1 mm recess would put the seal into the clamp's overhang (the clamp end sits on the shelf face), so 6.0 stays: inside the window at nominal, 0.15 mm under at worst case. Rev D adds the back support the seal was missing (support diameter ≥ d1 + 0.5c = 67.5 mm). The altitude joint needs a narrower seal running on the cartridge housing face (D95, next).
+2. **Wedge dowels (affects P1).** H7 holes on m6 dowels give −0.012…+0.008 mm, and two round holes must also take the ±0.3 mm pin-spacing tolerance of ISO 2768-m. Rev D has one 4 E7 round hole and one 4 E7 × 6 radial slot: 0.008–0.028 mm clearance, ≤ 175″ yaw play. Yaw on the wedge is harmless: the encoder and the pointing model take it.
+3. **Encoder gap.** With the typical package height (A = A1 + A2 = 1.00 mm) the P1 gap is 1.03 mm nominal, not the 0.81 mm of D48, which used the 1.20 mm maximum. The worst case still reaches contact (−0.49 mm). The main terms are the board thickness (±0.16, because the board is located by its top face), the 80 mm tube length at ISO 2768-m (±0.3) and the printed carrier. RSS gives 0.45–1.61 mm, about 10 ppm below 0.2 mm, so P1 is fine on a bench check, as D48 planned. In production the board sits chip-side down on three pads in the CNC housing, located by two pins (D96): 1.50 mm, worst case 1.08–1.92.
+4. **Encoder off-axis offset.** The datasheet allows 0.3 mm, for a 10 mm magnet; ours is 6 mm. P1 reaches 1.61 mm worst case: the carrier floats on its screws and the tube flange has up to 0.3 mm of play. Most of the resulting error is first-harmonic and the per-unit `cal.encoder` map removes it, but the production fix (pins, 28 h7/H7 flange) brings it to 0.32 mm worst case and 0.11 mm RSS.
+5. **Belt and pulleys.** The adjustment range is enough in every case. P1's printed housing can misalign the pulleys (0.86° worst case against 0.25°); the CNC housings pass on RSS. The 60T pulley on an H7/g6 bore runs out up to 0.071 mm against the spec's 0.03; that only moves the EQ budget from 2.19″ to 2.22″, but a light press (D97) meets the spec.
+6. **Seals.** A 1 mm flat gasket has about 0.15 mm of useful compression; MJF faces can differ by 0.9 mm over 150 mm, so low spots leak. A 3.0 mm cord in a 2.15 mm groove with hard stops stays at 15–30 % squeeze in moulded parts (D98). It needs a local flange about 6 mm wide around each joint; that goes into the moulding revisions.
+
+**Budget checks.** No change touches the torque, power or stiffness budgets. Accuracy: D97 brings the belt term back to 0.20″ (EQ total 2.18″). Weight: ST-313 rev D is 28 g heavier (149 → 177 g), so the D87 estimate goes from 5.11 to about **5.14 kg** for the head alone, 0.04 kg over D91. The CNC-housing redesign (deliverable 2) must find that back. **Customer-handled parts (D13):** none of D94–D99 changes how the customer swaps the pack, a cartridge or the covers; with D98 the cord stays in its groove when a cover comes off.
+
 ## Numbers pending P1
 
 Eighteen numbers in this phase wait on Phase 7. Each row says which measurement or order fills it and what it changes here.
@@ -167,7 +203,7 @@ Eighteen numbers in this phase wait on Phase 7. Each row says which measurement 
 | 1 | Reducer periodic error and repeatability | P0 M3 (T2) | Reducer RFQ acceptance limit; Q67 decision at the P2 gate |
 | 2 | Backlash and lost motion | P0 M4 (T1) | Reducer acceptance limit; end-of-line lost-motion check |
 | 3 | Encoder noise at the 0.8 mm gap | P0 M1 (D48) | Whether the production carriers move the encoder board |
-| 4 | Encoder linearity | P0 M2 | Magnet and tube tolerances in the stack-up |
+| 4 | Encoder linearity | P0 M2 | Magnet and tube tolerances in the stack-up (S1/S2 estimates) |
 | 5 | Encoder map residual | P0 M5 | End-of-line calibration pass limit |
 | 6 | PEC residual | P0 M6 (T3) | End-of-line PEC baseline limit |
 | 7 | Slew current and StallGuard, warm and at −20 °C | P0 M7 (T6) | End-of-line current and StallGuard thresholds; motor on altitude and roll |
@@ -193,7 +229,7 @@ The repo is attached and the CAD generator runs here (build123d 0.13, Phase 3 ch
 | --- | --- | --- |
 | 1 Process per part | Done (section 3, D88) | — |
 | 2 DFM revisions, STEP, A4 drawings with GD&T | Not started | Reducer drawings (RFQ, D87), Laifual drawing (D85) |
-| 3 Tolerance stack-ups | Not started | — (next) |
+| 3 Tolerance stack-ups | Done (section "Tolerance stack-ups", D93–D99); rerun when the reducer drawings arrive | Altitude seal choice (D95) |
 | 4 Production board revisions | Sourcing plan done (D90); sealed USB-C (D89) not started | Sealed socket choice |
 | 5 Reducer and bought-part quotes | Prices found, RFQ text ready (section 5) | Suppliers' replies |
 | 6 RFQ folders and quote guides | Folders made; reducer and pack packages written | CAD revisions for the made parts |
@@ -209,10 +245,11 @@ The repo is attached and the CAD generator runs here (build123d 0.13, Phase 3 ch
 
 - [x] Fix GitHub access (done 24 Nov).
 - [x] Answer Q67–Q72 (approved 24 Nov: D87–D92).
-- [ ] Carry on with the Phase 7 wave-1 orders: TPS25751DREFR first, then the Laifual quote.
+- [x] Answer Q73–Q76 (approved 24 Nov: D93–D99).
+- [ ] Carry on with the Phase 7 wave-1 orders: TPS25751DREFR first, then the Laifual quote. ST-303 for P0 goes in as drawn (D93); for P1 order `hardware/fab/cnc/ST-303.step` + `.pdf` rev D and ST-313 rev D.
 - [ ] When you send the Laifual message, also send the production RFQ text from section 5 to Laifual and the other five makers.
 
-**For me (repo attached 24 Nov):** branch `phase-8-production` made from the Phase 7 branch; brief already in `docs/prompts/phase-8-prompt.md`; progress in `hardware/production/PROGRESS.md`; RFQ folders made; next the tolerance stack-ups, the sealed USB-C choice for ST-501, the production parts list (Sheet + CSV), then the CAD revisions as the reducer drawings arrive.
+**For me (repo attached 24 Nov):** branch `phase-8-production` made from the Phase 7 branch; brief already in `docs/prompts/phase-8-prompt.md`; progress in `hardware/production/PROGRESS.md`; RFQ folders made; tolerance stack-ups done (D93–D99); next the altitude seal (D95), the sealed USB-C choice for ST-501, the production parts list (Sheet + CSV), then the CAD revisions as the reducer drawings arrive.
 
 ## Sources
 
@@ -223,3 +260,4 @@ Pages read on 24 Nov 2026. USD converted at the spec's USD 1 = EUR 0.91. Project
 - Chips: [LCSC TPS25751DREFR C30169739](https://www.lcsc.com/product-detail/C30169739.html); [TI TPS25751DREFR](https://www.ti.com/product/TPS25751/part-details/TPS25751DREFR); [DigiKey TPS25751DREFR](https://www.digikey.co.uk/en/products/detail/texas-instruments/TPS25751DREFR/23028775); [SnapMagic stock table](https://www.snapeda.com/parts/TPS25751DREFR/Texas%20Instruments/view-part/); [TI FAQ, TPS25750 to TPS25751](https://e2e.ti.com/f/1/t/1346998); [DigiKey MAX-M10S-00B](https://www.digikey.ca/en/products/detail/u-blox/MAX-M10S-00B/15712909); [DigiKey MAX-M10 series](https://www.digikey.com/en/product-highlight/u/u-blox/max-m10-series); [Future Electronics MAX-M10S-00B](https://www.futureelectronics.com/p/semiconductors--wireless-rf--rf-modules-solutions--gps/max-m10s-00b-u-blox-8161892); [JLCPCB RV-3028-C7 C3019759](https://jlcpcb.com/partdetail/C3019759); [DigiKey RV-3028-C7 QC](https://www.digikey.com/en/products/detail/micro-crystal-ag/RV-3028-C7-32-768KHZ-1PPM-TA-QC/10431070); [DigiKey RV-3028-C7 QA](https://www.digikey.ca/en/products/detail/micro-crystal-ag/RV-3028-C7-32-768KHZ-1PPM-TA-QA/10499248)
 - Cells and packs: [NKON P50B](https://www.nkon.nl/novat/rechargeable/molicel-inr21700-p50b-5000mah-50a.html); [18650 Battery Store P50B](https://www.18650batterystore.com/products/molicel-21700-p50b-5000mah-50a-battery?qv=B71cH3x1S); [CM Batteries 2S2P pack](https://cmbatteries.com/?p=21097); [Shenzhen First Power](https://ejfirstpower.en.alibaba.com/videoshow.html?d_type=cv); [Aceon pack assembly](https://www.aceongroup.com/custom-battery-packs/battery-pack-manufacturing/battery-pack-assembly/)
 - Moulding cost bands: [LANPDT, low-volume moulding](https://lanpdt.com/low-volume-injection-molding-cost/); [enclosure tooling range](https://dev.to/china-sourcing-agents/injection-mold-tooling-costs-for-electronics-enclosures-16dl)
+- Tolerance stack-ups: [MT6835 datasheet rev 1.3](https://cdn.promelec.ru/upload/items/2026/01/26/magntek~mt6835gt-std.pdf) (air gap, DISP, TSSOP-16 heights); [Protolabs Network standards, ISO 2768](https://hubs.com/manufacturing-standards); [Protolabs precision machining](https://www.protolabs.com/en-gb/resources/design-tips/fine-tuning-tolerances-for-cnc-machined-parts/); [JLC3DP capabilities (MJF)](https://jlc3dp.com/capabilities/3d-printing-service); [JLC3DP FDM/MJF accuracy](https://jlc3dp.com/blog/mjf-vs-fdm); [Protolabs moulding tolerances](https://www.protolabs.com/resources/blog/understanding-injection-molding-tolerances/); [JLCPCB thickness tolerance](https://jlcpcb.com/capabilities/Capabilities); [Hennlich V-ring tables](https://shop.hennlich.at/media/0a/3e/fc/1730191856/V-Ringe_2017.pdf_6720a1f084df1.pdf); [NAK VA80](https://simplybearings.co.uk/shop/p20725228/NAK-VA80-FKM-Rubber-V-Ring-Seal-For-Shafts-78-83mm/product_info.html); [V-ring installation guide (support diameter)](https://www.seals-shop.com/content/medias/installation_guides/en/IG_V%20Rings_EN.pdf); [Marco O-ring gland guide](https://www.marcorubber.com/assets/site/userAssets/file/O-Ring_Gland_General_Design_Considerations02.pdf); [Global O-Ring on Parker ORD 5700](https://www.globaloring.com/blog/o-ring-groove-design-calculator-engineering-the-right-gland-geometry-the-first-time/); [Fenner belt alignment](https://issuu.com/eriksuk/docs/fenner_ddmm_synchronous_belts/s/14967538); [Pfeifer belt misalignment](https://www.pfeiferindustries.com/information.php?info_id=51); [DisplayModule DM-OLED13-637](https://cdn.shopify.com/s/files/1/0264/7629/files/DM-OLED13-637_Datasheet.pdf); [Tailor Pixels TOJMD013C](https://pdf.directindustry.com/pdf/tailor-pixels-technology-co-ltd/product-specification-model-tojmd013c-13-oled-arduino-display-module-128-64/245050-1023033.html). Read 24 Nov 2026.

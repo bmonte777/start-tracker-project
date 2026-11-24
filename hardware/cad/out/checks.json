@@ -63,8 +63,8 @@
    "min_mm": 30.0,
    "rig": "lens",
    "part": "Bumper 2",
-   "above_tripod_wedge_mm": 177.6,
-   "above_tripod_no_wedge_mm": 147.6
+   "above_tripod_wedge_mm": 177.5,
+   "above_tripod_no_wedge_mm": 147.5
   },
   {
    "alt": 0,
@@ -87,56 +87,56 @@
    "min_mm": 31.6,
    "rig": "lens",
    "part": "Tower",
-   "above_tripod_wedge_mm": 137.0,
-   "above_tripod_no_wedge_mm": 107.0
+   "above_tripod_wedge_mm": 137.1,
+   "above_tripod_no_wedge_mm": 107.1
   },
   {
    "alt": 60,
    "min_mm": 31.6,
    "rig": "lens",
    "part": "Tower",
-   "above_tripod_wedge_mm": 101.7,
-   "above_tripod_no_wedge_mm": 71.7
+   "above_tripod_wedge_mm": 101.8,
+   "above_tripod_no_wedge_mm": 71.8
   },
   {
    "alt": 70,
    "min_mm": 25.7,
    "rig": "camera",
    "part": "Azimuth body",
-   "above_tripod_wedge_mm": 89.4,
-   "above_tripod_no_wedge_mm": 59.4
+   "above_tripod_wedge_mm": 89.5,
+   "above_tripod_no_wedge_mm": 59.5
   },
   {
    "alt": 80,
    "min_mm": 18.0,
    "rig": "camera",
    "part": "Azimuth body",
-   "above_tripod_wedge_mm": 81.2,
-   "above_tripod_no_wedge_mm": 51.2
+   "above_tripod_wedge_mm": 81.4,
+   "above_tripod_no_wedge_mm": 51.4
   },
   {
    "alt": 85,
    "min_mm": 15.5,
    "rig": "camera",
    "part": "Azimuth body",
-   "above_tripod_wedge_mm": 78.8,
-   "above_tripod_no_wedge_mm": 48.8
+   "above_tripod_wedge_mm": 78.9,
+   "above_tripod_no_wedge_mm": 48.9
   },
   {
    "alt": 90,
    "min_mm": 14.0,
    "rig": "camera",
    "part": "Azimuth body",
-   "above_tripod_wedge_mm": 77.4,
-   "above_tripod_no_wedge_mm": 47.4
+   "above_tripod_wedge_mm": 77.6,
+   "above_tripod_no_wedge_mm": 47.6
   },
   {
    "alt": 95,
    "min_mm": 13.5,
    "rig": "camera",
    "part": "Azimuth body",
-   "above_tripod_wedge_mm": 68.8,
-   "above_tripod_no_wedge_mm": 38.8
+   "above_tripod_wedge_mm": 68.9,
+   "above_tripod_no_wedge_mm": 38.9
   }
  ],
  "arm_swing": [
@@ -204,7 +204,7 @@
   },
   "below_tripod_plate_at_deg": -120.0,
   "below_tripod_no_wedge_at_deg": -105.0,
-  "clearance_at_0_mm": 2.7,
+  "clearance_at_0_mm": 2.8,
   "clearance_at_0_part": "Cartridge housing (roll)"
  },
  "roll_travel_alt45": {
@@ -228,7 +228,7 @@
   },
   "below_tripod_plate_at_deg": -100.0,
   "below_tripod_no_wedge_at_deg": -80.0,
-  "clearance_at_0_mm": 2.7,
+  "clearance_at_0_mm": 2.8,
   "clearance_at_0_part": "Cartridge housing (roll)"
  },
  "wedge_tilt": [
@@ -254,9 +254,9 @@
    "name": "Mirrorless + standard zoom on an Arca L-plate",
    "kg": 1.55,
    "mount_center_y": 13.0,
-   "alt_residual_Nm": 0.02,
-   "alt_offbalance_Nm": 1.12,
-   "alt_dz_mm": -34.2,
+   "alt_residual_Nm": 0.03,
+   "alt_offbalance_Nm": 1.15,
+   "alt_dz_mm": -34.7,
    "roll_r_mm": 102.2,
    "roll_torque_90_Nm": 1.55,
    "camera_swing": [
@@ -412,9 +412,9 @@
    "name": "Mirrorless + 70-200 f/2.8 on its collar",
    "kg": 1.95,
    "mount_center_y": 18.0,
-   "alt_residual_Nm": 0.56,
-   "alt_offbalance_Nm": 0.96,
-   "alt_dz_mm": -21.0,
+   "alt_residual_Nm": 0.57,
+   "alt_offbalance_Nm": 0.98,
+   "alt_dz_mm": -21.5,
    "roll_r_mm": 115.9,
    "roll_torque_90_Nm": 2.22,
    "camera_swing": [
@@ -569,10 +569,10 @@
   "P3": {
    "name": "Mirrorless + 150-600 class lens on its foot",
    "kg": 3.75,
-   "mount_center_y": 24.7,
+   "mount_center_y": 24.8,
    "alt_residual_Nm": 0.0,
-   "alt_offbalance_Nm": 0.58,
-   "alt_dz_mm": 10.7,
+   "alt_offbalance_Nm": 0.56,
+   "alt_dz_mm": 10.2,
    "roll_r_mm": 135.5,
    "roll_torque_90_Nm": 4.98,
    "camera_swing": [
@@ -581,8 +581,8 @@
      "min_mm": 30.0,
      "rig": "lens",
      "part": "Bumper 2",
-     "above_tripod_wedge_mm": 177.6,
-     "above_tripod_no_wedge_mm": 147.6
+     "above_tripod_wedge_mm": 177.5,
+     "above_tripod_no_wedge_mm": 147.5
     },
     {
      "alt": 0,
@@ -605,56 +605,56 @@
      "min_mm": 31.6,
      "rig": "lens",
      "part": "Tower",
-     "above_tripod_wedge_mm": 137.0,
-     "above_tripod_no_wedge_mm": 107.0
+     "above_tripod_wedge_mm": 137.1,
+     "above_tripod_no_wedge_mm": 107.1
     },
     {
      "alt": 60,
      "min_mm": 31.6,
      "rig": "lens",
      "part": "Tower",
-     "above_tripod_wedge_mm": 101.7,
-     "above_tripod_no_wedge_mm": 71.7
+     "above_tripod_wedge_mm": 101.8,
+     "above_tripod_no_wedge_mm": 71.8
     },
     {
      "alt": 70,
      "min_mm": 25.7,
      "rig": "camera",
      "part": "Azimuth body",
-     "above_tripod_wedge_mm": 89.4,
-     "above_tripod_no_wedge_mm": 59.4
+     "above_tripod_wedge_mm": 89.5,
+     "above_tripod_no_wedge_mm": 59.5
     },
     {
      "alt": 80,
      "min_mm": 18.0,
      "rig": "camera",
      "part": "Azimuth body",
-     "above_tripod_wedge_mm": 81.2,
-     "above_tripod_no_wedge_mm": 51.2
+     "above_tripod_wedge_mm": 81.4,
+     "above_tripod_no_wedge_mm": 51.4
     },
     {
      "alt": 85,
      "min_mm": 15.5,
      "rig": "camera",
      "part": "Azimuth body",
-     "above_tripod_wedge_mm": 78.8,
-     "above_tripod_no_wedge_mm": 48.8
+     "above_tripod_wedge_mm": 78.9,
+     "above_tripod_no_wedge_mm": 48.9
     },
     {
      "alt": 90,
      "min_mm": 14.0,
      "rig": "camera",
      "part": "Azimuth body",
-     "above_tripod_wedge_mm": 77.4,
-     "above_tripod_no_wedge_mm": 47.4
+     "above_tripod_wedge_mm": 77.6,
+     "above_tripod_no_wedge_mm": 47.6
     },
     {
      "alt": 95,
      "min_mm": 13.5,
      "rig": "camera",
      "part": "Azimuth body",
-     "above_tripod_wedge_mm": 68.8,
-     "above_tripod_no_wedge_mm": 38.8
+     "above_tripod_wedge_mm": 68.9,
+     "above_tripod_no_wedge_mm": 38.9
     }
    ],
    "camera_min": {
@@ -662,19 +662,19 @@
     "min_mm": 13.5,
     "rig": "camera",
     "part": "Azimuth body",
-    "above_tripod_wedge_mm": 68.8,
-    "above_tripod_no_wedge_mm": 38.8
+    "above_tripod_wedge_mm": 68.9,
+    "above_tripod_no_wedge_mm": 38.9
    },
    "camera_at_85": {
     "alt": 85,
     "min_mm": 15.5,
     "rig": "camera",
     "part": "Azimuth body",
-    "above_tripod_wedge_mm": 78.8,
-    "above_tripod_no_wedge_mm": 48.8
+    "above_tripod_wedge_mm": 78.9,
+    "above_tripod_no_wedge_mm": 48.9
    },
-   "tripod_min_wedge_mm": 68.8,
-   "tripod_min_no_wedge_mm": 38.8,
+   "tripod_min_wedge_mm": 68.9,
+   "tripod_min_no_wedge_mm": 38.9,
    "roll_alt0": {
     "toward_tower": {
      "limit_deg": 8.0,
@@ -696,7 +696,7 @@
     },
     "below_tripod_plate_at_deg": -120.0,
     "below_tripod_no_wedge_at_deg": -105.0,
-    "clearance_at_0_mm": 2.7,
+    "clearance_at_0_mm": 2.8,
     "clearance_at_0_part": "Cartridge housing (roll)"
    },
    "roll_alt45": {
@@ -720,7 +720,7 @@
     },
     "below_tripod_plate_at_deg": -100.0,
     "below_tripod_no_wedge_at_deg": -80.0,
-    "clearance_at_0_mm": 2.7,
+    "clearance_at_0_mm": 2.8,
     "clearance_at_0_part": "Cartridge housing (roll)"
    }
   },
@@ -729,8 +729,8 @@
    "kg": 2.7,
    "mount_center_y": 78.0,
    "alt_residual_Nm": 0.0,
-   "alt_offbalance_Nm": 0.4,
-   "alt_dz_mm": -9.0,
+   "alt_offbalance_Nm": 0.42,
+   "alt_dz_mm": -9.5,
    "roll_r_mm": 120.0,
    "roll_torque_90_Nm": 3.18,
    "camera_swing": [
@@ -755,64 +755,64 @@
      "min_mm": 41.7,
      "rig": "lens",
      "part": "Reducer size 17 (altitude)",
-     "above_tripod_wedge_mm": 153.0,
-     "above_tripod_no_wedge_mm": 123.0
+     "above_tripod_wedge_mm": 153.1,
+     "above_tripod_no_wedge_mm": 123.1
     },
     {
      "alt": 40,
      "min_mm": 41.7,
      "rig": "lens",
      "part": "Reducer size 17 (altitude)",
-     "above_tripod_wedge_mm": 89.7,
-     "above_tripod_no_wedge_mm": 59.7
+     "above_tripod_wedge_mm": 89.8,
+     "above_tripod_no_wedge_mm": 59.8
     },
     {
      "alt": 60,
      "min_mm": 41.7,
      "rig": "lens",
      "part": "Reducer size 17 (altitude)",
-     "above_tripod_wedge_mm": 42.7,
-     "above_tripod_no_wedge_mm": 12.7
+     "above_tripod_wedge_mm": 42.9,
+     "above_tripod_no_wedge_mm": 12.9
     },
     {
      "alt": 70,
      "min_mm": 41.7,
      "rig": "lens",
      "part": "Reducer size 17 (altitude)",
-     "above_tripod_wedge_mm": 27.2,
-     "above_tripod_no_wedge_mm": -2.8
+     "above_tripod_wedge_mm": 27.4,
+     "above_tripod_no_wedge_mm": -2.6
     },
     {
      "alt": 80,
      "min_mm": 35.9,
      "rig": "lens",
      "part": "Azimuth body",
-     "above_tripod_wedge_mm": 17.7,
-     "above_tripod_no_wedge_mm": -12.3
+     "above_tripod_wedge_mm": 17.9,
+     "above_tripod_no_wedge_mm": -12.1
     },
     {
      "alt": 85,
      "min_mm": 32.5,
      "rig": "lens",
      "part": "Azimuth body",
-     "above_tripod_wedge_mm": 15.3,
-     "above_tripod_no_wedge_mm": -14.7
+     "above_tripod_wedge_mm": 15.5,
+     "above_tripod_no_wedge_mm": -14.5
     },
     {
      "alt": 90,
      "min_mm": 29.8,
      "rig": "lens",
      "part": "Azimuth body",
-     "above_tripod_wedge_mm": 14.5,
-     "above_tripod_no_wedge_mm": -15.5
+     "above_tripod_wedge_mm": 14.7,
+     "above_tripod_no_wedge_mm": -15.3
     },
     {
      "alt": 95,
      "min_mm": 27.5,
      "rig": "lens",
      "part": "Azimuth body",
-     "above_tripod_wedge_mm": 8.3,
-     "above_tripod_no_wedge_mm": -21.7
+     "above_tripod_wedge_mm": 8.5,
+     "above_tripod_no_wedge_mm": -21.5
     }
    ],
    "camera_min": {
@@ -820,19 +820,19 @@
     "min_mm": 27.5,
     "rig": "lens",
     "part": "Azimuth body",
-    "above_tripod_wedge_mm": 8.3,
-    "above_tripod_no_wedge_mm": -21.7
+    "above_tripod_wedge_mm": 8.5,
+    "above_tripod_no_wedge_mm": -21.5
    },
    "camera_at_85": {
     "alt": 85,
     "min_mm": 32.5,
     "rig": "lens",
     "part": "Azimuth body",
-    "above_tripod_wedge_mm": 15.3,
-    "above_tripod_no_wedge_mm": -14.7
+    "above_tripod_wedge_mm": 15.5,
+    "above_tripod_no_wedge_mm": -14.5
    },
-   "tripod_min_wedge_mm": 8.3,
-   "tripod_min_no_wedge_mm": -21.7,
+   "tripod_min_wedge_mm": 8.5,
+   "tripod_min_no_wedge_mm": -21.5,
    "roll_alt0": {
     "toward_tower": {
      "limit_deg": 15.0,
@@ -887,8 +887,8 @@
    "kg": 7.0,
    "mount_center_y": 103.0,
    "alt_residual_Nm": 0.0,
-   "alt_offbalance_Nm": 2.66,
-   "alt_dz_mm": 30.9,
+   "alt_offbalance_Nm": 2.64,
+   "alt_dz_mm": 30.5,
    "roll_r_mm": 140.0,
    "roll_torque_90_Nm": 9.61,
    "camera_swing": [
@@ -929,40 +929,40 @@
      "min_mm": 32.0,
      "rig": "lens",
      "part": "Tower",
-     "above_tripod_wedge_mm": -39.0,
-     "above_tripod_no_wedge_mm": -69.0
+     "above_tripod_wedge_mm": -38.9,
+     "above_tripod_no_wedge_mm": -68.9
     },
     {
      "alt": 70,
      "min_mm": 32.0,
      "rig": "lens",
      "part": "Tower",
-     "above_tripod_wedge_mm": -64.5,
-     "above_tripod_no_wedge_mm": -94.5
+     "above_tripod_wedge_mm": -64.4,
+     "above_tripod_no_wedge_mm": -94.4
     },
     {
      "alt": 80,
      "min_mm": 31.8,
      "rig": "lens",
      "part": "Azimuth body",
-     "above_tripod_wedge_mm": -81.1,
-     "above_tripod_no_wedge_mm": -111.1
+     "above_tripod_wedge_mm": -81.0,
+     "above_tripod_no_wedge_mm": -111.0
     },
     {
      "alt": 85,
      "min_mm": 27.5,
      "rig": "lens",
      "part": "Azimuth body",
-     "above_tripod_wedge_mm": -86.0,
-     "above_tripod_no_wedge_mm": -116.0
+     "above_tripod_wedge_mm": -85.9,
+     "above_tripod_no_wedge_mm": -115.9
     },
     {
      "alt": 90,
      "min_mm": 23.7,
      "rig": "lens",
      "part": "Azimuth body",
-     "above_tripod_wedge_mm": -88.5,
-     "above_tripod_no_wedge_mm": -118.5
+     "above_tripod_wedge_mm": -88.4,
+     "above_tripod_no_wedge_mm": -118.4
     },
     {
      "alt": 95,
@@ -986,8 +986,8 @@
     "min_mm": 27.5,
     "rig": "lens",
     "part": "Azimuth body",
-    "above_tripod_wedge_mm": -86.0,
-    "above_tripod_no_wedge_mm": -116.0
+    "above_tripod_wedge_mm": -85.9,
+    "above_tripod_no_wedge_mm": -115.9
    },
    "tripod_min_wedge_mm": -96.4,
    "tripod_min_no_wedge_mm": -126.4,
@@ -1042,14 +1042,14 @@
   }
  },
  "mass": {
-  "total_kg": 6.829,
+  "total_kg": 6.857,
   "cog_mm": [
-   22.1,
+   22.6,
    -7.0,
    128.0
   ],
   "wedge_kg": 0.619,
-  "head_only_kg": 6.21,
+  "head_only_kg": 6.238,
   "groups": {
    "Reducers": 2.71,
    "Stepper motors": 0.95,
@@ -1057,7 +1057,7 @@
    "Battery pack": 0.381,
    "Electronics and harness": 0.127,
    "Housings and covers (printed)": 0.921,
-   "Aluminium parts and clamp": 1.22,
+   "Aluminium parts and clamp": 1.248,
    "Encoder tubes, magnets": 0.044,
    "Fasteners, inserts, seals": 0.353
   },
@@ -1180,7 +1180,7 @@
    },
    "ST-303": {
     "name": "Head base plate",
-    "kg": 0.1315,
+    "kg": 0.1314,
     "qty": 1
    },
    "ST-304": {
@@ -1215,7 +1215,7 @@
    },
    "ST-313": {
     "name": "Roll shelf",
-    "kg": 0.1495,
+    "kg": 0.1771,
     "qty": 1
    },
    "ST-314": {
@@ -1370,33 +1370,33 @@
    }
   },
   "alt_group": {
-   "kg": 5.544,
+   "kg": 5.572,
    "cg": [
     132.0,
-    0.0,
-    235.7
+    -0.0,
+    235.2
    ],
-   "dz_from_alt_axis": 10.7,
-   "dy_from_alt_axis": 0.0
+   "dz_from_alt_axis": 10.2,
+   "dy_from_alt_axis": -0.0
   },
   "roll_stage_plus_rig": {
-   "kg": 3.988,
+   "kg": 4.016,
    "cg": [
     136.9,
-    23.0,
-    273.6
+    22.9,
+    272.6
    ],
-   "offset_from_roll_axis": 128.6
+   "offset_from_roll_axis": 127.6
   },
   "roll_stage_hardware": {
-   "kg": 1.522,
+   "kg": 1.55,
    "cg": [
-    130.7,
-    -58.2,
+    130.8,
+    -57.5,
     134.2
    ]
   }
  },
- "seconds": 353.9,
+ "seconds": 337.3,
  "x_roll": 135.5
 }

@@ -283,7 +283,8 @@ def draw_part(pd, out_dir, sheet_no, sheet_total, iso_png=None):
         ax.text(x0, yy, lab, fontsize=5, color="0.35")
         ax.text(x0 + 22, yy, val, fontsize=6.4 if lab != "NAME" else 6.8, fontweight="bold" if lab in ("PART", "NAME") else None)
     rx = TB[0] + 128
-    for i, (lab, val) in enumerate([("SCALE", SCALE_TXT.get(s, f"{s}")), ("REV", P.REV), ("DATE", P.DATE),
+    for i, (lab, val) in enumerate([("SCALE", SCALE_TXT.get(s, f"{s}")), ("REV", P.PART_REV.get(pd.pid, (P.REV, P.DATE))[0]),
+                                    ("DATE", P.PART_REV.get(pd.pid, (P.REV, P.DATE))[1]),
                                    ("SHEET", f"{sheet_no} / {sheet_total}"), ("UNITS", "mm")]):
         yy = y0 - i * 4.85
         ax.text(rx, yy, lab, fontsize=5, color="0.35")

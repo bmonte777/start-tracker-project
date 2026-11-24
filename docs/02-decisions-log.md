@@ -192,3 +192,17 @@ The reasoning and numbers are in `docs/08-production.md`, sections "Decisions", 
 | D90 | Scarce chips (Q70) | No board change. TPS25751DREFR: buffer stock of 110 for the first 100 heads as soon as a franchised distributor has stock, a scheduled order ≥ 12 weeks ahead for 1,000, no brokers; TPS25750 only as an emergency fallback after checking its charger list for the BQ25792. GNSS alternate MAX-M10M-00B (same MAX footprint; the active antenna of D54 supplies the LNA), after a pin-table and antenna-bias check. Clock RV-3028-C7 bought from JLCPCB stock (C3019759), QA grade as alternate. TMC2209-LA and MT6835GT-STD-R get a stock check and buffer buy with the board RFQ |
 | D91 | Production weight target (Q71, changes D28) | Production head alone ≤ 5.1 kg; the removable wedge (0.62 kg) is extra, ≤ 5.75 kg together. Estimate with D87: 5.11 kg head alone, 5.73 kg with the wedge |
 | D92 | Final assembly (Q72) | Heads are assembled and tested in Portugal by Bruno and one helper, from kits of finished parts and boards; the cost model uses Portugal as the landing point |
+
+## Phase 8 — tolerance stack-ups (approved 24 Nov 2026)
+
+Questions Q73–Q76 came from the stack-ups in `hardware/production/tolerances/stackups.md` (`tools/production/tolerance_stackups.py`). Bruno answered on 24 Nov: ST-303 "order as drawn for P0"; the part and production fixes "recommend and implement"; altitude seal "narrower seal on housing face".
+
+| # | Topic | Decision |
+|---|---|---|
+| D93 | ST-303 in the P0 order (Q73) | The P0 ST-303 is ordered as drawn (rev C): the bench uses neither the V-ring nor the wedge dowels. The P1 order takes ST-303 rev D |
+| D94 | V-ring fitted widths and wedge dowels, P1 and production (Q74) | ST-303 rev D: V-ring shoulder at Z 37.5 (was 39.8), VA-75 fitted width 9.0 (B1 9.0 ± 1.2). Dowel holes: one 4 E7 round hole at 11.25° and one 4 E7 × 6 radial slot at 191.25° (were 2 × 4 H7 on 4 m6 dowels, −0.012…+0.008 mm). ST-313 rev D: VA-65 back support widened to R36 (axial support ≥ d1 + 0.5c); the 1 mm seat recess that was approved could not be made, because the clamp's end sits on the shelf face, so the roll fitted width stays 6.0 (inside 7.0 ± 1.0 at nominal, 0.15 mm under at worst case). ST-313 +28 g |
+| D95 | Altitude seal (Q75) | The VA-80 cannot fit the 2.5 mm between arm and tower. The lip will run on the cartridge housing front face (6.0 mm from the arm face) with a narrower seal for the 80 mm seat, chosen from a supplier table and shown to Bruno before the arm or tower changes |
+| D96 | Encoder in production (Q76) | Encoder board seated chip-side down on three pads machined in the CNC housing and located by two pins; nominal chip-to-magnet gap 1.5 mm (worst case 1.08–1.92); tube flange 28 h7 in a 28 H7 seat; magnet seat 6.00 +0.02/0; tube length and seat depth called out ±0.03/±0.05. P1 keeps D48 |
+| D97 | 60T pulley in production (Q76) | Pulley bore a light press on the wave-generator stub (run-out ≤ 0.03 mm, spec 3.5) |
+| D98 | Housing seals in production (Q76, details D88/D89) | 3.0 mm O-ring cord in 2.15 mm deep grooves with hard stops, screws ≤ 40 mm apart, instead of the 1 mm flat gaskets (squeeze 15–30 % worst case). The customer can still open covers with the hex keys; the cord stays in its groove |
+| D99 | Bezel window in production (Q76) | 45° chamfer through the 3 mm bezel around the OLED window, so the edge that limits the view is 2 mm from the glass instead of 5 mm: every pixel reads from 39° off-axis at nominal and 18° at worst case (without it: 18° and 6°) |

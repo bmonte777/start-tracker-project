@@ -17,6 +17,8 @@ import os
 
 REV = "C"
 DATE = "2026-11-22"
+# Parts revised after rev C (Phase 8): pid -> (rev, date). D94: V-ring fitted widths, wedge dowel slot.
+PART_REV = {"ST-303": ("D", "2026-11-24"), "ST-313": ("D", "2026-11-24")}
 
 # ---------------------------------------------------------------------------------------------
 # Layout (spec section 2.3); roll offset from the D31 study (D34)
@@ -232,3 +234,8 @@ TORQUE = {  # N.m. Steel A2-70 into aluminium thread / brass insert in nylon
 
 # H2S build plate (D29)
 PLATE_XY = (340.0, 320.0)
+
+# D94 (24 Nov 2026): V-ring fitted widths against the catalogue B1 (tools/production/tolerance_stackups.py)
+VRING_AZ_SHOULDER = 37.5        # VA-75 back face on ST-303 (rev C: 39.8); body floor Z 46.5 -> 9.0 (B1 9.0 +/- 1.2)
+VRING_ROLL_RECESS = 0.0         # a 1 mm recess would put the VA-65 into the clamp overhang (clamp end = shelf face): 6.0 kept
+VRING_ROLL_SUPPORT_R = 36.0     # axial support >= d1 + 0.5 c = 67.5 dia (V-ring installation guides); clipped at the shelf top

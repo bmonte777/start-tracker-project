@@ -1,8 +1,9 @@
 """Structure: base ST-301, wedge ST-302/303, latitude arcs ST-305, azimuth body ST-310, tower ST-311,
 altitude arm ST-312, roll shelf ST-313. Modelled in the world frame (wedge flat, az 0, alt 0, roll 0)."""
 import math
-from build123d import (Pos, Rot, Plane, extrude, make_hull, Circle, Rectangle, RectangleRounded, Polygon,
+from build123d import (SlotOverall, Pos, Rot, Plane, extrude, make_hull, Circle, Rectangle, RectangleRounded, Polygon,
                        offset, Kind, fillet, Axis, Sketch)
+
 
 from . import params as P
 from .core import cyl, box, polar, register, PartDef, feat, hull_extrude, roll_to_world
@@ -123,8 +124,9 @@ def build_head_base():
     two dowel holes for the wedge top plate ST-331."""
     z0, zt = P.Z_UPPER_PLATE_TOP, P.Z_AZ_OUT
     s = cyl(P.HEAD_BASE_R, zt - z0, z=z0)
-    s += cyl(40.0, 1.5, z=38.3)                                              # V-ring back shoulder
-    feat("pin", "75 h9", (0, 0, 39.8), "Z", zt - 39.8, "V-ring VA-75 seat (ST-213); 1.5 mm shoulder ring at Z 38.3")
+    s += cyl(40.0, 1.5, z=P.VRING_AZ_SHOULDER - 1.5)                          # V-ring back shoulder (D94: Z 37.5)
+    feat("pin", "75 h9", (0, 0, P.VRING_AZ_SHOULDER), "Z", zt - P.VRING_AZ_SHOULDER,
+         f"V-ring VA-75 seat (ST-213); 1.5 mm shoulder ring R40 at Z {P.VRING_AZ_SHOULDER - 1.5:.1f}; fitted width 9.0 to the body floor")
     s -= cyl(22.5, 2.5, z=zt - 2.5 + 0.01)
     feat("bore", "45 H7", (0, 0, zt), "-Z", 2.5, "azimuth reducer output pilot")
     tr = P.ENC_TUBE["flange_d"] / 2 + 0.1
@@ -141,10 +143,15 @@ def build_head_base():
     feat("cbore", "3.4 / 6.0x4.3", (0, 11, z0), "Z", None, "2x on PCD 22; encoder tube M3x8 ISO 4762 from below", 2)
     s -= cyl(6.0, 8.0, z=z0 - 0.01)
     feat("bore", "12 H7", (0, 0, z0), "Z", 8.0, "3/8in-16 bushing ST-307 pressed in with Loctite 638 (tripod / wedge screw)")
-    for a in P.WEDGE_PIN_ANG:
-        x, y = P.WEDGE_PIN_R * math.cos(math.radians(a)), P.WEDGE_PIN_R * math.sin(math.radians(a))
-        s -= cyl(2.0, 6.0, x, y, z0 - 0.01)
-    feat("bore", "4 H7", (32.4, 6.4, z0), "Z", 6.0, "2x dowel holes at R33, 11.25 / 191.25 deg (wedge top plate pins)", 2)
+    # D94: one round hole and one radial slot, both 4 E7 (+0.020/+0.032), so the head drops onto the m6 dowels by hand
+    a0, a1 = P.WEDGE_PIN_ANG
+    x, y = P.WEDGE_PIN_R * math.cos(math.radians(a0)), P.WEDGE_PIN_R * math.sin(math.radians(a0))
+    s -= cyl(2.013, 6.0, x, y, z0 - 0.01)
+    feat("bore", "4 E7", (round(x, 1), round(y, 1), z0), "Z", 6.0, "dowel hole A at R33, 11.25 deg (wedge top plate pin); position +/-0.05")
+    x, y = P.WEDGE_PIN_R * math.cos(math.radians(a1)), P.WEDGE_PIN_R * math.sin(math.radians(a1))
+    s -= Pos(x, y, z0 - 0.01) * Rot(0, 0, a1) * extrude(SlotOverall(6.0, 4.026), 6.0)
+    feat("slot", "4 E7 x 6", (round(x, 1), round(y, 1), z0), "Z", 6.0,
+         "dowel slot B at R33, 191.25 deg, long axis radial (on the pin line); width 4 E7")
     s -= Pos(0, 0, z0 - 0.01) * extrude(Circle(23.5) - Circle(15.5), 8.0)
     feat("pocket", "ring 31 / 47", (19.5, 0, z0), "Z", 8.0, "lightening ring from below")
     return s
@@ -384,15 +391,17 @@ def build_shelf():
     xr, zr = P.X_ROLL, P.Z_ROLL
     y0, t = P.ROLL_OUT_Y, 10.0
     st = P.SHELF_TOP
-    leg_f = _hull([Pos(xr, zr) * Circle(30), Pos(xr, zr + st - 5) * Rectangle(60, 10)])
+    leg_f = _hull([Pos(xr, zr) * Circle(P.VRING_ROLL_SUPPORT_R), Pos(xr, zr + st - 5) * Rectangle(60, 10)])   # D94: R36 backs the VA-65
     s = plate_xz(leg_f, y0 + t, t)                                             # Y -22..-12
+    s -= box(xr - 50, xr + 50, y0 - 1, y0 + t + 1, zr + st, zr + st + 10)      # keep the leg under the clamp seat
     s += box(xr - 30, xr + 30, y0, 40, zr + st - 8, zr + st)                  # horizontal leg, 8 thick
     for sx in (-1, 1):                                                         # ribs
         rib = Polygon((y0 + t, zr - 2), (y0 + t, zr + st - 8), (32, zr + st - 8), align=None)
         pl = Plane(origin=(xr + sx * 24 - 3, 0, 0), x_dir=(0, 1, 0), z_dir=(1, 0, 0))
         s += extrude(pl * rib, 6, dir=(1, 0, 0))
-    s += cyl(32.5, -2.5, xr, y0, zr, "Y") - cyl(27.5, -6, xr, y0 + 1, zr, "Y")
-    feat("pin", "65 h9 / 55", (xr, y0, zr), "-Y", 2.5, "V-ring VA-65 seat ring (ST-219)")
+    s += cyl(32.5, -4.5, xr, y0, zr, "Y") - cyl(27.5, -6, xr, y0 + 1, zr, "Y")     # seat 5.5 long from the recessed face
+    feat("pin", "65 h9 / 55", (xr, y0, zr), "-Y", 4.5 + P.VRING_ROLL_RECESS,
+         f"V-ring VA-65 seat ring (ST-219), 4.5 long; back face R32.5-R{P.VRING_ROLL_SUPPORT_R:.0f} on the shelf face; fitted width 6.0 to the reducer face")
     s -= cyl(18.0, 2.5, xr, y0 - 0.01, zr, "Y")
     feat("bore", "36 H7", (xr, y0, zr), "Y", 2.5, "roll reducer output pilot")
     s -= cyl(P.ENC_TUBE["flange_d"] / 2 + 0.1, 3.0, xr, y0 + 2.5, zr, "Y")

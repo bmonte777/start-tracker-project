@@ -88,7 +88,7 @@ def items():
     I("Head base plate", "ST-303", "wedge", ident, None, color=g["ST-303"].color, explode=(0, 0, -60))
     I("3/8in-16 bushing (head)", "ST-307", "wedge", Pos(0, 0, P.Z_UPPER_PLATE_TOP), B.bushing38, mass=0.006,
       color=(0.85, 0.85, 0.88), explode=(0, 0, -75))
-    I("V-ring VA-75 (azimuth)", "ST-213", "wedge", Pos(0, 0, 39.8), lambda: B.vring(75.0), mass=0.004,
+    I("V-ring VA-75 (azimuth)", "ST-213", "wedge", Pos(0, 0, 37.5), lambda: B.vring(75.0, 6.0, 9.0), mass=0.004,
       color=(0.08, 0.08, 0.08), explode=(0, 0, -45))
     # ---------------------------------------------------------------- cartridges
     for ax in ("az", "alt", "roll"):
@@ -187,7 +187,7 @@ def items():
       lambda: B.cyl(43.0, 1.6) - B.cyl(41.0, 3, z=-1), mass=0.002, color=(0.08, 0.08, 0.08), explode=(120, -230, 260))
     I("Roll shelf", "ST-313", "roll", ident, None, color=g["ST-313"].color, explode=(120, 90, 260))
     I("V-ring VA-65 (roll)", "ST-219", "roll", Pos(P.X_ROLL, P.ROLL_OUT_Y, P.Z_ROLL) * Rot(90, 0, 0),
-      lambda: B.vring(65.0, 5.0, 2.5), mass=0.003, color=(0.08, 0.08, 0.08), explode=(120, 60, 260))
+      lambda: B.vring(65.0, 5.0, 6.0), mass=0.003, color=(0.08, 0.08, 0.08), explode=(120, 60, 260))
     I("Arca clamp 60 mm", "ST-314", "roll", Pos(P.X_ROLL, P.CLAMP_CY, P.Z_ROLL + P.SHELF_TOP), B.clamp60, mass=P.CLAMP["mass"],
       color=(0.20, 0.20, 0.22), explode=(120, 90, 320))
     return it
