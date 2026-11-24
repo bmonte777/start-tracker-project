@@ -35,7 +35,7 @@ export async function render(root) {
       <div class="row between mt"><div id="plan" class="msg"></div><button id="start" class="primary bigbtn">Start</button></div></section>
     <section class="card span2"><h2>Running</h2><div id="run" class="msg">Nothing running.</div><div class="progress mt"><span id="runbar" style="width:0"></span></div>
       <div class="btns"><button id="pause">Pause</button><button id="resume">Resume</button><button id="stopjob" class="danger">Stop</button></div></section>
-    <section class="card"><h2>Shot log</h2><p class="small">Every frame the app takes is logged with time, settings and head position (CSV in Documents/Canopus on Android, Pictures\\Canopus on Windows).</p>
+    <section class="card"><h2>Shot log</h2><p class="small">Every frame the app takes is logged with time, settings and head position (CSV in Documents/Canopus on Android, Documents\\Canopus on Windows).</p>
       <ol id="log"></ol></section>
   </div>`;
   const offline = needHead(root);

@@ -1,21 +1,5 @@
 [
  {
-  "screen": "health",
-  "theme": "day",
-  "size": "desktop",
-  "ok": true,
-  "errors": [],
-  "file": "docs/img/06-screens/health-day.png"
- },
- {
-  "screen": "update",
-  "theme": "day",
-  "size": "desktop",
-  "ok": true,
-  "errors": [],
-  "file": "docs/img/06-screens/update-day.png"
- },
- {
   "screen": "connect",
   "theme": "day",
   "size": "desktop",
@@ -32,20 +16,92 @@
   "file": "docs/img/06-screens/dashboard-day.png"
  },
  {
-  "screen": "health",
-  "theme": "night",
+  "screen": "sky",
+  "theme": "day",
   "size": "desktop",
   "ok": true,
   "errors": [],
-  "file": "docs/img/06-screens/health-night.png"
+  "file": "docs/img/06-screens/sky-day.png"
+ },
+ {
+  "screen": "align",
+  "theme": "day",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/align-day.png"
+ },
+ {
+  "screen": "rig",
+  "theme": "day",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/rig-day.png"
+ },
+ {
+  "screen": "roll",
+  "theme": "day",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/roll-day.png"
+ },
+ {
+  "screen": "camera",
+  "theme": "day",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/camera-day.png"
+ },
+ {
+  "screen": "night",
+  "theme": "day",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/night-day.png"
+ },
+ {
+  "screen": "gallery",
+  "theme": "day",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/gallery-day.png"
+ },
+ {
+  "screen": "pec",
+  "theme": "day",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/pec-day.png"
+ },
+ {
+  "screen": "health",
+  "theme": "day",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/health-day.png"
  },
  {
   "screen": "update",
-  "theme": "night",
+  "theme": "day",
   "size": "desktop",
   "ok": true,
   "errors": [],
-  "file": "docs/img/06-screens/update-night.png"
+  "file": "docs/img/06-screens/update-day.png"
+ },
+ {
+  "screen": "settings",
+  "theme": "day",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/settings-day.png"
  },
  {
   "screen": "connect",
@@ -64,20 +120,92 @@
   "file": "docs/img/06-screens/dashboard-night.png"
  },
  {
-  "screen": "health",
-  "theme": "red",
+  "screen": "sky",
+  "theme": "night",
   "size": "desktop",
   "ok": true,
   "errors": [],
-  "file": "docs/img/06-screens/health-red.png"
+  "file": "docs/img/06-screens/sky-night.png"
+ },
+ {
+  "screen": "align",
+  "theme": "night",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/align-night.png"
+ },
+ {
+  "screen": "rig",
+  "theme": "night",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/rig-night.png"
+ },
+ {
+  "screen": "roll",
+  "theme": "night",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/roll-night.png"
+ },
+ {
+  "screen": "camera",
+  "theme": "night",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/camera-night.png"
+ },
+ {
+  "screen": "night",
+  "theme": "night",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/night-night.png"
+ },
+ {
+  "screen": "gallery",
+  "theme": "night",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/gallery-night.png"
+ },
+ {
+  "screen": "pec",
+  "theme": "night",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/pec-night.png"
+ },
+ {
+  "screen": "health",
+  "theme": "night",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/health-night.png"
  },
  {
   "screen": "update",
-  "theme": "red",
+  "theme": "night",
   "size": "desktop",
   "ok": true,
   "errors": [],
-  "file": "docs/img/06-screens/update-red.png"
+  "file": "docs/img/06-screens/update-night.png"
+ },
+ {
+  "screen": "settings",
+  "theme": "night",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/settings-night.png"
  },
  {
   "screen": "connect",
@@ -94,5 +222,405 @@
   "ok": true,
   "errors": [],
   "file": "docs/img/06-screens/dashboard-red.png"
+ },
+ {
+  "screen": "sky",
+  "theme": "red",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/sky-red.png"
+ },
+ {
+  "screen": "align",
+  "theme": "red",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/align-red.png"
+ },
+ {
+  "screen": "rig",
+  "theme": "red",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/rig-red.png"
+ },
+ {
+  "screen": "roll",
+  "theme": "red",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/roll-red.png"
+ },
+ {
+  "screen": "camera",
+  "theme": "red",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/camera-red.png"
+ },
+ {
+  "screen": "night",
+  "theme": "red",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/night-red.png"
+ },
+ {
+  "screen": "gallery",
+  "theme": "red",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/gallery-red.png"
+ },
+ {
+  "screen": "pec",
+  "theme": "red",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/pec-red.png"
+ },
+ {
+  "screen": "health",
+  "theme": "red",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/health-red.png"
+ },
+ {
+  "screen": "update",
+  "theme": "red",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/update-red.png"
+ },
+ {
+  "screen": "settings",
+  "theme": "red",
+  "size": "desktop",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/settings-red.png"
+ },
+ {
+  "screen": "connect",
+  "theme": "day",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/connect-day-phone.png"
+ },
+ {
+  "screen": "dashboard",
+  "theme": "day",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/dashboard-day-phone.png"
+ },
+ {
+  "screen": "sky",
+  "theme": "day",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/sky-day-phone.png"
+ },
+ {
+  "screen": "align",
+  "theme": "day",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/align-day-phone.png"
+ },
+ {
+  "screen": "rig",
+  "theme": "day",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/rig-day-phone.png"
+ },
+ {
+  "screen": "roll",
+  "theme": "day",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/roll-day-phone.png"
+ },
+ {
+  "screen": "camera",
+  "theme": "day",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/camera-day-phone.png"
+ },
+ {
+  "screen": "night",
+  "theme": "day",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/night-day-phone.png"
+ },
+ {
+  "screen": "gallery",
+  "theme": "day",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/gallery-day-phone.png"
+ },
+ {
+  "screen": "pec",
+  "theme": "day",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/pec-day-phone.png"
+ },
+ {
+  "screen": "health",
+  "theme": "day",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/health-day-phone.png"
+ },
+ {
+  "screen": "update",
+  "theme": "day",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/update-day-phone.png"
+ },
+ {
+  "screen": "settings",
+  "theme": "day",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/settings-day-phone.png"
+ },
+ {
+  "screen": "connect",
+  "theme": "night",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/connect-night-phone.png"
+ },
+ {
+  "screen": "dashboard",
+  "theme": "night",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/dashboard-night-phone.png"
+ },
+ {
+  "screen": "sky",
+  "theme": "night",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/sky-night-phone.png"
+ },
+ {
+  "screen": "align",
+  "theme": "night",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/align-night-phone.png"
+ },
+ {
+  "screen": "rig",
+  "theme": "night",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/rig-night-phone.png"
+ },
+ {
+  "screen": "roll",
+  "theme": "night",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/roll-night-phone.png"
+ },
+ {
+  "screen": "camera",
+  "theme": "night",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/camera-night-phone.png"
+ },
+ {
+  "screen": "night",
+  "theme": "night",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/night-night-phone.png"
+ },
+ {
+  "screen": "gallery",
+  "theme": "night",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/gallery-night-phone.png"
+ },
+ {
+  "screen": "pec",
+  "theme": "night",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/pec-night-phone.png"
+ },
+ {
+  "screen": "health",
+  "theme": "night",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/health-night-phone.png"
+ },
+ {
+  "screen": "update",
+  "theme": "night",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/update-night-phone.png"
+ },
+ {
+  "screen": "settings",
+  "theme": "night",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/settings-night-phone.png"
+ },
+ {
+  "screen": "connect",
+  "theme": "red",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/connect-red-phone.png"
+ },
+ {
+  "screen": "dashboard",
+  "theme": "red",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/dashboard-red-phone.png"
+ },
+ {
+  "screen": "sky",
+  "theme": "red",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/sky-red-phone.png"
+ },
+ {
+  "screen": "align",
+  "theme": "red",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/align-red-phone.png"
+ },
+ {
+  "screen": "rig",
+  "theme": "red",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/rig-red-phone.png"
+ },
+ {
+  "screen": "roll",
+  "theme": "red",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/roll-red-phone.png"
+ },
+ {
+  "screen": "camera",
+  "theme": "red",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/camera-red-phone.png"
+ },
+ {
+  "screen": "night",
+  "theme": "red",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/night-red-phone.png"
+ },
+ {
+  "screen": "gallery",
+  "theme": "red",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/gallery-red-phone.png"
+ },
+ {
+  "screen": "pec",
+  "theme": "red",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/pec-red-phone.png"
+ },
+ {
+  "screen": "health",
+  "theme": "red",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/health-red-phone.png"
+ },
+ {
+  "screen": "update",
+  "theme": "red",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/update-red-phone.png"
+ },
+ {
+  "screen": "settings",
+  "theme": "red",
+  "size": "phone",
+  "ok": true,
+  "errors": [],
+  "file": "docs/img/06-screens/settings-red-phone.png"
  }
 ]
