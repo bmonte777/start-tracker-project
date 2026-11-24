@@ -48,7 +48,7 @@ The battery fuse ITV4030L0815NR is [non-stocked at Mouser](https://www.mouser.co
 
 ## Round P0 order plan
 
-Place the orders in the sequence below, so that the long-lead items start first and the boards are ordered once their scarce parts are in your JLCPCB account. Every line (60 in all), with part numbers, links, prices, stock and the date each was checked, is in the Sheet and in `hardware/bom/order-plan-p0-p1.csv`. Totals include VAT only where the shop's price did.
+Place the orders in the sequence below, so that the long-lead items start first and the boards are ordered once their scarce parts are in your JLCPCB account. Every line (63 in all), with part numbers, links, prices, stock and the date each was checked, is in the Sheet and in `hardware/bom/order-plan-p0-p1.csv`. Totals include VAT only where the shop's price did.
 
 | Wave | Supplier | What | Priced total (EUR) |
 | --- | --- | --- | --- |
