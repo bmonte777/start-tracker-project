@@ -17,6 +17,7 @@ So a new chat can carry on. Brief: `docs/prompts/phase-7-prompt.md` (Project `cl
 | P0 order | waiting for Bruno (and the Laifual quote) |
 | P0 build guide | done: `docs/guides/p0-build-guide.html` = https://claude.ai/artifact/HiuZScf8CjeMNvxB91qPxm (sheets 0–13 + R, harness and torque reference). Built from `joints.py`, harness data, D46/D48/D80–D86 |
 | P0 bring-up companion, measurement scripts | next |
+| Hand-off prompts | `docs/prompts/phase-7-continue-prompt.md` (carry on Phase 7 in a new chat) and `docs/prompts/phase-8-prompt.md` (written early at Bruno's request, 24 Nov; update it with Phase 7 results before use). Both in the Project |
 | P0 build / bring-up / measurements | not started (no hardware) |
 | P1 | not started |
 
