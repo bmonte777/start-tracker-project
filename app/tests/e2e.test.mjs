@@ -49,7 +49,8 @@ describe('go-to and tracking', () => {
 describe('alignment', () => {
   test('plate-solve style syncs build the pointing model (points and RMS reported)', async () => {
     await withSim(['--speed', '50'], async (sim, c) => {
-      const stars = [[5.27815, 45.99799], [6.75248, -16.71612], [7.65503, 5.225], [5.91953, 7.40706]];  // Capella, Sirius, Procyon, Betelgeuse
+      // Capella, Sirius, Procyon, Betelgeuse, plus Dubhe and Caph, which never set at the simulator's latitude (Phase 7: the test failed around midday UTC)
+      const stars = [[5.27815, 45.99799], [6.75248, -16.71612], [7.65503, 5.225], [5.91953, 7.40706], [11.06213, 61.75103], [0.15297, 59.14978]];
       let n = 0;
       for (const [ra, dec] of stars) {
         try { await c.gotoRaDec(ra, dec); } catch (e) { continue; }     // below the horizon now: skip

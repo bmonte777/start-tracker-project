@@ -100,6 +100,14 @@ static bool confirm(const char *q, uint32_t timeout_ms = 60000)
     return false;
 }
 
+static int ask_int(const char *q, int def, int lo, int hi)
+{
+    out("%s  [Enter = %d]", q, def);
+    std::string s = read_line(30000);
+    int v = s.empty() ? def : atoi(s.c_str());
+    return v < lo || v > hi ? def : v;
+}
+
 static int ask_axis()
 {
     out("axis? 0 = azimuth (J7), 1 = altitude (J8), 2 = roll (J9)  [default 0]");
@@ -376,7 +384,7 @@ struct Item { char key; const char *name; std::function<bool(size_t)> fn; };
 
 void bringup_run()
 {
-    rp_q = xQueueCreate(32, sizeof(RpLine));
+    rp_q = xQueueCreate(128, sizeof(RpLine));   // Phase 7: raw dumps for tools/measure
     usb_serial_jtag_driver_config_t uc = USB_SERIAL_JTAG_DRIVER_CONFIG_DEFAULT();
     usb_serial_jtag_driver_install(&uc);
     io_init();
@@ -409,11 +417,13 @@ void bringup_run()
         {'h', "D2  motor thermistors", [](size_t i) { return rp_test(i, 2, (uint8_t)ask_axis()); }},
         {'i', "D3  driver UART (addresses 0,1,2)", [](size_t i) { return rp_test(i, 3, 0); }},
         {'j', "D3  step slowly, encoder follows", [](size_t i) { int a = ask_axis(); bool m = confirm("magnet on the bare motor shaft (bench)?"); return rp_test(i, 9, (uint8_t)a, m ? 0x8000 : 0); }},
-        {'k', "D4  sidereal tracking 10 min (CSV)", [](size_t i) { int a = ask_axis(); bool m = confirm("magnet on the bare motor shaft (bench)?"); return rp_test(i, 10, (uint8_t)a, m ? 0x8000 : 0, 10, 720); }},
+        {'k', "D4  sidereal tracking (CSV, 10-240 min)", [](size_t i) { int a = ask_axis(); bool m = confirm("magnet on the bare motor shaft (bench)?"); int mins = ask_int("minutes? 10 = Stage D4, 45 = test T2 (three wave-generator turns)", 10, 1, 240); return rp_test(i, 10, (uint8_t)a, m ? 0x8000 : 0, mins, (uint32_t)mins * 60 + 180); }},
         {'m', "D5  slews at 8 deg/s, 10 times", [](size_t i) { int a = ask_axis(); bool m = confirm("magnet on the bare motor shaft (bench)?"); return rp_test(i, 11, (uint8_t)a, m ? 0x8000 : 0, 0, 300); }},
         {'n', "D6  encoder field check", [](size_t i) { return rp_test(i, 12, (uint8_t)ask_axis()); }},
         {'o', "D8  encoder noise, 1000 readings (D48)", [](size_t i) { return rp_test(i, 7, (uint8_t)ask_axis()); }},
-        {'p', "D8  encoder sweep, one revolution (D48)", [](size_t i) { int a = ask_axis(); bool m = confirm("magnet on the bare motor shaft (bench)?"); return rp_test(i, 8, (uint8_t)a, m ? 0x8000 : 0, 360, 300); }},
+        {'p', "D8  encoder sweep, one revolution (D48)", [](size_t i) { int a = ask_axis(); bool m = confirm("magnet on the bare motor shaft (bench)?"); return rp_test(i, 8, (uint8_t)a, m ? 0x8000 : 0, 360, 900); }},   // Phase 7: a full output turn takes 6 min
+        {'q', "D5  lost motion at reversals (T1)", [](size_t i) { int a = ask_axis(); bool m = confirm("magnet on the bare motor shaft (bench)?"); int st = ask_int("step in arcsec? (T1 uses 60; 5-600)", 60, 5, 600); return rp_test(i, 14, (uint8_t)a, m ? 0x8000 : 0, st, 900); }},
+        {'t', "D5  slew log: current + StallGuard (T6)", [](size_t i) { int a = ask_axis(); int ma = ask_int(a == 0 ? "run current mA? 830 = 20 C, 1260 = -20 C (max 1350)" : "run current mA? 450 = 20 C, 890 = -20 C (max 1060)", a == 0 ? 830 : 450, 100, a == 0 ? 1350 : 1060); return rp_test(i, 15, (uint8_t)a, 0, ma, 600); }},
     };
     for (auto &it : items) results.push_back({it.name, 0});
 
