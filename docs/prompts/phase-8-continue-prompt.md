@@ -1,6 +1,6 @@
 # Star Tracker Project — Phase 8, carry on (after the tolerance stack-ups)
 
-**Use:** new chat in the "Star Tracker Project" Project · **Model:** Claude Fable 5.2 (or Opus 5.5) · **Effort:** high
+**Use:** new chat in the "Star Tracker Project" Project · **Model:** Opus 5.5 · **Effort:** high
 
 ---
 
