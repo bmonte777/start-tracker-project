@@ -11,7 +11,7 @@ So a new chat can carry on. Brief: `docs/prompts/phase-8-prompt.md` (Project `cl
 | Deliverable (brief) | State |
 |---|---|
 | 1 Process per part | done (doc section 3, D88) |
-| 2 DFM revisions, STEP, drawings, GD&T | not started; needs build123d in the container and the Laifual drawing (D85) |
+| 2 DFM revisions, STEP, drawings, GD&T | not started; build123d 0.13 installs here (`pip install --break-system-packages build123d`) and `build_all.py --only parts,assembly,checks` reproduces Phase 3 (6 min); waits on reducer drawings (D87) and the Laifual drawing (D85) |
 | 3 Tolerance stack-ups | not started |
 | 4 Production board revisions | sourcing plan done (D90); sealed USB-C (D89) and panel/jig changes not started |
 | 5 Reducer and bought-part quotes | list prices found; RFQ text ready; no quotes yet |

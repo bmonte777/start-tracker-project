@@ -10,7 +10,7 @@ Phase 8 has started on paper only. Phase 7 is still at the order stage: on 24 No
 
 The repo is attached (the first request was refused; access was fixed on 24 Nov). The work is on branch `phase-8-production`, made from `phase-7-prototype` because Phase 7 is not finished.
 
-This first instalment holds the work that needs neither the measurements nor the repo:
+This first instalment holds the work that does not need the measurements:
 
 - six production decisions (Q67–Q72, approved as D87–D92);
 - the production process for every made part at 100 and 1,000 heads, with the break-even working;
@@ -100,7 +100,7 @@ No reducer maker has quoted yet. Published volume tiers suggest the spec's 1,000
 
 **What the tiers do to the reducer cost (estimate).** The spec puts an LHT-17 at EUR 273 for one, EUR 241 at 100 and EUR 196 at 1,000: that is 88 % and 72 % of the single price. Laifual's published LSS tiers fall only to 80 % at 1,000. Applied to the spec's single prices (2 × EUR 273 + EUR 237 = EUR 783), the three reducers cost 783 × 0.80 = **EUR 626** at 1,000 heads against the spec's EUR 560: EUR 66 more per head. That is why Q67 matters.
 
-**RFQs to send** (folders in `hardware/production/rfq/` once the repo is attached):
+**RFQs to send** (folders in `hardware/production/rfq/`; reducers and battery pack written):
 
 | RFQ | Suppliers | Quantities | Acceptance |
 | --- | --- | --- | --- |
@@ -112,7 +112,7 @@ No reducer maker has quoted yet. Published volume tiers suggest the spec's 1,000
 
 ## Cost and retail price (preliminary)
 
-At today's cost the product cannot be priced near its rivals; with component-set reducers (Q67) it comes within about 15 % of a ZWO AM3N. These figures start from the Phase 4 cost model and will be replaced line by line as quotes arrive. The full production parts list (Sheet + CSV) is rebuilt once the repo is attached and the first quotes are in.
+At today's cost the product cannot be priced near its rivals; with component-set reducers (Q67) it comes within about 15 % of a ZWO AM3N. These figures start from the Phase 4 cost model and will be replaced line by line as quotes arrive. The full production parts list (Sheet + CSV) is rebuilt when the first quotes are in.
 
 **Starting point (Phase 4, per head, before VAT):** materials EUR 2,157 / 1,308 / 969 at 1 / 100 / 1,000 heads; cost of goods EUR 2,416 / 1,452 / 1,052. Landed at 1,000 heads: 1,052 + 44,600 tooling ÷ 1,000 = **EUR 1,097**.
 
@@ -185,24 +185,24 @@ Eighteen numbers in this phase wait on Phase 7. Each row says which measurement 
 
 IPX4 (T12) is a P2 test by plan, so it is not on this list.
 
-## What waits on the repo, and next steps
+## State of the deliverables, and next steps
 
-Most of the deliverables in your brief can only be made in the repo, so the next step is fixing GitHub access. Phase 7's orders still come first: Phase 8 must not hold them up.
+The repo is attached and the CAD generator runs here (build123d 0.13, Phase 3 checks reproduced), so nothing is blocked on access any more. Phase 7's orders still come first: Phase 8 must not hold them up.
 
 | Deliverable (brief) | State | Waiting on |
 | --- | --- | --- |
 | 1 Process per part | Done (section 3, D88) | — |
-| 2 DFM revisions, STEP, A4 drawings with GD&T | Not started | Repo, Q67–Q69, Laifual drawing |
-| 3 Tolerance stack-ups | Not started | Repo (the CAD parameters file) |
-| 4 Production board revisions | Sourcing plan done (section 4); layouts not started | Repo, Q69, Q70 |
+| 2 DFM revisions, STEP, A4 drawings with GD&T | Not started | Reducer drawings (RFQ, D87), Laifual drawing (D85) |
+| 3 Tolerance stack-ups | Not started | — (next) |
+| 4 Production board revisions | Sourcing plan done (D90); sealed USB-C (D89) not started | Sealed socket choice |
 | 5 Reducer and bought-part quotes | Prices found, RFQ text ready (section 5) | Suppliers' replies |
-| 6 RFQ folders and quote guides | Reducer guide done; folders not made | Repo |
-| 7 Tooling and fixtures (ST-9xx) | Not started | Repo, Q68 |
-| 8 Assembly line, end-of-line test, factory-test firmware | Not started | Repo; limits pending P1 |
-| 9 Pack production | Assemblers found (section 5) | Repo (ST-602 files), quotes |
-| 10 Packaging | Not started | Repo (head envelope) |
-| 11 Production parts list and retail price | Preliminary (section 6) | Repo, quotes |
-| 12 P2 pilot plan | Not started | Q67–Q69, P1 report |
+| 6 RFQ folders and quote guides | Folders made; reducer and pack packages written | CAD revisions for the made parts |
+| 7 Tooling and fixtures (ST-9xx) | Not started | CAD revisions |
+| 8 Assembly line, end-of-line test, factory-test firmware | Not started | Limits pending P1 |
+| 9 Pack production | Assemblers found, RFQ written | Quotes |
+| 10 Packaging | Not started | — |
+| 11 Production parts list and retail price | Preliminary (section 6) | Quotes |
+| 12 P2 pilot plan | Not started | P1 report |
 | 13 Phase 8 report | This doc is its first instalment | All of the above |
 
 **For you, in this order:**
@@ -212,11 +212,11 @@ Most of the deliverables in your brief can only be made in the repo, so the next
 - [ ] Carry on with the Phase 7 wave-1 orders: TPS25751DREFR first, then the Laifual quote.
 - [ ] When you send the Laifual message, also send the production RFQ text from section 5 to Laifual and the other five makers.
 
-**For me (repo attached 24 Nov):** branch `phase-8-production` made from the Phase 7 branch; brief already in `docs/prompts/phase-8-prompt.md`; progress in `hardware/production/PROGRESS.md`; next the RFQ folders, rebuild the production parts list (Sheet + CSV), then the stack-ups and the CAD revisions after your answers.
+**For me (repo attached 24 Nov):** branch `phase-8-production` made from the Phase 7 branch; brief already in `docs/prompts/phase-8-prompt.md`; progress in `hardware/production/PROGRESS.md`; RFQ folders made; next the tolerance stack-ups, the sealed USB-C choice for ST-501, the production parts list (Sheet + CSV), then the CAD revisions as the reducer drawings arrive.
 
 ## Sources
 
-Pages read on 24 Nov 2026. USD converted at the spec's USD 1 = EUR 0.91. Project inputs: spec rev C (sections 3, 4, 8, 9), Phase 3 rev C (parts and masses), Phase 4 (cost model), Phase 7 (order state and findings), decisions log D1–D86.
+Pages read on 24 Nov 2026. USD converted at the spec's USD 1 = EUR 0.91. Project inputs: spec rev C (sections 3, 4, 8, 9), Phase 3 rev C (parts and masses), Phase 4 (cost model), Phase 7 (order state and findings), decisions log D1–D92.
 
 - Market: [Benro Polaris Astro, Newegg/Adorama](https://www.newegg.com/p/0FY-002Z-003T1); [Park Cameras](https://www.parkcameras.com/shop/benro-polaris-astro-3-axis-head_6375994k); [ZWO AM3N, ZWO US store](https://us.zwoastro.com/products/am3n-harmonic-equatorial-mount); [ZWO AM3N, astroshop.eu](https://www.astroshop.eu/p,87038); [Asterra Z+](https://www.theasterra.com/products/asterra-z-plus)
 - Reducers: [Laifual LSS tiers](https://www.alibaba.com/product-detail/High-precision-Laifual-Harmonic-reducer-for_62499927002.html); [Laifual store](https://zjlaifual.en.alibaba.com/); [Laifual LSG](https://www.alibaba.com/product-detail/Laifual-high-torque-LSG-series-harmonic_62022131184.html); [Goldgun](https://www.alibaba.com/product-detail/LFS-Harmonic-Motor-Drive-Gearbox-High_1600968013163.html?s=p); [Leaderdrive LHS-17 surplus](https://www.ebay.com/itm/204610445897); [Honpine LHSG-RDP](https://www.directindustry.com/prod/suzhou-honpine-precision-industry-co-ltd/product-4614476-2802388.html); [KOFON KC-MC](https://www.directindustry.com/prod/kofon-motion-group/product-181579-2483233.html); [Hansheng CSF-17-I](https://www.directindustry.com/prod/hansheng-automation-dongguan-co-ltd/product-4605437-2740892.html)
