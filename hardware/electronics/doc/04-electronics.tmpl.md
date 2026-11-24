@@ -103,7 +103,7 @@ Round, 30 mm, two layers, 1.6 mm. Two M3 holes on a 23 mm circle. The MT6835 sit
 | Layout | Motor phases 0.6 mm wide, kept in pairs down the two sides, at least 4 mm from the encoder; SPI and 3.3 V routed by hand straight from the plug to the chip; ground poured on both sides and stitched. DRC (all severities, with schematic parity): clean |
 | Protection | 33 Ω in series with MISO (the line shared by three boards), 10 k pull-up on chip select, 100 nF + 1 µF + 10 µF at the chip. ESD protection for this harness is on the mainboard end (SRV05 arrays), where the cable enters the body |
 | Test pads | 9 on the top face: 3.3 V, ground, CS, SCK, MOSI, MISO, NTC, CAL_EN, PWM out. Probe them before the board is screwed to its carrier |
-| Parts | 9 BOM lines, all with a confirmed LCSC number. The MT6835GT (C2984637) was out of stock at LCSC on 22 November: see section 8.3 |
+| Parts | 9 BOM lines, all with a confirmed LCSC number. The MT6835GT-STD-R is C2932578 (D84, 24 November); the first number, C2984637, now lists the A10K variant |
 
 ![ST-520 top](img/04-st-520-top.png)
 ![ST-520 underside](img/04-st-520-bottom.png)

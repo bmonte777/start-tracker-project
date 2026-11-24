@@ -24,3 +24,6 @@ app/android/local.properties
 .pytest_cache/
 stars11.bin
 tycho2/
+__pycache__/
+*_analysis/
+docs/measurements/*/analysis/

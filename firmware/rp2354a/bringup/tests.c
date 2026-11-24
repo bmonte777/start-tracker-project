@@ -34,7 +34,17 @@ typedef struct {
     int64_t turns;
     bool pass;
     int rep;
+    /* Phase 7 additions: per-second averages, raw dumps, multi-step tests */
+    double acc_e, acc_c;
+    uint32_t acc_n, lines, idx;
+    uint64_t tline, tmove;
+    int pass_no, speed_i;
+    double lm_sum[2][2];              /* [pass][dir] sums of the error after the 3rd move of each run */
+    uint32_t lm_n[2][2];
+    double sp_sgmin[4], sp_sgsum[4], sp_errmax[4];
+    uint32_t sp_n[4], sp_diag[4];
 } tstate_t;
+static float rawbuf[1000];
 static tstate_t T;
 
 static void say(const char *fmt, ...)
@@ -251,21 +261,32 @@ void rp_test_poll(void)
     }
 
     case RT_ENC_NOISE: {                                /* Stage D step 8, D48: 1000 readings, shaft still */
-        double d;
-        uint8_t st;
-        if (enc_deg(T.axis, &d, &st)) {
-            if (st & 0x02) T.warn++;
-            if (st & 0x05) T.bad++;
-            double as = d * 3600.0;
-            if (T.n == 0) T.a = as;                     /* reference to keep numbers small */
-            double x = as - T.a;
-            T.sum += x; T.sum2 += x * x;
-            if (x < T.mn) T.mn = x;
-            if (x > T.mx) T.mx = x;
-            T.n++;
-        }
-        T.tnext = now + 1000;
-        if (T.n >= 1000 || T.crc > 50) {
+        if (T.phase == 0) {
+            double d;
+            uint8_t st;
+            if (enc_deg(T.axis, &d, &st)) {
+                if (st & 0x02) T.warn++;
+                if (st & 0x05) T.bad++;
+                double as = d * 3600.0;
+                if (T.n == 0) T.a = as;                     /* reference to keep numbers small */
+                double x = as - T.a;
+                if (T.n < 1000) rawbuf[T.n] = (float)x;
+                T.sum += x; T.sum2 += x * x;
+                if (x < T.mn) T.mn = x;
+                if (x > T.mx) T.mx = x;
+                T.n++;
+            }
+            T.tnext = now + 1000;
+            if (T.n >= 1000 || T.crc > 50) {
+                /* Phase 7: dump the raw readings for tools/measure (10 ms per line so the relay never drops one) */
+                say("i,arcsec");
+                T.phase = 1; T.idx = 0; T.tnext = now + 10000;
+            }
+        } else if (T.idx < T.n && T.idx < 1000) {
+            say("%lu,%.3f", (unsigned long)T.idx, (double)rawbuf[T.idx]);
+            T.idx++;
+            T.tnext = now + 10000;
+        } else {
             double mean = T.sum / (T.n ? T.n : 1);
             double rms = sqrt(fmax(0.0, T.sum2 / (T.n ? T.n : 1) - mean * mean));
             /* datasheet: 0.0015 deg RMS = 5.4" at BW=5; this image runs BW=3, so 2x the datasheet figure fails */
@@ -280,13 +301,37 @@ void rp_test_poll(void)
     case RT_ENC_SWEEP: {                                /* Stage D step 8 part 2: one slow revolution of the magnet */
         double sweep_enc = T.arg2 ? T.arg2 : 360.0;     /* degrees as the encoder sees them */
         double out = sweep_enc / enc_per_out();
+        /* Phase 7: with the encoder on the output (P0 rig, D81) the sweep is centred on the start position - first
+         * half a sweep back, then the logged sweep, then back to the start - so the leads leaving the turning body
+         * never twist more than half a turn either way */
+        bool centred = !geom_motor() && sweep_enc >= 90.0;
+        st_state_t s;
+        rp_snapshot(&s, NULL);
         if (T.phase == 0) {
             prep_axis_for_bench(T.axis);
             power(1);
+            if (centred) { move_rel(T.axis, -out / 2.0, 2.0, false); T.phase = 7; }
+            else T.phase = 8;
+            T.tnext = now + 300000;
+        } else if (T.phase == 7 || T.phase == 9) {      /* wait for the positioning move (7) or the return (9) */
+            double d;
+            enc_deg(T.axis, &d, NULL);                  /* keep the unwrap alive */
+            T.tnext = now + 1000;
+            if (s.ax[T.axis].mode == ST_AX_HOLDING) {
+                if (T.phase == 7) { T.phase = 8; T.tnext = now + 500000; }
+                else {
+                    finish(T.pass, "%s sweep %.0f deg: %lu samples, reversals %lu, jumps %lu, flat spots %.0f, weak-field %.0f, CRC %lu; "
+                           "encoder minus steps %.0f..%.0f\" (raw linearity, before the map)", AX[T.axis], sweep_enc,
+                           (unsigned long)T.n, (unsigned long)T.bad, (unsigned long)T.warn, T.a, T.b, (unsigned long)T.crc, T.mn, T.mx);
+                }
+            }
+        } else if (T.phase == 8) {                      /* start the logged sweep */
             enc_deg(T.axis, &T.start_deg, NULL);
             T.last_deg = T.start_deg;
             T.c = cmd_deg(T.axis);
-            move_rel(T.axis, out, fmin(1.0, out / 60.0) , false);   /* about one minute */
+            T.t0 = now;
+            move_rel(T.axis, out, fmin(1.0, out / 60.0) , false);   /* about one minute; 6 min for a full output turn */
+            say("t_s,cmd_deg,enc_deg,dev_arcsec,status");             /* Phase 7: log for tools/measure */
             T.phase = 1; T.tnext = now + 300000;
         } else {
             double d;
@@ -304,15 +349,18 @@ void rp_test_poll(void)
                 if (T.rep > 200) T.a++;                            /* flat spot: no change for 200 ms while moving */
                 T.last_deg = d;
                 T.n++;
+                if ((T.n % 100) == 0)
+                    say("%.2f,%.5f,%.5f,%.2f,%d", (now - T.t0) / 1e6, expect, d, dev, st);
             }
             T.tnext = now + 1000;
-            st_state_t s;
-            rp_snapshot(&s, NULL);
             if (s.ax[T.axis].mode == ST_AX_HOLDING && now - T.t0 > 2000000) {
-                bool ok = T.bad == 0 && T.warn == 0 && T.a == 0 && T.b == 0 && T.crc == 0;
-                finish(ok, "%s sweep %.0f deg: %lu samples, reversals %lu, jumps %lu, flat spots %.0f, weak-field %.0f, CRC %lu; "
-                       "encoder minus steps %.0f..%.0f\" (raw linearity, before the map)", AX[T.axis], sweep_enc,
-                       (unsigned long)T.n, (unsigned long)T.bad, (unsigned long)T.warn, T.a, T.b, (unsigned long)T.crc, T.mn, T.mx);
+                T.pass = T.bad == 0 && T.warn == 0 && T.a == 0 && T.b == 0 && T.crc == 0;
+                if (centred) { move_rel(T.axis, -out / 2.0, 2.0, false); T.phase = 9; T.tnext = now + 300000; }
+                else {
+                    finish(T.pass, "%s sweep %.0f deg: %lu samples, reversals %lu, jumps %lu, flat spots %.0f, weak-field %.0f, CRC %lu; "
+                           "encoder minus steps %.0f..%.0f\" (raw linearity, before the map)", AX[T.axis], sweep_enc,
+                           (unsigned long)T.n, (unsigned long)T.bad, (unsigned long)T.warn, T.a, T.b, (unsigned long)T.crc, T.mn, T.mx);
+                }
             }
         }
         break;
@@ -346,8 +394,10 @@ void rp_test_poll(void)
         break;
     }
 
-    case RT_TRACK: {                                    /* Stage D step 4: sidereal for 10 min, log encoder vs command */
-        int minutes = T.arg2 ? T.arg2 : 10;
+    case RT_TRACK: {                                    /* Stage D step 4: sidereal, log encoder vs command */
+        /* Phase 7: duration from the menu (10 min default; 45 min = three wave-generator turns for test T2), and each
+         * printed second is the mean of 1000 encoder readings at 1 kHz (encoder noise 5.4" -> about 0.2") */
+        int minutes = T.arg2 > 0 ? (T.arg2 > 240 ? 240 : T.arg2) : 10;
         if (T.phase == 0) {
             prep_axis_for_bench(T.axis);
             power(1);
@@ -366,36 +416,46 @@ void rp_test_poll(void)
             enc_deg(T.axis, &T.start_deg, NULL);
             T.c = (double)s.ax[T.axis].cmd * 360.0 / 4294967296.0;
             T.t0 = now;
-            say("t_s,cmd_arcsec,enc_arcsec,err_arcsec");
-            T.phase = 2; T.tnext = now + 1000000;
+            T.tline = now + 1000000;
+            say("t_s,cmd_arcsec,enc_arcsec,err_arcsec,n,temp_c");
+            T.phase = 2; T.tnext = now + 1000;
         } else {
             double d;
-            enc_deg(T.axis, &d, NULL);
-            double cmdd = (cmd_deg(T.axis) - T.c) * enc_per_out() * 3600.0;
-            double encd = (d - T.start_deg) * 3600.0;
-            double e = encd - cmdd;
-            T.sum += e; T.sum2 += e * e; T.n++;
-            if (e < T.mn) T.mn = e;
-            if (e > T.mx) T.mx = e;
-            say("%.0f,%.2f,%.2f,%.2f", (now - T.t0) / 1e6, cmdd, encd, e);
-            T.tnext += 1000000;
-            if (now - T.t0 > (uint64_t)minutes * 60000000ull) {
-                stop_axis(T.axis);
-                double mean = T.sum / T.n, rms = sqrt(fmax(0, T.sum2 / T.n - mean * mean));
-                finish(T.crc == 0, "%s tracking %d min: encoder minus command %.1f\" RMS, %.1f\" p-p (encoder not yet mapped; "
-                       "keep this log: first periodic-error number)", AX[T.axis], minutes, rms, T.mx - T.mn);
-            } else if ((T.n % 30) == 0) {                   /* refresh the setpoint every 30 s (valid 65 s) */
-                st_setpoint_t sp;
-                memset(&sp, 0, sizeof sp);
-                st_state_t s2;
-                rp_snapshot(&s2, NULL);
-                double el = (now - T.t0) / 1e6;
-                sp.t_us = s2.t_us;
-                sp.valid_ms = 65000;
-                sp.axis_mask = (uint8_t)(1u << T.axis);
-                sp.ax[T.axis].pos = deg_angle(T.c + SIDEREAL_DPS * el);
-                sp.ax[T.axis].rate = (int64_t)(SIDEREAL_DPS / 360.0 * 1099511627776.0);
-                rp_post(ST_MSG_SETPOINT, &sp, sizeof sp);
+            if (enc_deg(T.axis, &d, NULL)) {
+                T.acc_c += (cmd_deg(T.axis) - T.c) * enc_per_out() * 3600.0;
+                T.acc_e += (d - T.start_deg) * 3600.0;
+                T.acc_n++;
+            }
+            T.tnext = now + 1000;
+            if (now >= T.tline) {
+                T.tline += 1000000;
+                if (T.acc_n > 0) {
+                    double cmdd = T.acc_c / T.acc_n, encd = T.acc_e / T.acc_n, e = encd - cmdd;
+                    T.sum += e; T.sum2 += e * e; T.n++;
+                    if (e < T.mn) T.mn = e;
+                    if (e > T.mx) T.mx = e;
+                    say("%.0f,%.2f,%.2f,%.2f,%lu,%.1f", (now - T.t0) / 1e6, cmdd, encd, e, (unsigned long)T.acc_n, hw_ntc_c(T.axis));
+                }
+                T.acc_c = T.acc_e = 0; T.acc_n = 0; T.lines++;
+                if (now - T.t0 > (uint64_t)minutes * 60000000ull) {
+                    stop_axis(T.axis);
+                    double mean = T.sum / (T.n ? T.n : 1), rms = sqrt(fmax(0, T.sum2 / (T.n ? T.n : 1) - mean * mean));
+                    finish(T.crc < T.n * 10, "%s tracking %d min: encoder minus command %.1f\" RMS, %.1f\" p-p, %lu CRC errors "
+                           "(encoder not mapped; keep this log for tools/measure/periodic_error.py)", AX[T.axis], minutes, rms,
+                           T.mx - T.mn, (unsigned long)T.crc);
+                } else if ((T.lines % 30) == 0) {               /* refresh the setpoint every 30 s (valid 65 s) */
+                    st_setpoint_t sp;
+                    memset(&sp, 0, sizeof sp);
+                    st_state_t s2;
+                    rp_snapshot(&s2, NULL);
+                    double el = (now - T.t0) / 1e6;
+                    sp.t_us = s2.t_us;
+                    sp.valid_ms = 65000;
+                    sp.axis_mask = (uint8_t)(1u << T.axis);
+                    sp.ax[T.axis].pos = deg_angle(T.c + SIDEREAL_DPS * el);
+                    sp.ax[T.axis].rate = (int64_t)(SIDEREAL_DPS / 360.0 * 1099511627776.0);
+                    rp_post(ST_MSG_SETPOINT, &sp, sizeof sp);
+                }
             }
         }
         break;
@@ -431,6 +491,152 @@ void rp_test_poll(void)
                            AX[T.axis], T.mx, lim, (unsigned long)T.warn);
                 } else {
                     T.phase = 1;
+                }
+            }
+        }
+        break;
+    }
+
+    case RT_LOST: {                                     /* Phase 7, test T1 by encoder: lost motion at reversals */
+        /* Runs of 5 moves of `step` arcsec forward, then 5 back, 3 cycles; after each move the axis settles and the
+         * encoder is averaged over 1 s (1000 readings). Pass 0 with the encoder correction off (raw), pass 1 with it on
+         * (2" deadband, D67). Lost motion = mean error after moves 3-5 of the forward runs minus the same for the back
+         * runs. Limits: spec 1.2 / T1, raw <= 20" (azimuth, altitude) or 30" (roll), with the loop <= 10". */
+        double step_as = T.arg2 > 0 ? T.arg2 : 60.0;
+        double step_out = step_as / 3600.0 / enc_per_out();
+        st_state_t s;
+        rp_snapshot(&s, NULL);
+        if (T.phase == 0) {
+            prep_axis_for_bench(T.axis);
+            cfg(ST_CFG_CORR_DEADBAND, T.axis, deg_angle(90.0));
+            power(1);
+            enc_deg(T.axis, &T.start_deg, NULL);
+            T.c = cmd_deg(T.axis);
+            say("pass,n,dir,cmd_arcsec,enc_arcsec,err_arcsec");
+            T.pass_no = 0; T.idx = 0;
+            T.phase = 1; T.tnext = now + 1000000;
+        } else if (T.phase == 1) {                      /* start the next move */
+            int dir = ((T.idx / 5) % 2) ? -1 : 1;
+            move_rel(T.axis, dir * step_out, fmax(0.002, step_out / 2.0), false);
+            T.phase = 2; T.tnext = now + 200000;
+        } else if (T.phase == 2) {                      /* wait until holding, then settle */
+            double d;
+            enc_deg(T.axis, &d, NULL);                  /* keep the unwrap alive */
+            T.tnext = now + 1000;
+            if (s.ax[T.axis].mode == ST_AX_HOLDING) {
+                T.phase = 3; T.tline = now + (T.pass_no ? 3000000 : 1000000);
+            }
+            if (s.ax[T.axis].flags & ST_AXF_SLIP) { stop_axis(T.axis); finish(false, "slip flagged during the lost-motion test"); }
+        } else if (T.phase == 3) {                      /* settle (pass 1: give the 5 Hz loop time to correct) */
+            double d;
+            enc_deg(T.axis, &d, NULL);
+            T.tnext = now + 1000;
+            if (now >= T.tline) { T.acc_e = T.acc_c = 0; T.acc_n = 0; T.phase = 4; T.tline = now + 1000000; }
+        } else {                                        /* average 1 s */
+            double d;
+            if (enc_deg(T.axis, &d, NULL)) {
+                T.acc_e += (d - T.start_deg) * 3600.0;
+                T.acc_c += (cmd_deg(T.axis) - T.c) * enc_per_out() * 3600.0;
+                T.acc_n++;
+            }
+            T.tnext = now + 1000;
+            if (now >= T.tline && T.acc_n > 0) {
+                int dir = ((T.idx / 5) % 2) ? -1 : 1;
+                double e = T.acc_e / T.acc_n, c = T.acc_c / T.acc_n, err = e - c;
+                say("%d,%lu,%d,%.2f,%.2f,%.2f", T.pass_no, (unsigned long)T.idx, dir, c, e, err);
+                if ((T.idx % 5) >= 2) { T.lm_sum[T.pass_no][dir > 0 ? 0 : 1] += err; T.lm_n[T.pass_no][dir > 0 ? 0 : 1]++; }
+                T.idx++;
+                if (T.idx >= 30) {
+                    if (T.pass_no == 0) {
+                        T.pass_no = 1; T.idx = 0;
+                        if (!geom_motor()) cfg(ST_CFG_CORR_DEADBAND, T.axis, deg_angle(2.0 / 3600.0));
+                        T.phase = 1; T.tnext = now + 1000000;
+                    } else {
+                        double lm[2];
+                        for (int p = 0; p < 2; p++)
+                            lm[p] = fabs(T.lm_sum[p][0] / (T.lm_n[p][0] ? T.lm_n[p][0] : 1) - T.lm_sum[p][1] / (T.lm_n[p][1] ? T.lm_n[p][1] : 1));
+                        if (!geom_motor()) cfg(ST_CFG_CORR_DEADBAND, T.axis, deg_angle(2.0 / 3600.0));
+                        double lim = T.axis == 2 ? 30.0 : 20.0;
+                        bool ok = T.crc == 0 && lm[0] <= lim && (geom_motor() || lm[1] <= 10.0);
+                        finish(ok, "%s lost motion with %.0f\" steps: raw %.1f\" (limit %.0f\"), with the encoder loop %.1f\" (limit 10\")%s",
+                               AX[T.axis], step_as, lm[0], lim, lm[1], geom_motor() ? "; bench magnet: loop pass not meaningful" : "");
+                    }
+                } else {
+                    T.phase = 1; T.tnext = now + 200000;
+                }
+            }
+        }
+        break;
+    }
+
+    case RT_SLEWLOG: {                                  /* Phase 7, test T6 part: slew current and StallGuard log */
+        /* Slews of 60 deg out and back at 2, 4, 6 and 8 deg/s (8 is the firmware cap, D42) with the chosen run current,
+         * 16 V rail allowed. Logs every 100 ms. StallGuard: SG_RESULT (0..510, lower = more load) read by core 0 at
+         * 10 Hz; TCOOLTHRS is set for 0.5 deg/s so the value is valid, SGTHRS stays 0 (no stall stop). */
+        static const double SPEEDS[4] = {2.0, 4.0, 6.0, 8.0};
+        int ma = T.arg2 > 0 ? T.arg2 : (T.axis == 0 ? 830 : 450);
+        if (ma > (T.axis == 0 ? 1350 : 1060)) ma = T.axis == 0 ? 1350 : 1060;     /* spec 3.6 ceilings */
+        st_state_t s;
+        rp_snapshot(&s, NULL);
+        if (T.phase == 0) {
+            prep_axis_for_bench(T.axis);
+            cfg(ST_CFG_I_RUN_MA, T.axis, ma);
+            power(2);
+            for (int k = 0; k < 4; k++) { T.sp_sgmin[k] = 1e9; }
+            T.phase = 1; T.tnext = now + 600000;
+        } else if (T.phase == 1) {
+            hw_tmc_set_stall(T.axis, 0, 0.5f, 15360000.0);
+            enc_deg(T.axis, &T.start_deg, NULL);
+            T.c = cmd_deg(T.axis);
+            T.t0 = now; T.tline = now;
+            say("t_s,set_dps,rate_dps,cmd_deg,enc_deg,err_arcsec,sg,i_ma,vmot_v,temp_c,diag");
+            T.speed_i = 0; T.rep = 0;
+            T.phase = 2;
+        } else if (T.phase == 2) {                      /* start a move */
+            move_rel(T.axis, (T.rep % 2) ? -60.0 : 60.0, SPEEDS[T.speed_i], true);
+            T.tmove = now;
+            T.phase = 3; T.tnext = now + 300000;
+        } else {
+            double d;
+            enc_deg(T.axis, &d, NULL);                  /* 1 kHz keeps the unwrap alive at speed */
+            bool diag = hw_tmc_diag(T.axis);
+            T.tnext = now + 1000;
+            double rate = (double)s.ax[T.axis].rate * 360.0 / 1099511627776.0;
+            double cmdd = (cmd_deg(T.axis) - T.c) * enc_per_out() + T.start_deg;
+            double err = (d - cmdd) * 3600.0;
+            int k = T.speed_i;
+            if (fabs(rate) >= 0.9 * SPEEDS[k]) {        /* cruise part of the move */
+                if (s.ax[T.axis].sg < T.sp_sgmin[k]) T.sp_sgmin[k] = s.ax[T.axis].sg;
+                T.sp_sgsum[k] += s.ax[T.axis].sg; T.sp_n[k]++;
+            }
+            if (fabs(err) > T.sp_errmax[k]) T.sp_errmax[k] = fabs(err);
+            if (diag) T.sp_diag[k]++;
+            if (now >= T.tline) {
+                T.tline += 100000;
+                say("%.1f,%.0f,%.3f,%.4f,%.4f,%.1f,%u,%u,%.2f,%.1f,%d", (now - T.t0) / 1e6, SPEEDS[k], rate, cmdd, d, err,
+                    s.ax[T.axis].sg, s.ax[T.axis].i_ma, s.vmot_mv / 1000.0, s.ax[T.axis].temp_dc / 10.0, diag);
+            }
+            if (s.ax[T.axis].flags & ST_AXF_SLIP) {
+                stop_axis(T.axis);
+                finish(false, "%s slipped at %.0f deg/s with %d mA (encoder and steps differ > 0.05 deg)", AX[T.axis], SPEEDS[k], ma);
+                break;
+            }
+            if (s.ax[T.axis].mode == ST_AX_HOLDING && now - T.tmove > 500000) {
+                if (++T.rep % 2 == 0) T.speed_i++;
+                if (T.speed_i >= 4) {
+                    bool ok = T.crc == 0;
+                    for (int j = 0; j < 4; j++) {
+                        say("summary,%.0f,%.0f,%.0f,%.1f,%lu", SPEEDS[j], T.sp_n[j] ? T.sp_sgmin[j] : -1.0,
+                            T.sp_n[j] ? T.sp_sgsum[j] / T.sp_n[j] : -1.0, T.sp_errmax[j], (unsigned long)T.sp_diag[j]);
+                        ok &= T.sp_errmax[j] < 180.0 && T.sp_diag[j] == 0;
+                    }
+                    hw_tmc_set_stall(T.axis, 0, 0.0f, 15360000.0);
+                    finish(ok, "%s slews 2-8 deg/s at %d mA: worst encoder-steps difference %.1f\" (limit 180\" = 0.05 deg), "
+                           "DIAG high %lu times; summary lines are set_dps,sg_min,sg_mean,err_max_arcsec,diag", AX[T.axis], ma,
+                           fmax(fmax(T.sp_errmax[0], T.sp_errmax[1]), fmax(T.sp_errmax[2], T.sp_errmax[3])),
+                           (unsigned long)(T.sp_diag[0] + T.sp_diag[1] + T.sp_diag[2] + T.sp_diag[3]));
+                } else {
+                    T.phase = 2; T.tnext = now + 500000;
                 }
             }
         }

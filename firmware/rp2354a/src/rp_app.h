@@ -21,5 +21,7 @@ bool rp_test_owns_rail(void);
 /* test numbers, shared with the ESP32 menu (firmware/esp32s3/components/st_sys/bringup.cpp) */
 enum {
     RT_INFO = 1, RT_NTC = 2, RT_DRV_UART = 3, RT_RAIL = 4, RT_RAIL_LOAD = 5, RT_ENC = 6, RT_ENC_NOISE = 7,
-    RT_ENC_SWEEP = 8, RT_STEP = 9, RT_TRACK = 10, RT_SLEW = 11, RT_FIELD = 12, RT_STEPGEN = 13, RT_ABORT = 99,
+    RT_ENC_SWEEP = 8, RT_STEP = 9, RT_TRACK = 10, RT_SLEW = 11, RT_FIELD = 12, RT_STEPGEN = 13,
+    RT_LOST = 14, RT_SLEWLOG = 15,                  /* Phase 7: lost motion at reversals (T1), slew current + StallGuard log (T6) */
+    RT_ABORT = 99,
 };

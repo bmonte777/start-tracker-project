@@ -1534,14 +1534,14 @@
   },
   {
    "ref": "U6",
-   "value": "TPS25752ARSMR",
+   "value": "TPS25752ASRSMR",
    "footprint": "Package_DFN_QFN:VQFN-32-1EP_4x4mm_P0.4mm_EP2.8x2.8mm",
    "lib_id": "ST:TPS25752A",
    "dnp": false,
    "bom": true,
    "owner": "U6",
    "fields": {
-    "MPN": "TPS25752ARSMR"
+    "MPN": "TPS25752ASRSMR"
    },
    "sheet": "usb_b",
    "pins": {

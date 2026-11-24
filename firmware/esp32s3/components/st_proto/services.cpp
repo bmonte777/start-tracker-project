@@ -522,7 +522,8 @@ std::string Services::cal_encoder_start(int axis, double speed_dps)
     if (job_active()) return "invalid state: a job is running";
     cal_routine_ = "encoder"; cal_axis_ = axis; cal_speed_ = speed_dps; cal_reason_.clear();
     double now = s.ax[axis].cmd_deg;
-    if (axis == 0) { cal_start_ = now; cal_end_ = now + 360.0; }
+    // Phase 7: centred on where the axis stands, so leads leaving a turning body (P0 rig, D81) twist at most half a turn
+    if (axis == 0) { cal_start_ = now - 180.0; cal_end_ = now + 180.0; }
     else if (axis == 1) { cal_start_ = ALT_MIN + LIMIT_MARGIN_DEG; cal_end_ = 90.0; }
     else { double lo, hi; head_.roll_limits_at(s.ax[1].cmd_deg, lo, hi); cal_start_ = lo; cal_end_ = hi; }
     if (axis == 1) {   // payload altitude cap (P4/P5 without a pier extension)

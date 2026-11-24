@@ -165,3 +165,17 @@ Q44–Q51 in the same reply confirm D64–D71 above. The app reasoning is in `do
 |---|---|---|
 | D78 | Persistent head data (Q58) | The fault log, the three PEC tables and the three encoder maps are kept in files in the ESP32's `storage` partition (LittleFS) instead of NVS or RAM, so they survive a restart; settings stay in NVS. `faults.get` reports `persistent: true` on the head |
 | D79 | Battery health to the apps (Q59) | The power task passes the gauge's cycle count, state of health and both cell voltages to the Head; `health.get` reports them (`battery.cycles`, `soh_pct`, `cells_v`) and the Health screen shows them |
+
+## 24 Nov 2026 — Phase 7 order decisions (Bruno's answers to Q60–Q66)
+
+The reasoning is in `docs/07-prototype.md`, sections "Questions" and "Findings".
+
+| # | Topic | Decision |
+|---|---|---|
+| D80 | Printed parts (Q60, changes D15 and D29) | No printer is bought: every printed part of P0 and P1 is ordered from JLC3DP. The cartridge housings ST-210 and ST-211 are FDM PA12-CF (JLC3DP's nearest material to the PAHT-CF of D35); the body, tower, bezel and carriers are MJF PA12. Materials for the parts drawn in ASA, TPU and PETG are chosen at the P1 order. Bruno: "No, I will outsource this job" |
+| D81 | P0 bench rig (Q61) | P0 is built in the real azimuth body ST-310 as P1 assembly steps 2–4, standing on a tripod or a 3/8"-16 bolt through ST-303's socket. Body, motor and mainboard (on the bezel ST-315) turn together; only the bench-supply and USB leads leave the axis. No new fixture. Approved: "Go as recommended" |
+| D82 | Reducers for P0 (Q62) | Two LHT-17-100-U-III are bought now and both measured on P0; the better unit goes on azimuth, the other on altitude. The LHT-14 is bought after P0 test T2. Approved: "OK" |
+| D83 | First board order (Q63) | ST-501: 5 bare, 2 assembled; ST-520: 5 assembled (P0 1, P1 3, spare 1); ST-602: 2 assembled, in the P1 order. If the clock U23 or the GNSS U24 is out of stock at upload, those pads stay empty and the parts are fitted by hand later. Approved: "OK" |
+| D84 | Part numbers in the board order files (Q64) | ST-520 U1: LCSC C2984637 (now listed as the MT6835GT-A10K variant) → C2932578, MPN MT6835GT-STD-R. ST-501 U6: TPS25752ARSMR (not orderable) → TPS25752ASRSMR, the only orderable TPS25752A, in the same 32-pin RSM package; pins checked one by one against the datasheet table. No layout change. Applied in the BOMs, models, `design.py`, `catalog.py`, `costs.py` and the Phase 4 doc. Approved: "Approved" |
+| D85 | 60T pulley ST-205 (Q65) | Laifual's LHT-17/14-100-U-III drawing is asked for with the quote; ST-205's bolt pattern is then corrected from it (shown to Bruno first) and the pulley ordered as a configured GT2 pulley or from JLCCNC. Approved: "OK" |
+| D86 | Bench tools (Q66) | Bruno owns none: the tools wave of the order plan buys the whole bench kit (supply, multimeter, scope, soldering and hot-air station, PD tester, Debug Probe, TC2030 cable, USB-UART adapter, crimper, torque drivers, dial indicator and base). Answer: "None" |

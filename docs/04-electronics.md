@@ -117,7 +117,7 @@ Round, 30 mm, two layers, 1.6 mm. Two M3 holes on a 23 mm circle. The MT6835 sit
 | Layout | Motor phases 0.6 mm wide, kept in pairs down the two sides, at least 4 mm from the encoder; SPI and 3.3 V routed by hand straight from the plug to the chip; ground poured on both sides and stitched. DRC (all severities, with schematic parity): clean |
 | Protection | 33 Ω in series with MISO (the line shared by three boards), 10 k pull-up on chip select, 100 nF + 1 µF + 10 µF at the chip. ESD protection for this harness is on the mainboard end (SRV05 arrays), where the cable enters the body |
 | Test pads | 9 on the top face: 3.3 V, ground, CS, SCK, MOSI, MISO, NTC, CAL_EN, PWM out. Probe them before the board is screwed to its carrier |
-| Parts | 9 BOM lines, all with a confirmed LCSC number. The MT6835GT (C2984637) was out of stock at LCSC on 22 November: see section 8.3 |
+| Parts | 9 BOM lines, all with a confirmed LCSC number. The MT6835GT-STD-R is C2932578 (D84, 24 November); the first number, C2984637, now lists the A10K variant |
 
 ![ST-520 top](img/04-st-520-top.png)
 ![ST-520 underside](img/04-st-520-bottom.png)
@@ -283,7 +283,7 @@ The three cartridge harness lengths are measured along the cable route in the CA
 
 | Board | Value | Part | How to get it on the board |
 |---|---|---|---|
-| ST-520 | MT6835GT-STD | MT6835GT-STD (C2984637) | in the library, 0 in stock on the check date: pre-order through JLCPCB Parts Manager |
+| ST-520 | MT6835GT-STD | MT6835GT-STD-R (C2932578) | 850 in stock at LCSC on 24 November (D84; the old number C2984637 now lists the A10K variant) |
 | ST-501 | TMC2209-LA-T | TMC2209-LA-T (C465949) | 21 in stock, 15 needed for five sets: buy into your JLCPCB parts account before ordering |
 | ST-501 | 0R01 | 0.010 ohm 1 % 1 W current sense | generic: pick a 10 mΩ 1 % 1206 current-sense resistor in the matcher |
 | ST-501 | 0R15 | 0.15 ohm 1 % 0.5 W current sense | generic: pick a 0.15 Ω 1 % 1206 resistor rated 0.5 W or more in the matcher |
@@ -302,7 +302,7 @@ The three cartridge harness lengths are measured along the cable route in the CA
 | ST-501 | PESD24VS1UB | PESD24VS1UB | number not confirmed: pick a 24 V SOD-323 ESD diode in the matcher |
 | ST-501 | RV-3028-C7 | RV-3028-C7 32.768kHz 1ppm TA QC | not in the library: Global sourcing |
 | ST-501 | TPS25751DREFR | TPS25751DREFR | not in JLCPCB's library (the S variant, C22460852, is: different package): buy through Parts Manager → Global sourcing |
-| ST-501 | TPS25752ARSMR | TPS25752ARSMR | not in the library: Global sourcing |
+| ST-501 | TPS25752ASRSMR | TPS25752ASRSMR | not in the library: Global sourcing |
 | ST-501 | TPS55288RPMR | TPS55288RPMR | not in the library: Global sourcing |
 | ST-602 | ITV4030L0815NR | Littelfuse three-terminal fuse, 2-cell, 15 A | not at LCSC: buy from DigiKey or Mouser, consign it to JLCPCB or fit it by hand with hot air |
 
