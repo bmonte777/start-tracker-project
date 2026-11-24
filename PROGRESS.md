@@ -1,6 +1,6 @@
 # Phase 7 — Prototype: progress notes
 
-So a new chat can carry on. Brief: `docs/prompts/phase-7-prompt.md` (Project `claude/phase-7-prompt.md`). Document: `docs/07-prototype.md` (Project copy `claude/08-prototype.md`; Docs version "Phase 7 — Prototype", https://claude.ai/artifact/LVHGbTaGSPDXsHxDAeTkyV). Order plan Sheet: https://claude.ai/artifact/VKiXzXWiCveezhW2ECiHio = `hardware/bom/order-plan-p0-p1.csv` (regenerate with `tools/order_plan.py`, then rewrite the Sheet's rows 9–61).
+So a new chat can carry on. Brief: `docs/prompts/phase-7-prompt.md` (Project `claude/phase-7-prompt.md`). Document: `docs/07-prototype.md` (Project copy `claude/08-prototype.md`; Docs version "Phase 7 — Prototype", https://claude.ai/artifact/LVHGbTaGSPDXsHxDAeTkyV). Order plan Sheet: https://claude.ai/artifact/VKiXzXWiCveezhW2ECiHio = `hardware/bom/order-plan-p0-p1.csv` (regenerate with `tools/order_plan.py`, then rewrite the Sheet's rows 9–71).
 
 ## State (24 Nov 2026) — round P0, order stage
 
@@ -12,14 +12,17 @@ So a new chat can carry on. Brief: `docs/prompts/phase-7-prompt.md` (Project `cl
 
 | Round stage | State |
 |---|---|
-| Order plan P0/P1 | done: Sheet + CSV, 60 lines (full tool kit, D86), prices/stock read 24 Nov where marked |
+| Order plan P0/P1 | done: Sheet + CSV, 63 lines (full tool kit, D86; OLED, thermal epoxy, bench XT30 lead added for the build guide), prices/stock read 24 Nov where marked |
 | P0 order guides | done (doc section "Order guides"): Laifual quote, JLCPCB parts + boards, JLCCNC, JLC3DP |
 | P0 order | waiting for Bruno (and the Laifual quote) |
-| P0 build guide, bring-up companion, measurement scripts | not started; next |
+| P0 build guide | done: `docs/guides/p0-build-guide.html` = https://claude.ai/artifact/HiuZScf8CjeMNvxB91qPxm (sheets 0–13 + R, harness and torque reference). Built from `joints.py`, harness data, D46/D48/D80–D86 |
+| P0 bring-up companion, measurement scripts | next |
 | P0 build / bring-up / measurements | not started (no hardware) |
 | P1 | not started |
 
 ## Findings (reported to Bruno)
+
+- F5 (text fixed): `parts_cart.py` notes said ST-211 takes 16 M3 inserts and ST-210 12 M3; the feature tables give 18 and 14. Notes corrected; the drawing PDFs still carry the old note until they are rebuilt (build123d not in this container).
 
 - F1 (fixed, D84): ST-520 U1 LCSC C2984637 now lists as MT6835GT-A10K (out of stock); C2932578 = MT6835GT-STD-R, 850 in stock.
 - F2 (fixed, D84): ST-501 U6 MPN TPS25752ARSMR is not orderable; TPS25752ASRSMR (same RSM package) is. Pinout to be checked against the datasheet.

@@ -73,8 +73,12 @@ r(W3,'P1','NKON','ST-601','Molicel INR-21700-P50B',4,'P50B','https://www.nkon.nl
 r(W3,'P1','JLCCNC','ST-301,302,331,305,312,313,207,208,215','Remaining CNC set',1,'hardware/fab/cnc/*.step + .pdf','https://jlccnc.com/',501,'USD','Instant quote',NC,'Phase 3 estimate (587 set minus the P0 parts)')
 r(W3,'P1','JLC3DP','ST-210,211,311,2xx-6xx','Tower (MJF), 2 cartridge housings (PA12-CF), all other printed parts',1,'hardware/cad/stl','https://jlc3dp.com/','','USD','',NC,'D80: all printed parts from JLC3DP; materials for the ASA, TPU and PETG parts chosen at the P1 order')
 r(W3,'P1','B&H / dealer','ST-314','Arca clamp Sunwayfoto DDC-60i',1,'DDC-60i','',31.85,'EUR','',NC,'Master parts list price; page could not be read this week')
-r(W3,'P1','various','ST-304..333','Hinge pin, dowels, coin screws, thumb screws, V-rings, O-ring, PC window',1,'see hardware/fab/shopping-list.csv','','','EUR','',NC,'')
+r(W3,'P1','various','ST-304..333','Hinge pin, dowels, coin screws, thumb screws, V-rings, O-ring, PC window (ST-326), GNSS antenna (ST-512), 2.5 mm jack (ST-532)',1,'see hardware/fab/shopping-list.csv','','','EUR','',NC,'')
 r(W3,'P1','JST / generic','ST-530/531/532','Remaining harness parts (altitude, roll PTFE wire, XT30, power and data leads, jack)',1,'see harness-purchase-list.csv','','','EUR','',NC,'')
+# added 24 Nov with the P0 build guide (appended so the Sheet rows keep their places)
+r(W2,'P0+P1','Funduino (or any shop)','ST-516','OLED 1.3in 128x64 SH1106, I2C, white, pin order VCC-GND-SCL-SDA ("VGSS")',2,'OLED 1.3 VGSS I2C white','https://funduinoshop.com/en/electronic-modules/displays/oled/oled-1.3-128x64-vgss-i2c-with-white-font','','EUR','',NC,'The board is fitted for VCC on pin 1 (R96, R97). A GND-VCC module needs R98/R99 instead: buy VGSS. Board 35.4 x 33.5 x 1.2 mm assumed in the fit check')
+r(W2,'P0+P1','any','ST-530','Thermal epoxy for the motor thermistor bead (D46)',1,'','','','EUR','',NC,'Small tube; any two-part thermally conductive epoxy')
+r(WT,'P0','any','tool','Bench lead to the battery pads: XT30U-M plug, 0.5 m of 18 AWG silicone wire red and black, two 4 mm banana plugs',1,'XT30U-M + banana plugs','','','EUR','',NC,'Bench supply to the mainboard XT30 (ST-531-PWR mainboard half); red to +')
 for x in rows:
     p=x['Unit price']
     if p=='' : x['Unit price EUR']='';x['Line total EUR']=''

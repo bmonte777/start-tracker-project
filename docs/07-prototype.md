@@ -120,11 +120,11 @@ All files come from the repo on github.com: open **bmonte777/start-tracker-proje
 
 ## Next in round P0, and what is known
 
-The build guide, bring-up companion and measurement scripts come next, while the parts are on their way (boards about 3–4 weeks, because of the sourced ICs). They will be ready before the first parcel arrives.
+The build guide is done. Three small lines it needs were added to the order plan (now 63 lines): the 1.3" OLED for ST-516, thermal epoxy for the motor thermistor, and the bench XT30 lead. The ST-211 drawing note says 16 M3 inserts; the right count is 18 (12 reducer, 4 wall-top, 2 carrier posts), and ST-210 takes 14, not 12. The generator notes are fixed; the drawing PDFs will pick it up at their next rebuild. The bring-up companion and measurement scripts come next, while the parts are on their way (boards about 3–4 weeks, because of the sourced ICs). They will be ready before the first parcel arrives.
 
 | Stage | Deliverable | When |
 | --- | --- | --- |
-| P0 build | Illustrated P0 build guide (P1 steps 2–4 plus the bezel), HTML with Day/Night, also as a file | Before the parts arrive |
+| P0 build | **Done:** [P0 build guide](https://claude.ai/artifact/HiuZScf8CjeMNvxB91qPxm), also `docs/guides/p0-build-guide.html`. Fifteen sheets (0–13, R for reducer B), each with parts, joints (screw, key, torque, thread locker) and checks, plus the harness drawings and a torque table | 24 Nov |
 | P0 bring-up | Companion checklist for Stages A–D, with expected readings and what to do when one is wrong | Before the boards arrive |
 | P0 measurements | Procedures and scripts in `tools/measure/`: encoder noise and linearity (D48), periodic error, backlash, encoder map, PEC, slew current and StallGuard hot and cold, temperatures, power | Before the boards arrive |
 | P1 | Order (wave 3), build guide, gauge set-up in bqStudio, app first use, the rest of the tests | After P0 Stage D |
