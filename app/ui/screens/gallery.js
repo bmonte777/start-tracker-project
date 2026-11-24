@@ -6,8 +6,8 @@ export async function render(root) {
   root.innerHTML = pageHead('Pictures', 'Gallery', 'Frames downloaded over USB-C, newest first, grouped by night.') + '<div id="g"></div>';
   const box = $('#g', root);
   if (!camera.present()) {
-    box.innerHTML = `<div class="notice">The gallery shows the pictures the Star Tracker app downloaded from the camera
-      (Pictures/Star Tracker on Android, Pictures\\Star Tracker on Windows) and its shot log. Open it in the app.</div>
+    box.innerHTML = `<div class="notice">The gallery shows the pictures the Canopus app downloaded from the camera
+      (Pictures/Canopus on Android, Pictures\\Canopus on Windows) and its shot log. Open it in the app.</div>
       <div class="card mt"><h2>Shot log</h2><p>Each frame is logged with the time, the camera settings, and where the head pointed (RA/Dec, alt/az, roll), as CSV next to the pictures.</p></div>`;
     return;
   }

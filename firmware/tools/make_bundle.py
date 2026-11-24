@@ -2,7 +2,7 @@
 """Make a Star Tracker update bundle (.stfw) from the ESP32-S3 app image and/or the RP2354A motion image.
 Format: see firmware/esp32s3/components/st_app/ota.cpp. Used by the GitHub Actions workflow.
 
-    make_bundle.py --esp star_tracker_esp32s3.bin --rp st_rp2354a_motion.bin -o star-tracker-0.1.0.stfw
+    make_bundle.py --esp star_tracker_esp32s3.bin --rp st_rp2354a_motion.bin -o canopus-0.1.0.stfw
 """
 import argparse
 import hashlib

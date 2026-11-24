@@ -21,7 +21,7 @@ export async function render(root) {
   root.innerHTML = pageHead('Camera and jobs', 'Camera & jobs', 'Sony over USB-C with live view, or any camera on the head’s shutter port.') + `
   <div class="grid three">
     <section class="card lead span2"><div class="row between"><h2 style="margin:0">Sony camera · USB-C</h2><span id="camstate" class="chip"><i></i><span>—</span></span></div>
-      <div class="live mt"><div class="lv"><canvas id="lv" width="1024" height="683"></canvas><div class="lvph" id="lvph">${camera.present() ? 'Live view is off.' : 'Camera control runs in the Star Tracker app: plug the camera into the phone or PC with a USB-C cable and set it to PC Remote.'}</div></div>
+      <div class="live mt"><div class="lv"><canvas id="lv" width="1024" height="683"></canvas><div class="lvph" id="lvph">${camera.present() ? 'Live view is off.' : 'Camera control runs in the Canopus app: plug the camera into the phone or PC with a USB-C cable and set it to PC Remote.'}</div></div>
       <div class="side"><div id="props"></div><div class="btns"><button id="camconn">Connect camera</button><button id="lvbtn">Live view</button><button id="shoot" class="primary">Shoot</button></div></div></div></section>
     <section class="card"><h2>Trigger and lens</h2>
       <div class="seg" id="trig"><button value="usb">Camera on USB-C</button><button value="port">Head’s shutter port</button></div>
@@ -35,7 +35,7 @@ export async function render(root) {
       <div class="row between mt"><div id="plan" class="msg"></div><button id="start" class="primary bigbtn">Start</button></div></section>
     <section class="card span2"><h2>Running</h2><div id="run" class="msg">Nothing running.</div><div class="progress mt"><span id="runbar" style="width:0"></span></div>
       <div class="btns"><button id="pause">Pause</button><button id="resume">Resume</button><button id="stopjob" class="danger">Stop</button></div></section>
-    <section class="card"><h2>Shot log</h2><p class="small">Every frame the app takes is logged with time, settings and head position (CSV in Documents/Star Tracker on Android, Pictures\\Star Tracker on Windows).</p>
+    <section class="card"><h2>Shot log</h2><p class="small">Every frame the app takes is logged with time, settings and head position (CSV in Documents/Canopus on Android, Documents\\Canopus on Windows).</p>
       <ol id="log"></ol></section>
   </div>`;
   const offline = needHead(root);

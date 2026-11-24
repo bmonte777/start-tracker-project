@@ -239,7 +239,7 @@ void app_run()
     i2c_main.init(0, ESP_GPIO_I2C_SDA, ESP_GPIO_I2C_SCL, 400000);
     i2c_pack.init(1, ESP_GPIO_PACK_SDA, ESP_GPIO_PACK_SCL, 100000);
     oled.init();
-    oled.text(0, 0, "Star Tracker", true);
+    oled.text(0, 0, "Canopus", true);
     oled.text(0, 2, "starting...");
     oled.flush();
     imu_init();

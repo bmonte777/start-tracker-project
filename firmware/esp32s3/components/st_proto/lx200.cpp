@@ -96,7 +96,7 @@ std::string Lx200::command(const std::string &c)
     if (c == "Gr") return fmt_ra(tra_h_, high_precision_);
     if (c == "Gd") return fmt_dec(tdec_d_, high_precision_);
     if (c == "U") { high_precision_ = !high_precision_; return ""; }
-    if (c == "GVP") return "Star Tracker#";
+    if (c == "GVP") return "Canopus#";
     if (c == "GVN") return "0.1#";
     if (c == "GVD") return "Nov 23 2026#";
     if (c == "GVT") return "00:00:00#";

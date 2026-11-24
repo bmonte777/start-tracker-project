@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Canopus — landing page</title>
+<style>
+body{margin:0}
+.theme-day{--bg:#0B1020;--panel:#121933;--panel2:#18213F;--line:#2A3560;--ink:#EDE6D8;--muted:#B4AE9F;--accent:#E8A23A;--accentInk:#0B1020;--plate:#F1EEE7;--imgf:none}
+.theme-night{--bg:#000000;--panel:#000000;--panel2:#0D0201;--line:#5A120D;--ink:#FF3B30;--muted:#FF3B30;--accent:#FF3B30;--accentInk:#000000;--plate:#000000;--imgf:grayscale(1) invert(1) brightness(0.85) url(#nightred)}
+a{color:var(--accent)}a:hover{color:var(--ink)}
+.render{filter:var(--imgf)}
+.tbtn{font:600 14px/1 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:transparent;border:0;border-radius:999px;padding:10px 16px;min-height:44px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.tbtn.on{background:var(--accent);color:var(--accentInk)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 24px;border-radius:999px;font:600 16px/1 system-ui,-apple-system,"Segoe UI",sans-serif;text-decoration:none;cursor:pointer;border:1px solid var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accentInk)}
+.btn.primary:hover{color:var(--accentInk);filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.ghost:hover{color:var(--ink);border-color:var(--accent)}
+.navlink{color:var(--ink);text-decoration:none;font:500 15px/1 system-ui,-apple-system,"Segoe UI",sans-serif;padding:12px 6px}
+.navlink:hover{color:var(--accent)}
+table.cmp{width:100%;border-collapse:collapse;font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink)}
+table.cmp th,table.cmp td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+table.cmp th{font-weight:600;color:var(--muted);font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+input.email{flex:1 1 260px;min-width:0;min-height:48px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);font:16px system-ui,-apple-system,"Segoe UI",sans-serif}
+input.email::placeholder{color:var(--muted)}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="nightred" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"></feColorMatrix></filter></svg>
+<div id="root" class="theme-day" style="background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; min-height: 100vh">
+
+<header style="border-bottom: 1px solid var(--line)">
+<div style="max-width: 1200px; margin: 0 auto; padding: 16px 32px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+<a href="index.html" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink)">
+<svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="14" cy="14" r="12" stroke="var(--line)"></circle><path d="M14 4v20M4 14h20" stroke="var(--accent)"></path><circle cx="14" cy="14" r="3" fill="var(--accent)" stroke="none"></circle></svg>
+<span style="font-family: 'Iowan Old Style', Georgia, serif; font-size: 24px; letter-spacing: .12em">CANOPUS</span>
+</a>
+<nav aria-label="Main" style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px">
+<a class="navlink" href="#what">What it does</a>
+<a class="navlink" href="#open">Open &amp; repairable</a>
+<a class="navlink" href="specs.html">Specs</a>
+<a class="navlink" href="support.html">Support</a>
+<div role="group" aria-label="Display mode" style="display: flex; gap: 4px; padding: 4px; border: 1px solid var(--line); border-radius: 999px">
+<button type="button" class="tbtn on" aria-pressed="true" data-mode="day"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"></circle><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M3 13l1.4-1.4M11.6 4.4L13 3"></path></svg>Day</button>
+<button type="button" class="tbtn " aria-pressed="false" data-mode="night"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 9.5A5.5 5.5 0 1 1 6.5 3a4.5 4.5 0 0 0 6.5 6.5z"></path></svg>Night</button>
+</div>
+</nav>
+</div>
+</header>
+
+<section aria-labelledby="hero-h" style="max-width: 1200px; margin: 0 auto; padding: 72px 32px 56px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 48px; align-items: center">
+<div style="display: flex; flex-direction: column; gap: 24px">
+<p style="margin: 0; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent)">Open-source three-axis astro head</p>
+<h1 id="hero-h" style="margin: 0; font-family: 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: clamp(40px, 5vw, 64px); line-height: 1.08">A star tracker you can open with three hex keys.</h1>
+<p style="margin: 0; font-size: 19px; line-height: 1.6; color: var(--muted); max-width: 34em">Canopus is a motorised head for cameras and small telescopes up to 7 kg. It tracks in alt-az or on its removable wedge, with strain-wave gears that have almost no play and an encoder on every axis.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 12px">
+<a class="btn primary" href="#interest">Register interest</a>
+<a class="btn ghost" href="specs.html">See the specs</a>
+</div>
+<p style="margin: 0; font-size: 13px; color: var(--muted)">Prototype in development. Figures are design targets until measured on the first prototype.</p>
+</div>
+<figure style="margin: 0">
+<div style="border-radius: 20px; overflow: hidden; background: var(--plate); aspect-ratio: 1600 / 1100; border: 1px solid var(--line)">
+<img class="render" src="img/hero.png" alt="CAD render of the Canopus head carrying a long telephoto lens" style="width: 100%; display: block; margin-top: -6.5%">
+</div>
+<figcaption style="margin-top: 10px; font-size: 13px; color: var(--muted)">CAD render of prototype P1 with a 150–600 mm class lens.</figcaption>
+</figure>
+</section>
+
+<section id="what" aria-labelledby="what-h" style="max-width: 1200px; margin: 0 auto; padding: 56px 32px">
+<h2 id="what-h" style="margin: 0 0 32px; font-family: 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: 40px">What it does</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 20px">
+<div style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
+<svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="var(--accent)" stroke-width="1.5"><path d="M16 3l3 8h8l-6.5 5 2.5 8-7-5-7 5 2.5-8L5 11h8z"></path></svg>
+<h3 style="margin: 0; font-size: 20px">Tracks the sky</h3>
+<p style="margin: 0; line-height: 1.6; color: var(--muted)">Stars, the Moon or the Sun. Go-to, a seven-term pointing model and offline plate solving in the app.</p>
+</div>
+<div style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
+<svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="var(--accent)" stroke-width="1.5"><path d="M3 24l8-10 6 7 4-5 8 8z"></path><circle cx="23" cy="9" r="3"></circle></svg>
+<h3 style="margin: 0; font-size: 20px">Shoots the landscape</h3>
+<p style="margin: 0; line-height: 1.6; color: var(--muted)">Panoramas, path-lapse and time-lapse with any camera; Holy Grail ramps, HDR and focus stacks with a Sony on USB-C.</p>
+</div>
+<div style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
+<svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="var(--accent)" stroke-width="1.5"><rect x="5" y="6" width="22" height="14" rx="3"></rect><path d="M9 25h3M15 25h3M21 25h3"></path></svg>
+<h3 style="margin: 0; font-size: 20px">Runs on its own</h3>
+<p style="margin: 0; line-height: 1.6; color: var(--muted)">A screen, four buttons and a red night mode on the head. Jobs on the shutter port carry on with the phone asleep.</p>
+</div>
+<div style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
+<svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="var(--accent)" stroke-width="1.5"><path d="M6 12a14 14 0 0 1 20 0M10 16a8 8 0 0 1 12 0"></path><circle cx="16" cy="21" r="2"></circle></svg>
+<h3 style="margin: 0; font-size: 20px">Talks to your software</h3>
+<p style="margin: 0; line-height: 1.6; color: var(--muted)">ASCOM Alpaca and LX200 built into the head, over its own Wi-Fi. No PC driver to install.</p>
+</div>
+</div>
+</section>
+
+<section aria-labelledby="axes-h" style="max-width: 1200px; margin: 0 auto; padding: 56px 32px">
+<h2 id="axes-h" style="margin: 0 0 12px; font-family: 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: 40px">Three axes, two ways to set up</h2>
+<p style="margin: 0 0 32px; font-size: 18px; line-height: 1.6; color: var(--muted); max-width: 46em">Azimuth turns without a cable stop, altitude tilts from −10° to +95°, and roll turns the camera about the lens axis to frame or to cancel field rotation.</p>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 24px">
+<article style="background: var(--panel); border: 1px solid var(--line); border-radius: 20px; overflow: hidden">
+<div style="background: var(--plate); aspect-ratio: 1600 / 1100; overflow: hidden">
+<img class="render" src="img/nowedge.png" alt="CAD render of the head on a tripod without its wedge" style="width: 100%; display: block; margin-top: -6.5%">
+</div>
+<div style="padding: 28px; display: flex; flex-direction: column; gap: 10px">
+<h3 style="margin: 0; font-size: 22px">Alt-az, straight on the tripod</h3>
+<p style="margin: 0; line-height: 1.6; color: var(--muted)">For landscapes, panoramas and wide-field astro. Azimuth and altitude follow the target; roll keeps the stars at the same angle through a long sequence. The wedge stays at home.</p>
+</div>
+</article>
+<article style="background: var(--panel); border: 1px solid var(--line); border-radius: 20px; overflow: hidden">
+<div style="background: var(--plate); aspect-ratio: 1600 / 1100; overflow: hidden">
+<img class="render" src="img/eq.png" alt="CAD render of the head on its wedge, tilted for equatorial tracking" style="width: 100%; display: block; margin-top: -6.5%">
+</div>
+<div style="padding: 28px; display: flex; flex-direction: column; gap: 10px">
+<h3 style="margin: 0; font-size: 22px">EQ, on the removable wedge</h3>
+<p style="margin: 0; line-height: 1.6; color: var(--muted)">For long lenses and long exposures. The wedge tilts 0–75° (latitudes 15–90°, north or south) and the head tracks on one axis. One coin-slot screw holds it.</p>
+</div>
+</article>
+</div>
+</section>
+
+<section aria-labelledby="pay-h" style="max-width: 1200px; margin: 0 auto; padding: 56px 32px">
+<h2 id="pay-h" style="margin: 0 0 12px; font-family: 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: 40px">Five payload types, up to 7 kg</h2>
+<p style="margin: 0 0 32px; font-size: 18px; line-height: 1.6; color: var(--muted); max-width: 46em">Pick the type closest to your kit and the head sets its own roll and altitude limits, so a long lens never swings into the tower or the tripod.</p>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 16px">
+
+<div style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 8px">
+<span style="font-family: 'Iowan Old Style', Georgia, serif; font-size: 32px; color: var(--accent)">P1</span>
+<span style="font-weight: 600; line-height: 1.4">Mirrorless with a standard zoom</span>
+<span style="font-size: 14px; color: var(--muted)">1.55 kg · L-plate</span>
+</div>
+
+<div style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 8px">
+<span style="font-family: 'Iowan Old Style', Georgia, serif; font-size: 32px; color: var(--accent)">P2</span>
+<span style="font-weight: 600; line-height: 1.4">Mirrorless with a 70–200 f/2.8</span>
+<span style="font-size: 14px; color: var(--muted)">1.95 kg · lens collar</span>
+</div>
+
+<div style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 8px">
+<span style="font-family: 'Iowan Old Style', Georgia, serif; font-size: 32px; color: var(--accent)">P3</span>
+<span style="font-weight: 600; line-height: 1.4">Mirrorless with a 150–600 zoom</span>
+<span style="font-size: 14px; color: var(--muted)">3.75 kg · lens foot</span>
+</div>
+
+<div style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 8px">
+<span style="font-family: 'Iowan Old Style', Georgia, serif; font-size: 32px; color: var(--accent)">P4</span>
+<span style="font-weight: 600; line-height: 1.4">72 mm refractor with an astro camera</span>
+<span style="font-size: 14px; color: var(--muted)">2.70 kg · dovetail</span>
+</div>
+
+<div style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 8px">
+<span style="font-family: 'Iowan Old Style', Georgia, serif; font-size: 32px; color: var(--accent)">P5</span>
+<span style="font-weight: 600; line-height: 1.4">90 mm refractor at the full rating</span>
+<span style="font-size: 14px; color: var(--muted)">7.00 kg · dovetail</span>
+</div>
+
+</div>
+</section>
+
+<section aria-labelledby="spec-h" style="max-width: 1200px; margin: 0 auto; padding: 56px 32px">
+<div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 28px">
+<h2 id="spec-h" style="margin: 0; font-family: 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: 40px">Key specs</h2>
+<a href="specs.html" style="font-weight: 600">All specifications →</a>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 16px; overflow: hidden">
+
+<div style="background: var(--bg); padding: 28px 24px; display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'Iowan Old Style', Georgia, serif; font-size: 36px; line-height: 1.1">7 kg</span>
+<span style="font-size: 14px; line-height: 1.4; color: var(--muted)">payload, five payload types</span>
+</div>
+
+<div style="background: var(--bg); padding: 28px 24px; display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'Iowan Old Style', Georgia, serif; font-size: 36px; line-height: 1.1">8°/s</span>
+<span style="font-size: 14px; line-height: 1.4; color: var(--muted)">slews, from −20 to +40 °C</span>
+</div>
+
+<div style="background: var(--bg); padding: 28px 24px; display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'Iowan Old Style', Georgia, serif; font-size: 36px; line-height: 1.1">≤ 3″</span>
+<span style="font-size: 14px; line-height: 1.4; color: var(--muted)">RMS over 5 min on the wedge at 300 mm</span>
+</div>
+
+<div style="background: var(--bg); padding: 28px 24px; display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'Iowan Old Style', Georgia, serif; font-size: 36px; line-height: 1.1">≤ 2′</span>
+<span style="font-size: 14px; line-height: 1.4; color: var(--muted)">go-to after alignment (2σ)</span>
+</div>
+
+<div style="background: var(--bg); padding: 28px 24px; display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'Iowan Old Style', Georgia, serif; font-size: 36px; line-height: 1.1">72 Wh</span>
+<span style="font-size: 14px; line-height: 1.4; color: var(--muted)">swappable pack, 25 h alt-az tracking</span>
+</div>
+
+<div style="background: var(--bg); padding: 28px 24px; display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'Iowan Old Style', Georgia, serif; font-size: 36px; line-height: 1.1">IPX6</span>
+<span style="font-size: 14px; line-height: 1.4; color: var(--muted)">production (IPX4 prototype)</span>
+</div>
+
+</div>
+<p style="margin: 14px 0 0; font-size: 13px; color: var(--muted)">Design targets and calculations; each is measured on the first prototype.</p>
+</section>
+
+<section id="open" aria-labelledby="open-h" style="max-width: 1200px; margin: 0 auto; padding: 56px 32px">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 48px; align-items: center">
+<div style="display: flex; flex-direction: column; gap: 20px">
+<h2 id="open-h" style="margin: 0; font-family: 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: 40px">Open, and built to be repaired</h2>
+<p style="margin: 0; font-size: 18px; line-height: 1.6; color: var(--muted)">The firmware and both apps are open source. Inside, everything comes apart with the tools in the box.</p>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 14px">
+<li style="display: flex; gap: 14px; line-height: 1.5"><span aria-hidden="true" style="color: var(--accent)">—</span><span><b>One hex-key set.</b> 2, 2.5 and 3 mm keys; M3, M4 and M5 screws only.</span></li>
+<li style="display: flex; gap: 14px; line-height: 1.5"><span aria-hidden="true" style="color: var(--accent)">—</span><span><b>Swappable battery.</b> A 72 Wh pack of four standard 21700 cells, out without tools.</span></li>
+<li style="display: flex; gap: 14px; line-height: 1.5"><span aria-hidden="true" style="color: var(--accent)">—</span><span><b>Axis cartridges.</b> Each axis is one module held by four screws and one plug.</span></li>
+<li style="display: flex; gap: 14px; line-height: 1.5"><span aria-hidden="true" style="color: var(--accent)">—</span><span><b>Standard parts.</b> Bearings, belts, connectors and cells you can buy anywhere.</span></li>
+<li style="display: flex; gap: 14px; line-height: 1.5"><span aria-hidden="true" style="color: var(--accent)">—</span><span><b>Open source.</b> Firmware, Android and Windows apps, on GitHub.</span></li>
+</ul>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+<figure style="margin: 0">
+<div style="border-radius: 16px; overflow: hidden; background: var(--plate); aspect-ratio: 1600 / 1100; border: 1px solid var(--line)">
+<img class="render" src="img/cartridge.png" alt="Exploded CAD render of one axis cartridge" style="width: 100%; display: block; margin-top: -6.5%">
+</div>
+<figcaption style="margin-top: 8px; font-size: 13px; color: var(--muted)">One axis cartridge, exploded.</figcaption>
+</figure>
+<figure style="margin: 0">
+<div style="border-radius: 16px; overflow: hidden; background: var(--plate); aspect-ratio: 1600 / 1100; border: 1px solid var(--line)">
+<img class="render" src="img/battery.png" alt="CAD render of the battery pack" style="width: 100%; display: block; margin-top: -6.5%">
+</div>
+<figcaption style="margin-top: 8px; font-size: 13px; color: var(--muted)">The swappable 2S2P pack.</figcaption>
+</figure>
+</div>
+</div>
+</section>
+
+<section aria-labelledby="cmp-h" style="max-width: 1200px; margin: 0 auto; padding: 56px 32px">
+<h2 id="cmp-h" style="margin: 0 0 12px; font-family: 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: 40px">Next to a Polaris-class head</h2>
+<p style="margin: 0 0 28px; font-size: 18px; line-height: 1.6; color: var(--muted); max-width: 46em">The same three axes and 7 kg rating, with gears that have almost no play, encoders on every axis and the controller in the head. It is heavier.</p>
+<div style="overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--panel)">
+<table class="cmp">
+<thead><tr><th scope="col"> </th><th scope="col">Canopus</th><th scope="col">Benro Polaris Astro</th></tr></thead>
+<tbody>
+
+<tr><th scope="row" style="text-transform: none; letter-spacing: 0; font-size: 15px; color: var(--ink)">Axes</th><td>3: azimuth, altitude, roll</td><td style="color: var(--muted)">3, with the Astro module</td></tr>
+
+<tr><th scope="row" style="text-transform: none; letter-spacing: 0; font-size: 15px; color: var(--ink)">Equatorial set-up</th><td>Removable wedge, tracks on one axis</td><td style="color: var(--muted)">Not offered</td></tr>
+
+<tr><th scope="row" style="text-transform: none; letter-spacing: 0; font-size: 15px; color: var(--ink)">Gears</th><td>Strain-wave; ≤ 10″ play with encoder correction</td><td style="color: var(--muted)">Worm gears; 125–620″ play measured</td></tr>
+
+<tr><th scope="row" style="text-transform: none; letter-spacing: 0; font-size: 15px; color: var(--ink)">Encoders on the axes</th><td>On all three outputs</td><td style="color: var(--muted)">Not published</td></tr>
+
+<tr><th scope="row" style="text-transform: none; letter-spacing: 0; font-size: 15px; color: var(--ink)">Payload</th><td>7 kg</td><td style="color: var(--muted)">7 kg</td></tr>
+
+<tr><th scope="row" style="text-transform: none; letter-spacing: 0; font-size: 15px; color: var(--ink)">Weight</th><td>6.21 kg prototype head (production target ≤ 5.1 kg)</td><td style="color: var(--muted)">1.98 kg with the Astro module</td></tr>
+
+<tr><th scope="row" style="text-transform: none; letter-spacing: 0; font-size: 15px; color: var(--ink)">Battery</th><td>Swappable 72 Wh pack</td><td style="color: var(--muted)">Built-in 2,500 mAh</td></tr>
+
+<tr><th scope="row" style="text-transform: none; letter-spacing: 0; font-size: 15px; color: var(--ink)">Water resistance</th><td>IPX4 prototype, IPX6 production</td><td style="color: var(--muted)">IPX6</td></tr>
+
+<tr><th scope="row" style="text-transform: none; letter-spacing: 0; font-size: 15px; color: var(--ink)">Third-party software</th><td>Alpaca and LX200 in the head</td><td style="color: var(--muted)">Through a community PC driver</td></tr>
+
+</tbody>
+</table>
+</div>
+<p style="margin: 14px 0 0; font-size: 13px; line-height: 1.6; color: var(--muted)">Canopus: design figures for prototype P1. Polaris: <a href="https://www.digitalcameraworld.com/reviews/benro-polaris-astro-edition-star-tracker-review">Digital Camera World review</a> (payload, weight, battery) and dealer listings (IPX6), read 24 Nov 2026; backlash as measured by the open-source <a href="https://ogecko.github.io/alpaca-benro-polaris/v2.2/">Alpaca Benro Polaris driver</a> project.</p>
+</section>
+
+<section id="interest" aria-labelledby="int-h" style="max-width: 1200px; margin: 0 auto; padding: 56px 32px 88px">
+<div style="background: var(--panel); border: 1px solid var(--line); border-radius: 24px; padding: clamp(28px, 5vw, 56px); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 32px; align-items: center">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<h2 id="int-h" style="margin: 0; font-family: 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: 40px">Hear when it is ready</h2>
+<p style="margin: 0; font-size: 18px; line-height: 1.6; color: var(--muted)">One e-mail when the prototype results are in, one when it can be ordered. Nothing else.</p>
+</div>
+<form id="interest-form" style="display: flex; flex-direction: column; gap: 12px">
+<label for="email" style="font-weight: 600">E-mail address</label>
+<div style="display: flex; flex-wrap: wrap; gap: 12px">
+<input id="email" class="email" type="email" placeholder="you@example.com" autocomplete="email">
+<button type="submit" class="btn primary">Notify me</button>
+</div>
+
+<p id="sent" role="status" hidden style="margin: 0; color: var(--accent)">Thank you. This is a design study: nothing was sent.</p>
+
+<p style="margin: 0; font-size: 13px; color: var(--muted)">Design study: this form does not send anything yet.</p>
+</form>
+</div>
+</section>
+
+<footer style="border-top: 1px solid var(--line)">
+<div style="max-width: 1200px; margin: 0 auto; padding: 32px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; font-size: 14px; color: var(--muted)">
+<span>Canopus · an open-source project · design study, not published</span>
+<nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 20px">
+<a href="specs.html">Specs</a>
+<a href="support.html">Support</a>
+<a href="https://github.com/bmonte777/start-tracker-project">Source on GitHub</a>
+</nav>
+</div>
+</footer>
+
+</div>
+<script>
+(function(){
+  var root=document.getElementById('root');
+  function set(night){
+    root.className=night?'theme-night':'theme-day';
+    document.querySelectorAll('[data-mode]').forEach(function(b){
+      var on=(b.getAttribute('data-mode')==='night')===night;
+      b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false');
+    });
+    try{localStorage.setItem('canopus-mode',night?'night':'day');}catch(e){}
+  }
+  document.querySelectorAll('[data-mode]').forEach(function(b){
+    b.addEventListener('click',function(){set(b.getAttribute('data-mode')==='night');});
+  });
+  var saved=null; try{saved=localStorage.getItem('canopus-mode');}catch(e){}
+  if(saved==='night') set(true);
+  var f=document.getElementById('interest-form');
+  if(f) f.addEventListener('submit',function(e){e.preventDefault();document.getElementById('sent').hidden=false;});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Canopus — specifications</title>
+<style>
+body{margin:0}
+.theme-day{--bg:#0B1020;--panel:#121933;--panel2:#18213F;--line:#2A3560;--ink:#EDE6D8;--muted:#B4AE9F;--accent:#E8A23A;--accentInk:#0B1020;--plate:#F1EEE7;--imgf:none}
+.theme-night{--bg:#000000;--panel:#000000;--panel2:#0D0201;--line:#5A120D;--ink:#FF3B30;--muted:#FF3B30;--accent:#FF3B30;--accentInk:#000000;--plate:#000000;--imgf:grayscale(1) invert(1) sepia(1) saturate(6) hue-rotate(-38deg) brightness(0.62)}
+a{color:var(--accent)}a:hover{color:var(--ink)}
+.tbtn{font:600 14px/1 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:transparent;border:0;border-radius:999px;padding:10px 16px;min-height:44px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.tbtn.on{background:var(--accent);color:var(--accentInk)}
+.navlink{color:var(--ink);text-decoration:none;font:500 15px/1 system-ui,-apple-system,"Segoe UI",sans-serif;padding:12px 6px}
+.navlink:hover{color:var(--accent)}
+.navlink.cur{color:var(--accent)}
+table.sp{width:100%;border-collapse:collapse;font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink)}
+table.sp th,table.sp td{text-align:left;padding:14px 20px;border-bottom:1px solid var(--line);vertical-align:top}
+table.sp th{font-weight:500;color:var(--muted);width:38%}
+table.sp tr:last-child th,table.sp tr:last-child td{border-bottom:0}
+.tag{display:inline-block;margin-left:8px;padding:2px 8px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:var(--muted);white-space:nowrap}
+</style>
+</head>
+<body>
+<div id="root" class="theme-day" style="background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; min-height: 100vh">
+
+<header style="border-bottom: 1px solid var(--line)">
+<div style="max-width: 1200px; margin: 0 auto; padding: 16px 32px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+<a href="index.html" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink)">
+<svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true" fill="none" stroke-width="1.5"><circle cx="14" cy="14" r="12" stroke="var(--line)"></circle><path d="M14 4v20M4 14h20" stroke="var(--accent)"></path><circle cx="14" cy="14" r="3" fill="var(--accent)"></circle></svg>
+<span style="font-family: 'Iowan Old Style', Georgia, serif; font-size: 24px; letter-spacing: .12em">CANOPUS</span>
+</a>
+<nav aria-label="Main" style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px">
+<a class="navlink" href="index.html">Overview</a>
+<a class="navlink cur" href="specs.html" aria-current="page">Specs</a>
+<a class="navlink" href="support.html">Support</a>
+<div role="group" aria-label="Display mode" style="display: flex; gap: 4px; padding: 4px; border: 1px solid var(--line); border-radius: 999px">
+<button type="button" class="tbtn on" aria-pressed="true" data-mode="day"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"></circle><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M3 13l1.4-1.4M11.6 4.4L13 3"></path></svg>Day</button>
+<button type="button" class="tbtn " aria-pressed="false" data-mode="night"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 9.5A5.5 5.5 0 1 1 6.5 3a4.5 4.5 0 0 0 6.5 6.5z"></path></svg>Night</button>
+</div>
+</nav>
+</div>
+</header>
+
+<section style="max-width: 1200px; margin: 0 auto; padding: 64px 32px 24px">
+<p style="margin: 0 0 12px; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent)">Specifications</p>
+<h1 style="margin: 0 0 16px; font-family: 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: clamp(36px, 4.5vw, 56px); line-height: 1.1">Every number, and where it stands</h1>
+<p style="margin: 0; font-size: 18px; line-height: 1.6; color: var(--muted); max-width: 46em">These are the figures for prototype P1. A figure marked <span class="tag" style="margin-left: 0">calculated</span> comes from the design maths; <span class="tag" style="margin-left: 0">target</span> is what the production head aims for. All are measured on P1 before anything is sold.</p>
+</section>
+
+<section style="max-width: 1200px; margin: 0 auto; padding: 24px 32px 88px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 540px), 1fr)); gap: 24px; align-items: start">
+
+<section style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden">
+<h2 style="margin: 0; padding: 20px 20px 16px; font-family: 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: 26px; border-bottom: 1px solid var(--line)">Motion and accuracy</h2>
+<table class="sp">
+<tbody>
+
+<tr><th scope="row">Axes</th><td>Azimuth, altitude, roll</td></tr>
+
+<tr><th scope="row">Azimuth range</th><td>Unlimited, no cable stop</td></tr>
+
+<tr><th scope="row">Altitude range</th><td>−10° to +95°</td></tr>
+
+<tr><th scope="row">Roll range</th><td>Set by the payload type (for example +6° / −172° with P1)</td></tr>
+
+<tr><th scope="row">Slew speed</th><td>8°/s on every axis, −20 to +40 °C</td></tr>
+
+<tr><th scope="row">Tracking, EQ on the wedge</th><td>≤ 3″ RMS over 5 min at 300 mm (2.2″)<span class="tag">calculated</span></td></tr>
+
+<tr><th scope="row">Tracking, alt-az</th><td>≤ 5″ RMS over 5 min, altitude ≤ 60° (2.7″)<span class="tag">calculated</span></td></tr>
+
+<tr><th scope="row">Settling after a slew</th><td>≤ 2 s to within 2″</td></tr>
+
+<tr><th scope="row">Go-to accuracy</th><td>≤ 2′ (2σ) after alignment; ≤ 20″ after a plate solve</td></tr>
+
+<tr><th scope="row">Play at the output</th><td>≤ 10″ with encoder correction</td></tr>
+
+<tr><th scope="row">Gears</th><td>Strain-wave reducer after a 3:1 belt, on every axis</td></tr>
+
+<tr><th scope="row">Encoders</th><td>Absolute magnetic encoder on each axis output</td></tr>
+
+</tbody>
+</table>
+</section>
+
+<section style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden">
+<h2 style="margin: 0; padding: 20px 20px 16px; font-family: 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: 26px; border-bottom: 1px solid var(--line)">Payload</h2>
+<table class="sp">
+<tbody>
+
+<tr><th scope="row">Rating</th><td>7 kg</td></tr>
+
+<tr><th scope="row">P1</th><td>Mirrorless with a standard zoom, 1.55 kg, L-plate</td></tr>
+
+<tr><th scope="row">P2</th><td>Mirrorless with a 70–200 f/2.8, 1.95 kg, lens collar</td></tr>
+
+<tr><th scope="row">P3</th><td>Mirrorless with a 150–600 zoom, 3.75 kg, lens foot</td></tr>
+
+<tr><th scope="row">P4</th><td>72 mm refractor with an astro camera, 2.70 kg, dovetail</td></tr>
+
+<tr><th scope="row">P5</th><td>90 mm refractor, 7.00 kg, dovetail</td></tr>
+
+</tbody>
+</table>
+</section>
+
+<section style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden">
+<h2 style="margin: 0; padding: 20px 20px 16px; font-family: 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: 26px; border-bottom: 1px solid var(--line)">Power</h2>
+<table class="sp">
+<tbody>
+
+<tr><th scope="row">Battery</th><td>About 72 Wh, 7.2 V, four 21700 cells (2S2P), tool-free swap, gauge on the pack</td></tr>
+
+<tr><th scope="row">Runtime, alt-az tracking</th><td>25 h<span class="tag">calculated</span></td></tr>
+
+<tr><th scope="row">Runtime, EQ tracking</th><td>34 h<span class="tag">calculated</span></td></tr>
+
+<tr><th scope="row">Runtime at −20 °C</th><td>7.2 h<span class="tag">calculated</span></td></tr>
+
+<tr><th scope="row">Port A</th><td>USB-C power in and charging, up to 45 W</td></tr>
+
+<tr><th scope="row">Port B</th><td>USB-C camera power out, 5 or 9 V, 27 W</td></tr>
+
+<tr><th scope="row">Shutter port</th><td>2.5 mm jack, focus and shutter</td></tr>
+
+</tbody>
+</table>
+</section>
+
+<section style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden">
+<h2 style="margin: 0; padding: 20px 20px 16px; font-family: 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: 26px; border-bottom: 1px solid var(--line)">Connectivity and control</h2>
+<table class="sp">
+<tbody>
+
+<tr><th scope="row">Wireless</th><td>Wi-Fi 2.4 GHz (own network or joins yours), Bluetooth LE for set-up</td></tr>
+
+<tr><th scope="row">Sensors</th><td>GNSS position and time, tilt watch, magnetometer</td></tr>
+
+<tr><th scope="row">Protocols in the head</th><td>ASCOM Alpaca, LX200, WebSocket API</td></tr>
+
+<tr><th scope="row">Camera control</th><td>Sony on USB-C to the phone or PC; any camera with a wired remote on the shutter port</td></tr>
+
+<tr><th scope="row">On the head</th><td>1.3″ OLED screen, four buttons, status light with red night mode</td></tr>
+
+</tbody>
+</table>
+</section>
+
+<section style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden">
+<h2 style="margin: 0; padding: 20px 20px 16px; font-family: 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: 26px; border-bottom: 1px solid var(--line)">Mounting and set-up</h2>
+<table class="sp">
+<tbody>
+
+<tr><th scope="row">Modes</th><td>Alt-az on the tripod, or EQ on the removable wedge</td></tr>
+
+<tr><th scope="row">Wedge range</th><td>0–75° (latitudes 15–90°, north or south)</td></tr>
+
+<tr><th scope="row">Latitude adjustment</th><td>About 55′ per turn of the screw</td></tr>
+
+<tr><th scope="row">Camera side</th><td>Arca-Swiss clamp, 60 mm</td></tr>
+
+<tr><th scope="row">Tripod side</th><td>3/8″-16 socket on the head and on the wedge</td></tr>
+
+</tbody>
+</table>
+</section>
+
+<section style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden">
+<h2 style="margin: 0; padding: 20px 20px 16px; font-family: 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: 26px; border-bottom: 1px solid var(--line)">Build and service</h2>
+<table class="sp">
+<tbody>
+
+<tr><th scope="row">Weight, head</th><td>6.21 kg prototype; production ≤ 5.1 kg<span class="tag">target</span></td></tr>
+
+<tr><th scope="row">Weight, head and wedge</th><td>6.83 kg prototype; production ≤ 5.75 kg<span class="tag">target</span></td></tr>
+
+<tr><th scope="row">Water resistance</th><td>IPX4 prototype; IPX6 production<span class="tag">target</span></td></tr>
+
+<tr><th scope="row">Tools needed</th><td>Hex keys 2, 2.5 and 3 mm</td></tr>
+
+<tr><th scope="row">Screws</th><td>M3, M4 and M5 only</td></tr>
+
+<tr><th scope="row">Axis modules</th><td>Each held by four screws and one plug</td></tr>
+
+</tbody>
+</table>
+</section>
+
+<section style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden">
+<h2 style="margin: 0; padding: 20px 20px 16px; font-family: 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: 26px; border-bottom: 1px solid var(--line)">Software</h2>
+<table class="sp">
+<tbody>
+
+<tr><th scope="row">Apps</th><td>Android 10 or later; Windows 10 and 11</td></tr>
+
+<tr><th scope="row">Jobs</th><td>Time-lapse, panorama, path-lapse, astro sequence, star trails, Holy Grail, HDR, focus stack</td></tr>
+
+<tr><th scope="row">Updates</th><td>From the app or the head's web page; automatic roll-back; web flasher over USB for recovery</td></tr>
+
+<tr><th scope="row">Licence</th><td>Open source: firmware and both apps</td></tr>
+
+</tbody>
+</table>
+</section>
+
+</section>
+
+<footer style="border-top: 1px solid var(--line)">
+<div style="max-width: 1200px; margin: 0 auto; padding: 32px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; font-size: 14px; color: var(--muted)">
+<span>Canopus · an open-source project · design study, not published</span>
+<nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 20px">
+<a href="index.html">Overview</a>
+<a href="support.html">Support</a>
+<a href="https://github.com/bmonte777/start-tracker-project">Source on GitHub</a>
+</nav>
+</div>
+</footer>
+
+</div>
+<script>
+(function(){
+  var root=document.getElementById('root');
+  function set(night){
+    root.className=night?'theme-night':'theme-day';
+    document.querySelectorAll('[data-mode]').forEach(function(b){
+      var on=(b.getAttribute('data-mode')==='night')===night;
+      b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false');
+    });
+    try{localStorage.setItem('canopus-mode',night?'night':'day');}catch(e){}
+  }
+  document.querySelectorAll('[data-mode]').forEach(function(b){
+    b.addEventListener('click',function(){set(b.getAttribute('data-mode')==='night');});
+  });
+  var saved=null; try{saved=localStorage.getItem('canopus-mode');}catch(e){}
+  if(saved==='night') set(true);
+  var f=document.getElementById('interest-form');
+  if(f) f.addEventListener('submit',function(e){e.preventDefault();document.getElementById('sent').hidden=false;});
+})();
+</script>
+</body>
+</html>

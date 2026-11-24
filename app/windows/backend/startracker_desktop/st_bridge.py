@@ -97,7 +97,7 @@ class StBridge:
             out = []
             for d, adv in devs.values():
                 name = adv.local_name or d.name or ""
-                if name.startswith("StarTracker-") or SERVICE in [u.lower() for u in adv.service_uuids]:
+                if name.startswith("Canopus-") or SERVICE in [u.lower() for u in adv.service_uuids]:
                     out.append({"id": d.address, "name": name or d.address, "rssi": adv.rssi, "uuids": adv.service_uuids})
             return out
         return self._loop().run(scan(), 30)

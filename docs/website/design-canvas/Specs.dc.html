@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Canopus — specifications</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+.theme-day{--bg:#0B1020;--panel:#121933;--panel2:#18213F;--line:#2A3560;--ink:#EDE6D8;--muted:#B4AE9F;--accent:#E8A23A;--accentInk:#0B1020;--plate:#F1EEE7;--imgf:none}
+.theme-night{--bg:#000000;--panel:#000000;--panel2:#0D0201;--line:#5A120D;--ink:#FF3B30;--muted:#FF3B30;--accent:#FF3B30;--accentInk:#000000;--plate:#000000;--imgf:grayscale(1) invert(1) sepia(1) saturate(6) hue-rotate(-38deg) brightness(0.62)}
+a{color:var(--accent)}a:hover{color:var(--ink)}
+.tbtn{font:600 14px/1 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:transparent;border:0;border-radius:999px;padding:10px 16px;min-height:44px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.tbtn.on{background:var(--accent);color:var(--accentInk)}
+.navlink{color:var(--ink);text-decoration:none;font:500 15px/1 system-ui,-apple-system,"Segoe UI",sans-serif;padding:12px 6px}
+.navlink:hover{color:var(--accent)}
+.navlink.cur{color:var(--accent)}
+table.sp{width:100%;border-collapse:collapse;font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink)}
+table.sp th,table.sp td{text-align:left;padding:14px 20px;border-bottom:1px solid var(--line);vertical-align:top}
+table.sp th{font-weight:500;color:var(--muted);width:38%}
+table.sp tr:last-child th,table.sp tr:last-child td{border-bottom:0}
+.tag{display:inline-block;margin-left:8px;padding:2px 8px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:var(--muted);white-space:nowrap}
+</style>
+</helmet>
+<div class="{{themeClass}}" style="background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; min-height: 100vh">
+
+<header style="border-bottom: 1px solid var(--line)">
+<div style="max-width: 1200px; margin: 0 auto; padding: 16px 32px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+<a href="Main.dc.html" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink)">
+<svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true" fill="none" stroke-width="1.5"><circle cx="14" cy="14" r="12" stroke="var(--line)"></circle><path d="M14 4v20M4 14h20" stroke="var(--accent)"></path><circle cx="14" cy="14" r="3" fill="var(--accent)"></circle></svg>
+<span style="font-family: 'Iowan Old Style', Georgia, serif; font-size: 24px; letter-spacing: .12em">CANOPUS</span>
+</a>
+<nav aria-label="Main" style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px">
+<a class="navlink" href="Main.dc.html">Overview</a>
+<a class="navlink cur" href="Specs.dc.html" aria-current="page">Specs</a>
+<a class="navlink" href="Support.dc.html">Support</a>
+<div role="group" aria-label="Display mode" style="display: flex; gap: 4px; padding: 4px; border: 1px solid var(--line); border-radius: 999px">
+<button type="button" class="tbtn {{dayOn}}" aria-pressed="{{dayPressed}}" onClick="{{setDay}}"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"></circle><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M3 13l1.4-1.4M11.6 4.4L13 3"></path></svg>Day</button>
+<button type="button" class="tbtn {{nightOn}}" aria-pressed="{{nightPressed}}" onClick="{{setNight}}"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 9.5A5.5 5.5 0 1 1 6.5 3a4.5 4.5 0 0 0 6.5 6.5z"></path></svg>Night</button>
+</div>
+</nav>
+</div>
+</header>
+
+<section style="max-width: 1200px; margin: 0 auto; padding: 64px 32px 24px">
+<p style="margin: 0 0 12px; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent)">Specifications</p>
+<h1 style="margin: 0 0 16px; font-family: 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: clamp(36px, 4.5vw, 56px); line-height: 1.1">Every number, and where it stands</h1>
+<p style="margin: 0; font-size: 18px; line-height: 1.6; color: var(--muted); max-width: 46em">These are the figures for prototype P1. A figure marked <span class="tag" style="margin-left: 0">calculated</span> comes from the design maths; <span class="tag" style="margin-left: 0">target</span> is what the production head aims for. All are measured on P1 before anything is sold.</p>
+</section>
+
+<section style="max-width: 1200px; margin: 0 auto; padding: 24px 32px 88px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 540px), 1fr)); gap: 24px; align-items: start">
+<sc-for list="{{groups}}" as="g" hint-placeholder-count="7">
+<section style="background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden">
+<h2 style="margin: 0; padding: 20px 20px 16px; font-family: 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: 26px; border-bottom: 1px solid var(--line)">{{g.title}}</h2>
+<table class="sp">
+<tbody>
+<sc-for list="{{g.rows}}" as="r" hint-placeholder-count="5">
+<tr><th scope="row">{{r.k}}</th><td>{{r.v}}<sc-if value="{{r.t}}" hint-placeholder-val="{{ false }}"><span class="tag">{{r.t}}</span></sc-if></td></tr>
+</sc-for>
+</tbody>
+</table>
+</section>
+</sc-for>
+</section>
+
+<footer style="border-top: 1px solid var(--line)">
+<div style="max-width: 1200px; margin: 0 auto; padding: 32px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; font-size: 14px; color: var(--muted)">
+<span>Canopus · an open-source project · design study, not published</span>
+<nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 20px">
+<a href="Main.dc.html">Overview</a>
+<a href="Support.dc.html">Support</a>
+<a href="https://github.com/bmonte777/start-tracker-project">Source on GitHub</a>
+</nav>
+</div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"night":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":3000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const night = (this.state && this.state.night !== undefined) ? this.state.night : (this.props.night ?? false);
+    return {
+      themeClass: night ? 'theme-night' : 'theme-day',
+      dayOn: night ? '' : 'on', nightOn: night ? 'on' : '',
+      dayPressed: night ? 'false' : 'true', nightPressed: night ? 'true' : 'false',
+      setDay: () => this.setState({ night: false }),
+      setNight: () => this.setState({ night: true }),
+      groups: [
+        { title: 'Motion and accuracy', rows: [
+          { k: 'Axes', v: 'Azimuth, altitude, roll' },
+          { k: 'Azimuth range', v: 'Unlimited, no cable stop' },
+          { k: 'Altitude range', v: '−10° to +95°' },
+          { k: 'Roll range', v: 'Set by the payload type (for example +6° / −172° with P1)' },
+          { k: 'Slew speed', v: '8°/s on every axis, −20 to +40 °C' },
+          { k: 'Tracking, EQ on the wedge', v: '≤ 3″ RMS over 5 min at 300 mm (2.2″)', t: 'calculated' },
+          { k: 'Tracking, alt-az', v: '≤ 5″ RMS over 5 min, altitude ≤ 60° (2.7″)', t: 'calculated' },
+          { k: 'Settling after a slew', v: '≤ 2 s to within 2″' },
+          { k: 'Go-to accuracy', v: '≤ 2′ (2σ) after alignment; ≤ 20″ after a plate solve' },
+          { k: 'Play at the output', v: '≤ 10″ with encoder correction' },
+          { k: 'Gears', v: 'Strain-wave reducer after a 3:1 belt, on every axis' },
+          { k: 'Encoders', v: 'Absolute magnetic encoder on each axis output' }
+        ]},
+        { title: 'Payload', rows: [
+          { k: 'Rating', v: '7 kg' },
+          { k: 'P1', v: 'Mirrorless with a standard zoom, 1.55 kg, L-plate' },
+          { k: 'P2', v: 'Mirrorless with a 70–200 f/2.8, 1.95 kg, lens collar' },
+          { k: 'P3', v: 'Mirrorless with a 150–600 zoom, 3.75 kg, lens foot' },
+          { k: 'P4', v: '72 mm refractor with an astro camera, 2.70 kg, dovetail' },
+          { k: 'P5', v: '90 mm refractor, 7.00 kg, dovetail' }
+        ]},
+        { title: 'Power', rows: [
+          { k: 'Battery', v: 'About 72 Wh, 7.2 V, four 21700 cells (2S2P), tool-free swap, gauge on the pack' },
+          { k: 'Runtime, alt-az tracking', v: '25 h', t: 'calculated' },
+          { k: 'Runtime, EQ tracking', v: '34 h', t: 'calculated' },
+          { k: 'Runtime at −20 °C', v: '7.2 h', t: 'calculated' },
+          { k: 'Port A', v: 'USB-C power in and charging, up to 45 W' },
+          { k: 'Port B', v: 'USB-C camera power out, 5 or 9 V, 27 W' },
+          { k: 'Shutter port', v: '2.5 mm jack, focus and shutter' }
+        ]},
+        { title: 'Connectivity and control', rows: [
+          { k: 'Wireless', v: 'Wi-Fi 2.4 GHz (own network or joins yours), Bluetooth LE for set-up' },
+          { k: 'Sensors', v: 'GNSS position and time, tilt watch, magnetometer' },
+          { k: 'Protocols in the head', v: 'ASCOM Alpaca, LX200, WebSocket API' },
+          { k: 'Camera control', v: 'Sony on USB-C to the phone or PC; any camera with a wired remote on the shutter port' },
+          { k: 'On the head', v: '1.3″ OLED screen, four buttons, status light with red night mode' }
+        ]},
+        { title: 'Mounting and set-up', rows: [
+          { k: 'Modes', v: 'Alt-az on the tripod, or EQ on the removable wedge' },
+          { k: 'Wedge range', v: '0–75° (latitudes 15–90°, north or south)' },
+          { k: 'Latitude adjustment', v: 'About 55′ per turn of the screw' },
+          { k: 'Camera side', v: 'Arca-Swiss clamp, 60 mm' },
+          { k: 'Tripod side', v: '3/8″-16 socket on the head and on the wedge' }
+        ]},
+        { title: 'Build and service', rows: [
+          { k: 'Weight, head', v: '6.21 kg prototype; production ≤ 5.1 kg', t: 'target' },
+          { k: 'Weight, head and wedge', v: '6.83 kg prototype; production ≤ 5.75 kg', t: 'target' },
+          { k: 'Water resistance', v: 'IPX4 prototype; IPX6 production', t: 'target' },
+          { k: 'Tools needed', v: 'Hex keys 2, 2.5 and 3 mm' },
+          { k: 'Screws', v: 'M3, M4 and M5 only' },
+          { k: 'Axis modules', v: 'Each held by four screws and one plug' }
+        ]},
+        { title: 'Software', rows: [
+          { k: 'Apps', v: 'Android 10 or later; Windows 10 and 11' },
+          { k: 'Jobs', v: 'Time-lapse, panorama, path-lapse, astro sequence, star trails, Holy Grail, HDR, focus stack' },
+          { k: 'Updates', v: 'From the app or the head\'s web page; automatic roll-back; web flasher over USB for recovery' },
+          { k: 'Licence', v: 'Open source: firmware and both apps' }
+        ]}
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

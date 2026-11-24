@@ -476,7 +476,7 @@ public final class SonyCamera {
             }
         }
         lastFile = name;
-        log("Saved Pictures/Star Tracker/" + name);
+        log("Saved Pictures/Canopus/" + name);
     }
 
     /** A file in Pictures/Star Tracker, visible in the Gallery once complete. */
@@ -502,7 +502,7 @@ public final class SonyCamera {
                 ContentValues v = new ContentValues();
                 v.put(MediaStore.MediaColumns.DISPLAY_NAME, name);
                 v.put(MediaStore.MediaColumns.MIME_TYPE, mime);
-                v.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Star Tracker");
+                v.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Canopus");
                 v.put(MediaStore.MediaColumns.IS_PENDING, 1);
                 Uri collection = mime.startsWith("image/jpeg") || mime.startsWith("image/heif")
                         ? MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -513,7 +513,7 @@ public final class SonyCamera {
                 if (os == null) throw new IOException("Could not open " + name);
                 return new Saved(os, cr, uri);
             }
-            File dir = new File(ctx.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "Star Tracker");
+            File dir = new File(ctx.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "Canopus");
             if (!dir.exists() && !dir.mkdirs()) throw new IOException("Could not create " + dir);
             return new Saved(new FileOutputStream(new File(dir, name)), null, null);
         }
@@ -1128,7 +1128,7 @@ public final class SonyCamera {
                         out.compress(android.graphics.Bitmap.CompressFormat.JPEG, 95, f.stream);
                         f.commit();
                     }
-                    log("Saved Pictures/Star Tracker/" + name + " (" + used + " frames blended)");
+                    log("Saved Pictures/Canopus/" + name + " (" + used + " frames blended)");
                 }
             }
         });
@@ -1948,7 +1948,7 @@ public final class SonyCamera {
     /** Text to send to the developer when a camera behaves unexpectedly. */
     public synchronized String diagnostics() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Star Tracker camera diagnostics\nModel: ").append(model).append('\n');
+        sb.append("Canopus camera diagnostics\nModel: ").append(model).append('\n');
         sb.append("Android ").append(Build.VERSION.RELEASE).append(", ").append(Build.MANUFACTURER)
                 .append(' ').append(Build.MODEL).append('\n');
         sb.append("Settings parse: ").append(props.parseProblem == null ? "ok" : props.parseProblem).append('\n');

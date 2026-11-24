@@ -22,7 +22,7 @@ export async function render(root) {
       <div class="hr"></div>
       <h3>Type an address</h3>
       <div class="row"><input id="addr" type="text" placeholder="192.168.1.42 or name:8080" style="flex:1;min-width:200px"><button id="go">Connect</button></div>
-      <p class="small mt">The simulator answers on <span class="k">localhost:8080</span>. The head’s own Wi-Fi is <span class="k">StarTracker-XXXX</span> at <span class="k">192.168.4.1</span>; its password is on the head’s screen (network page).</p>
+      <p class="small mt">The simulator answers on <span class="k">localhost:8080</span>. The head’s own Wi-Fi is <span class="k">Canopus-XXXX</span> at <span class="k">192.168.4.1</span>; its password is on the head’s screen (network page).</p>
     </section>
     <section class="card">
       <h2>No GNSS fix yet?</h2>
@@ -40,11 +40,11 @@ export async function render(root) {
           <div class="row"><input id="ssid" type="text" placeholder="Your Wi-Fi name" style="flex:1"><input id="psk" type="text" placeholder="Password" style="flex:1"></div>
           <div><button id="sendwifi" disabled>Send Wi-Fi to the head</button> <span id="wifimsg" class="small"></span></div></div></div>
       </div>
-      ${hasShell() ? '' : '<div class="warn">Bluetooth set-up needs the Star Tracker app on Android or Windows. In a browser, join the head’s own Wi-Fi instead.</div>'}
+      ${hasShell() ? '' : '<div class="warn">Bluetooth set-up needs the Canopus app on Android or Windows. In a browser, join the head’s own Wi-Fi instead.</div>'}
     </section>
     <section class="card">
       <h2>Or use the head’s own Wi-Fi</h2>
-      <ol class="how"><li>Open your ${platform() === 'windows' ? 'computer' : 'phone'}’s Wi-Fi settings.</li><li>Join <b>StarTracker-XXXX</b> with the password on the head’s screen.</li><li>Come back here and press <b>Look again</b>.</li></ol>
+      <ol class="how"><li>Open your ${platform() === 'windows' ? 'computer' : 'phone'}’s Wi-Fi settings.</li><li>Join <b>Canopus-XXXX</b> with the password on the head’s screen.</li><li>Come back here and press <b>Look again</b>.</li></ol>
       <div class="btns"><button id="wifiset">Open Wi-Fi settings</button></div>
     </section>
   </div>`;
@@ -82,7 +82,7 @@ export async function render(root) {
     if (!v) return;
     const [host, port] = v.replace(/^\w+:\/\//, '').split(':');
     const info = await discoveryBridge.httpGetJson(`http://${host}:${port || 80}/startracker/v1/info`, 2500);
-    if (!info) { toast(`No Star Tracker answers at ${v}`, 'bad'); return; }
+    if (!info) { toast(`No Canopus head answers at ${v}`, 'bad'); return; }
     if (await connectTo({ host, info, ws: wsUrlFrom(host, info), http: httpBaseFrom(host, info), via: 'typed' })) location.hash = '#/dashboard';
   };
   $('#loc', root).onclick = (e) => act(e.target, async () => {

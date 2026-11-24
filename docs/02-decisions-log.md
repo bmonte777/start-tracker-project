@@ -206,3 +206,14 @@ Questions Q73–Q76 came from the stack-ups in `hardware/production/tolerances/s
 | D97 | 60T pulley in production (Q76) | Pulley bore a light press on the wave-generator stub (run-out ≤ 0.03 mm, spec 3.5) |
 | D98 | Housing seals in production (Q76, details D88/D89) | 3.0 mm O-ring cord in 2.15 mm deep grooves with hard stops, screws ≤ 40 mm apart, instead of the 1 mm flat gaskets (squeeze 15–30 % worst case). The customer can still open covers with the hex keys; the cord stays in its groove |
 | D99 | Bezel window in production (Q76) | 45° chamfer through the 3 mm bezel around the OLED window, so the edge that limits the view is 2 mm from the glass instead of 5 mm: every pixel reads from 39° off-axis at nominal and 18° at worst case (without it: 18° and 6°) |
+
+## 24 Nov 2026 — Phase 9a decisions (Bruno's answers to Q77–Q80)
+
+Bruno's direction for the name: no names tied to Portugal; the name must come from space or astronomy.
+
+| # | Topic | Decision |
+|---|---|---|
+| D100 | How far the new name goes in the code (Q78) | Visible names only, changed together in one firmware + app release once the name is chosen: app name, OLED splash, Wi-Fi access point and BLE name prefix, head name, mDNS host name, update file name. The app id `pt.brunomonte.startracker` (D77), the API paths `/startracker/v1/…` (D75, D76) and the mDNS service type `_startracker._tcp` stay. The change is shown to Bruno before it is made. Approved: "Visible names only" |
+| D101 | Website look (Q79) | "Night observatory": near-black navy #0B1020, warm white #EDE6D8, one amber accent #E8A23A, serif headings (Georgia / Iowan Old Style), system sans body text, CAD renders on dark. Night mode is red #FF3B30 on black and nothing else (D7). Approved: "Night observatory" |
+| D102 | Product name (Q77) | **Canopus** — the second-brightest star and the guide star spacecraft star trackers lock onto. Chosen from round 3 of the shortlist (`docs/09a-name-shortlist.md`) after Bruno set the rule: space or astronomy names only, nothing tied to Portugal. Domain checks are Bruno's, after the choice. Approved: "Canopus" |
+| D103 | Canopus in the firmware and apps (Q80, applies D100) | App name, Windows window and installer "Canopus"; OLED splash "Canopus"; Wi-Fi access point and BLE name "Canopus-XXXX" (apps look for the prefix `Canopus-`); head name "Canopus"; mDNS `canopus.local`; LX200 product name "Canopus"; Alpaca server "Canopus", devices "Canopus head" and "Canopus roll axis"; update file `canopus-update.stfw`, release artifact `canopus-release`; photo, shot-log and data folders "Canopus"; simulator "Canopus-SIM". Unchanged: app id `pt.brunomonte.startracker`, API paths `/startracker/v1/…`, mDNS service `_startracker._tcp`, code comments, package and build names, and the P0 bring-up firmware banner. Tests after the change: firmware 29/29, protocol 18/18, app 40/40, Windows backend 36 passed. Approved: "Yes, apply it now" |

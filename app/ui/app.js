@@ -119,12 +119,12 @@ function bar() {
   const el = document.createElement('header');
   el.className = 'appbar';
   el.innerHTML = `
-    <a class="pill brand" href="#/dashboard" aria-label="Star Tracker">
+    <a class="pill brand" href="#/dashboard" aria-label="Canopus">
       <svg viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="st-ig" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16243c"/><stop offset=".65" stop-color="#3b5a85"/><stop offset="1" stop-color="#c88f5a"/></linearGradient></defs>
         <rect width="100" height="100" rx="24" fill="url(#st-ig)"/><g fill="none" stroke="#fff" stroke-linecap="round" stroke-opacity=".5" stroke-width="2.4"><circle cx="50" cy="44" r="22"/><circle cx="50" cy="44" r="12"/></g>
         <path d="M50 22 L52.6 41.4 L72 44 L52.6 46.6 L50 66 L47.4 46.6 L28 44 L47.4 41.4Z" fill="#ffb43d"/>
         <path d="M0 80 L22 66 L36 72 L54 58 L70 70 L100 78 L100 100 L0 100Z" fill="#1d2738"/></svg>
-      <b>Star Tracker</b><span class="sl">/</span><span class="here"></span></a>
+      <b>Canopus</b><span class="sl">/</span><span class="here"></span></a>
     <nav class="pill screens" aria-label="Screens">${prim.map(link).join('')}
       <details class="more"><summary><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg><span>More</span></summary>
         <div class="menu">${more.map(link).join('')}</div></details></nav>
@@ -157,7 +157,7 @@ async function route() {
   $$('.screens a').forEach((a) => a.classList.toggle('on', a.dataset.id === def[0]));
   $('.more summary')?.classList.toggle('on', !def[2]);
   $('.brand .here').textContent = def[1];
-  document.title = `Star Tracker · ${def[1]}`;
+  document.title = `Canopus · ${def[1]}`;
   let mod = loaded.get(def[0]);
   if (!mod) { mod = await import(`./screens/${def[0]}.js`); loaded.set(def[0], mod); }
   const view = $('#view');

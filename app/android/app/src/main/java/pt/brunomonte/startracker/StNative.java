@@ -93,7 +93,7 @@ public final class StNative {
             case "bleRead": return bleRead(a.getString("id"), a.getString("ch"));
             case "bleDisconnect": { BluetoothGatt g = gatts.remove(a.getString("id")); if (g != null) g.close(); return null; }
             case "keepAwake":
-                if (a.optBoolean("on")) CameraService.start(act, a.optString("text", "Star Tracker job"));
+                if (a.optBoolean("on")) CameraService.start(act, a.optString("text", "Canopus job"));
                 else CameraService.stop(act);
                 return null;
             case "notify": notifyUser(a.optString("title"), a.optString("text")); return null;
@@ -170,7 +170,7 @@ public final class StNative {
                 String name = r.getScanRecord() != null ? r.getScanRecord().getDeviceName() : null;
                 if (name == null) name = r.getDevice().getName();
                 boolean svc = r.getScanRecord() != null && r.getScanRecord().getServiceUuids() != null && r.getScanRecord().getServiceUuids().contains(new ParcelUuid(SERVICE));
-                if ((name != null && name.startsWith("StarTracker-")) || svc) {
+                if ((name != null && name.startsWith("Canopus-")) || svc) {
                     if (seen.putIfAbsent(r.getDevice().getAddress(), true) == null) {
                         try { synchronized (out) { out.put(new JSONObject().put("id", r.getDevice().getAddress()).put("name", name == null ? r.getDevice().getAddress() : name).put("rssi", r.getRssi())); } } catch (Exception ignored) { }
                     }

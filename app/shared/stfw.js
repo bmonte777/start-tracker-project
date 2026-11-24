@@ -23,9 +23,9 @@ async function sha256(bytes) {
 export async function inspectBundle(buf) {
   const b = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
   const out = { ok: false, error: '', version: 0, size: b.length, entries: [] };
-  if (b.length < 64) { out.error = 'file is too short to be a Star Tracker bundle'; return out; }
+  if (b.length < 64) { out.error = 'file is too short to be a Canopus bundle'; return out; }
   const dv = new DataView(b.buffer, b.byteOffset, b.byteLength);
-  if (String.fromCharCode(b[0], b[1], b[2], b[3]) !== 'STFW') { out.error = 'not a Star Tracker bundle (.stfw)'; return out; }
+  if (String.fromCharCode(b[0], b[1], b[2], b[3]) !== 'STFW') { out.error = 'not a Canopus bundle (.stfw)'; return out; }
   out.version = dv.getUint32(4, true);
   const n = dv.getUint32(8, true);
   if (out.version !== 1) { out.error = `bundle version ${out.version}; this app understands version 1`; return out; }

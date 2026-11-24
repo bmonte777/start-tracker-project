@@ -44,7 +44,7 @@ export function native(method, args = {}, timeoutMs = 30000) {
     return fetch('/bridge/st/' + method, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-StarTracker': '1' }, body: JSON.stringify(args) })
       .then(async (r) => { const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(j.error || 'HTTP ' + r.status); return j.result; });
   }
-  return Promise.reject(new Error('needs the Star Tracker app (Android or Windows)'));
+  return Promise.reject(new Error('needs the Canopus app (Android or Windows)'));
 }
 
 /** Discovery bridge for app/shared/discovery.js. HTTP works everywhere (the head allows cross-origin reads). */
@@ -92,7 +92,7 @@ export function location() {
 export const camera = {
   present: () => typeof window !== 'undefined' && !!window.CameraNative,
   call(method, ...args) {
-    if (!this.present()) throw new Error('camera control needs the Star Tracker app with the camera on USB-C');
+    if (!this.present()) throw new Error('camera control needs the Canopus app with the camera on USB-C');
     const r = window.CameraNative[method](...args);
     if (typeof r === 'string' && /^[[{]/.test(r)) { try { return JSON.parse(r); } catch (e) { return r; } }
     return r;

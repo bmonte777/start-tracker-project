@@ -41,7 +41,7 @@ struct Settings {
     bool enc_invert[ST_AXES] = {false, false, false};
     uint16_t i_run_ma[ST_AXES] = {830, 450, 450}, i_track_ma[ST_AXES] = {320, 180, 180};       // 20 C (phase4_results.json)
     uint16_t i_run_cold_ma[ST_AXES] = {1260, 890, 890}, i_track_cold_ma[ST_AXES] = {750, 630, 630};   // -20 C
-    std::string name = "StarTracker";
+    std::string name = "Canopus";
 };
 
 enum class TrackRate { Sidereal = 0, Lunar = 1, Solar = 2, King = 3 };      // ASCOM DriveRates order

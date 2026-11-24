@@ -86,7 +86,7 @@ std::string WsApi::info_json(int http_port, int alpaca_port, int lx200_port)
     cJSON *o = cJSON_CreateObject();
     Settings s = head_.settings();
     cJSON_AddStringToObject(o, "name", s.name.c_str());
-    cJSON_AddStringToObject(o, "model", "Star Tracker P1");
+    cJSON_AddStringToObject(o, "model", "Canopus P1");
     cJSON_AddStringToObject(o, "fw", FW_VERSION);
     cJSON_AddStringToObject(o, "api", API_MINOR);
     cJSON_AddNumberToObject(o, "http_port", http_port);
