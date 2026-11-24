@@ -171,7 +171,7 @@ The full report, with every contributor and its source, is `hardware/production/
 | Encoder off-axis offset (DISP) | ≤ 0.3 mm | WC 1.61, RSS 0.59: **fail** | WC 1.18: **fail** | WC 0.32, RSS 0.11: pass (RSS) |
 | Belt centre-distance range | covers belt tolerance and fitting | margin +2.15 / +0.34 mm | same | +2.55 / +0.74 mm |
 | Pulley axial offset | ±0.5 mm | WC ±0.80: **fail**; RSS pass | WC ±0.65 | WC ±0.45: pass |
-| Pulley angle | ≤ 0.25° | WC 0.86°: **fail** | WC 0.40°, RSS pass | WC 0.26°, RSS 0.15° |
+| Pulley angle | ≤ 0.25° | WC 0.86°: **fail** | WC 0.40°, RSS pass | WC 0.26° (just over), RSS 0.15°: pass on RSS |
 | 60T pulley run-out | ≤ 0.03 mm TIR | 0.071: **fail** (EQ budget 2.19 → 2.22″, still < 3″) | same | 0.030: pass |
 | Component-set concentricity (D87) | ≤ 0.015 mm (estimate) | – | two set-ups: **fail** | one set-up: WC 0.020, RSS 0.012 |
 | V-ring azimuth VA-75 | fitted width 9.0 ± 1.2 | 6.7: **fail** | same | rev D: 9.0 (WC 8.3–9.7) |
