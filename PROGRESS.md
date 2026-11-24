@@ -4,7 +4,7 @@ So a new chat can carry on. Brief: `docs/prompts/phase-7-prompt.md` (Project `cl
 
 ## State (24 Nov 2026) — round P0, order stage
 
-- **GitHub:** PR 12 was already merged. Branch `phase-7-prototype`; push access granted by Bruno on 24 Nov (the first attach was refused, then approved).
+- **GitHub:** PR 12 was already merged. Branch `phase-7-prototype`, draft PR 13; push access granted by Bruno on 24 Nov (the first attach was refused, then approved).
 - **Open questions:** Q60–Q66 (doc section "Questions"), all *pending approval*; nothing in D1–D79 changed yet. Q64 (BOM part numbers) and Q65 (ST-205) touch board order files and a part: do not change them before Bruno approves.
 - **Printer:** not known whether the H2S has been bought (Q60). Memory says he owned no printer on 20 Nov.
 
