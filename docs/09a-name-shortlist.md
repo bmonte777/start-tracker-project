@@ -1,4 +1,4 @@
-# Phase 9a — Product name shortlist (round 2)
+# Phase 9a — Product name shortlist (rounds 2 and 3)
 
 24 Nov 2026. **Bruno's direction after round 1: no names tied to Portugal; the name must come from space or astronomy.** Round 1 (Vela, Corvo, Caravela, Mira, …) is set aside. Domain checks are left until a name is chosen (Bruno). Waiting for the pick (Q77).
 
@@ -45,3 +45,30 @@ Left out without a full check: names already used by astro brands (Polaris, Alta
 | mDNS service | `_startracker._tcp` | **no** | — |
 
 The code change itself is made only after Bruno confirms it (one firmware + app release, tests rerun).
+
+## Round 3 (Bruno asked for more, 24 Nov)
+
+Same checks as round 2.
+
+| # | Name | What it says about the product | English / Portuguese | OLED and app | Already used? |
+|---|---|---|---|---|---|
+| 13 | **Canopus** | The second-brightest star, and the guide star that spacecraft star trackers lock onto to hold their attitude: the original "star tracker" star | ka-NOH-pus / *Canopo*; easy | 7 letters | No astro, camera or tripod product found |
+| 14 | **Caelum** | Latin for "the sky"; also a small southern constellation (the engraver's chisel: precision) | SEE-lum or KYE-lum (two ways to say it) / *Célum* | 6 letters | No product found |
+| 15 | **Thuban** | The pole star of 5,000 years ago (Egypt's pyramids point to it): precession and polar alignment | THOO-ban / "Tuban"; fine | 6 letters | No product found |
+| 16 | **Sagitta** | The Arrow: precise pointing | sa-JIT-a / *Sagita* | 7 letters | No product found |
+| 17 | **Albireo** | The gold-and-blue double star in Cygnus, a favourite first target | al-BIR-ee-oh / *Albíreo* | 7 letters | No product found |
+| 18 | **Culmina** | From *culmination*: the moment a target is highest and sharpest, the best time to shoot | KUL-min-a / *culminar*; easy | 7 letters | No product found |
+| 19 | **Corvus** | The Crow constellation (Latin name only) | KOR-vus | 6 letters | No product found |
+| 20 | **Kochab** | The pole star of the ancient Greeks | KOH-kab; awkward in both | 6 letters | No product found |
+| 21 | **Aphelion** | A planet's farthest point from the Sun | a-FEE-lee-on / *afélio* | 8 letters | No product found |
+| 22 | **Lagrange** | The mathematician, and the L-points where telescopes like JWST park | la-GRAHNZH | 8 letters | No product found |
+| 23 | **Meridian** | The line where a target culminates (meridian flip) | Easy | 8 letters | No brand found, but it is an everyday mount term ("meridian flip"), so it cannot be owned in searches |
+| 24 | **Auriga** | The Charioteer | Easy | 6 letters | **Clash:** Auriga is an astronomy eyepiece brand |
+
+### Round 3 recommendation
+
+1. **Canopus** — the star real star trackers use; a strong, easy, unused name.
+2. **Thuban** — the old pole star: a story about polar alignment that photographers enjoy telling.
+3. **Caelum** — "the sky" in Latin, short and elegant, but people say it two ways.
+
+Overall favourites across rounds 2 and 3: **Canopus**, **Trifid**, **Thuban**.
