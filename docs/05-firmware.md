@@ -42,7 +42,7 @@ D1–D63 are fixed and followed. The questions below were not covered by them. B
 | D68 (Q48) | Mount models and pointing | Internal frame = the head's own axis angles; matrix kinematics with the wedge tilt and IMU level; alt-az (roll de-rotates the field, Alpaca Rotator) and EQ on the wedge (azimuth = RA, altitude = Dec, roll = framing). Saemundsson refraction with pressure and temperature; a seven-term pointing model fitted by least squares; J2000 ↔ JNow with precession, nutation and aberration |
 | D69 (Q49) | Updates and recovery | Two ESP32 OTA slots with rollback; the ESP32 keeps the last good RP2354A image and rewrites it over SWD if the RP2354A fails to answer after an update; one `.stfw` bundle for both; the ESP32 keeps its USB pins on the built-in USB-serial so the web flasher can always recover it; no secure boot on prototypes |
 | D70 (Q50) | PD controller configuration | Write each controller's configuration into its EEPROM once (bring-up Stage C, 4CC `FLad`/`FLwd`/`FLvy`); the ESP32 also holds both images and loads them over I²C (`PBMs`/`PBMc`) if a controller starts in patch-wait mode |
-| D71 (Q51) | Small defaults | Access point "StarTracker-XXXX" with a password shown on the OLED; mDNS `startracker.local` (not built yet, section 10); BLE pairing with a 6-digit code; settings in NVS; Alpaca on 32323, LX200 on 4030 |
+| D71 (Q51) | Small defaults | Access point "StarTracker-XXXX" with a password shown on the OLED; mDNS `startracker.local` (built in Phase 6); BLE pairing with a 6-digit code; settings in NVS; Alpaca on 32323, LX200 on 4030 |
 
 Q42 and Q43 (Phase 4, how the board check is read) were approved as D62 and D63; they do not touch the firmware.
 
@@ -392,8 +392,8 @@ Alpaca notes: RA/Dec are JNow (`EquatorialSystem` = topocentric); `AlignmentMode
 ## 8. Loading and updating, point and click
 
 ### 8.1 Getting the files
-1. On github.com open the repository, click **Actions**, pick **Firmware and apps** on the left (called **Firmware** before Phase 6), click **Run workflow** (branch `main` once this pull request is merged), then **Run workflow** again.
-2. When the run shows a green tick (about 15 minutes), open it and download **esp32s3-images-and-flasher** (and **simulator-windows** if you want the simulator). Unzip.
+1. On github.com open the repository, click **Actions**, pick **Firmware and apps** on the left, click **Run workflow** (branch `main`), then **Run workflow** again.
+2. When the run shows a green tick (about 30 minutes), open it and download **star-tracker-release** (or just **esp32s3-images-and-flasher**). Unzip.
 
 ### 8.2 First load of a new board (ESP32-S3)
 1. Double-click `web-flasher.html` from the unzipped folder; it opens in Chrome or Edge.
