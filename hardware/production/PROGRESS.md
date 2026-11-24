@@ -6,7 +6,7 @@ So a new chat can carry on. Brief: `docs/prompts/phase-8-prompt.md` (Project `cl
 
 - **GitHub:** branch `phase-8-production`, made from `phase-7-prototype` (Phase 7 not finished, so its PR 13 is not merged). Draft PR open. The first attach was refused; Bruno fixed access the same day.
 - **Phase 7:** order stage, nothing measured. Every number that waits on P0/P1 is in the "Numbers pending P1" table of `docs/08-production.md` (18 rows).
-- **Hand-off prompt:** `docs/prompts/phase-8-continue-prompt.md` (Project `claude/phase-8-continue-prompt.md`) carries Phase 8 on in a new chat.
+- **Hand-off prompt:** `docs/prompts/phase-8-continue-prompt.md` (rewritten 24 Nov night, after the stack-ups) (Project `claude/phase-8-continue-prompt.md`) carries Phase 8 on in a new chat.
 - **Decisions:** Q67–Q72 approved 24 Nov → D87–D92; Q73–Q76 (stack-ups) approved 24 Nov → D93–D99, in `docs/02-decisions-log.md` and Project `claude/02-decisions-log.md`. Open: the altitude seal itself (D95: smaller seal on a smaller arm seat, e.g. VA-65 size on a 65 seat outside the R31 output flange, lip on the reducer's fixed face inside the tower's Ø84 opening at 6.0 mm; show Bruno before changing ST-311/312).
 - **Access:** the second session's push attach was refused first, then worked once Bruno authorised it in chat (24 Nov).
 
