@@ -5,8 +5,8 @@ So a new chat can carry on. Brief: `docs/prompts/phase-9a-prompt.md` (Project `c
 ## State (24 Nov 2026)
 
 - **Access:** the push attach was refused at first again; it worked once Bruno authorised it in chat.
-- **Deliverable 1, name:** shortlist of 12 in `docs/09a-name-shortlist.md`; top 3 Vela, Corvo, Caravela. Waiting for Bruno's pick (Q77). Domain checks: Bruno will do them once a name is chosen.
-- **Questions asked (24 Nov):** Q77 name; Q78 how far to rename the firmware ↔ app contract; Q79 website visual direction. Nothing below the name starts until Q77 is answered.
+- **Deliverable 1, name:** round 1 (Vela, Corvo, Caravela…) rejected: Bruno wants no names tied to Portugal, only space/astronomy names. Round 2 shortlist of 12 in `docs/09a-name-shortlist.md`; top 3 Trifid, Octans, Tycho. Waiting for Bruno's pick (Q77). Domain checks: Bruno does them once a name is chosen.
+- **Decisions:** Q78 → D100 (visible names only), Q79 → D101 (Night observatory look), in `docs/02-decisions-log.md` and Project `claude/02-decisions-log.md`. Open: Q77. Nothing below the name starts until Q77 is answered.
 - **Deliverable 2, user guide:** not started (waits on Q77).
 - **Deliverable 3, website design study:** not started (waits on Q77, Q79).
 
