@@ -331,7 +331,7 @@ These are estimates built from JLCPCB's public fee structure (assembly set-up ab
 | Tag-Connect TC2030-IDC-NL cable (6-pin, no legs) | Plugs onto the two programming pad sets J5 and J6 | <https://www.tag-connect.com/product/tc2030-idc-nl> |
 | USB-to-serial adapter, 3.3 V | ESP32 console and first load through J5 if USB does not enumerate | any CP2102 / CH343 adapter |
 | Oscilloscope, 2 channels, 50 MHz or more | Rail ripple, step pulses, SPI | any |
-| Electronic load or power resistors (10 Ω 50 W, 3.3 Ω 10 W) | Loading the rails and port B | any |
+| Electronic load or power resistors (10 Ω 50 W; two 3.3 Ω 50 W, Phase 7 F10) and a USB-C PD trigger board | Loading the rails and port B | any |
 | Crimp tool for JST GH / PH (Engineer PA-09) and fine tweezers | Roll harness, motor plugs | any |
 | Soldering iron with a fine tip, hot-air station, flux, 0.3 mm solder | Hand-fitted parts, thermistor leads | any |
 | Diametric magnet 6 × 2.5 mm and a NEMA 17 motor | Cartridge board test before the cartridges exist | spare from the parts list |
@@ -493,8 +493,8 @@ Work through the stages in order; do not skip ahead after a failed check. Bench 
 
 1. Look at the board under a magnifier: no solder bridges on the encoder chip's pins.
 2. Multimeter on continuity: `+3V3` pad to ground pad must **not** beep.
-3. Bench supply 3.3 V, limit 50 mA, on the `+3V3` and `GND` test pads. Expected current: 15–25 mA.
-4. Hold the 6 mm magnet 1–2 mm under the chip and turn it. The PWM test pad (TP9) shows a square wave on the oscilloscope whose duty follows the angle.
+3. Bench supply 3.3 V, limit 50 mA, on the `+3V3` and `GND` test pads (TP1, TP2). Expected current: 15–28 mA (MT6835 datasheet: 22 mA typical, 15–28 mA).
+4. Hold the 6 mm magnet 1–2 mm under the chip and turn it. The PWM test pad **TP8** shows a 994 Hz square wave on the oscilloscope whose duty follows the angle. *(Corrected in Phase 7, finding F6: this step said TP9, which is the NTC pad; the pads are TP1 3.3 V, TP2 GND, TP3 CS, TP4 SCK, TP5 MISO, TP6 MOSI, TP7 CAL_EN, TP8 PWM, TP9 NTC.)*
 
 ### Stage B — mainboard, no motors
 
@@ -510,9 +510,9 @@ Work through the stages in order; do not skip ahead after a failed check. Bench 
 ### Stage C — power paths
 
 1. Bench supply limit 3 A. From the RP2354A console: motor switch on, boost on. TP30 reads 10.0 V; with `VM_SEL` high, 16.0 V. Ripple on the oscilloscope under 100 mV peak-to-peak.
-2. Load `VMOT` with 10 Ω (1.6 A at 16 V) for one minute: the voltage holds within 0.2 V, the inductor L5 stays below 70 °C to the touch-thermometer.
+2. Load `VMOT` with 10 Ω (1.6 A at 16 V) for one minute: the voltage holds within 0.2 V, the inductor L5 stays below 70 °C to the touch-thermometer. *(Phase 7, finding F9: connect the resistor to the ends of the bulk capacitor C77, not to TP30, which is a 1 mm pad on one via; and raise the supply limit to 4.5 A for this step, since 26 W out of the boost is about 3.9 A from a 7.4 V supply.)*
 3. USB-C charger on port A with the PD tester in line: the tester shows 15 V or 20 V negotiated; TP4 `VBUS_CHG` follows. With the real pack the charge current ramps to the set value.
-4. Port B: enable from the ESP32 console, PD tester + load: 5 V and 9 V each hold at 3 A for one minute.
+4. Port B: enable from the ESP32 console, PD tester + load: 5 V and 9 V each hold at 3 A for one minute. *(Phase 7: the load is a USB-C PD trigger board with two 3.3 Ω 50 W resistors in parallel at 5 V, one at 9 V (2.7 A), or an electronic load.)*
 5. Buttons: each of the four reads low when pressed. LEDs: red, green, blue each light.
 6. Shutter port: with a multimeter on continuity across tip–sleeve of the jack, the meter beeps while the shutter output is on; the same for ring–sleeve and focus.
 
