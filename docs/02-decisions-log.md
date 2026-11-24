@@ -193,7 +193,7 @@ The reasoning and numbers are in `docs/08-production.md`, sections "Decisions", 
 | D91 | Production weight target (Q71, changes D28) | Production head alone ≤ 5.1 kg; the removable wedge (0.62 kg) is extra, ≤ 5.75 kg together. Estimate with D87: 5.11 kg head alone, 5.73 kg with the wedge |
 | D92 | Final assembly (Q72) | Heads are assembled and tested in Portugal by Bruno and one helper, from kits of finished parts and boards; the cost model uses Portugal as the landing point |
 
-## Phase 8 — tolerance stack-ups (approved 24 Nov 2026)
+## 24 Nov 2026 — Phase 8 tolerance stack-up decisions (Bruno: "Recommend and implement")
 
 Questions Q73–Q76 came from the stack-ups in `hardware/production/tolerances/stackups.md` (`tools/production/tolerance_stackups.py`). Bruno answered on 24 Nov: ST-303 "order as drawn for P0"; the part and production fixes "recommend and implement"; altitude seal "narrower seal on housing face".
 
