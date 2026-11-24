@@ -336,7 +336,7 @@ def vrings():
                      B1=9.0, tol=1.2, chain="arm ST-312 hub face X 46 -> tower ST-311 counterface pad X 43.5",
                      contrib=[("Reducer flange, output face to housing face", 0.10), ("Tower wall / pad (MJF)", 0.30),
                               ("Cartridge ear seat in the tower (MJF)", 0.20)],
-                     fix="D95: narrower seal with its lip on the cartridge housing face (6.0 mm); seal to be chosen from a supplier table"))
+                     fix="D95: smaller seal on a smaller arm seat (e.g. VA-65 size), lip on the reducer face inside the tower opening (6.0 mm); being chosen"))
     # roll: V-ring back on the shelf face (output face), counterface = reducer / housing front face at z = L_flange
     rows.append(dict(axis="roll", rev="rev C/D", seal="VA-65 (ST-219)", available=round(P.RED[14]["L_flange"] + P.VRING_ROLL_RECESS, 2),
                      B1=7.0, tol=1.0, chain="shelf ST-313 face (output face) -> reducer and housing front face",

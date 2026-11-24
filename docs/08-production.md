@@ -10,7 +10,7 @@ Phase 8 has started on paper only. Phase 7 is still at the order stage: on 24 No
 
 The repo is attached (the first request was refused; access was fixed on 24 Nov). The work is on branch `phase-8-production`, made from `phase-7-prototype` because Phase 7 is not finished.
 
-This first instalment holds the work that does not need the measurements:
+So far this doc holds the work that does not need the measurements:
 
 - six production decisions (Q67–Q72, approved as D87–D92);
 - the tolerance stack-ups (deliverable 3) and the fixes they led to (D93–D99), with ST-303 and ST-313 at rev D;
@@ -175,7 +175,7 @@ The full report, with every contributor and its source, is `hardware/production/
 | 60T pulley run-out | ≤ 0.03 mm TIR | 0.071: **fail** (EQ budget 2.19 → 2.22″, still < 3″) | same | 0.030: pass |
 | Component-set concentricity (D87) | ≤ 0.015 mm (estimate) | – | two set-ups: **fail** | one set-up: WC 0.020, RSS 0.012 |
 | V-ring azimuth VA-75 | fitted width 9.0 ± 1.2 | 6.7: **fail** | same | rev D: 9.0 (WC 8.3–9.7) |
-| V-ring altitude VA-80 | 9.0 ± 1.2 | 2.5: **fail** | same | D95: narrower seal on the housing face, being chosen |
+| V-ring altitude VA-80 | 9.0 ± 1.2 | 2.5: **fail** | same | D95: smaller seal on a smaller arm seat, lip on the reducer face (6.0 mm), being chosen |
 | V-ring roll VA-65 | 7.0 ± 1.0 | 6.0 (WC 5.85–6.15) | same | kept; back support added |
 | Wedge dowels | head drops on by hand | H7/m6 −0.012…+0.008 mm: **fail** | same | 4 E7 hole + slot: 0.008–0.028 mm |
 | Clamp seat (D20) | 45 ± 0.5 mm | pass | pass | pass |
@@ -185,7 +185,7 @@ The full report, with every contributor and its source, is `hardware/production/
 
 **What the stack-ups found, in order of importance.**
 
-1. **V-ring fitted widths (Phase 3 error, affects P1).** A V-ring only seals at its catalogue fitted width B1 (VA-75 and VA-80: 9.0 ± 1.2 mm; VA-65: 7.0 ± 1.0 mm). The Phase 3 geometry gives 6.7 mm on azimuth, 2.5 mm on altitude and 6.0 mm on roll. ST-303 rev D moves the azimuth shoulder down 2.3 mm (D94). On roll a 1 mm recess would put the seal into the clamp's overhang (the clamp end sits on the shelf face), so 6.0 stays: inside the window at nominal, 0.15 mm under at worst case. Rev D adds the back support the seal was missing (support diameter ≥ d1 + 0.5c = 67.5 mm). The altitude joint needs a narrower seal running on the cartridge housing face (D95, next).
+1. **V-ring fitted widths (Phase 3 error, affects P1).** A V-ring only seals at its catalogue fitted width B1 (VA-75 and VA-80: 9.0 ± 1.2 mm; VA-65: 7.0 ± 1.0 mm). The Phase 3 geometry gives 6.7 mm on azimuth, 2.5 mm on altitude and 6.0 mm on roll. ST-303 rev D moves the azimuth shoulder down 2.3 mm (D94). On roll a 1 mm recess would put the seal into the clamp's overhang (the clamp end sits on the shelf face), so 6.0 stays: inside the window at nominal, 0.15 mm under at worst case. Rev D adds the back support the seal was missing (support diameter ≥ d1 + 0.5c = 67.5 mm). The altitude joint needs a smaller seal on a smaller arm seat, with its lip on the reducer's fixed face inside the tower's Ø84 opening, 6.0 mm away (D95, next).
 2. **Wedge dowels (affects P1).** H7 holes on m6 dowels give −0.012…+0.008 mm, and two round holes must also take the ±0.3 mm pin-spacing tolerance of ISO 2768-m. Rev D has one 4 E7 round hole and one 4 E7 × 6 radial slot: 0.008–0.028 mm clearance, ≤ 175″ yaw play. Yaw on the wedge is harmless: the encoder and the pointing model take it.
 3. **Encoder gap.** With the typical package height (A = A1 + A2 = 1.00 mm) the P1 gap is 1.03 mm nominal, not the 0.81 mm of D48, which used the 1.20 mm maximum. The worst case still reaches contact (−0.49 mm). The main terms are the board thickness (±0.16, because the board is located by its top face), the 80 mm tube length at ISO 2768-m (±0.3) and the printed carrier. RSS gives 0.45–1.61 mm, about 10 ppm below 0.2 mm, so P1 is fine on a bench check, as D48 planned. In production the board sits chip-side down on three pads in the CNC housing, located by two pins (D96): 1.50 mm, worst case 1.08–1.92.
 4. **Encoder off-axis offset.** The datasheet allows 0.3 mm, for a 10 mm magnet; ours is 6 mm. P1 reaches 1.61 mm worst case: the carrier floats on its screws and the tube flange has up to 0.3 mm of play. Most of the resulting error is first-harmonic and the per-unit `cal.encoder` map removes it, but the production fix (pins, 28 h7/H7 flange) brings it to 0.32 mm worst case and 0.11 mm RSS.
